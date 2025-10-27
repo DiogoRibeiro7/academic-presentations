@@ -42,11 +42,11 @@ academic-presentations/
 ├── presentations/
 │   ├── mcmc-advanced/
 │   │   ├── slides/
-│   │   │   ├── advanced_mcmc_beamer.tex
-│   │   │   ├── advanced_mcmc_beamer.pdf
+│   │   │   ├── mcmc_beamer.tex
+│   │   │   ├── mcmc_beamer.pdf
 │   │   │   └── figures/
 │   │   ├── code/
-│   │   │   ├── advanced_mcmc_implementation.py
+│   │   │   ├── mcmc_implementation.py
 │   │   │   └── examples/
 │   │   ├── bibliography/
 │   │   │   └── mcmc_bibliography.md
@@ -129,11 +129,11 @@ pip install numpy scipy matplotlib seaborn pandas
 cd presentations/mcmc/slides/
 
 # Compile LaTeX
-pdflatex advanced_mcmc_beamer.tex
-pdflatex advanced_mcmc_beamer.tex  # Run twice for references
+pdflatex mcmc_beamer.tex
+pdflatex mcmc_beamer.tex  # Run twice for references
 
 # Or use latexmk for automatic compilation
-latexmk -pdf advanced_mcmc_beamer.tex
+latexmk -pdf mcmc_beamer.tex
 ```
 
 ## 🤝 Contributing
