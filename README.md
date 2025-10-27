@@ -14,7 +14,7 @@ This repository contains a collection of academic presentations covering advance
 
 ### Statistical Methods & Theory
 
-- **[Advanced MCMC Methods](./mcmc-advanced/)** - Comprehensive coverage from theory to modern implementations
+- **[Advanced MCMC Methods](./mcmc/)** - Comprehensive coverage from theory to modern implementations
 
   - 📄 LaTeX Beamer source
   - 📊 Implementation examples
