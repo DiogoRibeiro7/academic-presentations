@@ -1,0 +1,991 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% Theme and appearance
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usefonttheme{professionalfonts}
+
+% Packages
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{algorithm,algorithmic}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{subcaption}
+
+% Custom colors
+\definecolor{navyblue}{RGB}{0,32,96}
+\definecolor{crimson}{RGB}{178,34,52}
+\definecolor{forest}{RGB}{34,139,34}
+\definecolor{gold}{RGB}{255,215,0}
+
+% Customize theme colors
+\setbeamercolor{structure}{fg=navyblue}
+\setbeamercolor{title}{fg=white,bg=navyblue}
+\setbeamercolor{frametitle}{fg=white,bg=navyblue}
+\setbeamercolor{section in toc}{fg=navyblue}
+
+% Title information
+\title[Advanced MCMC]{Markov Chain Monte Carlo}
+\subtitle{Theory, Modern Algorithms, and Applications}
+\author[D. Ribeiro]{Diogo Ribeiro\\
+\small ESMAD -- Escola Superior de Média Arte e Design\\
+\small Lead Data Scientist, Mysense.ai}
+\date{\today}
+
+% Custom commands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\trace}{\text{tr}}
+\newcommand{\diag}{\text{diag}}
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+\titlepage
+\end{frame}
+
+% Table of contents
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Introduction and Foundations}
+
+\begin{frame}{The Monte Carlo Revolution}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Historical Timeline:}
+\begin{itemize}
+\item \textcolor{crimson}{1940s:} Stanisław Ulam -- Manhattan Project
+\item \textcolor{crimson}{1953:} Metropolis et al. -- First MCMC algorithm
+\item \textcolor{crimson}{1970:} Hastings -- Generalized acceptance criterion
+\item \textcolor{crimson}{1984:} Geman \& Geman -- Gibbs sampling
+\item \textcolor{crimson}{1987:} Duane et al. -- Hamiltonian Monte Carlo
+\item \textcolor{crimson}{2011:} Hoffman \& Gelman -- NUTS algorithm
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Revolutionary Impact}
+\begin{itemize}
+\item Transformed statistics from analytical to computational
+\item Enabled Bayesian inference for complex models
+\item Made high-dimensional problems tractable
+\item Foundation of modern ML/AI
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\vspace{0.5cm}
+\begin{alertblock}{Key Insight}
+MCMC didn't just change \emph{how} we compute -- it changed \emph{what} we can compute.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{The Fundamental Sampling Challenge}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Problem:} Sample from $\pi(\bx)$ when direct methods fail
+
+\vspace{0.3cm}
+\textbf{Traditional Methods Breakdown:}
+\begin{itemize}
+\item \textcolor{crimson}{Inverse transform:} No closed form CDF
+\item \textcolor{crimson}{Rejection sampling:} Exponential inefficiency in high-D
+\item \textcolor{crimson}{Grid methods:} Curse of dimensionality
+\item \textcolor{crimson}{Importance sampling:} Poor proposal overlap
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{MCMC Solution}
+Construct Markov chain with $\pi(\bx)$ as stationary distribution
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Method} & \textbf{Dimension} & \textbf{Feasible?} \\
+\midrule
+Direct sampling & 1D & \textcolor{forest}{Yes} \\
+Inverse transform & Simple PDFs & \textcolor{forest}{Yes} \\
+Rejection sampling & $>5$D & \textcolor{crimson}{No} \\
+Grid methods & $>3$D & \textcolor{crimson}{No} \\
+\textbf{MCMC} & \textbf{Any} & \textcolor{forest}{\textbf{Yes}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Critical Applications:}
+\begin{itemize}
+\item Bayesian neural networks ($10^6+$ parameters)
+\item Financial risk models
+\item Climate simulations
+\item Phylogenetic inference
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Mathematical Foundations}
+
+\begin{frame}{Markov Chain Theory}
+\begin{definition}[Markov Chain]
+A sequence $\{X_n\}_{n \geq 0}$ is a Markov chain if:
+\[P(X_{n+1} = x_{n+1} | X_0, \ldots, X_n) = P(X_{n+1} = x_{n+1} | X_n)\]
+\end{definition}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Key Concepts:}
+\begin{itemize}
+\item \textbf{Transition kernel:} $P(x, A) = P(X_{n+1} \in A | X_n = x)$
+\item \textbf{Chapman-Kolmogorov:} $P^n(x,A) = \int P^{n-1}(x,dy) P(y,A)$
+\item \textbf{Invariant distribution:} $\pi(A) = \int \pi(dx) P(x,A)$
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{theorem}[Ergodic Theorem]
+If the chain is irreducible, aperiodic, and positive recurrent, then:
+\[\lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n f(X_i) = \int f(x) \pi(dx) \quad \text{a.s.}\]
+\end{theorem}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{block}{Detailed Balance Condition}
+\[\pi(x) P(x, dy) = \pi(y) P(y, dx)\]
+Sufficient (but not necessary) for $\pi$ to be stationary.
+\end{block}
+\end{frame}
+
+\begin{frame}{Convergence Theory and Rates}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\begin{theorem}[Convergence to Stationarity]
+Under regularity conditions:
+\[\|P^n(x, \cdot) - \pi(\cdot)\|_{TV} \leq C \rho^n\]
+where $\rho < 1$ is the second-largest eigenvalue.
+\end{theorem}
+
+\textbf{Mixing Time:} $\tau_{mix}(\epsilon) = \min\{n : \max_x \|P^n(x, \cdot) - \pi(\cdot)\|_{TV} \leq \epsilon\}$
+
+\textbf{Spectral Gap:} $\gamma = 1 - \rho$ determines convergence rate
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Factors Affecting Convergence}
+\begin{itemize}
+\item \textcolor{crimson}{Geometry:} Condition number of target
+\item \textcolor{crimson}{Dimensionality:} Concentration phenomena
+\item \textcolor{crimson}{Multimodality:} Barrier crossing
+\item \textcolor{crimson}{Step size:} Acceptance vs exploration trade-off
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{Central Limit Theorem for MCMC}
+\[\sqrt{n}(\bar{f}_n - \pi(f)) \xrightarrow{d} N(0, \sigma^2_f)\]
+where $\sigma^2_f = \Var_\pi(f) + 2\sum_{k=1}^\infty \text{Cov}_\pi(f(X_0), f(X_k))$
+\end{alertblock}
+\end{frame}
+
+\section{Classical Algorithms}
+
+\begin{frame}{Metropolis-Hastings Algorithm}
+\begin{algorithm}[H]
+\caption{Metropolis-Hastings}
+\begin{algorithmic}[1]
+\STATE Initialize $x^{(0)}$
+\FOR{$t = 0, 1, 2, \ldots$}
+\STATE Propose $y \sim q(y | x^{(t)})$
+\STATE Compute acceptance probability:
+\[
+\alpha(x^{(t)}, y) = \min\left(1, \frac{\pi(y) q(x^{(t)} | y)}{\pi(x^{(t)}) q(y | x^{(t)})}\right)
+\]
+\STATE Accept $x^{(t+1)} = y$ with probability $\alpha$, otherwise $x^{(t+1)} = x^{(t)}$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Key Variants:}
+\begin{itemize}
+\item \textbf{Random Walk:} $q(y|x) = q(y-x)$
+\item \textbf{Independence:} $q(y|x) = q(y)$
+\item \textbf{Langevin:} $q(y|x) \propto \exp(-\|y-x-\frac{\epsilon^2}{2}\nabla\log\pi(x)\|^2/(2\epsilon^2))$
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Optimal Scaling Theory}
+For $d$-dimensional Gaussian targets:
+\begin{itemize}
+\item Optimal acceptance rate: $\approx 23.4\%$
+\item Optimal step size: $\propto d^{-1/2}$
+\item Efficiency: $O(d^2)$ mixing time
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Advanced Proposal Strategies}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Adaptive Metropolis:}
+\[C_n = \frac{s_d}{n} \sum_{i=1}^n (X_i - \bar{X}_n)(X_i - \bar{X}_n)^T + s_d \epsilon_n I_d\]
+
+where $s_d = (2.38)^2/d$ and $\epsilon_n \to 0$.
+
+\vspace{0.3cm}
+\textbf{Advantages:}
+\begin{itemize}
+\item Automatic tuning
+\item Adapts to target geometry
+\item Maintains ergodicity
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Multiple-try Metropolis:}
+\begin{enumerate}
+\item Generate $k$ proposals: $y_1, \ldots, y_k \sim q(\cdot | x)$
+\item Select $y_j$ with probability $\propto \pi(y_j)$
+\item Generate reference set from $y_j$
+\item Accept/reject based on ratio of weights
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{block}{Benefits}
+\begin{itemize}
+\item Higher acceptance rates
+\item Better exploration
+\item Parallelizable proposals
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Gibbs Sampling and Blocking}
+\textbf{Standard Gibbs Sampling:}
+\begin{align}
+X_1^{(t+1)} &\sim \pi(x_1 | X_2^{(t)}, X_3^{(t)}, \ldots, X_d^{(t)}) \\
+X_2^{(t+1)} &\sim \pi(x_2 | X_1^{(t+1)}, X_3^{(t)}, \ldots, X_d^{(t)}) \\
+&\vdots \\
+X_d^{(t+1)} &\sim \pi(x_d | X_1^{(t+1)}, X_2^{(t+1)}, \ldots, X_{d-1}^{(t+1)})
+\end{align}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Blocking Strategies:}
+\begin{itemize}
+\item \textbf{Random scan:} Update components randomly
+\item \textbf{Block Gibbs:} Update correlated components together
+\item \textbf{Collapsed Gibbs:} Integrate out auxiliary variables
+\end{itemize}
+
+\textbf{Example: Hierarchical Models}
+\[\theta_i | \mu, \tau \sim N(\mu, \tau^2)\]
+Block $(\mu, \tau)$ for better mixing.
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{alertblock}{Performance Considerations}
+\begin{itemize}
+\item \textcolor{crimson}{Slow mixing:} High posterior correlations
+\item \textcolor{forest}{Fast mixing:} Near-independence
+\item \textcolor{crimson}{Curse:} $O(d^2)$ scaling with correlation
+\end{itemize}
+\end{alertblock}
+
+\textbf{Acceleration Techniques:}
+\begin{itemize}
+\item Parameter expansion
+\item Reparameterization
+\item Auxiliary variable methods
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Modern Algorithms}
+
+\begin{frame}{Hamiltonian Monte Carlo}
+\textbf{Physical Intuition:} Frictionless particle on curved surface
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Hamiltonian System:}
+\begin{align}
+H(q, p) &= U(q) + K(p) \\
+U(q) &= -\log \pi(q) \text{ (potential energy)} \\
+K(p) &= \frac{1}{2} p^T M^{-1} p \text{ (kinetic energy)}
+\end{align}
+
+\textbf{Hamilton's equations:}
+\begin{align}
+\frac{dq}{dt} &= \frac{\partial H}{\partial p} = M^{-1} p \\
+\frac{dp}{dt} &= -\frac{\partial H}{\partial q} = -\nabla U(q)
+\end{align}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Leapfrog Integrator}
+\begin{align}
+p_{t+\epsilon/2} &= p_t - \frac{\epsilon}{2} \nabla U(q_t) \\
+q_{t+\epsilon} &= q_t + \epsilon M^{-1} p_{t+\epsilon/2} \\
+p_{t+\epsilon} &= p_{t+\epsilon/2} - \frac{\epsilon}{2} \nabla U(q_{t+\epsilon})
+\end{align}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{Key Advantages}
+\begin{itemize}
+\item \textbf{Distant proposals:} Can traverse typical set efficiently
+\item \textbf{High acceptance:} $>90\%$ typical with proper tuning
+\item \textbf{Gradient information:} Exploits structure of target distribution
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{No-U-Turn Sampler (NUTS)}
+\textbf{Problem with HMC:} Manual tuning of step size $\epsilon$ and number of steps $L$
+
+\begin{algorithm}[H]
+\caption{NUTS Algorithm (Simplified)}
+\begin{algorithmic}[1]
+\STATE Sample momentum $p_0 \sim N(0, M)$
+\STATE Set $q_- = q_+ = q_0$, $p_- = p_+ = p_0$
+\STATE Build trajectory by doubling until U-turn criterion:
+\WHILE{no U-turn detected}
+\STATE Double trajectory length in random direction
+\STATE Check stopping criterion: $(q_+ - q_-) \cdot p_+ < 0$ or $(q_+ - q_-) \cdot p_- < 0$
+\ENDWHILE
+\STATE Sample uniformly from valid points in trajectory
+\end{algorithmic}
+\end{algorithm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Automatic Adaptation:}
+\begin{itemize}
+\item \textbf{Step size:} Dual averaging to target acceptance rate
+\item \textbf{Mass matrix:} Regularized sample covariance
+\item \textbf{Trajectory length:} Dynamic stopping criterion
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Performance Benefits}
+\begin{itemize}
+\item No manual parameter tuning
+\item Efficient exploration of typical set
+\item Robust across diverse target distributions
+\item State-of-the-art for many applications
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Advanced MCMC Techniques}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Parallel Tempering:}
+\begin{itemize}
+\item Multiple chains at different "temperatures"
+\item $\pi_i(x) \propto \pi(x)^{1/T_i}$ where $T_1 < T_2 < \cdots < T_k$
+\item Periodic swaps between chains
+\item Facilitates mode jumping
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Reversible Jump MCMC:}
+\begin{itemize}
+\item Variable dimension problems
+\item Model selection applications
+\item Birth-death processes
+\item Careful design of dimension-changing moves
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Riemannian Manifold MCMC:}
+\begin{itemize}
+\item Exploit geometric structure of parameter space
+\item Metric tensor: $G(q) = \nabla^2 U(q)$ (Fisher information)
+\item Natural gradient directions
+\item Invariant to reparameterization
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Emerging Techniques}
+\begin{itemize}
+\item \textcolor{crimson}{Neural MCMC:} Deep learning proposals
+\item \textcolor{crimson}{Quantum MCMC:} Quantum annealing
+\item \textcolor{crimson}{Piecewise deterministic:} Event-driven sampling
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Diagnostics and Convergence}
+
+\begin{frame}{Comprehensive Convergence Assessment}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Quantitative Diagnostics:}
+
+\textbf{1. Gelman-Rubin Statistic:}
+\[\hat{R} = \sqrt{\frac{\hat{V}}{W}}\]
+where $\hat{V} = \frac{n-1}{n}W + \frac{1}{n}B$ and $B$, $W$ are between/within chain variances.
+
+\textbf{Target:} $\hat{R} \leq 1.01$
+
+\vspace{0.3cm}
+\textbf{2. Effective Sample Size:}
+\[ESS = \frac{mn}{1 + 2\sum_{t=1}^T \hat{\rho}_t}\]
+
+\textbf{Target:} $ESS \geq 400$ per chain
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{3. Monte Carlo Standard Error:}
+\[MCSE = \frac{\hat{\sigma}}{\sqrt{ESS}}\]
+
+\vspace{0.3cm}
+\textbf{Visual Diagnostics:}
+\begin{itemize}
+\item \textbf{Trace plots:} Mixing and stationarity
+\item \textbf{Rank plots:} Chain uniformity
+\item \textbf{Autocorrelation:} Dependence structure
+\item \textbf{Energy plots:} HMC-specific diagnostics
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{alertblock}{Diagnostic Protocol}
+\begin{enumerate}
+\item Multiple chains, dispersed starts
+\item Adequate warm-up ($\geq$50\% samples)
+\item Check all quantitative criteria
+\item Visual inspection
+\item Posterior predictive checks
+\end{enumerate}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Common Convergence Problems}
+\begin{table}
+\centering
+\begin{tabular}{p{2.5cm}p{3cm}p{5cm}}
+\toprule
+\textbf{Problem} & \textbf{Symptoms} & \textbf{Solutions} \\
+\midrule
+Poor mixing & High autocorr., low ESS & Adaptive proposals, reparameterization, HMC \\
+\midrule
+Multimodality & Chains in different modes & Parallel tempering, longer runs, multiple starts \\
+\midrule
+Label switching & Erratic parameter traces & Post-processing, identifiability constraints \\
+\midrule
+Heavy tails & Slow convergence & Robust proposals, tempering \\
+\midrule
+High dimension & All diagnostics poor & Dimension reduction, hierarchical models \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{block}{Advanced Diagnostics}
+\begin{itemize}
+\item \textbf{Split-$\hat{R}$:} Within-chain nonstationarity
+\item \textbf{Bulk/tail ESS:} Distribution-specific efficiency
+\item \textbf{Energy diagnostics:} HMC exploration quality
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{alertblock}{Red Flags}
+\begin{itemize}
+\item $\hat{R} > 1.01$ for any parameter
+\item $ESS < 400$ for any parameter
+\item Systematic trends in trace plots
+\item Divergent transitions (HMC)
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Applications}
+
+\begin{frame}{Bayesian Machine Learning}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Bayesian Neural Networks:}
+\[p(\mathbf{w} | \mathcal{D}) \propto p(\mathcal{D} | \mathbf{w}) p(\mathbf{w})\]
+
+\textbf{Challenges:}
+\begin{itemize}
+\item $10^6+$ parameters
+\item High correlations
+\item Complex posterior geometry
+\item Computational constraints
+\end{itemize}
+
+\textbf{MCMC Solutions:}
+\begin{itemize}
+\item Stochastic gradient MCMC
+\item Subsampling techniques
+\item Variational-MCMC hybrids
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Gaussian Processes:}
+\[f(\mathbf{x}) \sim \mathcal{GP}(m(\mathbf{x}), k(\mathbf{x}, \mathbf{x}'))\]
+
+\textbf{Hyperparameter Inference:}
+\begin{itemize}
+\item Length scales, noise variance
+\item Kernel parameters
+\item Inducing point locations
+\end{itemize}
+
+\begin{block}{Case Study: Drug Discovery}
+\begin{itemize}
+\item Molecular property prediction
+\item Uncertainty quantification critical
+\item MCMC for hyperparameter posteriors
+\item Enables active learning strategies
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{Recent Developments:} Cyclical SGMCMC, Stochastic Weight Averaging, Neural Transport
+\end{frame}
+
+\begin{frame}{Financial Risk Modeling}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Stochastic Volatility Models:}
+\begin{align}
+r_t &= \mu + \sqrt{h_t} \epsilon_t \\
+\log h_{t+1} &= \alpha + \beta \log h_t + \sigma \eta_t
+\end{align}
+
+\textbf{MCMC for Parameter Estimation:}
+\begin{itemize}
+\item Latent volatility states $\{h_t\}$
+\item Model parameters $(\alpha, \beta, \sigma, \mu)$
+\item Non-Gaussian state space model
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Portfolio Risk Assessment:}
+\begin{itemize}
+\item Multivariate copula models
+\item Tail dependence estimation
+\item Value-at-Risk calculation
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Case Study: Credit Risk}
+\textbf{Problem:} Bank portfolio with 10,000 loans
+
+\textbf{Model:} Hierarchical default probabilities
+\begin{align}
+\text{logit}(p_{ij}) &= \alpha_j + \beta^T x_{ij} \\
+\alpha_j &\sim N(\mu_\alpha, \sigma^2_\alpha)
+\end{align}
+
+\textbf{MCMC Results:}
+\begin{itemize}
+\item 95\% VaR: \$127M
+\item Expected Shortfall: \$89M
+\item Sector-specific risk factors
+\item Uncertainty intervals for risk metrics
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{Regulatory Applications:} Basel III capital requirements, stress testing, model validation
+\end{frame}
+
+\begin{frame}{Scientific Computing Applications}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Climate Modeling:}
+\begin{itemize}
+\item Earth system model calibration
+\item Parameter uncertainty quantification
+\item Ensemble generation for projections
+\item Millions of differential equations
+\end{itemize}
+
+\textbf{Example: Ocean Circulation}
+\begin{align}
+\frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla)\mathbf{u} = -\frac{1}{\rho}\nabla p + \nu \nabla^2 \mathbf{u}
+\end{align}
+
+\textbf{MCMC for:} Mixing coefficients, boundary conditions, forcing parameters
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Phylogenetic Inference:}
+\begin{itemize}
+\item Tree topology uncertainty
+\item Branch length estimation
+\item Molecular clock models
+\item Ancestral sequence reconstruction
+\end{itemize}
+
+\begin{block}{Computational Challenges}
+\begin{itemize}
+\item Discrete tree space
+\item Likelihood calculations $O(n^2)$
+\item Proposal design for trees
+\item Parallel computation strategies
+\end{itemize}
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Medical Applications:}
+\begin{itemize}
+\item Personalized treatment design
+\item Epidemiological modeling
+\item Drug development pipelines
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Implementation and Software}
+
+\begin{frame}{Modern Software Frameworks}
+\begin{table}
+\centering
+\small
+\begin{tabular}{p{2cm}p{3cm}p{4cm}p{2cm}}
+\toprule
+\textbf{Framework} & \textbf{Language} & \textbf{Strengths} & \textbf{Best For} \\
+\midrule
+Stan & C++/R/Python & HMC/NUTS, Speed & General purpose \\
+PyMC & Python & User-friendly, AD & Research, education \\
+JAX/NumPyro & Python & GPU, JIT compilation & Large scale \\
+TensorFlow Prob. & Python & Deep learning integration & ML applications \\
+JAGS & R/C++ & Flexibility & Traditional models \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Performance Considerations:}
+\begin{itemize}
+\item \textbf{Automatic differentiation:} Essential for HMC
+\item \textbf{GPU acceleration:} Massive parallelization
+\item \textbf{JIT compilation:} Runtime optimization
+\item \textbf{Memory management:} Large-scale applications
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Production Deployment:}
+\begin{itemize}
+\item \textbf{Containerization:} Docker, Kubernetes
+\item \textbf{Monitoring:} Real-time convergence tracking
+\item \textbf{Scaling:} Distributed computing clusters
+\item \textbf{Reproducibility:} Version control, seeds
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{Code Quality Best Practices}
+Unit testing on known distributions • Automated diagnostics • Documentation • Performance profiling • Error handling
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation Example: Adaptive Metropolis}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[language=Python, basicstyle=\tiny]
+class AdaptiveMetropolis:
+    def __init__(self, target_log_prob, dim):
+        self.target_log_prob = target_log_prob
+        self.dim = dim
+        self.cov = np.eye(dim) * 0.1
+        self.mean = np.zeros(dim)
+        
+    def sample(self, n_samples, x0):
+        samples = np.zeros((n_samples, self.dim))
+        samples[0] = x0
+        current_x = x0
+        current_logp = self.target_log_prob(x0)
+        
+        accepted = 0
+        for i in range(1, n_samples):
+            # Propose
+            proposal = np.random.multivariate_normal(
+                current_x, self.cov)
+            proposal_logp = self.target_log_prob(proposal)
+            
+            # Accept/reject
+            if (np.log(np.random.random()) < 
+                proposal_logp - current_logp):
+                current_x = proposal
+                current_logp = proposal_logp
+                accepted += 1
+                
+            samples[i] = current_x
+            
+            # Adapt covariance
+            if i % 100 == 0 and i > 200:
+                self.adapt_covariance(samples[:i])
+                
+        return samples, accepted / n_samples
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Key Features:}
+\begin{itemize}
+\item Automatic covariance adaptation
+\item Robust numerical implementation
+\item Performance monitoring
+\item Configurable adaptation schedule
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Extensions:}
+\begin{itemize}
+\item Parallel chains
+\item Online adaptation
+\item Constraint handling
+\item Warm-up phase management
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Production Considerations}
+\begin{itemize}
+\item Memory-efficient updates
+\item Numerical stability checks
+\item Graceful failure modes
+\item Comprehensive logging
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Future Directions}
+
+\begin{frame}{Emerging Trends and Research Frontiers}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Neural-Enhanced MCMC:}
+\begin{itemize}
+\item Deep learning proposal distributions
+\item Normalizing flows for reparameterization
+\item Neural ODEs for continuous dynamics
+\item Learned acceptance criteria
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Quantum Computing Integration:}
+\begin{itemize}
+\item Quantum annealing for optimization
+\item Variational quantum algorithms
+\item Quantum-classical hybrid methods
+\item Exponential speedup potential
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Geometric Methods:}
+\begin{itemize}
+\item Information geometry
+\item Optimal transport theory
+\item Manifold-aware sampling
+\item Invariant algorithms
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Large-Scale Applications:}
+\begin{itemize}
+\item Federated learning with MCMC
+\item Privacy-preserving inference
+\item Distributed posterior computation
+\item Edge computing deployment
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Next Decade Challenges}
+\begin{itemize}
+\item \textcolor{crimson}{Scale:} Billions of parameters
+\item \textcolor{crimson}{Speed:} Real-time inference
+\item \textcolor{crimson}{Robustness:} Model misspecification
+\item \textcolor{crimson}{Automation:} Minimal human intervention
+\end{itemize}
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Interdisciplinary Impact:}
+\begin{itemize}
+\item AI safety and robustness
+\item Personalized medicine
+\item Climate change modeling
+\item Financial system risk
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The Road Ahead}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Methodological Priorities:}
+\begin{enumerate}
+\item \textbf{Adaptive algorithms:} Self-tuning, robust to problem structure
+\item \textbf{Scalable architectures:} Distributed, GPU-accelerated computing
+\item \textbf{Quality assurance:} Automatic validation, error detection
+\item \textbf{User interfaces:} Accessible to non-experts
+\item \textbf{Integration:} Seamless ML/AI ecosystem compatibility
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Application Domains:}
+\begin{itemize}
+\item Scientific computing at exascale
+\item Real-time decision making
+\item Uncertainty quantification as a service
+\item Democratic access to Bayesian inference
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{alertblock}{Vision for 2030}
+\textbf{MCMC will be:}
+\begin{itemize}
+\item Fully automated
+\item Hardware-optimized
+\item Ubiquitously deployed
+\item Theoretically grounded
+\item Practically transformative
+\end{itemize}
+\end{alertblock}
+
+\vspace{0.3cm}
+\begin{block}{Call to Action}
+\begin{itemize}
+\item Contribute to open-source tools
+\item Bridge theory and practice
+\item Foster interdisciplinary collaboration
+\item Educate the next generation
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{center}
+\textcolor{navyblue}{\Large \textbf{The future of inference is computational, and MCMC is leading the way.}}
+\end{center}
+\end{frame}
+
+\begin{frame}{Summary and Key Takeaways}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Theoretical Foundations:}
+\begin{itemize}
+\item Markov chain theory provides rigorous framework
+\item Convergence rates depend on spectral properties
+\item Detailed balance ensures correct stationary distribution
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Algorithmic Advances:}
+\begin{itemize}
+\item HMC/NUTS: State-of-the-art for continuous distributions
+\item Adaptive methods: Automatic parameter tuning
+\item Specialized techniques: Problem-specific solutions
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Practical Impact:}
+\begin{itemize}
+\item Enables complex statistical models
+\item Drives modern machine learning
+\item Critical for scientific discovery
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Implementation Principles:}
+\begin{itemize}
+\item Comprehensive diagnostics are essential
+\item Software frameworks enable productivity
+\item Performance optimization requires expertise
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{alertblock}{The MCMC Paradigm}
+\begin{center}
+\textbf{Theory} $\rightarrow$ \textbf{Algorithms} $\rightarrow$ \textbf{Software} $\rightarrow$ \textbf{Applications}
+\end{center}
+\end{alertblock}
+
+\vspace{0.3cm}
+\textbf{Future Outlook:}
+\begin{itemize}
+\item Integration with AI/ML continues
+\item Hardware acceleration becomes standard
+\item Automation reduces barriers to entry
+\item New application domains emerge
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\textcolor{navyblue}{\textbf{Questions and Discussion}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+{\Huge Thank You}
+
+\vspace{1cm}
+
+\textbf{Diogo Ribeiro}\\
+ESMAD -- Escola Superior de Média Arte e Design\\
+Lead Data Scientist, Mysense.ai\\
+
+\vspace{0.5cm}
+
+\texttt{dfr@esmad.ipp.pt}\\
+\texttt{https://orcid.org/0009-0001-2022-7072}
+
+\vspace{1cm}
+
+\textit{Slides and code available at:}\\
+\texttt{github.com/diogoribeiro7}
+\end{center}
+\end{frame}
+
+\end{document}
