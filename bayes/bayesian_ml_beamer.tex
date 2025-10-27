@@ -1,0 +1,1065 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usefonttheme{professionalfonts}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{bayesnet}
+
+\definecolor{navyblue}{RGB}{0,32,96}
+\definecolor{crimson}{RGB}{178,34,52}
+\definecolor{forest}{RGB}{34,139,34}
+\definecolor{gold}{RGB}{255,215,0}
+\definecolor{purple}{RGB}{128,0,128}
+
+\setbeamercolor{structure}{fg=navyblue}
+\setbeamercolor{title}{fg=white,bg=navyblue}
+\setbeamercolor{frametitle}{fg=white,bg=navyblue}
+
+\title[Bayesian ML]{Bayesian Machine Learning}
+\subtitle{Neural Networks and Gaussian Processes}
+\author[D. Ribeiro]{Diogo Ribeiro\\
+\small ESMAD -- Escola Superior de Média Arte e Design\\
+\small Lead Data Scientist, Mysense.ai}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\KL}{\text{KL}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\GP}{\mathcal{GP}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Introduction to Bayesian Machine Learning}
+
+\begin{frame}{Why Bayesian Machine Learning?}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Traditional ML Limitations:}
+\begin{itemize}
+\item \textcolor{crimson}{Point estimates:} Single "best" parameters
+\item \textcolor{crimson}{Overconfidence:} No uncertainty quantification
+\item \textcolor{crimson}{Overfitting:} Limited regularization mechanisms
+\item \textcolor{crimson}{Model selection:} Ad-hoc validation approaches
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Bayesian Advantages:}
+\begin{itemize}
+\item \textcolor{forest}{Uncertainty quantification:} Principled confidence intervals
+\item \textcolor{forest}{Automatic regularization:} Prior knowledge integration
+\item \textcolor{forest}{Model comparison:} Marginal likelihood for selection
+\item \textcolor{forest}{Sequential learning:} Natural online updates
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Bayesian Paradigm}
+\begin{align}
+p(\btheta|\mathcal{D}) &= \frac{p(\mathcal{D}|\btheta)p(\btheta)}{p(\mathcal{D})}\\[0.3cm]
+\text{Posterior} &= \frac{\text{Likelihood} \times \text{Prior}}{\text{Evidence}}
+\end{align}
+\end{block}
+
+\begin{alertblock}{Key Insight}
+Treat parameters as random variables, not fixed unknowns
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Bayesian vs Frequentist Perspectives}
+\begin{table}
+\centering
+\begin{tabular}{p{3cm}p{4cm}p{4cm}}
+\toprule
+\textbf{Aspect} & \textbf{Frequentist} & \textbf{Bayesian} \\
+\midrule
+Parameters & Fixed unknown constants & Random variables with distributions \\
+\midrule
+Uncertainty & Confidence intervals (repeated sampling) & Credible intervals (probability statements) \\
+\midrule
+Model Selection & Cross-validation, AIC/BIC & Marginal likelihood, posterior odds \\
+\midrule
+Regularization & $L_1$/$L_2$ penalties & Prior distributions \\
+\midrule
+Prediction & Point estimates & Predictive distributions \\
+\midrule
+Computational & Optimization-based & Integration-based (MCMC/VI) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{block}{Bayesian Prediction}
+\[p(y^*|\bx^*, \mathcal{D}) = \int p(y^*|\bx^*, \btheta) p(\btheta|\mathcal{D}) d\btheta\]
+\textbf{Model averaging} over parameter uncertainty
+\end{block}
+\end{frame}
+
+\begin{frame}{Computational Challenges and Solutions}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Integration Problem:}
+\[p(\btheta|\mathcal{D}) = \frac{p(\mathcal{D}|\btheta)p(\btheta)}{\int p(\mathcal{D}|\btheta)p(\btheta)d\btheta}\]
+
+\textbf{Challenges:}
+\begin{itemize}
+\item High-dimensional integrals
+\item No closed-form solutions
+\item Computational complexity
+\item Scalability to big data
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Historical Solutions:}
+\begin{itemize}
+\item Conjugate priors
+\item Laplace approximation
+\item Variational methods
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Modern Approaches:}
+
+\begin{block}{Markov Chain Monte Carlo}
+\begin{itemize}
+\item Hamiltonian Monte Carlo
+\item No-U-Turn Sampler (NUTS)
+\item Exact sampling (asymptotically)
+\end{itemize}
+\end{block}
+
+\begin{block}{Variational Inference}
+\begin{itemize}
+\item Mean-field approximation
+\item Normalizing flows
+\item Automatic differentiation
+\item Scalable to large datasets
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Trade-offs}
+\textbf{MCMC:} Exact but slow\\
+\textbf{VI:} Approximate but fast
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Bayesian Neural Networks}
+
+\begin{frame}{From Neural Networks to Bayesian Neural Networks}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Standard Neural Network:}
+\[y = f(\bx; \bw) + \epsilon\]
+
+\textbf{Learning:} Find optimal weights $\bw^*$
+\[\bw^* = \arg\min_{\bw} \mathcal{L}(\bw) + \lambda R(\bw)\]
+
+\textbf{Prediction:} Point estimate
+\[p(y^*|\bx^*) = \delta(y^* - f(\bx^*; \bw^*))\]
+
+\vspace{0.3cm}
+\textbf{Issues:}
+\begin{itemize}
+\item No uncertainty quantification
+\item Prone to overconfidence
+\item Limited generalization
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Bayesian Neural Network:}
+\[y = f(\bx; \bw) + \epsilon, \quad \bw \sim p(\bw)\]
+
+\textbf{Learning:} Posterior distribution
+\[p(\bw|\mathcal{D}) \propto p(\mathcal{D}|\bw) p(\bw)\]
+
+\textbf{Prediction:} Averaging over weights
+\[p(y^*|\bx^*, \mathcal{D}) = \int p(y^*|\bx^*, \bw) p(\bw|\mathcal{D}) d\bw\]
+
+\vspace{0.3cm}
+\textbf{Benefits:}
+\begin{itemize}
+\item \textcolor{forest}{Uncertainty quantification}
+\item \textcolor{forest}{Automatic regularization}
+\item \textcolor{forest}{Better calibration}
+\item \textcolor{forest}{Robust predictions}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{BNN Architecture and Prior Specification}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Network Architecture:}
+\begin{align}
+h_1 &= \sigma(W_1 \bx + b_1)\\
+h_2 &= \sigma(W_2 h_1 + b_2)\\
+&\vdots\\
+y &= W_L h_{L-1} + b_L
+\end{align}
+
+\textbf{Prior Distributions:}
+\begin{align}
+W_{ij}^{(l)} &\sim \Normal(0, \sigma_w^2)\\
+b_i^{(l)} &\sim \Normal(0, \sigma_b^2)\\
+\sigma_y^2 &\sim \text{InverseGamma}(\alpha, \beta)
+\end{align}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{block}{Prior Considerations}
+\textbf{Weight Scale:} Controls capacity
+\begin{itemize}
+\item Small $\sigma_w$: Smooth functions
+\item Large $\sigma_w$: Complex functions
+\end{itemize}
+
+\textbf{Architecture Prior:}
+\begin{itemize}
+\item Number of layers
+\item Hidden units per layer
+\item Activation functions
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Practical Tip}
+Use empirical Bayes or cross-validation for hyperparameter selection
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{Likelihood Function:}
+\[p(\mathcal{D}|\bw) = \prod_{i=1}^N \Normal(y_i; f(\bx_i; \bw), \sigma_y^2)\]
+\end{frame}
+
+\begin{frame}{Inference Methods for BNNs}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{1. Hamiltonian Monte Carlo}
+\begin{itemize}
+\item \textcolor{forest}{Exact sampling} (asymptotically)
+\item Uses gradient information
+\item Handles correlations well
+\item Computationally intensive
+\end{itemize}
+
+\textbf{2. Variational Inference}
+\begin{itemize}
+\item Approximate posterior $q(\bw; \boldsymbol{\phi})$
+\item Minimize KL divergence
+\item Scalable to large networks
+\item Mean-field assumption
+\end{itemize}
+
+\begin{block}{VI Objective}
+\[\mathcal{L}(\boldsymbol{\phi}) = \E_{q(\bw)}[\log p(\mathcal{D}|\bw)] - \KL(q(\bw) \| p(\bw))\]
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{3. Monte Carlo Dropout}
+\begin{itemize}
+\item Approximate Bayesian inference
+\item Keep dropout at test time
+\item Ensemble of sub-networks
+\item Computationally efficient
+\end{itemize}
+
+\textbf{4. Ensemble Methods}
+\begin{itemize}
+\item Train multiple networks
+\item Different initializations
+\item Bootstrap sampling
+\item Deep ensembles
+\end{itemize}
+
+\begin{alertblock}{Practical Recommendation}
+\textbf{Small networks:} MCMC\\
+\textbf{Large networks:} Variational inference\\
+\textbf{Quick approximation:} MC Dropout
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Variational Inference for BNNs: Bayes by Backprop}
+\textbf{Algorithm: Bayes by Backprop (Blundell et al., 2015)}
+
+\begin{algorithm}[H]
+\caption{Variational Inference for BNN}
+\begin{algorithmic}[1]
+\STATE \textbf{Initialize:} Variational parameters $\boldsymbol{\phi}$ for $q(\bw|\boldsymbol{\phi})$
+\FOR{each iteration}
+\STATE Sample weights: $\bw \sim q(\bw|\boldsymbol{\phi})$
+\STATE Compute loss: $\mathcal{L} = -\log p(\mathcal{D}|\bw) + \KL(q(\bw) \| p(\bw))$
+\STATE Compute gradients: $\nabla_{\boldsymbol{\phi}} \mathcal{L}$ using reparameterization trick
+\STATE Update: $\boldsymbol{\phi} \leftarrow \boldsymbol{\phi} - \alpha \nabla_{\boldsymbol{\phi}} \mathcal{L}$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\textbf{Reparameterization Trick:}
+\begin{align}
+\bw &= \bmu + \boldsymbol{\sigma} \odot \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \Normal(0, I)\\
+q(\bw) &= \Normal(\bw; \bmu, \text{diag}(\boldsymbol{\sigma}^2))
+\end{align}
+
+\textbf{Key Innovation:} Gradient-based optimization of approximate posterior
+\end{frame}
+
+\begin{frame}{BNN Applications and Case Studies}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{1. Regression with Uncertainty}
+\begin{itemize}
+\item Heteroscedastic noise modeling
+\item Confidence intervals for predictions
+\item Outlier detection
+\item Active learning applications
+\end{itemize}
+
+\textbf{2. Classification with Calibration}
+\begin{itemize}
+\item Well-calibrated probabilities
+\item Uncertainty in predictions
+\item Out-of-distribution detection
+\item Medical diagnosis applications
+\end{itemize}
+
+\textbf{3. Reinforcement Learning}
+\begin{itemize}
+\item Exploration via uncertainty
+\item Thompson sampling
+\item Risk-aware decision making
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Case Study: Medical Diagnosis}
+\textbf{Problem:} Skin cancer classification
+
+\textbf{Dataset:} 10,000 dermoscopy images
+
+\textbf{BNN Results:}
+\begin{itemize}
+\item 94.2\% accuracy (vs 93.8\% standard NN)
+\item \textcolor{forest}{Well-calibrated} confidence scores
+\item Identifies uncertain cases for expert review
+\item 15\% reduction in misdiagnosis risk
+\end{itemize}
+
+\textbf{Key Insight:} Uncertainty quantification more valuable than accuracy gain
+\end{block}
+
+\begin{alertblock}{Industrial Impact}
+BNNs enable \textbf{safe AI deployment} in critical applications
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Gaussian Processes}
+
+\begin{frame}{Introduction to Gaussian Processes}
+\begin{definition}[Gaussian Process]
+A Gaussian process is a collection of random variables, any finite number of which have a joint Gaussian distribution.
+\end{definition}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Key Insight:} Instead of parameterizing functions, put distributions directly over functions.
+
+\begin{align}
+f(\bx) &\sim \GP(m(\bx), k(\bx, \bx'))\\
+m(\bx) &= \E[f(\bx)]\\
+k(\bx, \bx') &= \Cov[f(\bx), f(\bx')]
+\end{align}
+
+\textbf{Properties:}
+\begin{itemize}
+\item Non-parametric method
+\item Infinite-dimensional
+\item Uncertainty quantification
+\item Kernel-based similarity
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Finite Dimensional Consistency}
+For any finite set $\{\bx_1, \ldots, \bx_n\}$:
+\[\begin{pmatrix} f(\bx_1) \\ \vdots \\ f(\bx_n) \end{pmatrix} \sim \Normal\left(\begin{pmatrix} m(\bx_1) \\ \vdots \\ m(\bx_n) \end{pmatrix}, K\right)\]
+
+where $K_{ij} = k(\bx_i, \bx_j)$
+\end{block}
+
+\begin{alertblock}{Computational Complexity}
+Training: $O(n^3)$ for matrix inversion\\
+Prediction: $O(n)$ per test point
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Kernel Functions and Prior Specification}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Popular Kernel Functions:}
+
+\textbf{1. Squared Exponential (RBF):}
+\[k(\bx, \bx') = \sigma_f^2 \exp\left(-\frac{\|\bx - \bx'\|^2}{2\ell^2}\right)\]
+
+\textbf{2. Matérn:}
+\[k(\bx, \bx') = \sigma_f^2 \frac{2^{1-\nu}}{\Gamma(\nu)} \left(\frac{\sqrt{2\nu}r}{\ell}\right)^\nu K_\nu\left(\frac{\sqrt{2\nu}r}{\ell}\right)\]
+
+\textbf{3. Periodic:}
+\[k(\bx, \bx') = \sigma_f^2 \exp\left(-\frac{2\sin^2(\pi|x-x'|/p)}{\ell^2}\right)\]
+
+\textbf{4. Linear:}
+\[k(\bx, \bx') = \sigma_f^2 (\bx - c)^T(\bx' - c)\]
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Kernel Properties:}
+\begin{itemize}
+\item \textbf{Length scale} $\ell$: Controls smoothness
+\item \textbf{Signal variance} $\sigma_f^2$: Output scale
+\item \textbf{Noise variance} $\sigma_n^2$: Observation noise
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Kernel Composition:}
+\begin{itemize}
+\item \textbf{Addition:} $k_1 + k_2$ (combining patterns)
+\item \textbf{Multiplication:} $k_1 \times k_2$ (conjunction)
+\item \textbf{Scaling:} $\alpha k$ (amplitude)
+\end{itemize}
+
+\begin{block}{Example: Trend + Periodic}
+\[k(\bx, \bx') = k_{\text{linear}}(\bx, \bx') + k_{\text{periodic}}(\bx, \bx') + k_{\text{noise}}(\bx, \bx')\]
+Models long-term trends with seasonal patterns
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{GP Regression: Predictive Distribution}
+\textbf{Training Data:} $\mathcal{D} = \{(\bx_i, y_i)\}_{i=1}^n$
+
+\textbf{Likelihood:} $y_i = f(\bx_i) + \epsilon_i$, where $\epsilon_i \sim \Normal(0, \sigma_n^2)$
+
+\begin{block}{Predictive Distribution}
+For a new input $\bx^*$, the predictive distribution is:
+\begin{align}
+p(f^*|\bx^*, \mathcal{D}) &= \Normal(f^*; \mu^*, (\sigma^*)^2)\\
+\mu^* &= \mathbf{k}^T (\mathbf{K} + \sigma_n^2 \mathbf{I})^{-1} \mathbf{y}\\
+(\sigma^*)^2 &= k(\bx^*, \bx^*) - \mathbf{k}^T (\mathbf{K} + \sigma_n^2 \mathbf{I})^{-1} \mathbf{k}
+\end{align}
+\end{block}
+
+where:
+\begin{itemize}
+\item $\mathbf{k} = [k(\bx^*, \bx_1), \ldots, k(\bx^*, \bx_n)]^T$
+\item $\mathbf{K}_{ij} = k(\bx_i, \bx_j)$
+\item $\mathbf{y} = [y_1, \ldots, y_n]^T$
+\end{itemize}
+
+\textbf{Key Properties:}
+\begin{itemize}
+\item Exact Bayesian inference (given kernel)
+\item Uncertainty decreases near training data
+\item Automatic relevance determination
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Hyperparameter Learning in GPs}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Marginal Likelihood:}
+\begin{align}
+p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}) &= \Normal(\mathbf{y}; \mathbf{0}, \mathbf{K} + \sigma_n^2 \mathbf{I})\\
+\log p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}) &= -\frac{1}{2}\mathbf{y}^T \mathbf{K}_y^{-1} \mathbf{y}\\
+&\quad - \frac{1}{2}\log|\mathbf{K}_y| - \frac{n}{2}\log 2\pi
+\end{align}
+
+where $\mathbf{K}_y = \mathbf{K} + \sigma_n^2 \mathbf{I}$ and $\boldsymbol{\theta}$ are hyperparameters.
+
+\textbf{Optimization:}
+\[\boldsymbol{\theta}^* = \arg\max_{\boldsymbol{\theta}} \log p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta})\]
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Three Terms Interpretation:}
+\begin{enumerate}
+\item \textbf{Data fit:} $-\frac{1}{2}\mathbf{y}^T \mathbf{K}_y^{-1} \mathbf{y}$
+\item \textbf{Complexity penalty:} $-\frac{1}{2}\log|\mathbf{K}_y|$
+\item \textbf{Normalization:} $-\frac{n}{2}\log 2\pi$
+\end{enumerate}
+
+\begin{block}{Automatic Occam's Razor}
+GPs automatically balance model complexity and data fit through the marginal likelihood
+\end{block}
+
+\begin{alertblock}{Practical Implementation}
+Use gradient-based optimization (L-BFGS) with multiple random restarts
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Sparse Gaussian Processes}
+\textbf{Problem:} Standard GP inference scales as $O(n^3)$
+
+\textbf{Solution:} Inducing point methods
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Key Idea:} Approximate full GP using $m \ll n$ inducing points
+
+\begin{align}
+f(\bx) &\approx \tilde{f}(\bx) = \mathbf{k}_*^T \mathbf{K}_{mm}^{-1} \mathbf{f}_m\\
+\mathbf{f}_m &= [f(\mathbf{z}_1), \ldots, f(\mathbf{z}_m)]^T
+\end{align}
+
+where $\{\mathbf{z}_i\}_{i=1}^m$ are inducing inputs.
+
+\textbf{Variational Sparse GP:}
+\begin{itemize}
+\item Optimize inducing inputs $\{\mathbf{z}_i\}$
+\item Variational distribution $q(\mathbf{f}_m)$
+\item Scales as $O(nm^2)$
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{FITC Approximation}
+Fully Independent Training Conditional:
+\[q(\mathbf{f}) = p(\mathbf{f}|\mathbf{f}_m) q(\mathbf{f}_m)\]
+\end{block}
+
+\begin{block}{Stochastic Variational GP}
+\begin{itemize}
+\item Mini-batch training
+\item Natural gradients
+\item Scales to millions of points
+\item $O(m^3)$ per iteration
+\end{itemize}
+\end{block}
+
+\textbf{Modern Extensions:}
+\begin{itemize}
+\item Deep Gaussian Processes
+\item Convolutional GPs
+\item Multi-output GPs
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{GP Applications and Case Studies}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{1. Bayesian Optimization}
+\begin{itemize}
+\item Expensive function optimization
+\item Acquisition functions (EI, UCB, PI)
+\item Hyperparameter tuning
+\item Experimental design
+\end{itemize}
+
+\textbf{2. Time Series Forecasting}
+\begin{itemize}
+\item Temporal kernels
+\item Uncertainty in predictions
+\item Missing data handling
+\item Irregular time series
+\end{itemize}
+
+\textbf{3. Spatial Statistics}
+\begin{itemize}
+\item Geostatistics and kriging
+\item Environmental monitoring
+\item Sensor network optimization
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Case Study: Drug Discovery}
+\textbf{Problem:} Optimize molecular properties
+
+\textbf{Setup:}
+\begin{itemize}
+\item 10,000 molecules tested
+\item Each test costs \$1000
+\item Goal: Find top 1\% molecules
+\end{itemize}
+
+\textbf{GP-based Optimization:}
+\begin{itemize}
+\item Molecular fingerprints as features
+\item Tanimoto kernel for similarity
+\item Expected improvement acquisition
+\end{itemize}
+
+\textbf{Results:}
+\begin{itemize}
+\item 95\% reduction in tests needed
+\item Found optimal molecules in 500 tests
+\item Saved \$9.5M in experimental costs
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{Other Applications:} Robotics, Computer Vision, Natural Language Processing, Finance
+\end{frame}
+
+\section{Advanced Topics and Modern Developments}
+
+\begin{frame}{Deep Gaussian Processes}
+\textbf{Motivation:} Combine flexibility of deep learning with uncertainty of GPs
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Architecture:}
+\begin{align}
+\mathbf{h}_1 &\sim \GP(\mathbf{0}, k_1(\mathbf{x}, \mathbf{x}'))\\
+\mathbf{h}_2 &\sim \GP(\mathbf{0}, k_2(\mathbf{h}_1, \mathbf{h}_1'))\\
+&\vdots\\
+\mathbf{y} &\sim \GP(\mathbf{0}, k_L(\mathbf{h}_{L-1}, \mathbf{h}_{L-1}'))
+\end{align}
+
+\textbf{Properties:}
+\begin{itemize}
+\item Non-stationary kernels
+\item Hierarchical feature learning
+\item Uncertainty propagation through layers
+\item Automatic relevance determination
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Inference Challenges:}
+\begin{itemize}
+\item Intractable posterior
+\item Doubly stochastic variational inference
+\item Reparameterization trick for GPs
+\item Computational complexity
+\end{itemize}
+
+\begin{block}{Variational Approach}
+\begin{itemize}
+\item Variational distribution for each layer
+\item Monte Carlo estimates
+\item Natural gradient optimization
+\end{itemize}
+\end{block}
+
+\textbf{Applications:}
+\begin{itemize}
+\item High-dimensional regression
+\item Dimensionality reduction
+\item Semi-supervised learning
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Neural Networks vs Gaussian Processes: The Infinite Width Limit}
+\textbf{Remarkable Connection:} Neural networks converge to Gaussian processes in the infinite width limit
+
+\begin{theorem}[Neal, 1996]
+Consider a single hidden layer neural network:
+\[f(\bx) = \frac{1}{\sqrt{H}} \sum_{i=1}^H v_i \sigma(w_i^T \bx + b_i)\]
+
+As $H \to \infty$ with i.i.d. weights $w_i, v_i, b_i$, the function $f(\bx)$ converges to a Gaussian process.
+\end{theorem}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Neural Tangent Kernel:}
+\begin{itemize}
+\item Describes infinite-width NN dynamics
+\item Fixed kernel during training
+\item Connects optimization and function space
+\end{itemize}
+
+\textbf{Practical Implications:}
+\begin{itemize}
+\item Very wide networks behave like GPs
+\item Finite networks: richer function class
+\item Understanding generalization
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Modern Extensions}
+\textbf{Deep Neural Networks:}
+\begin{itemize}
+\item Infinite depth limit
+\item Bayesian neural networks at scale
+\item Feature learning vs fixed kernels
+\end{itemize}
+
+\textbf{Practical Considerations:}
+\begin{itemize}
+\item Finite width effects
+\item Training dynamics
+\item Representation learning
+\end{itemize}
+\end{block}
+
+\textbf{Research Frontier:} Understanding when NNs outperform their GP limits
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Variational Inference: Connecting BNNs and GPs}
+\textbf{Unified Framework:} Both BNNs and GPs can be viewed through variational inference lens
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Bayesian Neural Networks:}
+\begin{align}
+\text{ELBO} &= \E_{q(\bw)}[\log p(\mathcal{D}|\bw)] - \KL(q(\bw) \| p(\bw))
+\end{align}
+
+\textbf{Sparse Gaussian Processes:}
+\begin{align}
+\text{ELBO} &= \E_{q(\mathbf{f})}[\log p(\mathcal{D}|\mathbf{f})] - \KL(q(\mathbf{f}) \| p(\mathbf{f}))
+\end{align}
+
+\textbf{Common Techniques:}
+\begin{itemize}
+\item Reparameterization trick
+\item Natural gradients
+\item Stochastic optimization
+\item Amortized inference
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Modern Developments:}
+
+\begin{block}{Normalizing Flows}
+\begin{itemize}
+\item Flexible posterior approximations
+\item Invertible transformations
+\item Better than mean-field
+\end{itemize}
+\end{block}
+
+\begin{block}{Neural Processes}
+\begin{itemize}
+\item Combine NNs and GPs
+\item Amortized inference
+\item Meta-learning for functions
+\end{itemize}
+\end{block}
+
+\textbf{Practical Tools:}
+\begin{itemize}
+\item PyTorch, TensorFlow Probability
+\item GPyTorch, GPflow
+\item Automatic differentiation
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Practical Implementation and Software}
+
+\begin{frame}{Software Ecosystem for Bayesian ML}
+\begin{table}
+\centering
+\small
+\begin{tabular}{p{2.5cm}p{3cm}p{3.5cm}p{2.5cm}}
+\toprule
+\textbf{Framework} & \textbf{Strengths} & \textbf{Applications} & \textbf{Language} \\
+\midrule
+PyTorch & Flexible, research-friendly & Custom BNN architectures & Python \\
+\midrule
+TensorFlow Prob. & Production-ready, scalable & Large-scale deployment & Python \\
+\midrule
+GPyTorch & GPU acceleration for GPs & Large-scale GP inference & Python \\
+\midrule
+GPflow & TensorFlow-based GPs & Deep GPs, sparse methods & Python \\
+\midrule
+Stan & Probabilistic programming & Custom model specification & Multiple \\
+\midrule
+PyMC & User-friendly Bayesian & Educational, prototyping & Python \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Performance Considerations:}
+\begin{itemize}
+\item GPU acceleration essential
+\item Automatic differentiation
+\item JIT compilation (JAX, TorchScript)
+\item Memory optimization
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Production Deployment:}
+\begin{itemize}
+\item Uncertainty calibration
+\item Model serving infrastructure
+\item A/B testing frameworks
+\item Monitoring and alerts
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation Example: Simple BNN in PyTorch}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{block}{Bayesian Linear Layer}
+\begin{verbatim}
+class BayesianLinear(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        # Weight parameters
+        self.weight_mu = nn.Parameter(
+            torch.zeros(out_features, in_features))
+        self.weight_rho = nn.Parameter(
+            torch.ones(out_features, in_features) * -3)
+        
+        # Bias parameters  
+        self.bias_mu = nn.Parameter(
+            torch.zeros(out_features))
+        self.bias_rho = nn.Parameter(
+            torch.ones(out_features) * -3)
+    
+    def forward(self, x):
+        # Sample weights and biases
+        weight_sigma = torch.log1p(torch.exp(self.weight_rho))
+        weight = self.weight_mu + weight_sigma * torch.randn_like(weight_sigma)
+        
+        bias_sigma = torch.log1p(torch.exp(self.bias_rho))
+        bias = self.bias_mu + bias_sigma * torch.randn_like(bias_sigma)
+        
+        return F.linear(x, weight, bias)
+\end{verbatim}
+\end{block}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Key Components:}
+\begin{itemize}
+\item \textcolor{forest}{Variational parameters:} $\mu$, $\rho$
+\item \textcolor{forest}{Reparameterization:} $w = \mu + \sigma \epsilon$
+\item \textcolor{forest}{Softplus:} $\sigma = \log(1 + \exp(\rho))$
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Training Loop:}
+\begin{itemize}
+\item Sample weights each forward pass
+\item Compute ELBO loss
+\item Backprop through sampling
+\item Update variational parameters
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Prediction:}
+\begin{itemize}
+\item Multiple forward passes
+\item Monte Carlo averaging
+\item Uncertainty estimation
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Best Practices and Common Pitfalls}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Bayesian Neural Networks:}
+
+\begin{block}{Best Practices}
+\begin{itemize}
+\item Start with prior sensitivity analysis
+\item Use multiple random seeds
+\item Monitor KL divergence during training
+\item Validate uncertainty calibration
+\item Consider computational budget
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Common Pitfalls}
+\begin{itemize}
+\item Overconfident posterior approximations
+\item Poor initialization of variational parameters
+\item Ignoring computational overhead
+\item Not validating uncertainty quality
+\end{itemize}
+\end{alertblock}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Gaussian Processes:}
+
+\begin{block}{Best Practices}
+\begin{itemize}
+\item Choose kernels based on problem structure
+\item Use multiple optimization restarts
+\item Validate on held-out data
+\item Consider sparse approximations for large data
+\item Monitor numerical stability
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Common Pitfalls}
+\begin{itemize}
+\item Poor kernel choice for the problem
+\item Local optima in hyperparameter optimization
+\item Numerical issues with matrix inversion
+\item Overconfidence in extrapolation regions
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{General Advice:} Always validate uncertainty estimates on real test cases where you know the ground truth uncertainty.
+\end{frame}
+
+\section{Future Directions and Conclusions}
+
+\begin{frame}{Current Research Frontiers}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Methodological Advances:}
+\begin{itemize}
+\item \textcolor{purple}{Continual learning} with uncertainty
+\item \textcolor{purple}{Federated Bayesian learning}
+\item \textcolor{purple}{Physics-informed priors}
+\item \textcolor{purple}{Causal discovery} with GPs
+\item \textcolor{purple}{Multi-modal} Bayesian models
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Computational Innovations:}
+\begin{itemize}
+\item \textcolor{crimson}{Quantum-enhanced} sampling
+\item \textcolor{crimson}{Neuromorphic computing} for BNNs
+\item \textcolor{crimson}{Distributed inference} at scale
+\item \textcolor{crimson}{Edge deployment} of Bayesian models
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Application Domains:}
+\begin{itemize}
+\item \textcolor{forest}{Autonomous systems} (vehicles, drones)
+\item \textcolor{forest}{Healthcare AI} with safety guarantees
+\item \textcolor{forest}{Climate modeling} and prediction
+\item \textcolor{forest}{Financial risk} assessment
+\item \textcolor{forest}{Scientific discovery} acceleration
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Societal Impact:}
+\begin{itemize}
+\item \textcolor{gold}{Trustworthy AI} development
+\item \textcolor{gold}{Algorithmic fairness} with uncertainty
+\item \textcolor{gold}{Privacy-preserving} ML
+\item \textcolor{gold}{Explainable AI} through Bayesian lens
+\end{itemize}
+\end{column}
+\end{columns}
+
+\begin{alertblock}{The Next Decade}
+Bayesian ML will become the \textbf{standard approach} for safety-critical applications requiring uncertainty quantification.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Summary and Key Takeaways}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Bayesian Neural Networks:}
+\begin{itemize}
+\item \textcolor{forest}{Uncertainty quantification} for deep learning
+\item \textcolor{forest}{Automatic regularization} through priors
+\item \textcolor{crimson}{Computational challenges} in large networks
+\item \textcolor{forest}{Growing adoption} in critical applications
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Gaussian Processes:}
+\begin{itemize}
+\item \textcolor{forest}{Non-parametric} Bayesian approach
+\item \textcolor{forest}{Exact inference} for regression
+\item \textcolor{forest}{Flexible} through kernel design
+\item \textcolor{crimson}{Scalability} remains a challenge
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Practical Guidelines:}
+\begin{itemize}
+\item Start with \textbf{simple baselines}
+\item Validate \textbf{uncertainty calibration}
+\item Consider \textbf{computational constraints}
+\item Use \textbf{appropriate software} tools
+\item Focus on \textbf{problem-specific} solutions
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{When to Use What?}
+\textbf{BNNs:} Large datasets, complex patterns, representation learning
+
+\textbf{GPs:} Small-medium datasets, interpretability, principled uncertainty
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\textcolor{navyblue}{\Large \textbf{The future of ML is Bayesian: principled, uncertain, and trustworthy}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+{\Huge Thank You}
+
+\vspace{0.8cm}
+
+\textbf{Questions \& Discussion}
+
+\vspace{1cm}
+
+\textbf{Diogo Ribeiro}\\
+ESMAD -- Escola Superior de Média Arte e Design\\
+Lead Data Scientist, Mysense.ai\\
+
+\vspace{0.5cm}
+
+\texttt{dfr@esmad.ipp.pt}\\
+\texttt{https://orcid.org/0009-0001-2022-7072}
+
+\vspace{0.8cm}
+
+\textit{Slides and code available at:}\\
+\texttt{github.com/diogoribeiro7/academic-presentations}
+\end{center}
+\end{frame}
+
+\end{document}

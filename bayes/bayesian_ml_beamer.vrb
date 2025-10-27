@@ -1,0 +1,58 @@
+\frametitle{Implementation Example: Simple BNN in PyTorch}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{block}{Bayesian Linear Layer}
+\begin{verbatim}
+class BayesianLinear(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        # Weight parameters
+        self.weight_mu = nn.Parameter(
+            torch.zeros(out_features, in_features))
+        self.weight_rho = nn.Parameter(
+            torch.ones(out_features, in_features) * -3)
+
+        # Bias parameters
+        self.bias_mu = nn.Parameter(
+            torch.zeros(out_features))
+        self.bias_rho = nn.Parameter(
+            torch.ones(out_features) * -3)
+
+    def forward(self, x):
+        # Sample weights and biases
+        weight_sigma = torch.log1p(torch.exp(self.weight_rho))
+        weight = self.weight_mu + weight_sigma * torch.randn_like(weight_sigma)
+
+        bias_sigma = torch.log1p(torch.exp(self.bias_rho))
+        bias = self.bias_mu + bias_sigma * torch.randn_like(bias_sigma)
+
+        return F.linear(x, weight, bias)
+\end{verbatim}
+\end{block}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Key Components:}
+\begin{itemize}
+\item \textcolor{forest}{Variational parameters:} $\mu$, $\rho$
+\item \textcolor{forest}{Reparameterization:} $w = \mu + \sigma \epsilon$
+\item \textcolor{forest}{Softplus:} $\sigma = \log(1 + \exp(\rho))$
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Training Loop:}
+\begin{itemize}
+\item Sample weights each forward pass
+\item Compute ELBO loss
+\item Backprop through sampling
+\item Update variational parameters
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Prediction:}
+\begin{itemize}
+\item Multiple forward passes
+\item Monte Carlo averaging
+\item Uncertainty estimation
+\end{itemize}
+\end{column}
+\end{columns}
