@@ -126,7 +126,7 @@ pip install numpy scipy matplotlib seaborn pandas
 
 ```bash
 # Navigate to presentation directory
-cd presentations/mcmc-advanced/slides/
+cd presentations/mcmc/slides/
 
 # Compile LaTeX
 pdflatex advanced_mcmc_beamer.tex
