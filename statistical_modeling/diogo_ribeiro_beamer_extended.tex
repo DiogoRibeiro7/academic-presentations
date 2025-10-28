@@ -1,0 +1,498 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ---------------- Beamer Setup ----------------
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+% Fonts/encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{multicol}
+
+% Listings style
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{rcode}{
+  language=R,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{codegray},
+  stringstyle=\color{red!60!black},
+  backgroundcolor=\color{codebg},
+  showstringspaces=false,
+  frame=single,
+  framerule=0.2pt,
+  breaklines=true
+}
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{codegray},
+  stringstyle=\color{red!60!black},
+  backgroundcolor=\color{codebg},
+  showstringspaces=false,
+  frame=single,
+  framerule=0.2pt,
+  breaklines=true
+}
+
+% Section TOC at start of each section
+\AtBeginSection[]{
+  \begin{frame}{Agenda}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% Metadata
+\title[Explanatory Statistical Modeling]{Explanatory Statistical Modeling}
+\subtitle{From Linear Models to GLMs, Ordinal Models, and Survival}
+\author[Diogo Ribeiro]{\textbf{Diogo Ribeiro}}
+\institute{Senior Data Scientist \& Mathematician}
+\date{\today}
+
+\begin{document}
+
+% ------------- Title frame -------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ------------- Agenda -------------
+\begin{frame}{Full Agenda}
+  \tableofcontents
+\end{frame}
+
+% ===============================================================
+\section{Welcome \& Context}
+
+\begin{frame}{Welcome}
+\begin{itemize}
+  \item What you'll get today:
+  \begin{itemize}
+    \item Practical modeling workflow for explanatory analysis.
+    \item How to pick models for different outcome scales.
+    \item Diagnostics, validation, and communication.
+  \end{itemize}
+  \item Materials: code snippets in R and Python.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{About Me}
+\begin{itemize}
+  \item \textbf{Diogo Ribeiro} --- Senior Data Scientist \& Mathematician.
+  \item Focus: time series, streaming analytics, and interpretable models.
+  \item Motto: lean models, clean code, reproducible pipelines.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Explanatory vs Predictive}
+\begin{block}{Explanatory}
+  Emphasizes understanding relationships and effects. Inference-oriented.
+\end{block}
+\begin{block}{Predictive}
+  Emphasizes generalization error on unseen data. Forecast-oriented.
+\end{block}
+\begin{alertblock}{Key Point}
+  Pick metrics, validation, and modeling choices aligned with your goal.
+\end{alertblock}
+\end{frame}
+
+% ===============================================================
+\section{Data Foundations}
+
+\begin{frame}{Data Types \& Structures}
+\begin{multicols}{2}
+\begin{itemize}
+  \item Numeric (int/double)
+  \item Categorical (nominal/ordinal)
+  \item Logical/Boolean
+  \item Dates/Times
+\end{itemize}
+\columnbreak
+\begin{itemize}
+  \item Vectors, matrices
+  \item Data frames/tibbles
+  \item Missingness \& encoding
+\end{itemize}
+\end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]{R Refresher}
+\begin{lstlisting}[style=rcode]
+x <- 42.0            # numeric (double)
+y <- 42L             # integer
+f <- factor(c("A","B","A"))
+
+df <- data.frame(x = 1:5, y = c(3, NA, 5, 8, 13))
+mean(df$y, na.rm = TRUE)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Python Refresher (pandas)}
+\begin{lstlisting}[style=pycode]
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({"x": range(5), "y": [3, np.nan, 5, 8, 13]})
+df["y"].mean(skipna=True)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{EDA: First Things First}
+\begin{itemize}
+  \item Distributions, outliers, missing data patterns.
+  \item Group differences and relationships.
+  \item Data leakage risks (especially in longitudinal/sensor data).
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Inference Basics}
+
+\begin{frame}{Samples, Populations, \& SEs}
+\begin{itemize}
+  \item Sample $\to$ estimate parameters.
+  \item Standard errors quantify sampling variability.
+  \item Confidence intervals communicate uncertainty.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Hypothesis Testing Basics}
+\begin{itemize}
+  \item Null vs alternative hypotheses.
+  \item p-values, effect sizes, and power.
+  \item Multiple testing: control FWER/FDR.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Linear Models}
+
+\begin{frame}{Simple Linear Regression}
+$y = \beta_0 + \beta_1 x + \varepsilon$
+\begin{itemize}
+  \item Interpret $\beta_1$: expected change in $y$ per unit $x$.
+  \item Assumptions: linearity, independence, homoscedasticity, normality.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Multiple Linear Regression}
+$y = \alpha + \sum_k \beta_k x_k + \varepsilon$
+\begin{itemize}
+  \item Interpret coefficients ceteris paribus.
+  \item Address collinearity (VIF), feature selection, interactions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{R Example: LM}
+\begin{lstlisting}[style=rcode]
+url <- "https://peopleanalytics-regression-book.org/data/ugtests.csv"
+ug <- read.csv(url)
+
+m <- lm(Final ~ Yr1 + Yr2 + Yr3, data = ug)
+summary(m)
+confint(m)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Diagnostics: Linear Models}
+\begin{itemize}
+  \item Residual plots and Q-Q plots.
+  \item Leverage and Cook’s distance.
+  \item Transformations or robust regression when assumptions fail.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Logistic Regression (Binary)}
+
+\begin{frame}{Logit Model}
+\[\log\frac{p}{1-p}=\beta_0+\beta^\top x \quad \Rightarrow \quad \exp(\beta)=\text{odds ratios}\]
+\begin{itemize}
+  \item Report OR with CIs.
+  \item Calibrate probabilities (reliability diagrams).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{R Example: Binary Logistic}
+\begin{lstlisting}[style=rcode]
+url <- "https://peopleanalytics-regression-book.org/data/speed_dating.csv"
+sp <- read.csv(url)
+sp_m <- subset(sp, gender == 1)
+fit <- glm(dec ~ attr + intel + prob, data = sp_m, family = binomial())
+est <- summary(fit)$coefficients
+cbind(est, OR = exp(est[, "Estimate"]))
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Model Assessment}
+\begin{itemize}
+  \item ROC, PR, and calibration.
+  \item Pseudo-$R^2$ (McFadden, Cox–Snell, Nagelkerke).
+  \item Train/test splits or cross-validation.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Ordinal Logistic Regression}
+
+\begin{frame}{Proportional Odds Model}
+\begin{itemize}
+  \item Ordered categories via cumulative logits.
+  \item Same slopes across thresholds; different intercepts.
+  \item Check proportional odds assumption.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{R Example: Ordinal}
+\begin{lstlisting}[style=rcode]
+library(MASS)
+url <- "https://peopleanalytics-regression-book.org/data/managers.csv"
+man <- read.csv(url)
+man$performance_group <- ordered(man$performance_group,
+  levels = c("Bottom","Middle","Top"))
+mod <- polr(performance_group ~ test_score + group_size +
+              yrs_employed + concern_flag, data = man)
+summary(mod)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Interpreting Ordinal Models}
+\begin{itemize}
+  \item Effects on odds of being at/above each threshold.
+  \item Marginal effects to translate into probabilities.
+  \item Violations: partial proportional odds models.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Count Models \& Overdispersion}
+
+\begin{frame}{Poisson and Negative Binomial}
+\begin{itemize}
+  \item Poisson: $\mathbb{E}[y]=\mathbb{V}[y]=\mu$.
+  \item Overdispersion $\Rightarrow$ consider Negative Binomial.
+  \item Offsets for exposure/time at risk.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{R Example: Poisson GLM}
+\begin{lstlisting}[style=rcode]
+df <- data.frame(y = rpois(100, lambda = 2),
+                 x = rnorm(100), log_exp = log(1))
+po <- glm(y ~ x + offset(log_exp), data = df, family = poisson())
+summary(po)
+\end{lstlisting}
+\end{frame}
+
+% ===============================================================
+\section{Survival Analysis}
+
+\begin{frame}{Survival Basics}
+\begin{itemize}
+  \item Time-to-event outcomes; censoring is common.
+  \item Kaplan–Meier for $S(t)$ curves.
+  \item Cox PH: $\lambda(t|x)=\lambda_0(t)\exp(\beta^\top x)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{R Example: Survival}
+\begin{lstlisting}[style=rcode]
+library(survival)
+time <- c(5, 8, 12, 18, 20)
+cens <- c(1, 0, 1, 1, 0)  # 1=event, 0=censored
+x <- c(0, 1, 0, 1, 1)
+cox <- coxph(Surv(time, cens) ~ x)
+summary(cox)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Assumptions \& Checks}
+\begin{itemize}
+  \item Proportional hazards diagnostics (Schoenfeld residuals).
+  \item Ties handling (Efron/Breslow).
+  \item Alternative AFT models when PH fails.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Designing A/B Tests (Bonus)}
+
+\begin{frame}{Experiment Design}
+\begin{itemize}
+  \item Randomization, control/treatment, stratification.
+  \item Power, minimum detectable effect, test duration.
+  \item Guard against novelty and interference.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Analysis \& Pitfalls}
+\begin{itemize}
+  \item Intention-to-treat vs per-protocol.
+  \item Sequential peeking and alpha spending.
+  \item Multiple comparisons corrections.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Diagnostics \& Robustness}
+
+\begin{frame}{Robust Regression}
+\begin{itemize}
+  \item M-estimators (Huber, Tukey).
+  \item Resistant to outliers in $y$.
+  \item Compare with OLS: coefficient stability.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Influence Diagnostics}
+\begin{itemize}
+  \item Leverage, Cook’s distance, DFFITS, DFBETAS.
+  \item Actionable thresholds and domain knowledge.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model Uncertainty}
+\begin{itemize}
+  \item Competing models \& information criteria (AIC/BIC).
+  \item Sensitivity analysis.
+  \item Pre-registration for confirmatory studies.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Communicating Results}
+
+\begin{frame}{Explain with Clarity}
+\begin{itemize}
+  \item Report estimates with SE/CI.
+  \item Visualize partial effects/marginal means.
+  \item State assumptions, limitations, and scope.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tables \& Figures}
+\begin{itemize}
+  \item Coefficient tables: tidy, labeled, units included.
+  \item Visuals: avoid chartjunk; annotate key effects.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Hands-on Exercises}
+
+\begin{frame}{Exercise 1: Linear Model}
+\begin{enumerate}
+  \item Fit $y \sim x_1 + x_2$.
+  \item Check residuals and leverage.
+  \item Explain $\beta$ in plain language.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Exercise 2: Logistic Model}
+\begin{enumerate}
+  \item Fit $y\in\{0,1\}$ with 3 predictors.
+  \item Report OR with 95\% CI.
+  \item Plot calibration.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Exercise 3: Ordinal Model}
+\begin{enumerate}
+  \item Fit proportional odds model.
+  \item Check proportional odds assumption.
+  \item Translate to category probabilities.
+\end{enumerate}
+\end{frame}
+
+% ===============================================================
+\section{Case Studies}
+
+\begin{frame}{Case: Employee Performance}
+\begin{itemize}
+  \item Outcome: ordered performance groups.
+  \item Predictors: test scores, tenure, team size.
+  \item Model: ordinal logistic with checks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Case: Click-through Rate}
+\begin{itemize}
+  \item Outcome: binary click/no click.
+  \item Predictors: layout, position, user segment.
+  \item Model: logistic with interactions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Case: Time to Churn}
+\begin{itemize}
+  \item Outcome: time-to-churn with censoring.
+  \item Predictors: usage frequency, support tickets.
+  \item Model: Cox PH with diagnostics.
+\end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Appendix}
+
+\begin{frame}{Useful R Packages}
+\begin{itemize}
+  \item \texttt{stats}, \texttt{MASS}, \texttt{survival}, \texttt{brant}
+  \item \texttt{car} (VIF), \texttt{sandwich}, \texttt{lmtest}
+  \item \texttt{ordinal}, \texttt{MASS::polr}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Useful Python Packages}
+\begin{itemize}
+  \item \texttt{statsmodels}, \texttt{scikit-learn}
+  \item \texttt{lifelines} (survival), \texttt{pandas}, \texttt{numpy}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Glossary}
+\begin{itemize}
+  \item \textbf{OR}: odds ratio.
+  \item \textbf{CI}: confidence interval.
+  \item \textbf{PH}: proportional hazards.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{References}
+\begin{itemize}
+  \item Gelman \& Hill (2007), \emph{Data Analysis Using Regression and Multilevel/Hierarchical Models}.
+  \item Harrell (2015), \emph{Regression Modeling Strategies}.
+  \item Fox (2016), \emph{Applied Regression Analysis and GLMs}.
+\end{itemize}
+\end{frame}
+
+% ------------- Closing -------------
+\begin{frame}{Key Takeaways}
+\begin{itemize}
+  \item Match model to outcome and study goal.
+  \item Diagnose and validate before concluding.
+  \item Communicate effects with uncertainty and clarity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \centering \Large Thank you! \\\vspace{6pt}
+  \normalsize Slides: \textbf{Diogo Ribeiro}
+\end{frame}
+
+\end{document}
