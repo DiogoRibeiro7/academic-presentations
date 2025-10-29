@@ -1,0 +1,376 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ---------------- Beamer Setup ----------------
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+% Fonts/encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{lmodern}  % Commented out - not available
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{multicol}
+
+% Listings style
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{rcode}{
+  language=R,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{codegray},
+  stringstyle=\color{red!60!black},
+  backgroundcolor=\color{codebg},
+  showstringspaces=false,
+  frame=single,
+  framerule=0.2pt,
+  breaklines=true
+}
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{codegray},
+  stringstyle=\color{red!60!black},
+  backgroundcolor=\color{codebg},
+  showstringspaces=false,
+  frame=single,
+  framerule=0.2pt,
+  breaklines=true
+}
+
+\title[Experimentation \& Causal Inference]{Experimentation, Causal Inference,\\
+Metrics, Modeling, and MLOps (Everything Explained)}
+\author{Diogo Ribeiro}
+\institute{Data Science Lead \,|\, Mathematics}
+\date{\today}
+
+\AtBeginSection[]{
+  \begin{frame}{Roadmap}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\section{A/B Testing: Core Concepts}
+\begin{frame}{A/B Testing (Controlled Experiments)}
+  \textbf{Definition:} Randomly split units into Control (A) and Treatment (B) and compare outcomes.\\[0.5em]
+  \textbf{Why:} Randomization balances observed/unobserved factors $\Rightarrow$ causal attribution.\\[0.5em]
+  \textbf{Units of Randomization:} user, session, cluster/geo. \\[0.25em]
+  \textbf{Key rule:} use the smallest unit that avoids \emph{interference}.
+  \begin{itemize}
+    \item Stable hashing for assignment (e.g., \texttt{hash(user\_id) mod K}).
+    \item Stratification (blocking) by country/device to reduce variance.
+    \item Exposure integrity: only eligible, actually-exposed users in analysis.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Metrics and Decisioning}
+  \begin{itemize}
+    \item \textbf{Primary metric:} single pre-declared decision metric (e.g., D7 retention).
+    \item \textbf{Secondary metrics:} additional success indicators (adoption, time-to-value).
+    \item \textbf{Guardrails:} safety metrics that must not degrade (e.g., p95 latency, crash-free sessions).
+    \item \textbf{KPI:} Key Performance Indicator; connects work to OKRs (Objectives \& Key Results).
+  \end{itemize}
+\end{frame}
+
+\section{Hypothesis Testing \& Power}
+\begin{frame}{Statistical Testing Basics}
+  \begin{itemize}
+    \item \textbf{Null (H$_0$):} no effect; \textbf{Alternative (H$_1$):} effect exists.
+    \item \textbf{p-value:} probability of stats as extreme as observed, if H$_0$ true.
+    \item \textbf{$\alpha$ (Type I error):} false positive rate (commonly 0.05).
+    \item \textbf{$\beta$ (Type II error):} false negative rate; \textbf{Power} $=1-\beta$.
+    \item \textbf{Confidence Interval (CI):} Range that would contain the true effect in repeated samples (under the model).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Sample Size \& MDE (Minimum Detectable Effect)}
+  \textbf{Two-proportion sample size per arm (approx.):}
+  \[
+    n \approx \frac{2\,\bar{p}(1-\bar{p})\,\big(z_{1-\alpha/2}+z_{1-\beta}\big)^2}{\text{MDE}^2}
+  \]
+  \begin{itemize}
+    \item $\bar{p}$: baseline rate (e.g., 0.12); $z_{1-\alpha/2}\approx1.96$ for $\alpha=0.05$; $z_{1-\beta}\approx0.84$ for 80\% power.
+    \item \textbf{Duration:} $ \text{days} \approx \frac{n}{\text{eligible users/day/arm}} $, then round to full weeks to cover seasonality.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Variance Reduction: CUPED}
+  \textbf{CUPED =} Controlled Experiments Using Pre-Experiment Data.
+  \begin{itemize}
+    \item Use pre-period covariate $X$ correlated with outcome $Y$.
+  \end{itemize}
+  \vspace{0.5em}
+  \textbf{Adjustment:}\quad $Y^* = Y - \theta\,(X-\mathbb{E}[X])$, \quad $\theta=\frac{\mathrm{Cov}(Y,X)}{\mathrm{Var}(X)}$\\[0.5em]
+  \textbf{Variance factor:}\quad $\mathrm{Var}(Y^*) \approx (1-R^2)\,\mathrm{Var}(Y)$ where $R^2$ comes from regressing $Y$ on $X$.
+\end{frame}
+
+\section{Multiple Testing \& Sequential Designs}
+\begin{frame}{Multiple Testing}
+  \begin{itemize}
+    \item Testing many variants/slices inflates false positives.
+    \item \textbf{FWER} (Family-Wise Error Rate): Prob($\geq1$ false positive).
+    \item \textbf{FDR} (False Discovery Rate): Expected fraction of false among declared positives.
+    \item \textbf{Controls:} Holm--Bonferroni (FWER, more powerful than Bonferroni); Benjamini--Hochberg (FDR).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Sequential Testing (Interim Looks)}
+  \begin{itemize}
+    \item \textbf{Peeking} inflates Type I error.
+    \item \textbf{Fixed-horizon:} Decide once at the end.
+    \item \textbf{Alpha-spending:} e.g., O'Brien--Fleming boundaries allocate $\alpha$ across interim looks with conservative early thresholds.
+  \end{itemize}
+\end{frame}
+
+\section{Data Quality \& Integrity}
+\begin{frame}{SRM (Sample Ratio Mismatch)}
+  \textbf{Definition:} Observed allocation differs from expected (e.g., 50/50 planned, 54/46 observed).\\[0.5em]
+  \textbf{Why it matters:} Indicates routing/eligibility/bot issues that can bias estimates.\\[0.5em]
+  \textbf{Detection:} $\chi^2$ goodness-of-fit on counts; alert if $p < 0.001$ sustained.
+\end{frame}
+
+\begin{frame}{Exposure Integrity \& Instrumentation}
+  \begin{itemize}
+    \item Idempotent events with keys; link exposure $\rightarrow$ outcome.
+    \item Normalize time zones (store in UTC); handle late events with watermarks.
+    \item Exclude bots/internal traffic; audit coverage and eligibility.
+  \end{itemize}
+\end{frame}
+
+\section{Interference \& Network Effects}
+\begin{frame}{When Independence Fails}
+  \begin{itemize}
+    \item \textbf{Interference:} One unit's treatment affects another's outcome (social features, shared infra).
+    \item \textbf{Mitigations:} cluster randomization (geo/store), switchback experiments, measure spillovers.
+    \item Use cluster-robust standard errors in inference.
+  \end{itemize}
+\end{frame}
+
+\section{When A/B Isn't Feasible}
+\begin{frame}{Difference-in-Differences (DiD)}
+  \begin{itemize}
+    \item Compare before/after changes between treated and control groups.
+    \item \textbf{Assumption:} Parallel trends.
+    \item \textbf{Good practice:} Event-study plots; cluster-robust SEs; wild bootstrap if few clusters.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Synthetic Control, RDD, IV}
+  \begin{itemize}
+    \item \textbf{Synthetic Control:} Weighted donor pool mimics treated pre-period; validate via placebo-in-space/time.
+    \item \textbf{RDD:} Treatment at threshold; check manipulation (McCrary), estimate locally with optimal bandwidth.
+    \item \textbf{IV:} Instrument $Z$ affects treatment $T$ but not outcome $Y$ directly; requires relevance, exogeneity, exclusion.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Propensity Scores (PSM/PSW)}
+  \begin{itemize}
+    \item Model $P(T=1\mid X)$ to match/weight units and balance covariates.
+    \item \textbf{Diagnostics:} Standardized Mean Difference (SMD) $<0.1$, overlap, no extreme weights.
+    \item Sensitivity: Rosenbaum bounds for unobserved confounding.
+  \end{itemize}
+\end{frame}
+
+\section{Modeling \& Evaluation}
+\begin{frame}{Logit/Probit (Binary Models)}
+  \begin{itemize}
+    \item \textbf{Logit:} $\mathrm{logit}(p)=\log\frac{p}{1-p}=\beta_0+\beta^\top x$; odds ratios $e^{\beta_j}$.
+    \item \textbf{Probit:} $\Phi^{-1}(p)=\beta_0+\beta^\top x$; similar to logit.
+    \item \textbf{Regularization:} L1 (sparsity), L2 (stability/multicollinearity).
+    \item \textbf{Calibration:} Reliability plots; Platt scaling or isotonic regression.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tree Ensembles \& Neural Nets}
+  \begin{itemize}
+    \item \textbf{Random Forest:} bagged trees; robust; limited tuning.
+    \item \textbf{GBMs (XGBoost/LightGBM):} sequential trees; strong on tabular data.
+    \item \textbf{NNs:} FFN (tabular), CNN (images), RNN/LSTM (sequences). Regularize with dropout/weight decay.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Imbalance \& Metrics}
+  \begin{itemize}
+    \item \textbf{Imbalance:} Class weights/focal loss; avoid SMOTE in time series.
+    \item \textbf{Metrics:} ROC-AUC, PR-AUC, Precision, Recall, F1, Brier score (probability calibration).
+    \item \textbf{Explainability:} Feature importance, PDP/ICE, SHAP (global \& local).
+  \end{itemize}
+\end{frame}
+
+\section{Monitoring \& Drift}
+\begin{frame}{Drift Types \& Tests}
+  \begin{itemize}
+    \item \textbf{Data drift:} feature distribution shifts. \textbf{Concept drift:} relationship changes.
+    \item \textbf{PSI (Population Stability Index):} binned divergence; org thresholds (e.g., 0.1, 0.25).
+    \item \textbf{KS test:} max CDF distance; sensitive on large $n$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Retraining \& Ops}
+  \begin{itemize}
+    \item \textbf{Triggers:} retrain on drift thresholds or performance decay.
+    \item \textbf{Cadence:} scheduled retrains with backtesting before promotion.
+    \item Track schema checks, latency, decision logs.
+  \end{itemize}
+\end{frame}
+
+\section{MLOps \& Delivery}
+\begin{frame}{Ops \& Tooling}
+  \begin{itemize}
+    \item \textbf{CI/CD:} Continuous Integration/Delivery---tests, builds, deploys.
+    \item \textbf{Canary:} small \% rollout; measure before expand.
+    \item \textbf{Shadow:} parallel predictions; no user impact.
+    \item \textbf{Feature store:} consistent batch/online features.
+    \item \textbf{Model registry:} versions, lineage, approvals.
+    \item \textbf{Kill switch:} instant rollback.
+  \end{itemize}
+\end{frame}
+
+\section{Visualization Principles}
+\begin{frame}{Design for Decision}
+  \begin{itemize}
+    \item Start from the decision/question; one message per slide.
+    \item Maximize data-ink ratio (Tufte); remove chart junk.
+    \item Honest axes; colorblind-safe palettes; add context lines/targets.
+  \end{itemize}
+\end{frame}
+
+\section{SQL \& Warehousing}
+\begin{frame}[fragile]{Cohort Retention (SQL Skeleton)}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+WITH installs AS (
+  SELECT user_id, MIN(event_ts) AS install_ts
+  FROM events
+  WHERE event_name = 'install'
+  GROUP BY 1
+),
+activity AS (
+  SELECT e.user_id,
+         DATE_DIFF('day', i.install_ts, e.event_ts) AS dfi
+  FROM events e
+  JOIN installs i USING (user_id)
+  WHERE e.event_name = 'app_open'
+    AND e.event_ts BETWEEN i.install_ts
+                        AND i.install_ts + INTERVAL '28 day'
+),
+dedup AS (
+  SELECT user_id, dfi,
+         ROW_NUMBER() OVER (
+           PARTITION BY user_id, dfi ORDER BY updated_at DESC
+         ) AS rn
+  FROM activity
+)
+SELECT dfi,
+       COUNT(DISTINCT CASE WHEN dfi = 0 THEN user_id END) AS n0,
+       COUNT(DISTINCT CASE WHEN rn = 1 THEN user_id END) AS active,
+       COUNT(DISTINCT CASE WHEN rn = 1 THEN user_id END)::float
+       / NULLIF(COUNT(DISTINCT CASE WHEN dfi = 0 THEN user_id END), 0)
+       AS retention
+FROM dedup
+GROUP BY 1
+ORDER BY 1;
+\end{lstlisting}
+\end{frame}
+
+\section{Retention \& Survival}
+\begin{frame}{Kaplan--Meier \& Cox PH}
+  \begin{itemize}
+    \item \textbf{KM:} Nonparametric survival $S(t)$ with censoring.
+    \item \textbf{Cox PH:} Hazard model with multiplicative covariate effects; test proportional hazards via Schoenfeld residuals.
+    \item Compare cohorts with log-rank test.
+  \end{itemize}
+\end{frame}
+
+\section{Pitfalls \& Remedies}
+\begin{frame}{Common Pitfalls}
+  \begin{itemize}
+    \item Peeking without correction $\Rightarrow$ inflated Type I error.
+    \item Ignoring SRM $\Rightarrow$ biased estimates.
+    \item Leakage from future/post-treatment variables.
+    \item Metric misalignment (optimize clicks vs. retention).
+    \item Multiple testing without correction; Simpson's paradox.
+    \item No post-ship monitoring; regression to the mean.
+  \end{itemize}
+\end{frame}
+
+\section{Glossary (Abbreviations)}
+\begin{frame}{Quick Reference}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+A/B & Control vs. treatment experiment \\
+KPI & Key Performance Indicator \\
+SRM & Sample Ratio Mismatch \\
+MDE & Minimum Detectable Effect \\
+CUPED & Variance reduction using pre-period covariates \\
+FWER & Family-Wise Error Rate \\
+FDR & False Discovery Rate \\
+RCT & Randomized Controlled Trial \\
+DiD & Difference-in-Differences \\
+RDD & Regression Discontinuity Design \\
+IV & Instrumental Variables \\
+PSM/PSW & Propensity Score Matching/Weighting \\
+ROC-AUC/PR-AUC & Discrimination summaries under class imbalance \\
+Brier & Probability calibration error (MSE of probs) \\
+PSI & Population Stability Index \\
+KS & Kolmogorov--Smirnov test \\
+p95 & 95th percentile (latency tail) \\
+PDP/ICE & Partial Dependence / Individual Conditional Expectation \\
+SHAP & Shapley-based local/global explanations \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\section{Appendix: Formulas \& Checks}
+\begin{frame}{Formulas}
+\small
+\begin{itemize}
+  \item \textbf{Two-proportion MDE (given $n$):}
+  \(\displaystyle \mathrm{MDE} \approx \sqrt{\frac{2\,\bar{p}(1-\bar{p})\,(z_{1-\alpha/2}+z_{1-\beta})^2}{n}}\)
+  \item \textbf{CUPED:} \( Y^* = Y - \theta(X-\mathbb{E}[X]),\ \theta=\frac{\mathrm{Cov}(Y,X)}{\mathrm{Var}(X)} \)
+  \item \textbf{BH-FDR:} sort p-values $p_{(i)}$, find largest $k$ with $p_{(k)} \leq \frac{k}{m}q$, declare $1..k$.
+  \item \textbf{Holm:} order p-values; compare $p_{(i)} \leq \frac{\alpha}{m-i+1}$ sequentially.
+  \item \textbf{O'Brien--Fleming (alpha-spending):} conservative early, liberal late boundaries.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Checks \& Runbooks}
+\small
+\begin{itemize}
+  \item Pre-register primary metric, guardrails, decision rule.
+  \item Powering with realistic MDE; round duration to full cycles.
+  \item Instrumentation dry run; SRM alarms; exposure audits.
+  \item Sensitivity: heterogeneity, alternative tests (Welch/MWU), outliers.
+  \item Post-ship: DiD vs. non-adopters; kill switch; rollback plan.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Closing}
+  \centering
+  \Large Questions \& Discussion
+\end{frame}
+
+\end{document}
