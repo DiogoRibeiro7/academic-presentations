@@ -1,0 +1,110 @@
+\frametitle{Pipeline Design and Reproducibility}
+\textbf{Best Practice:} Use sklearn pipelines for reproducible feature engineering.
+
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\begin{lstlisting}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import (
+    StandardScaler, OneHotEncoder,
+    FunctionTransformer
+)
+from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import cross_val_score
+
+# Sample mixed-type dataset
+np.random.seed(42)
+data = pd.DataFrame({
+    'numeric1': np.random.randn(1000),
+    'numeric2': np.random.exponential(2, 1000),
+    'category1': np.random.choice(['A', 'B', 'C'], 1000),
+    'category2': np.random.choice(['X', 'Y'], 1000),
+    'date': pd.date_range('2020-01-01', periods=1000, freq='D')
+})
+
+# Create target with some relationship to features
+data['target'] = (2 * data['numeric1'] +
+                 np.where(data['category1'] == 'A', 5, 0) +
+                 np.random.randn(1000))
+
+# Custom date feature extractor
+def extract_date_features(X):
+    """Extract date features from datetime column"""
+    X = X.copy()
+    X['year'] = X['date'].dt.year
+    X['month'] = X['date'].dt.month
+    X['dayofweek'] = X['date'].dt.dayofweek
+    X['is_weekend'] = X['dayofweek'].isin([5, 6]).astype(int)
+    return X[['year', 'month', 'dayofweek', 'is_weekend']]
+
+# Define preprocessing pipelines for different data types
+numeric_features = ['numeric1', 'numeric2']
+categorical_features = ['category1', 'category2']
+
+# Preprocessing pipeline
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numeric_features),
+        ('cat', OneHotEncoder(drop='first'), categorical_features),
+        ('date', FunctionTransformer(extract_date_features), ['date'])
+    ],
+    remainder='drop'
+)
+
+# Complete ML pipeline
+ml_pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('feature_selection', SelectKBest(f_regression, k=8)),
+    ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+])
+
+# Evaluate pipeline
+X = data.drop('target', axis=1)
+y = data['target']
+
+scores = cross_val_score(ml_pipeline, X, y, cv=5, scoring='r2')
+print(f"Pipeline R^2 Score: {scores.mean():.4f} (+/- {scores.std()*2:.4f})")
+
+# Fit pipeline and inspect feature names
+ml_pipeline.fit(X, y)
+feature_names = ml_pipeline.named_steps['preprocessor'].get_feature_names_out()
+selected_features = ml_pipeline.named_steps['feature_selection'].get_support()
+selected_feature_names = feature_names[selected_features]
+print(f"Selected features: {list(selected_feature_names)}")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.4\textwidth}
+\textbf{Pipeline Benefits:}
+
+\begin{itemize}
+\item \textcolor{forest}{\textbf{Reproducibility}}: Same transformations every time
+\item \textcolor{forest}{\textbf{No leakage}}: Proper train/test separation
+\item \textcolor{forest}{\textbf{Easy deployment}}: Single object to save
+\item \textcolor{forest}{\textbf{Grid search}}: Tune all hyperparameters
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Key Components:}
+\begin{itemize}
+\item \textbf{ColumnTransformer}: Handle mixed data types
+\item \textbf{Pipeline}: Chain transformations
+\item \textbf{FunctionTransformer}: Custom functions
+\item \textbf{Feature unions}: Combine transformations
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Production Checklist}
+\begin{itemize}
+\item Version control all code
+\item Save fitted pipelines
+\item Monitor feature distributions
+\item Handle missing values gracefully
+\item Document all transformations
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
