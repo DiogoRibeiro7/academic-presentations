@@ -1,0 +1,8 @@
+\beamer@sectionintoc {1}{Introduction and Motivation}{3}{0}{1}
+\beamer@sectionintoc {2}{Mathematical Foundations}{6}{0}{2}
+\beamer@sectionintoc {3}{The Bias-Variance Tradeoff}{8}{0}{3}
+\beamer@sectionintoc {4}{PAC Learning Theory}{12}{0}{4}
+\beamer@sectionintoc {5}{Model Selection and Cross-Validation}{15}{0}{5}
+\beamer@sectionintoc {6}{Applications and Case Studies}{18}{0}{6}
+\beamer@sectionintoc {7}{Modern Extensions and Future Directions}{21}{0}{7}
+\beamer@sectionintoc {8}{Summary and Conclusions}{23}{0}{8}
