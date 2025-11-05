@@ -1,0 +1,804 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Explainable AI and Model Interpretability
+% Understanding and explaining machine learning models
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Additional packages
+\usepackage{subcaption}
+\usepackage{multirow}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Explainable AI and Model Interpretability}
+\subtitle{From Black Boxes to Transparent Systems}
+\date{\today}
+
+\begin{document}
+
+% ================================================================
+% Title and TOC
+% ================================================================
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\tocslide
+
+% ================================================================
+\section{Introduction}
+% ================================================================
+
+\begin{frame}{The Interpretability Crisis}
+  \textbf{Modern ML models are powerful but opaque:}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{High Performance:}
+    \begin{itemize}
+      \item Deep neural networks
+      \item Ensemble methods
+      \item Complex feature interactions
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Low Interpretability:}
+    \begin{itemize}
+      \item Millions of parameters
+      \item Non-linear transformations
+      \item Difficult to explain
+    \end{itemize}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{alertbox}{Why Does Interpretability Matter?}
+    \begin{itemize}
+      \item \textbf{Trust:} Users need to understand decisions
+      \item \textbf{Debugging:} Identify and fix model errors
+      \item \textbf{Regulation:} GDPR "right to explanation"
+      \item \textbf{Fairness:} Detect and mitigate bias
+      \item \textbf{Scientific insight:} Understand underlying phenomena
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Interpretability vs. Explainability}
+  \begin{definitionbox}{Interpretability}
+    The degree to which a human can \textbf{understand} the cause of a decision.
+
+    \textit{Example:} Linear regression with few features is inherently interpretable.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Explainability}
+    The degree to which a human can \textbf{consistently predict} the model's result.
+
+    \textit{Example:} LIME provides explanations for black-box models.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Key distinction:}
+  \begin{itemize}
+    \item \textbf{Interpretability:} Intrinsic property of the model
+    \item \textbf{Explainability:} Post-hoc analysis of model behavior
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Accuracy-Interpretability Tradeoff}
+  \begin{center}
+    \textbf{Traditional view: Must choose between accuracy and interpretability}
+  \end{center}
+
+  \vspace{0.5em}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Inherently Interpretable:}
+    \begin{itemize}
+      \item Linear/logistic regression
+      \item Decision trees (shallow)
+      \item Generalized additive models (GAM)
+      \item Rule-based systems
+    \end{itemize}
+
+    \textcolor{ESMADBlue}{\textbf{High interpretability, Lower accuracy}}
+
+    \column{0.5\textwidth}
+    \textbf{Black Box Models:}
+    \begin{itemize}
+      \item Deep neural networks
+      \item Random forests (large)
+      \item Gradient boosting
+      \item SVM with RBF kernel
+    \end{itemize}
+
+    \textcolor{ESMADAccent}{\textbf{Low interpretability, Higher accuracy}}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{block}{Modern Approach}
+    Use explanation methods to make black-box models transparent!
+  \end{block}
+\end{frame}
+
+% ================================================================
+\section{Global vs. Local Explanations}
+% ================================================================
+
+\begin{frame}{Scope of Explanations}
+  \begin{definitionbox}{Global Explanations}
+    Describe the \textbf{overall} behavior of the model across all predictions.
+
+    \textit{Question:} How does the model work in general?
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Local Explanations}
+    Explain a \textbf{specific} prediction for a single instance.
+
+    \textit{Question:} Why did the model make this particular prediction?
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Example: Credit Scoring}
+    \textbf{Global:} "Income is the most important feature overall"
+
+    \textbf{Local:} "Applicant X was denied because their income (\$30K) is below the threshold (\$35K)"
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Global Explanation Methods}
+  \textbf{1. Feature Importance:}
+  \begin{itemize}
+    \item Ranking features by contribution to predictions
+    \item Methods: Permutation importance, SHAP values (aggregated), drop-column
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. Partial Dependence Plots (PDP):}
+  \begin{itemize}
+    \item Show marginal effect of features on predictions
+    \item $\text{PDP}(x_s) = \E_{x_c}[\hat{f}(x_s, x_c)]$
+    \item Averaged over all other features
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. Accumulated Local Effects (ALE):}
+  \begin{itemize}
+    \item Like PDP but handles correlated features better
+    \item Based on conditional distributions
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{4. Model Distillation:}
+  \begin{itemize}
+    \item Train simpler model to mimic complex model
+    \item Interpretable surrogate (decision tree, linear model)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Local Explanation Methods}
+  \textbf{1. Individual Conditional Expectation (ICE):}
+  \begin{itemize}
+    \item Like PDP but for individual instances
+    \item Shows heterogeneous effects
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. LIME (Local Interpretable Model-agnostic Explanations):}
+  \begin{itemize}
+    \item Fit simple model locally around instance
+    \item Perturb input and observe model response
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. SHAP (SHapley Additive exPlanations):}
+  \begin{itemize}
+    \item Game-theoretic approach
+    \item Distributes prediction among features fairly
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{4. Counterfactual Explanations:}
+  \begin{itemize}
+    \item "What would need to change for different prediction?"
+    \item Actionable insights
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Model-Agnostic Methods}
+% ================================================================
+
+\begin{frame}{Permutation Feature Importance}
+  \begin{definitionbox}{Permutation Importance}
+    Measure importance by randomly permuting a feature and observing the change in model performance.
+
+    \begin{equation}
+      \text{FI}_j = \text{Error}(\text{permuted}(X_j)) - \text{Error}(X)
+    \end{equation}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Algorithm:}
+  \begin{enumerate}
+    \item Train model on original data
+    \item For each feature $j$:
+    \begin{enumerate}
+      \item Randomly permute values of feature $j$
+      \item Compute prediction error
+      \item Calculate difference from baseline error
+    \end{enumerate}
+    \item Rank features by importance
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \textbf{Advantages:}
+  \begin{itemize}
+    \item Model-agnostic
+    \item Easy to implement
+    \item Captures non-linear effects
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{LIME: Local Interpretable Model-agnostic Explanations}
+  \textbf{Core idea:} Approximate complex model locally with interpretable model.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{LIME Objective}
+    \begin{equation}
+      \xi(x) = \argmin_{g \in \mathcal{G}} \mathcal{L}(f, g, \pi_x) + \Omega(g)
+    \end{equation}
+
+    where:
+    \begin{itemize}
+      \item $f$: Black-box model
+      \item $g$: Interpretable model (e.g., linear)
+      \item $\mathcal{L}$: Measure of how well $g$ approximates $f$
+      \item $\pi_x$: Locality kernel (weights nearby samples)
+      \item $\Omega(g)$: Complexity penalty
+    \end{itemize}
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{LIME Algorithm}
+  \textbf{For tabular data:}
+
+  \begin{enumerate}
+    \item \textbf{Sample:} Generate perturbed samples around instance $x$
+    \begin{itemize}
+      \item Create synthetic data by perturbing features
+      \item Weight samples by proximity to $x$
+    \end{itemize}
+
+    \item \textbf{Predict:} Get black-box predictions for samples
+
+    \item \textbf{Fit:} Train interpretable model (linear regression) on weighted samples
+
+    \item \textbf{Explain:} Use coefficients as feature importance
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Example Output}
+    "For this loan application (approved):
+    \begin{itemize}
+      \item Income (\$65K): +0.35 (positive contribution)
+      \item Credit score (720): +0.28
+      \item Debt ratio (0.25): -0.12
+    \end{itemize}"
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{SHAP: SHapley Additive exPlanations}
+  \textbf{Based on Shapley values from cooperative game theory.}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Shapley Value}
+    Contribution of feature $i$ to prediction:
+    \begin{equation}
+      \phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(|N|-|S|-1)!}{|N|!} [f(S \cup \{i\}) - f(S)]
+    \end{equation}
+
+    where $N$ is set of all features, $S$ is a subset not containing $i$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Properties:}
+  \begin{itemize}
+    \item \textbf{Efficiency:} $\sum_i \phi_i = f(x) - f(\emptyset)$ (prediction explained)
+    \item \textbf{Symmetry:} Equal features get equal values
+    \item \textbf{Dummy:} Irrelevant features get zero value
+    \item \textbf{Additivity:} Values sum correctly
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{SHAP in Practice}
+  \textbf{Computing exact Shapley values is exponential!}
+
+  \vspace{0.5em}
+
+  \textbf{Efficient approximations:}
+
+  \begin{itemize}
+    \item \textbf{TreeSHAP:} For tree-based models (RF, XGBoost, LightGBM)
+    \begin{itemize}
+      \item Polynomial time algorithm
+      \item Exact Shapley values
+    \end{itemize}
+
+    \item \textbf{KernelSHAP:} Model-agnostic approximation
+    \begin{itemize}
+      \item Weighted linear regression approach
+      \item Similar to LIME but theoretically grounded
+    \end{itemize}
+
+    \item \textbf{DeepSHAP:} For neural networks
+    \begin{itemize}
+      \item Combines DeepLIFT with Shapley values
+      \item Fast approximation
+    \end{itemize}
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Visualization:}
+  \begin{itemize}
+    \item Waterfall plots (individual predictions)
+    \item Summary plots (feature importance)
+    \item Dependence plots (feature interactions)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{LIME vs. SHAP}
+  \begin{center}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Property} & \textbf{LIME} & \textbf{SHAP} \\
+    \midrule
+    Theoretical foundation & Heuristic & Game theory \\
+    Consistency & No guarantee & Guaranteed \\
+    Local accuracy & High & High \\
+    Computational cost & Low & Medium-High \\
+    Additivity & Not guaranteed & Guaranteed \\
+    Model-agnostic & Yes & Yes (KernelSHAP) \\
+    Specialized versions & Image, text & Tree, Deep \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+
+  \begin{block}{When to Use?}
+    \begin{itemize}
+      \item \textbf{LIME:} Quick explanations, simple use case
+      \item \textbf{SHAP:} Rigorous analysis, better properties, worth the computation
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% ================================================================
+\section{Model-Specific Methods}
+% ================================================================
+
+\begin{frame}{Intrinsically Interpretable Models}
+  \textbf{1. Linear Models:}
+  \begin{itemize}
+    \item Coefficients directly interpretable
+    \item $\hat{y} = \beta_0 + \sum_{j=1}^p \beta_j x_j$
+    \item Each $\beta_j$ shows effect of one-unit change in $x_j$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. Decision Trees:}
+  \begin{itemize}
+    \item Sequence of if-then rules
+    \item Easy to visualize and explain
+    \item But: unstable, high variance
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. Generalized Additive Models (GAM):}
+  \begin{equation}
+    g(\E[y]) = \beta_0 + \sum_{j=1}^p f_j(x_j)
+  \end{equation}
+  \begin{itemize}
+    \item Flexible non-linear effects
+    \item Each $f_j$ can be plotted separately
+    \item Maintains additivity
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Neural Network Interpretation}
+  \textbf{1. Gradient-based Methods:}
+
+  \begin{itemize}
+    \item \textbf{Saliency Maps:} $\frac{\partial f(x)}{\partial x_i}$
+    \begin{itemize}
+      \item Shows which inputs affect output most
+      \item Commonly used for images
+    \end{itemize}
+
+    \item \textbf{Integrated Gradients:}
+    \begin{equation}
+      \text{IG}_i(x) = (x_i - x_i') \int_{\alpha=0}^1 \frac{\partial f(x' + \alpha(x - x'))}{\partial x_i} d\alpha
+    \end{equation}
+    \begin{itemize}
+      \item Accumulates gradients along path
+      \item Satisfies axioms (completeness, sensitivity)
+    \end{itemize}
+
+    \item \textbf{Grad-CAM:} For CNNs
+    \begin{itemize}
+      \item Weighted combination of activation maps
+      \item Highlights important regions in images
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Attention Mechanisms}
+  \textbf{Built-in interpretability in Transformers!}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Attention Weights}
+    \begin{equation}
+      \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+    \end{equation}
+
+    Attention weights $\alpha_{ij}$ show how much position $i$ attends to position $j$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Interpretation:}
+  \begin{itemize}
+    \item Visualize attention matrices
+    \item Identify which inputs are important
+    \item Understand model reasoning
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Caveat}
+    Attention weights $\neq$ importance!
+    \begin{itemize}
+      \item Multiple attention heads complicate interpretation
+      \item May not reflect actual contribution to prediction
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+% ================================================================
+\section{Fairness and Bias Detection}
+% ================================================================
+
+\begin{frame}{Algorithmic Fairness}
+  \textbf{ML models can perpetuate or amplify bias:}
+
+  \begin{itemize}
+    \item Training data reflects historical discrimination
+    \item Proxy variables encode protected attributes
+    \item Feedback loops reinforce biases
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Example: COMPAS}
+    ProPublica (2016) found COMPAS recidivism algorithm:
+    \begin{itemize}
+      \item Higher false positive rate for Black defendants
+      \item Lower false positive rate for white defendants
+      \item Despite being "race-blind"
+    \end{itemize}
+  \end{examplebox}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Legal and Ethical Implications}
+    \begin{itemize}
+      \item Fair lending laws
+      \item Equal employment opportunity
+      \item GDPR algorithmic decision-making
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Fairness Definitions}
+  \textbf{Let $A$ be protected attribute (race, gender, etc.)}
+
+  \vspace{0.5em}
+
+  \textbf{1. Statistical Parity:}
+  \begin{equation}
+    P(\hat{Y} = 1 | A = 0) = P(\hat{Y} = 1 | A = 1)
+  \end{equation}
+  Equal positive prediction rates across groups.
+
+  \vspace{0.3em}
+
+  \textbf{2. Equal Opportunity:}
+  \begin{equation}
+    P(\hat{Y} = 1 | Y = 1, A = 0) = P(\hat{Y} = 1 | Y = 1, A = 1)
+  \end{equation}
+  Equal true positive rates (equal recall).
+
+  \vspace{0.3em}
+
+  \textbf{3. Equalized Odds:}
+  \begin{align}
+    P(\hat{Y} = 1 | Y = y, A = 0) = P(\hat{Y} = 1 | Y = y, A = 1), \quad y \in \{0,1\}
+  \end{align}
+  Equal TPR and FPR across groups.
+
+  \vspace{0.3em}
+
+  \textbf{4. Calibration:}
+  \begin{equation}
+    P(Y = 1 | \hat{P} = p, A = a) = p \quad \forall p, a
+  \end{equation}
+  Predicted probabilities are accurate within groups.
+\end{frame}
+
+\begin{frame}{Impossibility Results}
+  \begin{theorembox}{Fairness Impossibility (Chouldechova, 2017)}
+    Except in degenerate cases, a model cannot simultaneously satisfy:
+    \begin{itemize}
+      \item Equalized odds (equal TPR and FPR)
+      \item Calibration (accurate probabilities)
+      \item Different base rates across groups
+    \end{itemize}
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Implication:} Must choose which notion of fairness to prioritize!
+
+  \vspace{0.5em}
+
+  \textbf{Trade-offs:}
+  \begin{itemize}
+    \item Fairness metrics often conflict
+    \item No universally "fair" solution
+    \item Context-dependent choices
+    \item Need stakeholder input
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Detecting and Mitigating Bias}
+  \textbf{Detection:}
+  \begin{enumerate}
+    \item Compute fairness metrics for each group
+    \item Check for disparate impact
+    \item Analyze feature importance by group
+    \item Use interpretability tools (SHAP, LIME)
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \textbf{Mitigation strategies:}
+
+  \begin{itemize}
+    \item \textbf{Pre-processing:}
+    \begin{itemize}
+      \item Re-weight training data
+      \item Remove bias from features
+    \end{itemize}
+
+    \item \textbf{In-processing:}
+    \begin{itemize}
+      \item Add fairness constraints to objective
+      \item Adversarial debiasing
+    \end{itemize}
+
+    \item \textbf{Post-processing:}
+    \begin{itemize}
+      \item Adjust prediction thresholds per group
+      \item Calibration techniques
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Practical Implementation}
+% ================================================================
+
+\begin{frame}[fragile]{Python Tools for XAI}
+  \textbf{Popular libraries:}
+
+  \vspace{0.5em}
+
+  \textbf{1. SHAP:}
+  \begin{lstlisting}[language=Python]
+import shap
+
+# For tree models
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+
+# Visualizations
+shap.summary_plot(shap_values, X_test)
+shap.waterfall_plot(shap_values[0])
+shap.dependence_plot("feature_name", shap_values, X_test)
+  \end{lstlisting}
+
+  \vspace{0.5em}
+
+  \textbf{2. LIME:}
+  \begin{lstlisting}[language=Python]
+from lime.lime_tabular import LimeTabularExplainer
+
+explainer = LimeTabularExplainer(X_train, mode='classification')
+explanation = explainer.explain_instance(X_test[0],
+                                         model.predict_proba)
+explanation.show_in_notebook()
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{More Tools}
+  \textbf{3. InterpretML (Microsoft):}
+  \begin{lstlisting}[language=Python]
+from interpret.glassbox import ExplainableBoostingClassifier
+from interpret import show
+
+# Train interpretable model
+ebm = ExplainableBoostingClassifier()
+ebm.fit(X_train, y_train)
+
+# Global explanation
+ebm_global = ebm.explain_global()
+show(ebm_global)
+
+# Local explanation
+ebm_local = ebm.explain_local(X_test, y_test)
+show(ebm_local)
+  \end{lstlisting}
+
+  \vspace{0.5em}
+
+  \textbf{4. Fairlearn (Microsoft):}
+  \begin{lstlisting}[language=Python]
+from fairlearn.metrics import MetricFrame
+
+# Compute metrics by group
+metric_frame = MetricFrame(
+    metrics={'accuracy': accuracy_score, 'fpr': false_positive_rate},
+    y_true=y_test,
+    y_pred=y_pred,
+    sensitive_features=sensitive_features
+)
+print(metric_frame.by_group)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Best Practices}
+  \textbf{1. Choose the right explanation method:}
+  \begin{itemize}
+    \item Model type (tree-based, neural network, etc.)
+    \item Audience (technical vs. non-technical)
+    \item Purpose (debugging, transparency, fairness)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. Validate explanations:}
+  \begin{itemize}
+    \item Check consistency across methods
+    \item Test with synthetic data
+    \item Compare to domain knowledge
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. Communicate effectively:}
+  \begin{itemize}
+    \item Use visualizations
+    \item Provide context
+    \item Avoid over-interpretation
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{4. Consider computational cost:}
+  \begin{itemize}
+    \item SHAP can be expensive for large datasets
+    \item Use approximations when needed
+    \item Cache results when possible
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \textbf{Key Takeaways:}
+
+  \begin{itemize}
+    \item Interpretability is crucial for trust, debugging, and fairness
+    \item \textbf{Global explanations:} Understand model behavior overall
+    \item \textbf{Local explanations:} Explain individual predictions
+    \item \textbf{SHAP:} Theoretically sound, widely applicable
+    \item \textbf{LIME:} Fast, intuitive, model-agnostic
+    \item \textbf{Fairness:} Multiple definitions, inherent trade-offs
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{The Future of XAI}
+    \begin{itemize}
+      \item Regulatory requirements increasing
+      \item Better integration into ML pipelines
+      \item Standardization of methods and metrics
+      \item Causal explanations beyond correlations
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Further Reading}
+  \textbf{Books:}
+  \begin{itemize}
+    \item Molnar (2022). \textit{Interpretable Machine Learning}
+    \item Barocas, Hardt, Narayanan (2019). \textit{Fairness and Machine Learning}
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Key Papers:}
+  \begin{itemize}
+    \item Ribeiro et al. (2016). "Why Should I Trust You? Explaining Predictions" (LIME)
+    \item Lundberg \& Lee (2017). "A Unified Approach to Interpreting Model Predictions" (SHAP)
+    \item Doshi-Velez \& Kim (2017). "Towards A Rigorous Science of Interpretable ML"
+    \item Chouldechova (2017). "Fair Prediction with Disparate Impact"
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Tools:}
+  \begin{itemize}
+    \item SHAP: \url{https://github.com/slundberg/shap}
+    \item LIME: \url{https://github.com/marcotcr/lime}
+    \item InterpretML: \url{https://interpret.ml/}
+    \item Fairlearn: \url{https://fairlearn.org/}
+  \end{itemize}
+\end{frame}
+
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for applied AI ethics work
+  \item XAI research community
+}
+
+\contactslide
+
+\end{document}

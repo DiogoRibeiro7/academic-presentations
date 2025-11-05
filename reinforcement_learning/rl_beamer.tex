@@ -1,0 +1,1359 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Reinforcement Learning - Academic Presentation
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Reinforcement Learning}
+\subtitle{From Markov Decision Processes to Deep RL}
+\date{\today}
+
+% ================================================================
+% Document
+% ================================================================
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Table of contents
+\tocslide
+
+% ================================================================
+\section{Introduction to Reinforcement Learning}
+% ================================================================
+
+\begin{frame}{What is Reinforcement Learning?}
+  \begin{definitionbox}{Reinforcement Learning}
+    A computational approach to learning from interaction with an environment through trial and error, guided by a reward signal.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Key Components:}
+  \begin{itemize}
+    \item \textbf{Agent:} The learner and decision maker
+    \item \textbf{Environment:} What the agent interacts with
+    \item \textbf{State:} Current situation of the agent
+    \item \textbf{Action:} Choices available to the agent
+    \item \textbf{Reward:} Feedback signal from environment
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Goal:} Learn a \alert{policy} $\pi$ that maximizes cumulative reward over time.
+\end{frame}
+
+\begin{frame}{RL vs Other ML Paradigms}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Supervised Learning:}
+    \begin{itemize}
+      \item Learning from labeled examples
+      \item Direct feedback (correct answer)
+      \item i.i.d. data assumption
+      \item Immediate evaluation
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \textbf{Unsupervised Learning:}
+    \begin{itemize}
+      \item Finding patterns in data
+      \item No explicit feedback
+      \item Structure discovery
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Reinforcement Learning:}
+    \begin{itemize}
+      \item Learning from interaction
+      \item Delayed, evaluative feedback
+      \item Sequential, correlated data
+      \item Exploration vs exploitation
+      \item Credit assignment problem
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \begin{alertbox}{Key Difference}
+      RL must discover which actions yield the most reward through trial and error.
+    \end{alertbox}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Applications of Reinforcement Learning}
+  \textbf{Game Playing:}
+  \begin{itemize}
+    \item AlphaGo, AlphaZero (board games)
+    \item Atari games, StarCraft II
+    \item Poker (Libratus, Pluribus)
+  \end{itemize}
+
+  \textbf{Robotics:}
+  \begin{itemize}
+    \item Robot manipulation and grasping
+    \item Locomotion and navigation
+    \item Autonomous vehicles
+  \end{itemize}
+
+  \textbf{Business Applications:}
+  \begin{itemize}
+    \item Recommendation systems
+    \item Resource allocation and scheduling
+    \item Automated trading
+    \item Energy management
+    \item Healthcare treatment optimization
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Markov Decision Processes}
+% ================================================================
+
+\begin{frame}{Markov Decision Process (MDP)}
+  \begin{definitionbox}{MDP}
+    A tuple $(S, A, P, R, \gamma)$ where:
+    \begin{itemize}
+      \item $S$ - State space
+      \item $A$ - Action space
+      \item $P(s'|s,a)$ - Transition probability function
+      \item $R(s,a,s')$ - Reward function
+      \item $\gamma \in [0,1)$ - Discount factor
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Markov Property}
+    The future is independent of the past given the present:
+    $$\Prob(S_{t+1}|S_t, A_t, S_{t-1}, A_{t-1}, \ldots, S_0) = \Prob(S_{t+1}|S_t, A_t)$$
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Intuition:} The current state contains all relevant information for decision making.
+\end{frame}
+
+\begin{frame}{Policy and Value Functions}
+  \begin{definitionbox}{Policy}
+    A policy $\pi: S \to \Delta(A)$ is a mapping from states to probability distributions over actions.
+    \begin{itemize}
+      \item \textbf{Deterministic:} $\pi(s) = a$
+      \item \textbf{Stochastic:} $\pi(a|s) = \Prob(A_t = a | S_t = s)$
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Value Functions}
+    \textbf{State-value function:}
+    $$V^\pi(s) = \E_\pi\left[\sum_{t=0}^\infty \gamma^t R_{t+1} \mid S_0 = s\right]$$
+
+    \textbf{Action-value function (Q-function):}
+    $$Q^\pi(s,a) = \E_\pi\left[\sum_{t=0}^\infty \gamma^t R_{t+1} \mid S_0 = s, A_0 = a\right]$$
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{Bellman Equations}
+  \begin{theorembox}{Bellman Expectation Equations}
+    For any policy $\pi$:
+    \begin{align*}
+      V^\pi(s) &= \sum_a \pi(a|s) \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V^\pi(s')] \\
+      Q^\pi(s,a) &= \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma \sum_{a'} \pi(a'|s') Q^\pi(s',a')]
+    \end{align*}
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Bellman Optimality Equations}
+    For the optimal policy $\pi^*$:
+    \begin{align*}
+      V^*(s) &= \max_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V^*(s')] \\
+      Q^*(s,a) &= \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma \max_{a'} Q^*(s',a')]
+    \end{align*}
+  \end{theorembox}
+
+  \textbf{Key insight:} Optimal value functions satisfy recursive relationships.
+\end{frame}
+
+\begin{frame}{Optimal Policy}
+  \begin{theorembox}{Existence of Optimal Policy}
+    For any finite MDP, there exists an optimal deterministic policy $\pi^*$ such that:
+    $$V^{\pi^*}(s) \geq V^\pi(s) \quad \forall s \in S, \forall \pi$$
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Extracting optimal policy from $Q^*$:}
+  $$\pi^*(s) = \argmax_a Q^*(s,a)$$
+
+  \vspace{0.5em}
+
+  \textbf{Extracting optimal policy from $V^*$:}
+  $$\pi^*(s) = \argmax_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V^*(s')]$$
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Note}
+    Finding $Q^*$ is often more convenient as it doesn't require knowledge of the model dynamics $P$.
+  \end{alertbox}
+\end{frame}
+
+% ================================================================
+\section{Dynamic Programming Methods}
+% ================================================================
+
+\begin{frame}{Dynamic Programming Approach}
+  \textbf{Requirements:}
+  \begin{itemize}
+    \item Complete knowledge of MDP dynamics $(P, R)$
+    \item Finite state and action spaces
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Two main approaches:}
+  \begin{enumerate}
+    \item \textbf{Policy Iteration:}
+    \begin{itemize}
+      \item Policy evaluation: Compute $V^\pi$ for current policy
+      \item Policy improvement: Update policy greedily w.r.t. $V^\pi$
+      \item Repeat until convergence
+    \end{itemize}
+
+    \item \textbf{Value Iteration:}
+    \begin{itemize}
+      \item Iteratively update value function using Bellman optimality equation
+      \item Extract optimal policy from converged value function
+    \end{itemize}
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Convergence}
+    Both policy iteration and value iteration converge to optimal policy $\pi^*$ and value function $V^*$.
+  \end{theorembox}
+\end{frame}
+
+\begin{frame}[fragile]{Value Iteration Algorithm}
+  \begin{examplebox}{Value Iteration}
+    \textbf{Input:} MDP $(S, A, P, R, \gamma)$, threshold $\theta > 0$
+
+    \textbf{Output:} Optimal value function $V^*$ and policy $\pi^*$
+
+    \begin{enumerate}
+      \item Initialize $V(s) = 0$ for all $s \in S$
+      \item \textbf{Repeat:}
+      \begin{itemize}
+        \item $\Delta \leftarrow 0$
+        \item For each $s \in S$:
+        \begin{itemize}
+          \item $v \leftarrow V(s)$
+          \item $V(s) \leftarrow \max_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V(s')]$
+          \item $\Delta \leftarrow \max(\Delta, |v - V(s)|)$
+        \end{itemize}
+      \end{itemize}
+      \textbf{Until} $\Delta < \theta$
+      \item Extract policy: $\pi(s) = \argmax_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V(s')]$
+    \end{enumerate}
+  \end{examplebox}
+
+  \textbf{Complexity:} $O(|S|^2|A|)$ per iteration.
+\end{frame}
+
+\begin{frame}{Policy Iteration Algorithm}
+  \begin{examplebox}{Policy Iteration}
+    \textbf{Initialize:} Arbitrary policy $\pi$
+
+    \textbf{Repeat:}
+
+    \textbf{1. Policy Evaluation:}
+    \begin{itemize}
+      \item Solve system of equations: $V^\pi(s) = \sum_a \pi(a|s) \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V^\pi(s')]$
+      \item Or iterate until convergence
+    \end{itemize}
+
+    \textbf{2. Policy Improvement:}
+    \begin{itemize}
+      \item $\pi'(s) = \argmax_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V^\pi(s')]$
+    \end{itemize}
+
+    \textbf{Until} $\pi' = \pi$
+  \end{examplebox}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Advantage}
+    Often converges in fewer iterations than value iteration, but each iteration is more expensive.
+  \end{alertbox}
+\end{frame}
+
+% ================================================================
+\section{Monte Carlo Methods}
+% ================================================================
+
+\begin{frame}{Monte Carlo RL}
+  \textbf{Key idea:} Learn from complete episodes of experience.
+
+  \vspace{0.5em}
+
+  \textbf{Advantages:}
+  \begin{itemize}
+    \item \alert{Model-free:} Don't need to know $P$ or $R$
+    \item Learn from actual or simulated experience
+    \item Can be used with non-Markov environments
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Requirements:}
+  \begin{itemize}
+    \item Episodes must terminate
+    \item Can only update after episode completion
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Return}
+    The return from time step $t$ is:
+    $$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots = \sum_{k=0}^\infty \gamma^k R_{t+k+1}$$
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{Monte Carlo Policy Evaluation}
+  \textbf{Goal:} Estimate $V^\pi(s)$ from episodes following policy $\pi$.
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{First-Visit MC}
+    For each episode:
+    \begin{enumerate}
+      \item Generate episode following $\pi$: $S_0, A_0, R_1, S_1, A_1, R_2, \ldots, S_T$
+      \item For each state $s$ appearing in episode (first time only):
+      \begin{itemize}
+        \item Compute return $G_t$ from that occurrence
+        \item Append $G_t$ to list Returns($s$)
+        \item $V(s) \leftarrow$ average(Returns($s$))
+      \end{itemize}
+    \end{enumerate}
+  \end{examplebox}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Convergence}
+    By the law of large numbers, $V(s) \to V^\pi(s)$ as the number of visits to $s \to \infty$.
+  \end{theorembox}
+\end{frame}
+
+\begin{frame}{Monte Carlo Control}
+  \textbf{Challenge:} Policy improvement requires action values $Q(s,a)$, not just $V(s)$.
+
+  \vspace{0.5em}
+
+  \textbf{Solution:} Estimate $Q^\pi(s,a)$ instead of $V^\pi(s)$.
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{MC Exploring Starts}
+    \begin{enumerate}
+      \item Initialize $Q(s,a)$ arbitrarily and $\pi(s)$ arbitrarily
+      \item \textbf{Repeat forever:}
+      \begin{itemize}
+        \item Generate episode with random starting state-action pair
+        \item For each $(s,a)$ pair in episode (first visit):
+        \begin{itemize}
+          \item $G \leftarrow$ return following $(s,a)$
+          \item Append $G$ to Returns$(s,a)$
+          \item $Q(s,a) \leftarrow$ average(Returns$(s,a)$)
+        \end{itemize}
+        \item For each $s$ in episode: $\pi(s) \leftarrow \argmax_a Q(s,a)$
+      \end{itemize}
+    \end{enumerate}
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Exploration vs Exploitation}
+  \begin{alertbox}{Fundamental Dilemma}
+    \textbf{Exploitation:} Choose actions that maximize immediate reward based on current knowledge.
+
+    \textbf{Exploration:} Try new actions to discover potentially better options.
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \textbf{$\epsilon$-Greedy Policy:}
+  $$\pi(a|s) = \begin{cases}
+    1 - \epsilon + \frac{\epsilon}{|A|} & \text{if } a = \argmax_{a'} Q(s,a') \\
+    \frac{\epsilon}{|A|} & \text{otherwise}
+  \end{cases}$$
+
+  \vspace{0.5em}
+
+  \textbf{Other exploration strategies:}
+  \begin{itemize}
+    \item \textbf{Boltzmann (Softmax):} $\pi(a|s) \propto \exp(Q(s,a)/\tau)$
+    \item \textbf{Upper Confidence Bound (UCB):} Choose $\argmax_a [Q(s,a) + c\sqrt{\frac{\ln t}{N(s,a)}}]$
+    \item \textbf{Optimistic initialization:} Start with high $Q$ values
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Temporal Difference Learning}
+% ================================================================
+
+\begin{frame}{Temporal Difference (TD) Learning}
+  \textbf{Key innovation:} Learn from incomplete episodes using bootstrapping.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{TD(0) Update Rule}
+    After observing transition $(S_t, R_{t+1}, S_{t+1})$:
+    $$V(S_t) \leftarrow V(S_t) + \alpha[R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]$$
+    where $\alpha$ is the learning rate.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{TD target:} $R_{t+1} + \gamma V(S_{t+1})$
+
+  \textbf{TD error:} $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$
+
+  \vspace{0.5em}
+
+  \textbf{Comparison:}
+  \begin{itemize}
+    \item \textbf{Monte Carlo:} Uses actual return $G_t$ (unbiased, high variance)
+    \item \textbf{TD:} Uses estimate $R_{t+1} + \gamma V(S_{t+1})$ (biased, low variance)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{TD vs MC vs DP}
+  \begin{table}
+    \centering
+    \small
+    \begin{tabular}{lccc}
+      \toprule
+      Property & DP & MC & TD \\
+      \midrule
+      Model required? & Yes & No & No \\
+      Bootstraps? & Yes & No & Yes \\
+      Complete episodes? & No & Yes & No \\
+      Converges? & Yes & Yes & Yes \\
+      Bias & None & None & Initially biased \\
+      Variance & Low & High & Low \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vspace{0.5em}
+
+  \textbf{Advantages of TD:}
+  \begin{itemize}
+    \item Learn online, without waiting for episode termination
+    \item Can learn from incomplete sequences
+    \item Lower variance than MC
+    \item More efficient for many problems
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{SARSA: On-Policy TD Control}
+  \begin{definitionbox}{SARSA}
+    State-Action-Reward-State-Action algorithm learns $Q^\pi$ for the current policy $\pi$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{SARSA Algorithm}
+    Initialize $Q(s,a)$ arbitrarily
+
+    \textbf{For each episode:}
+    \begin{enumerate}
+      \item Initialize $S$
+      \item Choose $A$ from $S$ using policy derived from $Q$ (e.g., $\epsilon$-greedy)
+      \item \textbf{Repeat for each step:}
+      \begin{itemize}
+        \item Take action $A$, observe $R, S'$
+        \item Choose $A'$ from $S'$ using policy derived from $Q$
+        \item $Q(S,A) \leftarrow Q(S,A) + \alpha[R + \gamma Q(S',A') - Q(S,A)]$
+        \item $S \leftarrow S'$; $A \leftarrow A'$
+      \end{itemize}
+      \textbf{Until} $S$ is terminal
+    \end{enumerate}
+  \end{examplebox}
+
+  \textbf{Note:} Updates based on action actually taken (\alert{on-policy}).
+\end{frame}
+
+\begin{frame}{Q-Learning: Off-Policy TD Control}
+  \begin{definitionbox}{Q-Learning}
+    Off-policy TD control that learns optimal action-value function $Q^*$ directly.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Q-Learning Algorithm}
+    Initialize $Q(s,a)$ arbitrarily
+
+    \textbf{For each episode:}
+    \begin{enumerate}
+      \item Initialize $S$
+      \item \textbf{Repeat for each step:}
+      \begin{itemize}
+        \item Choose $A$ from $S$ using policy derived from $Q$ (e.g., $\epsilon$-greedy)
+        \item Take action $A$, observe $R, S'$
+        \item $Q(S,A) \leftarrow Q(S,A) + \alpha[R + \gamma \max_{a'} Q(S',a') - Q(S,A)]$
+        \item $S \leftarrow S'$
+      \end{itemize}
+      \textbf{Until} $S$ is terminal
+    \end{enumerate}
+  \end{examplebox}
+
+  \vspace{0.5em}
+
+  \textbf{Key difference from SARSA:} Uses $\max_{a'} Q(S',a')$ instead of $Q(S',A')$.
+\end{frame}
+
+\begin{frame}{On-Policy vs Off-Policy}
+  \begin{definitionbox}{On-Policy}
+    Learn about and improve the policy being used for action selection.
+    \begin{itemize}
+      \item Example: SARSA
+      \item Learns $Q^\pi$ for current policy $\pi$
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Off-Policy}
+    Learn about optimal policy while following a different behavior policy.
+    \begin{itemize}
+      \item Example: Q-learning
+      \item Learns $Q^*$ while following $\epsilon$-greedy policy
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Off-policy advantages:}
+  \begin{itemize}
+    \item Learn from exploratory or expert demonstrations
+    \item Reuse experience from old policies
+    \item Greater flexibility
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Function Approximation}
+% ================================================================
+
+\begin{frame}{Need for Function Approximation}
+  \textbf{Problem:} Tabular methods don't scale to large state/action spaces.
+
+  \vspace{0.5em}
+
+  \textbf{Examples of large state spaces:}
+  \begin{itemize}
+    \item Backgammon: $\approx 10^{20}$ states
+    \item Go: $\approx 10^{170}$ states
+    \item Continuous state spaces: infinite states
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Solution:} Approximate value functions using function approximators.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Function Approximation}
+    Represent value function with parameters $\vect{w}$:
+    $$\hat{V}(s; \vect{w}) \approx V^\pi(s) \quad \text{or} \quad \hat{Q}(s,a; \vect{w}) \approx Q^\pi(s,a)$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Common approximators:}
+  \begin{itemize}
+    \item Linear combinations of features
+    \item Neural networks (deep RL)
+    \item Decision trees, kernel methods
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Gradient-Based Value Function Approximation}
+  \textbf{Objective:} Minimize mean squared error between true and estimated values.
+
+  \vspace{0.5em}
+
+  \textbf{Gradient descent update:}
+  $$\vect{w}_{t+1} = \vect{w}_t - \frac{1}{2}\alpha \nabla_{\vect{w}} [V^\pi(S_t) - \hat{V}(S_t; \vect{w}_t)]^2$$
+
+  \vspace{0.5em}
+
+  \textbf{Semi-gradient TD(0):}
+  $$\vect{w}_{t+1} = \vect{w}_t + \alpha[R_{t+1} + \gamma \hat{V}(S_{t+1}; \vect{w}_t) - \hat{V}(S_t; \vect{w}_t)] \nabla_{\vect{w}} \hat{V}(S_t; \vect{w}_t)$$
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Semi-gradient Methods}
+    Called "semi-gradient" because we don't differentiate through the target $R_{t+1} + \gamma \hat{V}(S_{t+1}; \vect{w}_t)$.
+
+    This introduces bias but works well in practice.
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Linear Function Approximation}
+  \textbf{Feature representation:} $\vect{x}(s) = [x_1(s), x_2(s), \ldots, x_n(s)]^T$
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Linear Value Function}
+    $$\hat{V}(s; \vect{w}) = \vect{w}^T \vect{x}(s) = \sum_{i=1}^n w_i x_i(s)$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Gradient:}
+  $$\nabla_{\vect{w}} \hat{V}(s; \vect{w}) = \vect{x}(s)$$
+
+  \vspace{0.5em}
+
+  \textbf{Linear TD(0) update:}
+  $$\vect{w}_{t+1} = \vect{w}_t + \alpha[R_{t+1} + \gamma \vect{w}_t^T \vect{x}(S_{t+1}) - \vect{w}_t^T \vect{x}(S_t)] \vect{x}(S_t)$$
+
+  \vspace{0.5em}
+
+  \textbf{Advantages:}
+  \begin{itemize}
+    \item Simple and computationally efficient
+    \item Convergence guarantees for on-policy methods
+    \item Well-understood theoretically
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Deep Reinforcement Learning}
+% ================================================================
+
+\begin{frame}{Deep Q-Networks (DQN)}
+  \textbf{Breakthrough:} Mnih et al. (2015) - Human-level control through deep RL.
+
+  \vspace{0.5em}
+
+  \textbf{Key innovations:}
+
+  \begin{enumerate}
+    \item \textbf{Experience Replay:}
+    \begin{itemize}
+      \item Store transitions $(s, a, r, s')$ in replay buffer
+      \item Sample random mini-batches for training
+      \item Breaks correlation between consecutive samples
+    \end{itemize}
+
+    \item \textbf{Target Network:}
+    \begin{itemize}
+      \item Separate network $\hat{Q}(s,a;\vect{w}^-)$ for computing targets
+      \item Updated periodically from main network
+      \item Stabilizes training
+    \end{itemize}
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \textbf{Loss function:}
+  $$L(\vect{w}) = \E_{(s,a,r,s') \sim D}\left[(r + \gamma \max_{a'} \hat{Q}(s',a';\vect{w}^-) - \hat{Q}(s,a;\vect{w}))^2\right]$$
+\end{frame}
+
+\begin{frame}[fragile]{DQN Algorithm}
+  \begin{examplebox}{Deep Q-Network Algorithm}
+    \small
+    \textbf{Initialize:}
+    \begin{itemize}
+      \item Replay buffer $D$ with capacity $N$
+      \item Q-network $\hat{Q}(s,a;\vect{w})$ with random weights $\vect{w}$
+      \item Target network $\hat{Q}(s,a;\vect{w}^-)$ with $\vect{w}^- = \vect{w}$
+    \end{itemize}
+
+    \textbf{For each episode:}
+    \begin{enumerate}
+      \item Observe initial state $s$
+      \item \textbf{For each step:}
+      \begin{itemize}
+        \item Select action: $a = \begin{cases} \text{random} & \text{with prob. } \epsilon \\ \argmax_{a'} \hat{Q}(s,a';\vect{w}) & \text{otherwise} \end{cases}$
+        \item Execute $a$, observe $r, s'$
+        \item Store $(s,a,r,s')$ in $D$
+        \item Sample random mini-batch from $D$
+        \item Compute target: $y = r + \gamma \max_{a'} \hat{Q}(s',a';\vect{w}^-)$
+        \item Update $\vect{w}$ by gradient descent on $(y - \hat{Q}(s,a;\vect{w}))^2$
+        \item Every $C$ steps: $\vect{w}^- \leftarrow \vect{w}$
+      \end{itemize}
+    \end{enumerate}
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Improvements to DQN}
+  \textbf{Double DQN (van Hasselt et al., 2016):}
+  \begin{itemize}
+    \item Addresses overestimation bias in Q-learning
+    \item Use online network to select actions, target network to evaluate:
+    $$y = r + \gamma \hat{Q}(s', \argmax_{a'} \hat{Q}(s',a';\vect{w}); \vect{w}^-)$$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Dueling DQN (Wang et al., 2016):}
+  \begin{itemize}
+    \item Separate value and advantage streams:
+    $$Q(s,a) = V(s) + A(s,a) - \frac{1}{|A|}\sum_{a'} A(s,a')$$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Prioritized Experience Replay (Schaul et al., 2016):}
+  \begin{itemize}
+    \item Sample important transitions more frequently
+    \item Priority based on TD error: $p_i = |\delta_i| + \epsilon$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Rainbow DQN:} Combines all improvements for state-of-the-art performance.
+\end{frame}
+
+% ================================================================
+\section{Policy Gradient Methods}
+% ================================================================
+
+\begin{frame}{Policy Gradient Approach}
+  \textbf{Idea:} Directly parameterize and optimize the policy.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Parameterized Policy}
+    Policy with parameters $\vect{\theta}$:
+    $$\pi(a|s; \vect{\theta}) = \Prob(A_t = a | S_t = s; \vect{\theta})$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Objective:} Maximize expected return
+  $$J(\vect{\theta}) = \E_{\pi_\theta}[G_0] = \E_{\pi_\theta}\left[\sum_{t=0}^\infty \gamma^t R_{t+1}\right]$$
+
+  \vspace{0.5em}
+
+  \textbf{Gradient ascent:}
+  $$\vect{\theta}_{t+1} = \vect{\theta}_t + \alpha \nabla_{\vect{\theta}} J(\vect{\theta}_t)$$
+
+  \vspace{0.5em}
+
+  \textbf{Advantages over value-based methods:}
+  \begin{itemize}
+    \item Can learn stochastic policies
+    \item Better convergence properties
+    \item Effective in high-dimensional or continuous action spaces
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Policy Gradient Theorem}
+  \begin{theorembox}{Policy Gradient Theorem (Sutton et al., 2000)}
+    For any differentiable policy $\pi(a|s;\vect{\theta})$:
+    $$\nabla_{\vect{\theta}} J(\vect{\theta}) \propto \sum_s \mu(s) \sum_a Q^\pi(s,a) \nabla_{\vect{\theta}} \pi(a|s;\vect{\theta})$$
+    where $\mu(s)$ is the on-policy state distribution.
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Equivalent form:}
+  $$\nabla_{\vect{\theta}} J(\vect{\theta}) = \E_{\pi_\theta}\left[Q^\pi(s,a) \nabla_{\vect{\theta}} \ln \pi(a|s;\vect{\theta})\right]$$
+
+  \vspace{0.5em}
+
+  \textbf{REINFORCE algorithm (Williams, 1992):}
+  $$\vect{\theta}_{t+1} = \vect{\theta}_t + \alpha G_t \nabla_{\vect{\theta}} \ln \pi(A_t|S_t;\vect{\theta}_t)$$
+
+  \vspace{0.5em}
+
+  \textbf{Intuition:} Increase probability of actions with high returns, decrease probability of actions with low returns.
+\end{frame}
+
+\begin{frame}{Actor-Critic Methods}
+  \textbf{Problem with REINFORCE:} High variance due to Monte Carlo returns.
+
+  \vspace{0.5em}
+
+  \textbf{Solution:} Use learned value function as baseline.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Actor-Critic}
+    Two components:
+    \begin{itemize}
+      \item \textbf{Actor:} Policy $\pi(a|s;\vect{\theta})$
+      \item \textbf{Critic:} Value function $\hat{V}(s;\vect{w})$ or $\hat{Q}(s,a;\vect{w})$
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Update rules:}
+  \begin{itemize}
+    \item \textbf{Critic:} TD learning for value function
+    $$\delta_t = r + \gamma \hat{V}(s';\vect{w}) - \hat{V}(s;\vect{w})$$
+    $$\vect{w}_{t+1} = \vect{w}_t + \alpha_w \delta_t \nabla_{\vect{w}} \hat{V}(s;\vect{w})$$
+
+    \item \textbf{Actor:} Policy gradient using TD error
+    $$\vect{\theta}_{t+1} = \vect{\theta}_t + \alpha_\theta \delta_t \nabla_{\vect{\theta}} \ln \pi(a|s;\vect{\theta})$$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Advanced Policy Gradient Methods}
+  \textbf{Advantage Actor-Critic (A2C):}
+  \begin{itemize}
+    \item Use advantage function: $A(s,a) = Q(s,a) - V(s)$
+    \item Reduces variance while maintaining unbiased gradient
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Asynchronous Advantage Actor-Critic (A3C):}
+  \begin{itemize}
+    \item Multiple parallel agents updating shared parameters
+    \item Improves training stability and speed
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Proximal Policy Optimization (PPO):}
+  \begin{itemize}
+    \item Constrains policy updates to trust region
+    \item Clipped surrogate objective:
+    $$L(\vect{\theta}) = \E[\min(r_t(\vect{\theta})\hat{A}_t, \text{clip}(r_t(\vect{\theta}), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$
+    where $r_t(\vect{\theta}) = \frac{\pi(a|s;\vect{\theta})}{\pi(a|s;\vect{\theta}_{\text{old}})}$
+    \item Currently most popular deep RL algorithm
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Deterministic Policy Gradient (DPG)}
+  \textbf{For continuous action spaces:} Deterministic policies can be more efficient.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Deterministic Policy}
+    $$a = \mu(s;\vect{\theta})$$
+    Maps states directly to actions (no stochasticity).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Deterministic Policy Gradient Theorem}
+    $$\nabla_{\vect{\theta}} J(\vect{\theta}) = \E_s[\nabla_a Q^\mu(s,a)|_{a=\mu(s)} \nabla_{\vect{\theta}} \mu(s;\vect{\theta})]$$
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Deep Deterministic Policy Gradient (DDPG):}
+  \begin{itemize}
+    \item Actor-critic with deterministic policy
+    \item Experience replay and target networks (like DQN)
+    \item Effective for continuous control tasks
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Multi-Agent Reinforcement Learning}
+% ================================================================
+
+\begin{frame}{Multi-Agent RL (MARL)}
+  \begin{definitionbox}{Multi-Agent Setting}
+    Multiple agents learning simultaneously in shared environment.
+    \begin{itemize}
+      \item Each agent has own policy and objectives
+      \item Actions of one agent affect others
+      \item Environment becomes non-stationary from each agent's perspective
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Types of multi-agent settings:}
+  \begin{itemize}
+    \item \textbf{Cooperative:} Agents share common goal (team games)
+    \item \textbf{Competitive:} Agents have conflicting goals (zero-sum games)
+    \item \textbf{Mixed:} Combination of cooperation and competition
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Challenges:}
+  \begin{itemize}
+    \item Non-stationarity: Other agents' policies change during learning
+    \item Credit assignment: Which agent contributed to success/failure?
+    \item Scalability: Exponential growth with number of agents
+    \item Communication and coordination
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Game Theoretic Concepts}
+  \begin{definitionbox}{Nash Equilibrium}
+    A joint policy $(\pi_1^*, \ldots, \pi_n^*)$ where no agent can improve by unilaterally changing their policy:
+    $$J_i(\pi_i^*, \pi_{-i}^*) \geq J_i(\pi_i, \pi_{-i}^*) \quad \forall \pi_i, \forall i$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Self-play:}
+  \begin{itemize}
+    \item Agent trains against copies of itself
+    \item Used in AlphaGo, AlphaZero, OpenAI Five
+    \item Can converge to Nash equilibrium in two-player zero-sum games
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Pareto optimality:}
+  \begin{itemize}
+    \item No agent can improve without hurting another
+    \item Relevant for cooperative settings
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MARL Algorithms}
+  \textbf{Independent Q-Learning:}
+  \begin{itemize}
+    \item Each agent learns independently using Q-learning
+    \item Simple but may not converge due to non-stationarity
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Centralized Training, Decentralized Execution (CTDE):}
+  \begin{itemize}
+    \item Training: Use global information (all agents' observations)
+    \item Execution: Each agent acts based only on local observations
+    \item Examples: MADDPG, QMIX, COMA
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Communication protocols:}
+  \begin{itemize}
+    \item CommNet: Learn to communicate through backpropagation
+    \item DIAL: Differentiable inter-agent learning
+    \item TarMAC: Targeted multi-agent communication
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Mean field methods:}
+  \begin{itemize}
+    \item Approximate effect of many agents with mean field
+    \item Scales to very large numbers of agents
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Practical Considerations}
+% ================================================================
+
+\begin{frame}{Implementing RL Systems}
+  \textbf{State representation:}
+  \begin{itemize}
+    \item Design informative features
+    \item Use domain knowledge
+    \item Consider frame stacking for temporal information
+    \item Normalization and scaling
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Reward shaping:}
+  \begin{itemize}
+    \item Sparse vs dense rewards
+    \item Avoid reward hacking
+    \item Use reward clipping for stability
+    \item Consider intrinsic motivation
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Hyperparameters:}
+  \begin{itemize}
+    \item Learning rate: Often needs decay schedule
+    \item Discount factor $\gamma$: Typically 0.95-0.99
+    \item Exploration: $\epsilon$ decay schedule
+    \item Network architecture: Depends on state complexity
+    \item Replay buffer size: Balance memory and diversity
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Debugging and Evaluation}
+  \begin{alertbox}{Common Issues}
+    \begin{itemize}
+      \item Policy not learning: Check reward scale, learning rate
+      \item Instability: Reduce learning rate, check target network updates
+      \item Overfitting: Add regularization, increase replay buffer
+      \item Slow learning: Improve state representation, reward shaping
+    \end{itemize}
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \textbf{Evaluation metrics:}
+  \begin{itemize}
+    \item Average episodic return
+    \item Success rate (for goal-based tasks)
+    \item Convergence speed
+    \item Sample efficiency
+    \item Robustness to initial conditions
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Visualization:}
+  \begin{itemize}
+    \item Learning curves (return vs episodes/timesteps)
+    \item Value function heatmaps
+    \item Policy visualization
+    \item Attention weights (for attention-based models)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{RL Libraries and Frameworks}
+  \textbf{Python Libraries:}
+  \begin{itemize}
+    \item \textbf{OpenAI Gym:} Standard environment interface
+    \item \textbf{Stable-Baselines3:} High-quality implementations of RL algorithms
+    \item \textbf{RLlib (Ray):} Scalable RL with distributed training
+    \item \textbf{TF-Agents, Keras-RL:} TensorFlow-based RL
+    \item \textbf{PyTorch RL libraries:} Tianshou, rlpyt
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Simulation environments:}
+  \begin{itemize}
+    \item \textbf{Atari 2600:} Classic benchmark (57 games)
+    \item \textbf{MuJoCo:} Continuous control, robotics
+    \item \textbf{PyBullet:} Open-source physics simulation
+    \item \textbf{Unity ML-Agents:} 3D environments
+    \item \textbf{PettingZoo:} Multi-agent environments
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Getting started:}
+  \begin{itemize}
+    \item Start with simple environments (CartPole, MountainCar)
+    \item Use pre-implemented algorithms from Stable-Baselines3
+    \item Gradually move to more complex tasks
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Q-Learning with OpenAI Gym}
+  \begin{lstlisting}[language=Python, basicstyle=\tiny]
+import gym
+import numpy as np
+
+# Create environment
+env = gym.make('CartPole-v1')
+
+# Initialize Q-table (discretized state space)
+n_states = (6, 12)  # bins for position and velocity
+n_actions = env.action_space.n
+Q = np.zeros(n_states + (n_actions,))
+
+# Hyperparameters
+alpha = 0.1  # learning rate
+gamma = 0.99  # discount factor
+epsilon = 0.1  # exploration rate
+
+def discretize_state(state):
+    # Discretize continuous state
+    pos_bins = np.linspace(-2.4, 2.4, n_states[0])
+    vel_bins = np.linspace(-3, 3, n_states[1])
+    return (np.digitize(state[0], pos_bins),
+            np.digitize(state[1], vel_bins))
+
+# Training loop
+for episode in range(1000):
+    state = discretize_state(env.reset())
+    done = False
+
+    while not done:
+        # Epsilon-greedy action selection
+        if np.random.random() < epsilon:
+            action = env.action_space.sample()
+        else:
+            action = np.argmax(Q[state])
+
+        # Take action
+        next_state, reward, done, _ = env.step(action)
+        next_state = discretize_state(next_state)
+
+        # Q-learning update
+        Q[state][action] += alpha * (reward + gamma * np.max(Q[next_state]) - Q[state][action])
+        state = next_state
+  \end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Advanced Topics and Future Directions}
+% ================================================================
+
+\begin{frame}{Model-Based RL}
+  \textbf{Idea:} Learn a model of environment dynamics, use for planning.
+
+  \vspace{0.5em}
+
+  \textbf{Advantages:}
+  \begin{itemize}
+    \item More sample efficient
+    \item Can imagine/simulate trajectories
+    \item Transfer learning across tasks
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Challenges:}
+  \begin{itemize}
+    \item Model errors compound over time
+    \item Difficult in complex, high-dimensional environments
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Approaches:}
+  \begin{itemize}
+    \item \textbf{Dyna-Q:} Combine model-free and model-based learning
+    \item \textbf{PETS:} Probabilistic ensemble for uncertainty
+    \item \textbf{World Models:} Learn compressed representations
+    \item \textbf{MuZero:} Model-based planning without explicit dynamics model
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hierarchical RL}
+  \textbf{Motivation:} Break down complex tasks into simpler sub-tasks.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Options Framework}
+    An option consists of:
+    \begin{itemize}
+      \item Initiation set $I \subseteq S$
+      \item Policy $\pi: S \times A \to [0,1]$
+      \item Termination condition $\beta: S \to [0,1]$
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Benefits:}
+  \begin{itemize}
+    \item Temporal abstraction
+    \item Reusable skills
+    \item Faster learning
+    \item Better exploration
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Methods:}
+  \begin{itemize}
+    \item Hierarchical DQN (h-DQN)
+    \item FeUdal Networks (FuN)
+    \item Hierarchical Actor-Critic (HAC)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Inverse RL and Imitation Learning}
+  \textbf{Problem:} Reward engineering is difficult in many domains.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Inverse Reinforcement Learning (IRL)}
+    Given expert demonstrations, infer the reward function being optimized.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Imitation Learning}
+    Learn policy directly from expert demonstrations.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Methods:}
+  \begin{itemize}
+    \item \textbf{Behavioral Cloning:} Supervised learning from demonstrations
+    \item \textbf{DAgger:} Dataset aggregation for interactive imitation
+    \item \textbf{GAIL:} Generative adversarial imitation learning
+    \item \textbf{Maximum Entropy IRL:} Probabilistic approach to IRL
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Applications:} Autonomous driving, robotics, game AI
+\end{frame}
+
+\begin{frame}{Meta-RL and Transfer Learning}
+  \textbf{Meta-RL (Learning to Learn):}
+  \begin{itemize}
+    \item Train on distribution of tasks
+    \item Learn to quickly adapt to new tasks
+    \item Examples: MAML, RL², Meta-Q-Learning
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Transfer Learning:}
+  \begin{itemize}
+    \item Reuse knowledge from source tasks
+    \item Fine-tuning pre-trained policies
+    \item Progressive neural networks
+    \item Multi-task learning
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Sim-to-Real Transfer:}
+  \begin{itemize}
+    \item Train in simulation, deploy in real world
+    \item Domain randomization
+    \item Reality gap challenges
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Current Research Frontiers}
+  \textbf{Safety and Robustness:}
+  \begin{itemize}
+    \item Safe exploration
+    \item Constrained RL
+    \item Adversarial robustness
+    \item Interpretability
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Sample Efficiency:}
+  \begin{itemize}
+    \item Reduce data requirements
+    \item Better exploration strategies
+    \item Offline RL (learning from fixed datasets)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Scaling and Generalization:}
+  \begin{itemize}
+    \item Foundation models for RL
+    \item Decision transformers
+    \item Large-scale distributed training
+    \item Zero-shot generalization
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Real-World Applications:}
+  \begin{itemize}
+    \item Healthcare, education, finance
+    \item Energy systems, sustainability
+    \item Human-AI interaction
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \textbf{Key Concepts Covered:}
+  \begin{itemize}
+    \item Markov Decision Processes and Bellman equations
+    \item Dynamic programming methods (value iteration, policy iteration)
+    \item Monte Carlo and temporal difference learning
+    \item Q-learning and SARSA
+    \item Function approximation and deep RL
+    \item Policy gradient methods and actor-critic
+    \item Multi-agent reinforcement learning
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{The RL Landscape:}
+  \begin{itemize}
+    \item \textbf{Model-free vs model-based:} Trade-off between simplicity and efficiency
+    \item \textbf{Value-based vs policy-based:} Different approaches to optimization
+    \item \textbf{On-policy vs off-policy:} Learning and behavior policies
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Practical Takeaways}
+  \begin{alertbox}{Best Practices}
+    \begin{enumerate}
+      \item Start simple: Use tabular methods for small problems
+      \item Understand your problem: Is it episodic? What's the state/action space?
+      \item Choose appropriate algorithm: DQN for discrete actions, PPO/DDPG for continuous
+      \item Monitor learning: Plot returns, check convergence
+      \item Tune hyperparameters: Learning rate, exploration, network architecture
+      \item Use established libraries: Stable-Baselines3, RLlib
+    \end{enumerate}
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \textbf{Resources for Further Learning:}
+  \begin{itemize}
+    \item Sutton \& Barto: "Reinforcement Learning: An Introduction" (2nd ed., 2018)
+    \item Spinning Up in Deep RL (OpenAI)
+    \item DeepMind x UCL RL Lecture Series
+    \item Papers: DQN, PPO, SAC, MuZero
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Future of RL}
+  \textbf{Exciting developments ahead:}
+  \begin{itemize}
+    \item More robust and safe RL algorithms
+    \item Better sample efficiency through model-based methods
+    \item Integration with foundation models and LLMs
+    \item Real-world deployment in robotics, healthcare, autonomous systems
+    \item Multi-agent systems for complex coordination problems
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{Final Thought}
+    Reinforcement learning is a powerful paradigm for sequential decision making that continues to push the boundaries of what's possible in AI.
+
+    \vspace{0.5em}
+
+    The combination of deep learning and RL has already achieved superhuman performance in games, and is poised to transform many real-world domains.
+  \end{block}
+\end{frame}
+
+% Acknowledgments slide
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for industry applications and insights
+  \item The RL research community for groundbreaking work
+  \item OpenAI, DeepMind, and others for open-source contributions
+}
+
+% Contact information slide
+\contactslide
+
+\end{document}

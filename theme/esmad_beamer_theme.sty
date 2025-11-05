@@ -1,0 +1,367 @@
+% ================================================================
+% ESMAD Beamer Theme
+% Professional Academic Presentation Style
+% ================================================================
+% Author: Diogo Ribeiro
+% Institution: ESMAD - Escola Superior de Média Arte e Design
+% Version: 1.0
+% Date: 2025
+% ================================================================
+
+\ProvidesPackage{esmad_beamer_theme}[2025/01/01 ESMAD Beamer Theme]
+
+% ================================================================
+% Required Packages
+% ================================================================
+
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{tcolorbox}
+\RequirePackage{fontawesome5}  % For icons
+\RequirePackage{hyperref}
+\RequirePackage{amsmath,amsthm,amssymb}
+\RequirePackage{algorithm,algpseudocode}
+\RequirePackage{booktabs}  % For professional tables
+
+% ================================================================
+% Color Scheme
+% ================================================================
+
+% Primary colors (professional blue palette)
+\definecolor{ESMADBlue}{RGB}{0, 51, 102}      % Primary brand color
+\definecolor{ESMADLightBlue}{RGB}{51, 102, 153}
+\definecolor{ESMADAccent}{RGB}{204, 51, 0}    % Accent color for highlights
+\definecolor{ESMADGray}{RGB}{128, 128, 128}
+\definecolor{ESMADLightGray}{RGB}{240, 240, 240}
+
+% Text colors
+\definecolor{TextDark}{RGB}{33, 33, 33}
+\definecolor{TextLight}{RGB}{250, 250, 250}
+
+% Code highlighting colors
+\definecolor{CodeBackground}{RGB}{248, 248, 248}
+\definecolor{CodeComment}{RGB}{0, 128, 0}
+\definecolor{CodeKeyword}{RGB}{128, 0, 128}
+\definecolor{CodeString}{RGB}{186, 33, 33}
+
+% ================================================================
+% Beamer Settings
+% ================================================================
+
+% Theme selection
+\usetheme{Madrid}  % Clean and professional
+\usecolortheme{default}
+
+% Customize colors
+\setbeamercolor{structure}{fg=ESMADBlue}
+\setbeamercolor{palette primary}{bg=ESMADBlue,fg=white}
+\setbeamercolor{palette secondary}{bg=ESMADLightBlue,fg=white}
+\setbeamercolor{palette tertiary}{bg=ESMADBlue,fg=white}
+\setbeamercolor{palette quaternary}{bg=ESMADAccent,fg=white}
+
+\setbeamercolor{frametitle}{bg=ESMADBlue,fg=white}
+\setbeamercolor{framesubtitle}{bg=ESMADBlue,fg=white}
+
+\setbeamercolor{title}{fg=ESMADBlue}
+\setbeamercolor{author}{fg=TextDark}
+\setbeamercolor{date}{fg=ESMADGray}
+
+\setbeamercolor{item}{fg=ESMADBlue}
+\setbeamercolor{subitem}{fg=ESMADLightBlue}
+\setbeamercolor{subsubitem}{fg=ESMADGray}
+
+\setbeamercolor{block title}{bg=ESMADBlue,fg=white}
+\setbeamercolor{block body}{bg=ESMADLightGray,fg=TextDark}
+
+\setbeamercolor{block title example}{bg=ESMADLightBlue,fg=white}
+\setbeamercolor{block body example}{bg=ESMADLightGray,fg=TextDark}
+
+\setbeamercolor{block title alerted}{bg=ESMADAccent,fg=white}
+\setbeamercolor{block body alerted}{bg=ESMADLightGray,fg=TextDark}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Add frame numbers
+\setbeamertemplate{footline}[frame number]
+
+% Itemize/enumerate styling
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% ================================================================
+% Custom Commands for Author Information
+% ================================================================
+
+% Store author information
+\newcommand{\authorname}[1]{\def\@authorname{#1}}
+\newcommand{\authoremail}[1]{\def\@authoremail{#1}}
+\newcommand{\authororcid}[1]{\def\@authororcid{#1}}
+\newcommand{\authorinstitution}[1]{\def\@authorinstitution{#1}}
+\newcommand{\authorcompany}[1]{\def\@authorcompany{#1}}
+
+% Default values
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% ================================================================
+% Title Page Customization
+% ================================================================
+
+\defbeamertemplate*{title page}{esmad}[1][]
+{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%
+    \end{beamercolorbox}%
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \usebeamerfont{author}\@authorname\\
+      \vskip0.3em
+      {\small\textit{\@authorinstitution}}\\
+      {\small\textit{\@authorcompany}}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}
+      \faEnvelope~\href{mailto:\@authoremail}{\@authoremail}~~
+      \faOrcid~\href{https://orcid.org/\@authororcid}{\@authororcid}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}\vskip0.5em
+  \endgroup
+  \vfill
+}
+
+% ================================================================
+% Footer with Contact Information
+% ================================================================
+
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\@authorname
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% ================================================================
+% Custom Blocks and Boxes
+% ================================================================
+
+% Theorem environments with custom styling
+\newenvironment{theorembox}[1]{%
+  \begin{tcolorbox}[
+    colback=ESMADLightGray,
+    colframe=ESMADBlue,
+    fonttitle=\bfseries,
+    title=#1
+  ]
+}{%
+  \end{tcolorbox}
+}
+
+% Definition box
+\newenvironment{definitionbox}[1]{%
+  \begin{tcolorbox}[
+    colback=ESMADLightGray,
+    colframe=ESMADLightBlue,
+    fonttitle=\bfseries,
+    title=#1
+  ]
+}{%
+  \end{tcolorbox}
+}
+
+% Example box
+\newenvironment{examplebox}[1]{%
+  \begin{tcolorbox}[
+    colback=white,
+    colframe=ESMADLightBlue,
+    fonttitle=\bfseries,
+    title=#1,
+    boxrule=1.5pt
+  ]
+}{%
+  \end{tcolorbox}
+}
+
+% Important/alert box
+\newenvironment{alertbox}[1]{%
+  \begin{tcolorbox}[
+    colback=white,
+    colframe=ESMADAccent,
+    fonttitle=\bfseries,
+    title=#1,
+    boxrule=2pt
+  ]
+}{%
+  \end{tcolorbox}
+}
+
+% ================================================================
+% Code Listing Style
+% ================================================================
+
+\RequirePackage{listings}
+
+\lstdefinestyle{esmadcode}{
+    backgroundcolor=\color{CodeBackground},
+    commentstyle=\color{CodeComment},
+    keywordstyle=\color{CodeKeyword},
+    numberstyle=\tiny\color{ESMADGray},
+    stringstyle=\color{CodeString},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{ESMADGray}
+}
+
+\lstset{style=esmadcode}
+
+% ================================================================
+% Mathematical Notation Helpers
+% ================================================================
+
+% Common distributions
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\Uniform}{\mathcal{U}}
+\newcommand{\Bernoulli}{\text{Bernoulli}}
+\newcommand{\Binomial}{\text{Binomial}}
+\newcommand{\Poisson}{\text{Poisson}}
+\newcommand{\Exponential}{\text{Exp}}
+\newcommand{\Beta}{\text{Beta}}
+\newcommand{\Gamma}{\text{Gamma}}
+
+% Probability and expectation
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\Prob}{\mathbb{P}}
+
+% Common operators
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% Vectors and matrices
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+
+% Independence symbol
+\newcommand{\indep}{\perp\!\!\!\perp}
+
+% ================================================================
+% Reference Slide Template
+% ================================================================
+
+\newcommand{\referenceslide}[1]{
+\begin{frame}[allowframebreaks]{References}
+  \bibliographystyle{apalike}
+  \bibliography{#1}
+\end{frame}
+}
+
+% ================================================================
+% Contact Slide Template
+% ================================================================
+
+\newcommand{\contactslide}{
+\begin{frame}{Contact Information}
+  \begin{center}
+    {\Large \@authorname}\\[0.5em]
+    {\large \@authorinstitution}\\
+    {\large \@authorcompany}\\[1em]
+
+    \begin{tabular}{cl}
+      \faEnvelope & \href{mailto:\@authoremail}{\@authoremail}\\[0.3em]
+      \faOrcid & \href{https://orcid.org/\@authororcid}{\@authororcid}\\[0.3em]
+      \faGithub & \href{https://github.com/diogoribeiro7}{github.com/diogoribeiro7}\\[0.3em]
+      \faLinkedin & \href{https://linkedin.com/in/diogoribeiro7}{linkedin.com/in/diogoribeiro7}
+    \end{tabular}\\[1em]
+
+    \vfill
+
+    {\small This presentation is part of the academic materials repository.\\
+    Available at: \url{https://github.com/diogoribeiro7/academic-presentations}}
+  \end{center}
+\end{frame}
+}
+
+% ================================================================
+% Acknowledgments Slide Template
+% ================================================================
+
+\newcommand{\acknowledgmentsslide}[1]{
+\begin{frame}{Acknowledgments}
+  \begin{itemize}
+    #1
+  \end{itemize}
+  \vfill
+  \centering
+  {\small
+  \textbf{Generated with \LaTeX~Beamer}\\
+  Theme: ESMAD Professional Academic Style
+  }
+\end{frame}
+}
+
+% ================================================================
+% Table of Contents Slide
+% ================================================================
+
+\newcommand{\tocslide}{
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+}
+
+% ================================================================
+% Section Slide Template
+% ================================================================
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+% ================================================================
+% End of Package
+% ================================================================
+
+\endinput

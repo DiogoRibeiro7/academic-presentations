@@ -1,0 +1,871 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Deep Learning Fundamentals
+% Comprehensive introduction to neural networks and deep learning
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Additional packages
+\usepackage{subcaption}
+\usepackage{multirow}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Deep Learning Fundamentals}
+\subtitle{From Neurons to Transformers}
+\date{\today}
+
+\begin{document}
+
+% ================================================================
+% Title and TOC
+% ================================================================
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\tocslide
+
+% ================================================================
+\section{Introduction}
+% ================================================================
+
+\begin{frame}{What is Deep Learning?}
+  \begin{definitionbox}{Deep Learning}
+    A class of machine learning algorithms that use \textbf{multiple layers} of non-linear transformations to learn hierarchical representations from data.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Key characteristics:}
+  \begin{itemize}
+    \item \textbf{Depth:} Many layers (hence "deep")
+    \item \textbf{End-to-end learning:} Learn features automatically
+    \item \textbf{Hierarchical representations:} Low-level → High-level
+    \item \textbf{Scalability:} Performance improves with more data
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Why now?}
+  \begin{itemize}
+    \item Big Data: Massive datasets available
+    \item Compute: GPUs, TPUs enable fast training
+    \item Algorithms: Better architectures and training techniques
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Biological Inspiration}
+  \textbf{Artificial neurons inspired by biological neurons:}
+
+  \vspace{0.5em}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Biological Neuron:}
+    \begin{itemize}
+      \item Dendrites: Receive signals
+      \item Cell body: Processes signals
+      \item Axon: Sends output
+      \item Synapses: Connect neurons
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Artificial Neuron:}
+    \begin{itemize}
+      \item Inputs: $x_1, \ldots, x_n$
+      \item Weights: $w_1, \ldots, w_n$
+      \item Aggregation: $\sum w_i x_i + b$
+      \item Activation: $f(\cdot)$
+    \end{itemize}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{alertbox}{Important}
+    Modern deep learning has moved beyond simple biological analogy!
+    \begin{itemize}
+      \item Backpropagation doesn't occur in brain
+      \item Architectures are engineering solutions
+      \item Biological plausibility not the goal
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+% ================================================================
+\section{Neural Network Basics}
+% ================================================================
+
+\begin{frame}{The Perceptron}
+  \begin{definitionbox}{Perceptron (Rosenblatt, 1958)}
+    \begin{equation}
+      y = f\left(\sum_{i=1}^n w_i x_i + b\right) = f(\vect{w}^T \vect{x} + b)
+    \end{equation}
+
+    where $f$ is a step function: $f(z) = \begin{cases} 1 & z \geq 0 \\ 0 & z < 0 \end{cases}$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Learning rule:}
+  \begin{equation}
+    w_i \leftarrow w_i + \eta (y_{\text{true}} - y_{\text{pred}}) x_i
+  \end{equation}
+
+  where $\eta$ is the learning rate.
+
+  \vspace{0.5em}
+
+  \textbf{Limitations (Minsky \& Papert, 1969):}
+  \begin{itemize}
+    \item Can only learn linearly separable functions
+    \item Cannot solve XOR problem
+    \item Led to "AI winter" in 1970s
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Multi-Layer Perceptron (MLP)}
+  \textbf{Solution: Add hidden layers!}
+
+  \begin{definitionbox}{Feed-Forward Neural Network}
+    \textbf{Layer $l$:}
+    \begin{align}
+      \vect{z}^{(l)} &= \mat{W}^{(l)} \vect{a}^{(l-1)} + \vect{b}^{(l)} \\
+      \vect{a}^{(l)} &= f(\vect{z}^{(l)})
+    \end{align}
+
+    where:
+    \begin{itemize}
+      \item $\vect{a}^{(l)}$: Activations (outputs) of layer $l$
+      \item $\mat{W}^{(l)}$: Weight matrix
+      \item $\vect{b}^{(l)}$: Bias vector
+      \item $f$: Activation function
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Universal Approximation Theorem:}
+  \begin{itemize}
+    \item MLP with one hidden layer can approximate any continuous function
+    \item Requires sufficient hidden units
+    \item But deeper networks are more efficient!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Activation Functions}
+  \textbf{Non-linearity is crucial! Without it, network is just linear regression.}
+
+  \vspace{0.5em}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{1. Sigmoid:}
+    \begin{equation}
+      \sigma(z) = \frac{1}{1 + e^{-z}}
+    \end{equation}
+    \begin{itemize}
+      \item Output: $(0, 1)$
+      \item Smooth gradient
+      \item Problem: Vanishing gradients
+    \end{itemize}
+
+    \textbf{2. Tanh:}
+    \begin{equation}
+      \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+    \end{equation}
+    \begin{itemize}
+      \item Output: $(-1, 1)$
+      \item Zero-centered
+      \item Still vanishing gradients
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{3. ReLU:}
+    \begin{equation}
+      \text{ReLU}(z) = \max(0, z)
+    \end{equation}
+    \begin{itemize}
+      \item Most popular!
+      \item No vanishing gradients
+      \item Fast computation
+      \item Problem: "Dead neurons"
+    \end{itemize}
+
+    \textbf{4. Variants:}
+    \begin{itemize}
+      \item \textbf{Leaky ReLU:} $\max(0.01z, z)$
+      \item \textbf{ELU:} Smooth for $z < 0$
+      \item \textbf{Swish:} $z \cdot \sigma(z)$
+      \item \textbf{GELU:} Used in Transformers
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Backpropagation and Training}
+% ================================================================
+
+\begin{frame}{The Learning Problem}
+  \textbf{Goal:} Minimize loss function $\mathcal{L}(\theta)$ over parameters $\theta$.
+
+  \vspace{0.5em}
+
+  \textbf{Common loss functions:}
+
+  \begin{itemize}
+    \item \textbf{Mean Squared Error (Regression):}
+    \begin{equation}
+      \mathcal{L} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2
+    \end{equation}
+
+    \item \textbf{Cross-Entropy (Classification):}
+    \begin{equation}
+      \mathcal{L} = -\frac{1}{n} \sum_{i=1}^n \sum_{c=1}^C y_{ic} \log(\hat{y}_{ic})
+    \end{equation}
+
+    \item \textbf{Binary Cross-Entropy:}
+    \begin{equation}
+      \mathcal{L} = -\frac{1}{n} \sum_{i=1}^n [y_i \log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)]
+    \end{equation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backpropagation}
+  \textbf{Efficiently compute gradients using chain rule!}
+
+  \begin{definitionbox}{Chain Rule}
+    For composite function $f(g(x))$:
+    \begin{equation}
+      \frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}
+    \end{equation}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{For neural networks:}
+
+  \textbf{Forward pass:} Compute activations layer by layer
+  \begin{equation}
+    \vect{a}^{(l)} = f(\mat{W}^{(l)} \vect{a}^{(l-1)} + \vect{b}^{(l)})
+  \end{equation}
+
+  \textbf{Backward pass:} Compute gradients layer by layer
+  \begin{align}
+    \delta^{(l)} &= (\mat{W}^{(l+1)})^T \delta^{(l+1)} \odot f'(\vect{z}^{(l)}) \\
+    \frac{\partial \mathcal{L}}{\partial \mat{W}^{(l)}} &= \delta^{(l)} (\vect{a}^{(l-1)})^T
+  \end{align}
+
+  where $\delta^{(l)}$ is the error at layer $l$.
+\end{frame}
+
+\begin{frame}{Gradient Descent}
+  \textbf{Update rule:}
+  \begin{equation}
+    \theta_{t+1} = \theta_t - \eta \nabla_\theta \mathcal{L}(\theta_t)
+  \end{equation}
+
+  \vspace{0.5em}
+
+  \textbf{Variants:}
+
+  \begin{itemize}
+    \item \textbf{Batch Gradient Descent:} Use full dataset
+    \begin{itemize}
+      \item Accurate gradients
+      \item Slow for large datasets
+    \end{itemize}
+
+    \item \textbf{Stochastic Gradient Descent (SGD):} One sample at a time
+    \begin{itemize}
+      \item Fast updates
+      \item Noisy gradients
+    \end{itemize}
+
+    \item \textbf{Mini-Batch SGD:} Batches of $B$ samples
+    \begin{itemize}
+      \item Balance between accuracy and speed
+      \item Most commonly used
+      \item Typical batch sizes: 32, 64, 128, 256
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Advanced Optimizers}
+  \textbf{Momentum (Polyak, 1964):}
+  \begin{align}
+    \vect{v}_t &= \beta \vect{v}_{t-1} + \nabla_\theta \mathcal{L}(\theta_t) \\
+    \theta_{t+1} &= \theta_t - \eta \vect{v}_t
+  \end{align}
+  Accumulates velocity, smooths updates.
+
+  \vspace{0.5em}
+
+  \textbf{Adam (Kingma \& Ba, 2015):} Most popular!
+  \begin{align}
+    \vect{m}_t &= \beta_1 \vect{m}_{t-1} + (1-\beta_1) \nabla_\theta \mathcal{L} \\
+    \vect{v}_t &= \beta_2 \vect{v}_{t-1} + (1-\beta_2) (\nabla_\theta \mathcal{L})^2 \\
+    \hat{\vect{m}}_t &= \vect{m}_t / (1-\beta_1^t), \quad \hat{\vect{v}}_t = \vect{v}_t / (1-\beta_2^t) \\
+    \theta_{t+1} &= \theta_t - \eta \frac{\hat{\vect{m}}_t}{\sqrt{\hat{\vect{v}}_t} + \epsilon}
+  \end{align}
+
+  \begin{itemize}
+    \item Adaptive learning rates per parameter
+    \item Default: $\beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-8}$
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Regularization}
+% ================================================================
+
+\begin{frame}{Why Regularization?}
+  \begin{alertbox}{The Overfitting Problem}
+    Deep networks have millions of parameters → Can memorize training data!
+
+    \textbf{Consequences:}
+    \begin{itemize}
+      \item Perfect training accuracy
+      \item Poor generalization to test data
+      \item Unreliable predictions
+    \end{itemize}
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \textbf{Regularization techniques:}
+  \begin{enumerate}
+    \item L1/L2 weight penalties
+    \item Dropout
+    \item Batch normalization
+    \item Data augmentation
+    \item Early stopping
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{L1 and L2 Regularization}
+  \textbf{Add penalty term to loss function:}
+
+  \vspace{0.5em}
+
+  \textbf{L2 (Ridge):}
+  \begin{equation}
+    \mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda \sum_{i} w_i^2
+  \end{equation}
+  \begin{itemize}
+    \item Shrinks weights towards zero
+    \item Smooth, differentiable
+    \item Most common in deep learning
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{L1 (Lasso):}
+  \begin{equation}
+    \mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda \sum_{i} |w_i|
+  \end{equation}
+  \begin{itemize}
+    \item Encourages sparsity
+    \item Some weights → exactly zero
+    \item Acts as feature selection
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Dropout}
+  \begin{definitionbox}{Dropout (Srivastava et al., 2014)}
+    During training, randomly set a fraction $p$ of neurons to zero.
+
+    \textbf{Training:}
+    \begin{equation}
+      \vect{a}^{(l)} = f(\vect{z}^{(l)}) \odot \vect{m}, \quad \vect{m} \sim \text{Bernoulli}(1-p)
+    \end{equation}
+
+    \textbf{Testing:} Use all neurons, scale by $(1-p)$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Why does it work?}
+  \begin{itemize}
+    \item Ensemble effect: Training many "thinned" networks
+    \item Prevents co-adaptation of neurons
+    \item Forces redundant representations
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Typical values:} $p = 0.5$ for hidden layers, $p = 0.1$ for input
+\end{frame}
+
+\begin{frame}{Batch Normalization}
+  \begin{definitionbox}{Batch Normalization (Ioffe \& Szegedy, 2015)}
+    Normalize activations across mini-batch:
+    \begin{align}
+      \mu_B &= \frac{1}{B} \sum_{i=1}^B \vect{z}_i \\
+      \sigma_B^2 &= \frac{1}{B} \sum_{i=1}^B (\vect{z}_i - \mu_B)^2 \\
+      \hat{\vect{z}}_i &= \frac{\vect{z}_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} \\
+      \vect{y}_i &= \gamma \hat{\vect{z}}_i + \beta
+    \end{align}
+
+    where $\gamma, \beta$ are learned parameters.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Benefits:}
+  \begin{itemize}
+    \item Faster convergence (can use higher learning rates)
+    \item Reduces internal covariate shift
+    \item Acts as regularization (slight noise from batch statistics)
+    \item Essential for very deep networks
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Convolutional Neural Networks (CNN)}
+% ================================================================
+
+\begin{frame}{Why CNNs for Images?}
+  \textbf{Fully-connected networks don't scale:}
+  \begin{itemize}
+    \item 224×224 RGB image: 150,528 inputs
+    \item 1000 hidden units: 150M parameters (just first layer!)
+    \item Ignores spatial structure
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Key principles of CNNs:}
+  \begin{enumerate}
+    \item \textbf{Local connectivity:} Neurons connect to small regions
+    \item \textbf{Parameter sharing:} Same weights applied everywhere
+    \item \textbf{Translation equivariance:} Shift input → Shift output
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Biological Inspiration}
+    Based on Hubel \& Wiesel's (1962) work on cat visual cortex:
+    \begin{itemize}
+      \item Simple cells: Detect edges
+      \item Complex cells: Invariant to position
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Convolution Operation}
+  \begin{definitionbox}{2D Convolution}
+    \begin{equation}
+      (I * K)[i,j] = \sum_m \sum_n I[i+m, j+n] \cdot K[m, n]
+    \end{equation}
+
+    where $I$ is input image, $K$ is kernel (filter).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Hyperparameters:}
+  \begin{itemize}
+    \item \textbf{Kernel size:} Usually 3×3 or 5×5
+    \item \textbf{Stride:} Step size (usually 1 or 2)
+    \item \textbf{Padding:} "same" or "valid"
+    \item \textbf{Number of filters:} Determines output depth
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Output size:}
+  \begin{equation}
+    O = \left\lfloor \frac{I + 2P - K}{S} \right\rfloor + 1
+  \end{equation}
+  where $I$ = input size, $P$ = padding, $K$ = kernel size, $S$ = stride.
+\end{frame}
+
+\begin{frame}{CNN Architecture Components}
+  \textbf{Typical CNN structure:}
+
+  \vspace{0.5em}
+
+  \textbf{1. Convolutional Layers:}
+  \begin{itemize}
+    \item Apply learned filters
+    \item Extract local features
+    \item Multiple filters → Multiple feature maps
+  \end{itemize}
+
+  \textbf{2. Pooling Layers:}
+  \begin{itemize}
+    \item Reduce spatial dimensions
+    \item \textbf{Max pooling:} Take maximum in each region
+    \item \textbf{Average pooling:} Take average
+    \item Provides translation invariance
+  \end{itemize}
+
+  \textbf{3. Fully-Connected Layers:}
+  \begin{itemize}
+    \item At the end of network
+    \item Combine features for final prediction
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Example:} \texttt{Conv → ReLU → Pool → Conv → ReLU → Pool → FC → Softmax}
+\end{frame}
+
+\begin{frame}{Classic CNN Architectures}
+  \textbf{1. LeNet-5 (LeCun, 1998):}
+  \begin{itemize}
+    \item First successful CNN
+    \item Digit recognition (MNIST)
+    \item 7 layers, 60K parameters
+  \end{itemize}
+
+  \textbf{2. AlexNet (Krizhevsky et al., 2012):}
+  \begin{itemize}
+    \item ImageNet breakthrough (top-5 error: 15.3\%)
+    \item 8 layers, 60M parameters
+    \item ReLU, dropout, data augmentation
+    \item Trained on GPUs
+  \end{itemize}
+
+  \textbf{3. VGGNet (Simonyan \& Zisserman, 2014):}
+  \begin{itemize}
+    \item Very deep (16-19 layers)
+    \item Small 3×3 filters throughout
+    \item 138M parameters
+  \end{itemize}
+
+  \textbf{4. ResNet (He et al., 2015):}
+  \begin{itemize}
+    \item Residual connections enable very deep networks (50-152 layers)
+    \item Skip connections: $F(x) + x$
+    \item Solves vanishing gradient problem
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Recurrent Neural Networks (RNN)}
+% ================================================================
+
+\begin{frame}{Sequential Data}
+  \textbf{Many problems involve sequences:}
+  \begin{itemize}
+    \item Text: Words in sentences
+    \item Speech: Audio over time
+    \item Time series: Stock prices, weather
+    \item Video: Frames over time
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Challenge:} Variable-length inputs and outputs
+
+  \vspace{0.5em}
+
+  \textbf{RNN solution:} Maintain hidden state that captures history
+
+  \begin{equation}
+    \vect{h}_t = f(\mat{W}_{hh} \vect{h}_{t-1} + \mat{W}_{xh} \vect{x}_t + \vect{b}_h)
+  \end{equation}
+
+  \textbf{Key idea:} Share parameters across time steps!
+\end{frame}
+
+\begin{frame}{RNN Architectures}
+  \textbf{Different input/output configurations:}
+
+  \vspace{0.5em}
+
+  \begin{enumerate}
+    \item \textbf{One-to-One:} Standard neural network
+    \item \textbf{One-to-Many:} Image captioning (image → sequence)
+    \item \textbf{Many-to-One:} Sentiment analysis (sequence → label)
+    \item \textbf{Many-to-Many (same length):} Video classification
+    \item \textbf{Many-to-Many (different length):} Machine translation
+  \end{enumerate}
+
+  \vspace{0.5em}
+
+  \textbf{Challenges:}
+  \begin{itemize}
+    \item \textbf{Vanishing gradients:} Hard to learn long-term dependencies
+    \item \textbf{Exploding gradients:} Unstable training
+    \item \textbf{Solution:} LSTM and GRU cells
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{LSTM (Long Short-Term Memory)}
+  \textbf{Hochreiter \& Schmidhuber (1997) - Addresses vanishing gradients}
+
+  \vspace{0.5em}
+
+  \textbf{Key components:}
+  \begin{itemize}
+    \item \textbf{Cell state $\vect{c}_t$:} Long-term memory highway
+    \item \textbf{Gates:} Control information flow
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{LSTM equations:}
+  \begin{align}
+    \vect{f}_t &= \sigma(\mat{W}_f [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_f) \quad \text{(forget gate)} \\
+    \vect{i}_t &= \sigma(\mat{W}_i [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_i) \quad \text{(input gate)} \\
+    \tilde{\vect{c}}_t &= \tanh(\mat{W}_c [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_c) \quad \text{(candidate)} \\
+    \vect{c}_t &= \vect{f}_t \odot \vect{c}_{t-1} + \vect{i}_t \odot \tilde{\vect{c}}_t \quad \text{(cell state)} \\
+    \vect{o}_t &= \sigma(\mat{W}_o [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_o) \quad \text{(output gate)} \\
+    \vect{h}_t &= \vect{o}_t \odot \tanh(\vect{c}_t) \quad \text{(hidden state)}
+  \end{align}
+\end{frame}
+
+% ================================================================
+\section{Transformer Architecture}
+% ================================================================
+
+\begin{frame}{Attention is All You Need}
+  \textbf{Vaswani et al. (2017) - Revolutionary architecture}
+
+  \vspace{0.5em}
+
+  \textbf{Problems with RNNs:}
+  \begin{itemize}
+    \item Sequential computation (can't parallelize)
+    \item Long-range dependencies still challenging
+    \item Slow training
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Transformer solution:}
+  \begin{itemize}
+    \item \textbf{Self-attention:} Every position attends to all positions
+    \item \textbf{Parallelizable:} No sequential dependency
+    \item \textbf{Positional encoding:} Add position information
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{block}{Impact}
+    Transformers now dominate NLP (BERT, GPT) and expanding to vision (ViT), audio, and more!
+  \end{block}
+\end{frame}
+
+\begin{frame}{Self-Attention Mechanism}
+  \begin{definitionbox}{Scaled Dot-Product Attention}
+    \begin{equation}
+      \text{Attention}(\mat{Q}, \mat{K}, \mat{V}) = \text{softmax}\left(\frac{\mat{Q}\mat{K}^T}{\sqrt{d_k}}\right)\mat{V}
+    \end{equation}
+
+    where:
+    \begin{itemize}
+      \item $\mat{Q}$: Query matrix (what we're looking for)
+      \item $\mat{K}$: Key matrix (what's available)
+      \item $\mat{V}$: Value matrix (actual content)
+      \item $d_k$: Dimension of keys (for scaling)
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Multi-Head Attention:}
+  \begin{itemize}
+    \item Run attention mechanism multiple times in parallel
+    \item Each "head" learns different patterns
+    \item Concatenate and project outputs
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Transformer Architecture}
+  \textbf{Encoder-Decoder structure:}
+
+  \vspace{0.5em}
+
+  \textbf{Encoder (left side):}
+  \begin{enumerate}
+    \item Multi-head self-attention
+    \item Add \& Normalize
+    \item Feed-forward network
+    \item Add \& Normalize
+    \item (Repeat $N$ times)
+  \end{enumerate}
+
+  \textbf{Decoder (right side):}
+  \begin{enumerate}
+    \item Masked multi-head self-attention
+    \item Add \& Normalize
+    \item Cross-attention to encoder
+    \item Add \& Normalize
+    \item Feed-forward network
+    \item Add \& Normalize
+    \item (Repeat $N$ times)
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Transformer Variants}
+  \textbf{Major models based on Transformers:}
+
+  \vspace{0.5em}
+
+  \textbf{BERT (Devlin et al., 2018):}
+  \begin{itemize}
+    \item Encoder-only
+    \item Bidirectional context
+    \item Pre-training: Masked language modeling
+    \item Fine-tuning for downstream tasks
+  \end{itemize}
+
+  \textbf{GPT (Radford et al., 2018-2023):}
+  \begin{itemize}
+    \item Decoder-only
+    \item Autoregressive generation
+    \item Scaling to 175B+ parameters (GPT-3)
+    \item In-context learning
+  \end{itemize}
+
+  \textbf{Vision Transformer (Dosovitskiy et al., 2020):}
+  \begin{itemize}
+    \item Apply Transformers to images
+    \item Split image into patches
+    \item Competitive with CNNs on large datasets
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Practical Training Tips}
+% ================================================================
+
+\begin{frame}{Training Best Practices}
+  \textbf{1. Data Preprocessing:}
+  \begin{itemize}
+    \item Normalize inputs (zero mean, unit variance)
+    \item Data augmentation (images: flip, crop, rotate)
+    \item Handle class imbalance
+  \end{itemize}
+
+  \textbf{2. Initialization:}
+  \begin{itemize}
+    \item \textbf{Xavier/Glorot:} For tanh/sigmoid
+    \item \textbf{He initialization:} For ReLU
+    \item Never initialize all weights to zero!
+  \end{itemize}
+
+  \textbf{3. Learning Rate:}
+  \begin{itemize}
+    \item Start with default values (0.001 for Adam)
+    \item Learning rate schedules (decay, cyclical)
+    \item Warm-up for large batches
+  \end{itemize}
+
+  \textbf{4. Batch Size:}
+  \begin{itemize}
+    \item Larger batches: Faster, more stable
+    \item Smaller batches: Better generalization
+    \item Trade-off with GPU memory
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Debugging Neural Networks}
+  \textbf{Common issues and solutions:}
+
+  \vspace{0.5em}
+
+  \begin{enumerate}
+    \item \textbf{Loss not decreasing:}
+    \begin{itemize}
+      \item Check learning rate (too high or too low)
+      \item Verify gradient flow (print gradient norms)
+      \item Check data preprocessing
+    \end{itemize}
+
+    \item \textbf{Loss exploding:}
+    \begin{itemize}
+      \item Reduce learning rate
+      \item Gradient clipping
+      \item Check for bugs in loss computation
+    \end{itemize}
+
+    \item \textbf{Overfitting:}
+    \begin{itemize}
+      \item Add regularization (dropout, L2)
+      \item More data or data augmentation
+      \item Reduce model capacity
+    \end{itemize}
+
+    \item \textbf{Underfitting:}
+    \begin{itemize}
+      \item Increase model capacity
+      \item Train longer
+      \item Reduce regularization
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \textbf{Key concepts covered:}
+
+  \begin{itemize}
+    \item \textbf{Foundations:} Neurons, activation functions, backpropagation
+    \item \textbf{Optimization:} SGD, Adam, learning rate schedules
+    \item \textbf{Regularization:} Dropout, batch normalization, weight decay
+    \item \textbf{CNNs:} Convolution, pooling, ResNet
+    \item \textbf{RNNs:} LSTM, sequence modeling
+    \item \textbf{Transformers:} Attention, BERT, GPT
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{The Deep Learning Revolution}
+    \begin{itemize}
+      \item Transforming AI and industry
+      \item Rapid progress in architectures and applications
+      \item Democratization through frameworks (PyTorch, TensorFlow)
+      \item Still many open questions!
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Further Reading}
+  \textbf{Books:}
+  \begin{itemize}
+    \item Goodfellow, Bengio, Courville (2016). \textit{Deep Learning}
+    \item Zhang et al. (2023). \textit{Dive into Deep Learning}
+  \end{itemize}
+
+  \textbf{Courses:}
+  \begin{itemize}
+    \item Stanford CS231n (CNNs for Visual Recognition)
+    \item Stanford CS224n (NLP with Deep Learning)
+    \item fast.ai Practical Deep Learning
+  \end{itemize}
+
+  \textbf{Key Papers:}
+  \begin{itemize}
+    \item Krizhevsky et al. (2012). "ImageNet Classification with Deep CNNs" (AlexNet)
+    \item He et al. (2015). "Deep Residual Learning" (ResNet)
+    \item Vaswani et al. (2017). "Attention Is All You Need" (Transformer)
+  \end{itemize}
+\end{frame}
+
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for deep learning applications
+  \item Deep learning research community
+}
+
+\contactslide
+
+\end{document}

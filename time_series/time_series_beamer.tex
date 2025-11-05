@@ -1,0 +1,741 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Time Series Analysis
+% A comprehensive introduction to time series methods
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Additional packages
+\usepackage{subcaption}
+\usepackage{multirow}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Time Series Analysis}
+\subtitle{From Classical Methods to Deep Learning}
+\date{\today}
+
+\begin{document}
+
+% ================================================================
+% Title and TOC
+% ================================================================
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\tocslide
+
+% ================================================================
+\section{Introduction to Time Series}
+% ================================================================
+
+\begin{frame}{What is a Time Series?}
+  \begin{definitionbox}{Time Series}
+    A \textbf{time series} is a sequence of observations $\{y_t\}_{t=1}^T$ indexed by time, where $y_t$ represents the value at time $t$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Key Characteristics:}
+  \begin{itemize}
+    \item \textbf{Temporal ordering:} Observations have a natural sequence
+    \item \textbf{Dependence:} Values are typically correlated over time
+    \item \textbf{Components:} Trend, seasonality, cycles, irregular
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Applications:}
+  \begin{itemize}
+    \item Finance: Stock prices, returns, volatility
+    \item Economics: GDP, inflation, unemployment
+    \item Climate: Temperature, precipitation
+    \item Business: Sales, demand, web traffic
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Time Series Components}
+  \textbf{Additive Decomposition:}
+  \begin{equation}
+    y_t = T_t + S_t + C_t + \epsilon_t
+  \end{equation}
+
+  where:
+  \begin{itemize}
+    \item $T_t$ = \textbf{Trend} (long-term movement)
+    \item $S_t$ = \textbf{Seasonality} (regular periodic fluctuations)
+    \item $C_t$ = \textbf{Cycle} (longer-term oscillations)
+    \item $\epsilon_t$ = \textbf{Irregular/Noise} (random variation)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Multiplicative Decomposition:}
+  \begin{equation}
+    y_t = T_t \times S_t \times C_t \times \epsilon_t
+  \end{equation}
+
+  Used when variation increases with level (common in economics).
+\end{frame}
+
+\begin{frame}{Stationarity}
+  \begin{definitionbox}{Weak (Covariance) Stationarity}
+    A time series is weakly stationary if:
+    \begin{enumerate}
+      \item $\E[y_t] = \mu$ for all $t$ (constant mean)
+      \item $\Var(y_t) = \sigma^2$ for all $t$ (constant variance)
+      \item $\Cov(y_t, y_{t-h}) = \gamma_h$ depends only on lag $h$
+    \end{enumerate}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Why Stationarity Matters}
+    Most time series models assume stationarity. Non-stationary series can lead to:
+    \begin{itemize}
+      \item Spurious regressions
+      \item Invalid statistical inference
+      \item Poor forecasting performance
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Achieving Stationarity}
+  \textbf{Common transformations:}
+
+  \begin{enumerate}
+    \item \textbf{Differencing:}
+    \begin{itemize}
+      \item First difference: $\Delta y_t = y_t - y_{t-1}$
+      \item Seasonal difference: $\Delta_s y_t = y_t - y_{t-s}$
+    \end{itemize}
+
+    \item \textbf{Detrending:}
+    \begin{itemize}
+      \item Remove linear trend: $\tilde{y}_t = y_t - (\hat{\alpha} + \hat{\beta}t)$
+      \item Remove polynomial trend
+    \end{itemize}
+
+    \item \textbf{Log transformation:}
+    \begin{itemize}
+      \item Stabilize variance: $\log(y_t)$
+      \item Box-Cox transformation: $y_t^{(\lambda)} = \frac{y_t^\lambda - 1}{\lambda}$
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\section{Classical Time Series Models}
+% ================================================================
+
+\begin{frame}{Autoregressive (AR) Models}
+  \begin{definitionbox}{AR(p) Model}
+    \begin{equation}
+      y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \epsilon_t
+    \end{equation}
+    where $\epsilon_t \sim \text{WN}(0, \sigma^2)$ (white noise).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Interpretation:}
+  \begin{itemize}
+    \item Current value depends on $p$ past values
+    \item $\phi_i$ coefficients measure persistence
+    \item Order $p$ selected via AIC/BIC
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{AR(1) Example}
+    $y_t = 0.8 y_{t-1} + \epsilon_t$
+    \begin{itemize}
+      \item Stationary if $|\phi_1| < 1$
+      \item Mean: $\E[y_t] = 0$
+      \item Variance: $\Var(y_t) = \frac{\sigma^2}{1-\phi_1^2}$
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Moving Average (MA) Models}
+  \begin{definitionbox}{MA(q) Model}
+    \begin{equation}
+      y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \cdots + \theta_q \epsilon_{t-q}
+    \end{equation}
+    where $\epsilon_t \sim \text{WN}(0, \sigma^2)$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Interpretation:}
+  \begin{itemize}
+    \item Current value is linear combination of white noise terms
+    \item Always stationary
+    \item Shocks have limited effect (only $q$ periods)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{ACF vs PACF:}
+  \begin{itemize}
+    \item AR(p): ACF decays, PACF cuts off after lag $p$
+    \item MA(q): ACF cuts off after lag $q$, PACF decays
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ARMA and ARIMA Models}
+  \begin{definitionbox}{ARMA(p,q) Model}
+    Combines AR and MA components:
+    \begin{equation}
+      y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \epsilon_t + \sum_{j=1}^q \theta_j \epsilon_{t-j}
+    \end{equation}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{ARIMA(p,d,q) Model}
+    ARMA applied to $d$-differenced data:
+    \begin{equation}
+      \phi(B)(1-B)^d y_t = \theta(B)\epsilon_t
+    \end{equation}
+    where $B$ is the backshift operator: $B y_t = y_{t-1}$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Box-Jenkins Methodology:}
+  \begin{enumerate}
+    \item \textbf{Identification:} Determine $(p,d,q)$ from ACF/PACF
+    \item \textbf{Estimation:} Fit model (MLE)
+    \item \textbf{Diagnostic checking:} Residual analysis
+    \item \textbf{Forecasting:} Generate predictions
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Seasonal ARIMA}
+  \begin{definitionbox}{SARIMA$(p,d,q)(P,D,Q)_s$ Model}
+    \begin{equation}
+      \phi(B)\Phi(B^s)(1-B)^d(1-B^s)^D y_t = \theta(B)\Theta(B^s)\epsilon_t
+    \end{equation}
+    where $s$ is the seasonal period.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Components:}
+  \begin{itemize}
+    \item $(p,d,q)$: Non-seasonal AR, differencing, MA orders
+    \item $(P,D,Q)_s$: Seasonal AR, differencing, MA orders
+    \item $s$: Seasonal period (e.g., 12 for monthly data)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Example: Monthly Sales}
+    SARIMA$(1,1,1)(1,1,1)_{12}$
+    \begin{itemize}
+      \item AR(1) and MA(1) for short-term dynamics
+      \item First differencing to remove trend
+      \item Seasonal AR(1) and MA(1) at lag 12
+      \item Seasonal differencing to remove seasonality
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+% ================================================================
+\section{Vector Autoregression (VAR)}
+% ================================================================
+
+\begin{frame}{Multivariate Time Series}
+  \begin{definitionbox}{VAR(p) Model}
+    For $k$-dimensional time series $\vect{y}_t = (y_{1t}, \ldots, y_{kt})'$:
+    \begin{equation}
+      \vect{y}_t = \vect{c} + \mat{A}_1 \vect{y}_{t-1} + \cdots + \mat{A}_p \vect{y}_{t-p} + \vect{\epsilon}_t
+    \end{equation}
+    where $\vect{\epsilon}_t \sim \Normal(\vect{0}, \mat{\Sigma})$ and $\mat{A}_i$ are $k \times k$ coefficient matrices.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Interpretation:}
+  \begin{itemize}
+    \item Each variable depends on its own lags and lags of all other variables
+    \item Captures dynamic interactions between variables
+    \item $(A_i)_{jk}$ measures effect of variable $k$ at lag $i$ on variable $j$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{VAR Analysis Tools}
+  \textbf{1. Granger Causality:}
+  \begin{itemize}
+    \item Variable $x$ Granger-causes $y$ if past values of $x$ help predict $y$
+    \item Test: $H_0$: All coefficients of $x$ lags in $y$ equation are zero
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. Impulse Response Functions (IRF):}
+  \begin{itemize}
+    \item Trace effect of one-unit shock to variable $j$ on all variables over time
+    \item $\text{IRF}(h) = \frac{\partial \vect{y}_{t+h}}{\partial \epsilon_{jt}}$
+    \item Visualize dynamic relationships
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. Forecast Error Variance Decomposition:}
+  \begin{itemize}
+    \item Decompose forecast error variance into contributions from each shock
+    \item Measures relative importance of each variable
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{State Space Models}
+% ================================================================
+
+\begin{frame}{State Space Representation}
+  \begin{definitionbox}{State Space Model}
+    \textbf{State equation:}
+    \begin{equation}
+      \vect{x}_t = \mat{F}_t \vect{x}_{t-1} + \mat{B}_t \vect{u}_t + \vect{w}_t
+    \end{equation}
+
+    \textbf{Observation equation:}
+    \begin{equation}
+      \vect{y}_t = \mat{H}_t \vect{x}_t + \vect{v}_t
+    \end{equation}
+
+    where $\vect{w}_t \sim \Normal(\vect{0}, \mat{Q}_t)$ and $\vect{v}_t \sim \Normal(\vect{0}, \mat{R}_t)$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Components:}
+  \begin{itemize}
+    \item $\vect{x}_t$: Hidden state (unobserved)
+    \item $\vect{y}_t$: Observations
+    \item $\mat{F}_t$: State transition matrix
+    \item $\mat{H}_t$: Observation matrix
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Kalman Filter}
+  \textbf{Optimal recursive algorithm for linear Gaussian state space models.}
+
+  \vspace{0.5em}
+
+  \textbf{Prediction step:}
+  \begin{align}
+    \hat{\vect{x}}_{t|t-1} &= \mat{F}_t \hat{\vect{x}}_{t-1|t-1} + \mat{B}_t \vect{u}_t \\
+    \mat{P}_{t|t-1} &= \mat{F}_t \mat{P}_{t-1|t-1} \mat{F}_t' + \mat{Q}_t
+  \end{align}
+
+  \textbf{Update step:}
+  \begin{align}
+    \mat{K}_t &= \mat{P}_{t|t-1} \mat{H}_t' (\mat{H}_t \mat{P}_{t|t-1} \mat{H}_t' + \mat{R}_t)^{-1} \\
+    \hat{\vect{x}}_{t|t} &= \hat{\vect{x}}_{t|t-1} + \mat{K}_t (\vect{y}_t - \mat{H}_t \hat{\vect{x}}_{t|t-1}) \\
+    \mat{P}_{t|t} &= (\mat{I} - \mat{K}_t \mat{H}_t) \mat{P}_{t|t-1}
+  \end{align}
+
+  where $\mat{K}_t$ is the Kalman gain.
+\end{frame}
+
+\begin{frame}{Applications of State Space Models}
+  \textbf{1. Structural Time Series:}
+  \begin{itemize}
+    \item Decompose series into trend, seasonal, cycle
+    \item Handle missing data and irregular spacing
+    \item Example: Local level model, local linear trend
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. Dynamic Linear Models:}
+  \begin{itemize}
+    \item Time-varying regression coefficients
+    \item Bayesian inference via MCMC or particle filters
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. ARMA as State Space:}
+  \begin{itemize}
+    \item Any ARMA model can be written in state space form
+    \item Enables ML estimation via Kalman filter
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Forecasting}
+% ================================================================
+
+\begin{frame}{Point Forecasts}
+  \textbf{h-step ahead forecast:}
+  \begin{equation}
+    \hat{y}_{T+h|T} = \E[y_{T+h} | y_1, \ldots, y_T]
+  \end{equation}
+
+  \vspace{0.5em}
+
+  \textbf{For ARIMA models:}
+  \begin{itemize}
+    \item 1-step: Direct substitution
+    \item Multi-step: Iterative forecasting
+    \item Forecast variance increases with horizon $h$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{AR(1) Forecast}
+    Model: $y_t = 0.8 y_{t-1} + \epsilon_t$
+
+    Forecasts:
+    \begin{align*}
+      \hat{y}_{T+1|T} &= 0.8 y_T \\
+      \hat{y}_{T+2|T} &= 0.8 \hat{y}_{T+1|T} = 0.8^2 y_T \\
+      \hat{y}_{T+h|T} &= 0.8^h y_T \to 0 \text{ as } h \to \infty
+    \end{align*}
+  \end{examplebox}
+\end{frame}
+
+\begin{frame}{Prediction Intervals}
+  \textbf{95\% prediction interval:}
+  \begin{equation}
+    \hat{y}_{T+h|T} \pm 1.96 \sqrt{\Var(y_{T+h} - \hat{y}_{T+h|T})}
+  \end{equation}
+
+  \vspace{0.5em}
+
+  \textbf{Forecast error variance:}
+  \begin{itemize}
+    \item Increases with forecast horizon
+    \item Depends on model parameters and residual variance
+    \item For ARMA: Analytical formula available
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Bootstrap Prediction Intervals}
+    For complex models without analytical variance:
+    \begin{enumerate}
+      \item Fit model and obtain residuals
+      \item Resample residuals with replacement
+      \item Generate forecast paths
+      \item Compute quantiles of forecast distribution
+    \end{enumerate}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Forecast Evaluation Metrics}
+  \textbf{Common metrics for evaluating forecasts:}
+
+  \vspace{0.5em}
+
+  \begin{itemize}
+    \item \textbf{Mean Absolute Error (MAE):}
+    \begin{equation}
+      \text{MAE} = \frac{1}{n} \sum_{t=1}^n |y_t - \hat{y}_t|
+    \end{equation}
+
+    \item \textbf{Root Mean Squared Error (RMSE):}
+    \begin{equation}
+      \text{RMSE} = \sqrt{\frac{1}{n} \sum_{t=1}^n (y_t - \hat{y}_t)^2}
+    \end{equation}
+
+    \item \textbf{Mean Absolute Percentage Error (MAPE):}
+    \begin{equation}
+      \text{MAPE} = \frac{100}{n} \sum_{t=1}^n \left|\frac{y_t - \hat{y}_t}{y_t}\right|
+    \end{equation}
+
+    \item \textbf{Symmetric MAPE (sMAPE):}
+    \begin{equation}
+      \text{sMAPE} = \frac{100}{n} \sum_{t=1}^n \frac{2|y_t - \hat{y}_t|}{|y_t| + |\hat{y}_t|}
+    \end{equation}
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Modern Deep Learning Approaches}
+% ================================================================
+
+\begin{frame}{Recurrent Neural Networks (RNN)}
+  \begin{definitionbox}{RNN Architecture}
+    Hidden state update:
+    \begin{equation}
+      \vect{h}_t = \tanh(\mat{W}_{hh} \vect{h}_{t-1} + \mat{W}_{xh} \vect{x}_t + \vect{b}_h)
+    \end{equation}
+
+    Output:
+    \begin{equation}
+      \vect{y}_t = \mat{W}_{hy} \vect{h}_t + \vect{b}_y
+    \end{equation}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Challenges:}
+  \begin{itemize}
+    \item \textbf{Vanishing gradients:} Hard to learn long-term dependencies
+    \item \textbf{Exploding gradients:} Unstable training
+  \end{itemize}
+
+  \textbf{Solution:} Long Short-Term Memory (LSTM) and GRU
+\end{frame}
+
+\begin{frame}{Long Short-Term Memory (LSTM)}
+  \textbf{LSTM cell with gating mechanisms:}
+
+  \begin{align*}
+    \text{Forget gate:} \quad & \vect{f}_t = \sigma(\mat{W}_f [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_f) \\
+    \text{Input gate:} \quad & \vect{i}_t = \sigma(\mat{W}_i [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_i) \\
+    \text{Candidate:} \quad & \tilde{\vect{c}}_t = \tanh(\mat{W}_c [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_c) \\
+    \text{Cell state:} \quad & \vect{c}_t = \vect{f}_t \odot \vect{c}_{t-1} + \vect{i}_t \odot \tilde{\vect{c}}_t \\
+    \text{Output gate:} \quad & \vect{o}_t = \sigma(\mat{W}_o [\vect{h}_{t-1}, \vect{x}_t] + \vect{b}_o) \\
+    \text{Hidden state:} \quad & \vect{h}_t = \vect{o}_t \odot \tanh(\vect{c}_t)
+  \end{align*}
+
+  \vspace{0.3em}
+
+  \textbf{Key features:}
+  \begin{itemize}
+    \item Cell state $\vect{c}_t$ provides long-term memory
+    \item Gates control information flow
+    \item Mitigates vanishing gradient problem
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Seq2Seq and Attention}
+  \textbf{Sequence-to-Sequence (Seq2Seq):}
+  \begin{itemize}
+    \item Encoder: Maps input sequence to context vector
+    \item Decoder: Generates output sequence from context
+    \item Used for variable-length forecasting
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Attention Mechanism:}
+  \begin{equation}
+    \text{Attention}(\vect{Q}, \vect{K}, \vect{V}) = \text{softmax}\left(\frac{\vect{Q}\vect{K}^T}{\sqrt{d_k}}\right)\vect{V}
+  \end{equation}
+
+  \begin{itemize}
+    \item Allows decoder to focus on relevant parts of input
+    \item Addresses bottleneck of fixed-size context vector
+    \item Improves long-range dependencies
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Transformers for Time Series}
+  \textbf{Self-Attention for Temporal Data:}
+
+  \begin{itemize}
+    \item Parallel processing (no sequential constraint)
+    \item Direct modeling of pairwise dependencies
+    \item Positional encoding for temporal information
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Recent architectures:}
+  \begin{itemize}
+    \item \textbf{Temporal Fusion Transformer (TFT):}
+    \begin{itemize}
+      \item Multi-horizon forecasting
+      \item Variable selection
+      \item Interpretable attention weights
+    \end{itemize}
+
+    \item \textbf{Autoformer:}
+    \begin{itemize}
+      \item Decomposition-based architecture
+      \item Auto-correlation mechanism
+      \item Strong seasonality modeling
+    \end{itemize}
+
+    \item \textbf{Informer:}
+    \begin{itemize}
+      \item Efficient for long sequences
+      \item ProbSparse attention
+      \item Reduced computational complexity
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hybrid Approaches}
+  \textbf{Combining classical and deep learning:}
+
+  \vspace{0.5em}
+
+  \textbf{1. ES-RNN (Smyl, 2020):}
+  \begin{itemize}
+    \item Exponential smoothing + LSTM
+    \item Winner of M4 forecasting competition
+    \item Combines statistical principles with DL flexibility
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{2. N-BEATS (Oreshkin et al., 2019):}
+  \begin{itemize}
+    \item Pure deep learning, no domain knowledge
+    \item Interpretable decomposition (trend + seasonality)
+    \item Strong performance on multiple benchmarks
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{3. Prophet (Facebook):}
+  \begin{itemize}
+    \item Additive model with automatic changepoint detection
+    \item Handles missing data and outliers
+    \item User-friendly for business forecasting
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Best Practices and Pitfalls}
+% ================================================================
+
+\begin{frame}{Model Selection and Validation}
+  \textbf{Time Series Cross-Validation:}
+
+  \begin{itemize}
+    \item \textbf{Rolling window:} Train on $[1, t]$, test on $[t+1, t+h]$
+    \item \textbf{Expanding window:} Increasingly larger training sets
+    \item Never use future data for training (data leakage!)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Model Selection Criteria:}
+  \begin{itemize}
+    \item \textbf{AIC:} $-2\log L + 2k$ (penalizes complexity)
+    \item \textbf{BIC:} $-2\log L + k\log n$ (stronger penalty)
+    \item \textbf{Out-of-sample error:} Most reliable for forecasting
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Overfitting Warning}
+    Complex models (many parameters, deep networks) can overfit!
+    \begin{itemize}
+      \item Use validation set
+      \item Regularization (L1/L2, dropout)
+      \item Ensemble methods
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Common Pitfalls}
+  \begin{enumerate}
+    \item \textbf{Ignoring stationarity:}
+    \begin{itemize}
+      \item Test for unit roots (ADF, KPSS)
+      \item Transform data appropriately
+    \end{itemize}
+
+    \item \textbf{Data snooping:}
+    \begin{itemize}
+      \item Don't repeatedly test on same validation set
+      \item Use separate test set for final evaluation
+    \end{itemize}
+
+    \item \textbf{Spurious patterns:}
+    \begin{itemize}
+      \item Be skeptical of perfect fits
+      \item Check residual diagnostics
+    \end{itemize}
+
+    \item \textbf{Structural breaks:}
+    \begin{itemize}
+      \item Economy/system changes over time
+      \item Consider adaptive methods or regime-switching models
+    \end{itemize}
+
+    \item \textbf{Scale issues:}
+    \begin{itemize}
+      \item Neural networks sensitive to input scale
+      \item Normalize/standardize features
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \textbf{Classical Methods:}
+  \begin{itemize}
+    \item ARIMA: Foundation of time series analysis
+    \item VAR: Multivariate relationships
+    \item State Space: Flexible framework, optimal filtering
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Deep Learning:}
+  \begin{itemize}
+    \item LSTM/GRU: Handle long-term dependencies
+    \item Transformers: State-of-the-art for many tasks
+    \item Hybrid: Combine strengths of both approaches
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Key Takeaways:}
+  \begin{itemize}
+    \item No universal best method
+    \item Understand your data and problem
+    \item Validate carefully with proper time series CV
+    \item Consider ensemble of multiple approaches
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Further Reading}
+  \textbf{Classical Methods:}
+  \begin{itemize}
+    \item Hamilton (1994). \textit{Time Series Analysis}
+    \item Box, Jenkins, Reinsel (2015). \textit{Time Series Analysis: Forecasting and Control}
+    \item Lütkepohl (2005). \textit{New Introduction to Multiple Time Series Analysis}
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Deep Learning:}
+  \begin{itemize}
+    \item Goodfellow, Bengio, Courville (2016). \textit{Deep Learning}
+    \item Lim, Zohren (2021). "Time-series forecasting with deep learning: a survey"
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Applied:}
+  \begin{itemize}
+    \item Hyndman, Athanasopoulos (2021). \textit{Forecasting: Principles and Practice}
+    \item Tsay (2014). \textit{Multivariate Time Series Analysis}
+  \end{itemize}
+\end{frame}
+
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for industry applications
+  \item Time series research community
+}
+
+\contactslide
+
+\end{document}

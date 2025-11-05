@@ -1,0 +1,360 @@
+name: Generate PDF Previews
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.tex'
+      - 'theme/**'
+  workflow_dispatch:
+
+jobs:
+  generate-previews:
+    name: Generate PDF Previews
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        presentation:
+          - name: "Time Series Analysis"
+            path: "time_series/time_series_beamer"
+          - name: "Explainable AI"
+            path: "explainable_ai/interpretability_beamer"
+          - name: "Deep Learning"
+            path: "deep_learning/deep_learning_beamer"
+          - name: "Reinforcement Learning"
+            path: "reinforcement_learning/rl_beamer"
+          - name: "Optimization"
+            path: "optimization/optimization_beamer"
+          - name: "MCMC Methods"
+            path: "mcmc/mcmc_beamer"
+          - name: "Causal Inference"
+            path: "causal_inference/causal_inference_beamer"
+          - name: "Statistical Learning"
+            path: "statistical_learning/statistical_learning_beamer"
+          - name: "Bayesian ML"
+            path: "bayesian_ml/bayesian_ml_beamer"
+          - name: "Feature Engineering"
+            path: "feature_engineering/feature_engineering_beamer"
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ${{ matrix.presentation.path }}.tex
+          args: -pdf -interaction=nonstopmode
+
+      - name: Install ImageMagick and Poppler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick poppler-utils ghostscript
+
+      - name: Update ImageMagick policy for PDF
+        run: |
+          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
+
+      - name: Generate preview images (first 3 slides)
+        run: |
+          # Convert first 3 pages to PNG
+          pdftoppm -png -f 1 -l 3 -r 150 ${{ matrix.presentation.path }}.pdf preview
+
+          # Create thumbnails
+          for img in preview-*.png; do
+            convert "$img" -resize 400x300 "thumb_$img"
+          done
+
+          # Create a contact sheet (grid of thumbnails)
+          montage thumb_preview-*.png -geometry 400x300+10+10 -tile 3x1 ${{ matrix.presentation.path }}_preview.png
+
+      - name: Upload preview images
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ matrix.presentation.name }}
+          path: |
+            preview-*.png
+            thumb_preview-*.png
+            ${{ matrix.presentation.path }}_preview.png
+          retention-days: 90
+
+  create-preview-page:
+    name: Create Preview Gallery Page
+    needs: generate-previews
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all preview artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: previews
+
+      - name: Generate HTML gallery
+        run: |
+          cat > index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Academic Presentations - Preview Gallery</title>
+            <style>
+              * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+              }
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 2rem;
+              }
+              .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                padding: 2rem;
+              }
+              header {
+                text-align: center;
+                margin-bottom: 3rem;
+                padding-bottom: 2rem;
+                border-bottom: 3px solid #667eea;
+              }
+              h1 {
+                color: #2d3748;
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+              }
+              .subtitle {
+                color: #718096;
+                font-size: 1.1rem;
+              }
+              .gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 2rem;
+                margin-bottom: 2rem;
+              }
+              .card {
+                background: #f7fafc;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+              }
+              .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+              }
+              .card-image {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                background: #edf2f7;
+              }
+              .card-content {
+                padding: 1.5rem;
+              }
+              .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.5rem;
+              }
+              .card-description {
+                color: #718096;
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+              }
+              .badge {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                background: #667eea;
+                color: white;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+              }
+              footer {
+                text-align: center;
+                padding-top: 2rem;
+                border-top: 2px solid #e2e8f0;
+                color: #718096;
+              }
+              .github-link {
+                display: inline-block;
+                margin-top: 1rem;
+                padding: 0.75rem 1.5rem;
+                background: #2d3748;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: background 0.3s ease;
+              }
+              .github-link:hover {
+                background: #1a202c;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <header>
+                <h1>Academic Presentations</h1>
+                <p class="subtitle">Data Science & Machine Learning Course Materials</p>
+                <p class="subtitle">by Diogo Ribeiro - ESMAD</p>
+              </header>
+
+              <div class="gallery">
+                <div class="card">
+                  <img src="previews/preview-Time Series Analysis/time_series_time_series_beamer_preview.png" alt="Time Series" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Time+Series'">
+                  <div class="card-content">
+                    <h3 class="card-title">Time Series Analysis</h3>
+                    <p class="card-description">ARIMA, VAR, state space models, and deep learning approaches (LSTM, Transformers)</p>
+                    <span class="badge">Statistics</span>
+                    <span class="badge">Deep Learning</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Explainable AI/explainable_ai_interpretability_beamer_preview.png" alt="XAI" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Explainable+AI'">
+                  <div class="card-content">
+                    <h3 class="card-title">Explainable AI</h3>
+                    <p class="card-description">SHAP, LIME, model interpretability, fairness, and bias detection</p>
+                    <span class="badge">ML</span>
+                    <span class="badge">Ethics</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Deep Learning/deep_learning_deep_learning_beamer_preview.png" alt="Deep Learning" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Deep+Learning'">
+                  <div class="card-content">
+                    <h3 class="card-title">Deep Learning Fundamentals</h3>
+                    <p class="card-description">Neural networks, CNNs, RNNs, Transformers, and modern architectures</p>
+                    <span class="badge">Neural Networks</span>
+                    <span class="badge">Computer Vision</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Reinforcement Learning/reinforcement_learning_rl_beamer_preview.png" alt="RL" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Reinforcement+Learning'">
+                  <div class="card-content">
+                    <h3 class="card-title">Reinforcement Learning</h3>
+                    <p class="card-description">MDPs, Q-learning, policy gradients, and deep RL applications</p>
+                    <span class="badge">RL</span>
+                    <span class="badge">Game AI</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Optimization/optimization_optimization_beamer_preview.png" alt="Optimization" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Optimization'">
+                  <div class="card-content">
+                    <h3 class="card-title">Optimization for Data Science</h3>
+                    <p class="card-description">Convex optimization, gradient descent, and evolutionary algorithms</p>
+                    <span class="badge">Optimization</span>
+                    <span class="badge">ML Training</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-MCMC Methods/mcmc_mcmc_beamer_preview.png" alt="MCMC" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=MCMC+Methods'">
+                  <div class="card-content">
+                    <h3 class="card-title">MCMC Methods</h3>
+                    <p class="card-description">Metropolis-Hastings, Hamiltonian Monte Carlo, and Bayesian inference</p>
+                    <span class="badge">Bayesian</span>
+                    <span class="badge">Sampling</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Causal Inference/causal_inference_causal_inference_beamer_preview.png" alt="Causal Inference" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Causal+Inference'">
+                  <div class="card-content">
+                    <h3 class="card-title">Causal Inference</h3>
+                    <p class="card-description">Potential outcomes, DAGs, IV, RDD, and difference-in-differences</p>
+                    <span class="badge">Causality</span>
+                    <span class="badge">Econometrics</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Statistical Learning/statistical_learning_statistical_learning_beamer_preview.png" alt="Statistical Learning" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Statistical+Learning'">
+                  <div class="card-content">
+                    <h3 class="card-title">Statistical Learning</h3>
+                    <p class="card-description">Regression, classification, regularization, and model selection</p>
+                    <span class="badge">Statistics</span>
+                    <span class="badge">ML</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Bayesian ML/bayesian_ml_bayesian_ml_beamer_preview.png" alt="Bayesian ML" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Bayesian+ML'">
+                  <div class="card-content">
+                    <h3 class="card-title">Bayesian Machine Learning</h3>
+                    <p class="card-description">Bayesian inference, probabilistic models, and uncertainty quantification</p>
+                    <span class="badge">Bayesian</span>
+                    <span class="badge">Probabilistic ML</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <img src="previews/preview-Feature Engineering/feature_engineering_feature_engineering_beamer_preview.png" alt="Feature Engineering" class="card-image" onerror="this.src='https://via.placeholder.com/400x200?text=Feature+Engineering'">
+                  <div class="card-content">
+                    <h3 class="card-title">Feature Engineering</h3>
+                    <p class="card-description">Feature creation, selection, transformation, and dimensionality reduction</p>
+                    <span class="badge">Data Preprocessing</span>
+                    <span class="badge">ML Pipeline</span>
+                  </div>
+                </div>
+              </div>
+
+              <footer>
+                <p>&copy; 2025 Diogo Ribeiro - ESMAD & Mysense.ai</p>
+                <p>Licensed under CC BY-SA 4.0 (presentations) and MIT (code)</p>
+                <a href="https://github.com/diogoribeiro7/academic-presentations" class="github-link">View on GitHub</a>
+              </footer>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      - name: Commit and push preview page
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update preview gallery [skip ci]" || echo "No changes to commit"
+          git push origin gh-pages
+
+  preview-summary:
+    name: Preview Generation Summary
+    needs: [generate-previews, create-preview-page]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Create summary
+        run: |
+          echo "# PDF Preview Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Preview Generation: ${{ needs.generate-previews.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Gallery Page: ${{ needs.create-preview-page.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Preview Gallery" >> $GITHUB_STEP_SUMMARY
+          echo "View the gallery at: https://diogoribeiro7.github.io/academic-presentations/" >> $GITHUB_STEP_SUMMARY

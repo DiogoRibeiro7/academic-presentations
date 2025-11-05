@@ -1,0 +1,344 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{MCMC Methods - Problem Set}
+\rhead{Diogo Ribeiro, ESMAD}
+\cfoot{\thepage}
+
+% Theorem environments
+\newtheorem{exercise}{Exercise}
+\newtheorem{problem}{Problem}
+
+% Colors for code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{\textbf{Markov Chain Monte Carlo Methods}\\
+Problem Set}
+\author{Diogo Ribeiro\\
+\textit{ESMAD - Escola Superior de Média Arte e Design}\\
+\textit{Lead Data Scientist, Mysense.ai}\\
+\href{mailto:dfr@esmad.ipp.pt}{dfr@esmad.ipp.pt}\\
+ORCID: \href{https://orcid.org/0009-0001-2022-7072}{0009-0001-2022-7072}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This problem set covers fundamental and advanced concepts in Markov Chain Monte Carlo (MCMC) methods. Students should complete these exercises to gain practical experience with MCMC algorithms, convergence diagnostics, and applications to Bayesian inference. Solutions should be submitted as Jupyter notebooks or R Markdown documents with complete code and explanations.
+\end{abstract}
+
+\section{Theoretical Foundations}
+
+\begin{exercise}[Detailed Balance]
+Consider a Markov chain with transition kernel $K(x \to y)$ and stationary distribution $\pi(x)$.
+
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that if the detailed balance condition holds:
+    $$\pi(x)K(x \to y) = \pi(y)K(y \to x)$$
+    then $\pi$ is a stationary distribution of the chain.
+
+    \item Show that the Metropolis-Hastings algorithm satisfies detailed balance with respect to the target distribution $\pi(x)$.
+
+    \item Give an example of a Markov chain that has $\pi$ as a stationary distribution but does not satisfy detailed balance.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[Acceptance Probability]
+The Metropolis-Hastings algorithm uses acceptance probability:
+$$\alpha(x \to x') = \min\left(1, \frac{\pi(x')q(x'|x)}{\pi(x)q(x|x')}\right)$$
+
+\begin{enumerate}[label=(\alph*)]
+    \item Derive this formula from the detailed balance condition.
+
+    \item For a symmetric proposal $q(x'|x) = q(x|x')$, show that this reduces to the Metropolis algorithm acceptance probability.
+
+    \item Consider an asymmetric proposal. How does the Hastings correction $\frac{q(x|x')}{q(x'|x)}$ affect the acceptance rate?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[Convergence Diagnostics]
+Explain the following convergence diagnostics and when each is most useful:
+
+\begin{enumerate}[label=(\alph*)]
+    \item Gelman-Rubin $\hat{R}$ statistic
+    \item Effective Sample Size (ESS)
+    \item Geweke diagnostic
+    \item Autocorrelation plots
+\end{enumerate}
+
+For each, provide:
+\begin{itemize}
+    \item Mathematical definition
+    \item Interpretation guidelines
+    \item When it might give misleading results
+\end{itemize}
+\end{exercise}
+
+\section{Implementation Exercises}
+
+\begin{problem}[Metropolis-Hastings from Scratch]
+Implement the Metropolis-Hastings algorithm to sample from a mixture of two Gaussians:
+$$\pi(x) = 0.3 \mathcal{N}(-3, 1) + 0.7 \mathcal{N}(2, 1.5)$$
+
+\textbf{Requirements:}
+\begin{enumerate}
+    \item Use a Gaussian random walk proposal: $q(x'|x) = \mathcal{N}(x, \sigma^2)$
+    \item Experiment with different proposal variances: $\sigma \in \{0.5, 1.0, 2.5, 5.0\}$
+    \item Generate 10,000 samples with 2,000 burn-in
+    \item Plot:
+    \begin{itemize}
+        \item Trace plots
+        \item Histograms comparing samples to true density
+        \item Autocorrelation functions
+        \item Acceptance rates vs. proposal variance
+    \end{itemize}
+    \item Calculate effective sample size for each $\sigma$
+    \item Which proposal variance gives the best efficiency?
+\end{enumerate}
+\end{problem}
+
+\begin{problem}[Adaptive MCMC]
+Implement an adaptive Metropolis algorithm that automatically tunes the proposal variance during burn-in.
+
+\textbf{Algorithm:}
+\begin{enumerate}
+    \item Start with initial proposal variance $\sigma^2_0$
+    \item Every 50 iterations during burn-in:
+    \begin{itemize}
+        \item If acceptance rate $> 0.44$: increase $\sigma^2$ by 10\%
+        \item If acceptance rate $< 0.23$: decrease $\sigma^2$ by 10\%
+    \end{itemize}
+    \item Fix $\sigma^2$ after burn-in
+\end{enumerate}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Implement this algorithm
+    \item Test on the mixture distribution from Problem 1
+    \item Plot the evolution of $\sigma^2$ during burn-in
+    \item Compare final performance to fixed proposals
+\end{enumerate}
+
+\textbf{Note:} The target acceptance rates 0.44 and 0.23 are theoretically optimal for 1D and high-dimensional Gaussian targets respectively.
+\end{problem}
+
+\begin{problem}[Hamiltonian Monte Carlo]
+Implement basic Hamiltonian Monte Carlo for a 2D correlated Gaussian:
+$$\pi(x) = \mathcal{N}\left(\mu, \Sigma\right)$$
+where $\mu = [0, 0]^T$ and
+$$\Sigma = \begin{pmatrix} 1 & 0.8 \\ 0.8 & 1 \end{pmatrix}$$
+
+\textbf{Requirements:}
+\begin{enumerate}
+    \item Implement leapfrog integrator
+    \item Use $L = 20$ leapfrog steps with step size $\epsilon = 0.1$
+    \item Generate 5,000 samples
+    \item Compare to Metropolis-Hastings:
+    \begin{itemize}
+        \item Acceptance rates
+        \item Effective sample size
+        \item Autocorrelation
+        \item Mixing (visual inspection of 2D scatter plots)
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Bonus:} Implement a simple step size adaptation during burn-in to achieve acceptance rate $\approx 0.65$.
+\end{problem}
+
+\section{Bayesian Inference Applications}
+
+\begin{problem}[Logistic Regression]
+Use MCMC to perform Bayesian inference for logistic regression.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Generate synthetic data: $n = 200$ observations
+    \item True parameters: $\beta_0 = -1.5, \beta_1 = 2.0, \beta_2 = -0.5$
+    \item Model: $P(y_i = 1 | x_i) = \text{logit}^{-1}(\beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2})$
+    \item Prior: $\beta_j \sim \mathcal{N}(0, 10)$ for all $j$
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Implement Metropolis-Hastings for the posterior $p(\beta | y, X)$
+    \item Run multiple chains from different starting points
+    \item Check convergence using $\hat{R}$ statistic
+    \item Compute posterior means and 95\% credible intervals
+    \item Compare to maximum likelihood estimates
+    \item Make predictions and plot posterior predictive distribution
+\end{enumerate}
+\end{problem}
+
+\begin{problem}[Hierarchical Model]
+Implement MCMC for a hierarchical (mixed effects) model.
+
+\textbf{Model:}
+\begin{align*}
+y_{ij} &\sim \mathcal{N}(\mu_i + \beta x_{ij}, \sigma^2) \quad \text{(likelihood)}\\
+\mu_i &\sim \mathcal{N}(\mu_0, \tau^2) \quad \text{(group effects)}\\
+\mu_0 &\sim \mathcal{N}(0, 100) \quad \text{(hyperprior)}\\
+\beta &\sim \mathcal{N}(0, 10)\\
+\sigma^2, \tau^2 &\sim \text{Inv-Gamma}(1, 1)
+\end{align*}
+
+where $i = 1, \ldots, J$ indexes groups and $j = 1, \ldots, n_i$ indexes observations within groups.
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Simulate data with $J = 10$ groups, $n_i = 20$ observations each
+    \item Implement Gibbs sampler (derive full conditionals)
+    \item Estimate all parameters
+    \item Compute shrinkage: compare $\mu_i$ to group-specific means
+    \item Visualize posterior distributions
+\end{enumerate}
+\end{problem}
+
+\section{Advanced Topics}
+
+\begin{problem}[Challenging Distributions]
+Test your MCMC implementations on challenging target distributions:
+
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Neal's Funnel:}
+    \begin{align*}
+    v &\sim \mathcal{N}(0, 9)\\
+    x_i | v &\sim \mathcal{N}(0, e^v) \quad i = 1, \ldots, 9
+    \end{align*}
+
+    \item \textbf{Rosenbrock's Banana:}
+    $$\pi(x_1, x_2) \propto \exp\left(-\frac{x_1^2}{200} - \frac{1}{2}(x_2 - x_1^2)^2\right)$$
+
+    \item \textbf{Multimodal Distribution:}
+    $$\pi(x) = 0.3\mathcal{N}(-5, 1) + 0.3\mathcal{N}(0, 0.5) + 0.4\mathcal{N}(5, 1)$$
+\end{enumerate}
+
+For each distribution:
+\begin{itemize}
+    \item Try standard Metropolis-Hastings
+    \item Try Hamiltonian Monte Carlo (where applicable)
+    \item Document challenges encountered
+    \item Propose solutions or modifications
+    \item Compare mixing and convergence
+\end{itemize}
+\end{problem}
+
+\begin{problem}[Tempering]
+Implement parallel tempering to improve mixing for multimodal distributions.
+
+\textbf{Algorithm:}
+\begin{enumerate}
+    \item Run $K$ chains in parallel with temperatures $T_1 = 1 < T_2 < \cdots < T_K$
+    \item Each chain targets $\pi^{1/T_k}(x)$
+    \item Periodically propose swaps between adjacent chains
+    \item Accept swaps with Metropolis-Hastings criterion
+\end{enumerate}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Implement parallel tempering
+    \item Test on the multimodal distribution from Problem 6
+    \item Use $K = 5$ chains with temperatures $[1.0, 1.5, 2.5, 5.0, 10.0]$
+    \item Track swap acceptance rates
+    \item Compare to standard MCMC (Problem 6c)
+\end{enumerate}
+\end{problem}
+
+\section{Computational Considerations}
+
+\begin{problem}[Vectorization and Efficiency]
+Optimize your MCMC implementations for performance.
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Profile your Metropolis-Hastings code to identify bottlenecks
+    \item Vectorize operations where possible (avoid loops)
+    \item Compare runtime for:
+    \begin{itemize}
+        \item Naive Python implementation
+        \item Vectorized NumPy implementation
+        \item Numba JIT-compiled version (bonus)
+    \end{itemize}
+    \item Generate timing benchmarks for different sample sizes
+    \item Discuss memory vs. speed tradeoffs
+\end{enumerate}
+\end{problem}
+
+\section{Submission Guidelines}
+
+\subsection{Format}
+\begin{itemize}
+    \item Submit as Jupyter notebook (.ipynb) or R Markdown (.Rmd)
+    \item Include all code, outputs, and plots
+    \item Add markdown cells with explanations
+    \item Code should be well-commented and readable
+\end{itemize}
+
+\subsection{Evaluation Criteria}
+\begin{itemize}
+    \item \textbf{Correctness (40\%):} Algorithms implemented correctly
+    \item \textbf{Analysis (30\%):} Thoughtful interpretation of results
+    \item \textbf{Presentation (20\%):} Clear code and explanations
+    \item \textbf{Creativity (10\%):} Additional insights or extensions
+\end{itemize}
+
+\subsection{Resources}
+\begin{itemize}
+    \item Course implementations: \texttt{code/mcmc/}
+    \item Bibliography: \texttt{bibliographies/mcmc\_references.bib}
+    \item Documentation: \href{https://github.com/...}{GitHub Repository}
+\end{itemize}
+
+\section{Recommended Reading}
+
+\begin{enumerate}
+    \item Metropolis et al. (1953). "Equation of state calculations by fast computing machines"
+    \item Hastings (1970). "Monte Carlo sampling methods using Markov chains"
+    \item Gelman \& Rubin (1992). "Inference from iterative simulation"
+    \item Neal (2011). "MCMC using Hamiltonian dynamics"
+    \item Brooks et al. (2011). "Handbook of Markov Chain Monte Carlo"
+\end{enumerate}
+
+\vfill
+\hrule
+\vspace{0.5cm}
+\noindent\textbf{Contact:} Diogo Ribeiro, dfr@esmad.ipp.pt\\
+\textbf{Office Hours:} By appointment\\
+\textbf{Course Materials:} Available on repository
+
+\end{document}

@@ -1,0 +1,489 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepackage{fancyhdr}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Causal Inference - Problem Set}
+\rhead{Diogo Ribeiro, ESMAD}
+\cfoot{\thepage}
+
+% Theorem environments
+\newtheorem{exercise}{Exercise}
+\newtheorem{problem}{Problem}
+
+\title{\textbf{Causal Inference: Modern Methods}\\
+Problem Set}
+\author{Diogo Ribeiro\\
+\textit{ESMAD - Escola Superior de Média Arte e Design}\\
+\textit{Lead Data Scientist, Mysense.ai}\\
+\href{mailto:dfr@esmad.ipp.pt}{dfr@esmad.ipp.pt}\\
+ORCID: \href{https://orcid.org/0009-0001-2022-7072}{0009-0001-2022-7072}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This problem set covers modern methods in causal inference, including potential outcomes, directed acyclic graphs (DAGs), instrumental variables, regression discontinuity, and difference-in-differences. Students will gain practical experience identifying causal effects from observational data and understanding threats to causal identification.
+\end{abstract}
+
+\section{Potential Outcomes Framework}
+
+\begin{exercise}[Fundamental Problem of Causal Inference]
+Consider a job training program where $D_i = 1$ if individual $i$ receives training and $D_i = 0$ otherwise. Let $Y_i(1)$ be the potential outcome with training and $Y_i(0)$ without.
+
+\begin{enumerate}[label=(\alph*)]
+    \item Define the individual treatment effect (ITE), average treatment effect (ATE), and average treatment effect on the treated (ATT).
+
+    \item Explain why we cannot observe $Y_i(1) - Y_i(0)$ for any individual.
+
+    \item Show that the naive comparison $E[Y_i | D_i = 1] - E[Y_i | D_i = 0]$ equals:
+    $$\underbrace{E[Y_i(1) - Y_i(0) | D_i = 1]}_{\text{ATT}} + \underbrace{E[Y_i(0) | D_i = 1] - E[Y_i(0) | D_i = 0]}_{\text{Selection Bias}}$$
+
+    \item Under what conditions does the naive comparison identify the ATE?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[Conditional Independence Assumption]
+The conditional independence assumption (CIA) or unconfoundedness states:
+$$\{Y_i(0), Y_i(1)\} \perp D_i | X_i$$
+
+\begin{enumerate}[label=(\alph*)]
+    \item Explain this assumption in plain language.
+
+    \item Why is it called "unconfoundedness"?
+
+    \item Give an example where CIA is plausible.
+
+    \item Give an example where CIA is clearly violated.
+
+    \item Under CIA, show that:
+    $$E[Y_i(1) - Y_i(0) | X_i] = E[Y_i | D_i = 1, X_i] - E[Y_i | D_i = 0, X_i]$$
+\end{enumerate}
+\end{exercise}
+
+\section{Directed Acyclic Graphs (DAGs)}
+
+\begin{exercise}[Drawing and Interpreting DAGs]
+For each scenario, draw a DAG and identify the causal effect of interest:
+
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Education and Earnings:}
+    \begin{itemize}
+        \item Treatment: Years of education ($D$)
+        \item Outcome: Annual earnings ($Y$)
+        \item Confounders: Ability ($A$), Family background ($F$)
+        \item Mediator: Job type ($J$)
+    \end{itemize}
+    Draw the DAG and identify:
+    \begin{itemize}
+        \item All paths from $D$ to $Y$
+        \item Which paths are backdoor paths?
+        \item What variables should be controlled?
+        \item What is the direct effect of $D$ on $Y$ (not through $J$)?
+    \end{itemize}
+
+    \item \textbf{Collider Bias:}
+    Consider $D \to Y \leftarrow U$ where $U$ is unobserved.
+    \begin{itemize}
+        \item Explain why conditioning on $Y$ induces association between $D$ and $U$
+        \item Provide a real-world example of collider bias
+    \end{itemize}
+
+    \item \textbf{M-Bias:}
+    Draw a DAG with structure: $U_1 \to D$, $U_2 \to Y$, $U_1 \to M \leftarrow U_2$.
+    \begin{itemize}
+        \item Is there an open backdoor path from $D$ to $Y$?
+        \item What happens if you control for $M$?
+        \item When is controlling for $M$ harmful?
+    \end{itemize}
+\end{enumerate}
+\end{exercise}
+
+\begin{problem}[Backdoor Criterion]
+Use Pearl's backdoor criterion to determine the minimal sufficient adjustment set.
+
+\textbf{Scenario:} Consider the following DAG:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node (D) {$D$};
+    \node (Y) [right of=D, xshift=2cm] {$Y$};
+    \node (X1) [above of=D] {$X_1$};
+    \node (X2) [above of=Y] {$X_2$};
+    \node (X3) [below of=D] {$X_3$};
+    \node (U) [above of=X1, xshift=1cm] {$U$};
+
+    \draw[->] (D) -- (Y);
+    \draw[->] (X1) -- (D);
+    \draw[->] (X1) -- (Y);
+    \draw[->] (X2) -- (Y);
+    \draw[->] (X3) -- (D);
+    \draw[->] (U) -- (X1);
+    \draw[->] (U) -- (X2);
+\end{tikzpicture}
+\end{center}
+
+\begin{enumerate}
+    \item List all paths from $D$ to $Y$
+    \item Identify backdoor paths
+    \item Find all valid adjustment sets
+    \item What is the minimal sufficient adjustment set?
+    \item Can we identify the causal effect if $U$ is unobserved?
+\end{enumerate}
+\end{problem}
+
+\section{Instrumental Variables}
+
+\begin{problem}[Returns to Education]
+Estimate the returns to education using quarter of birth as an instrument.
+
+\textbf{Background:} Angrist \& Krueger (1991) used quarter of birth as an instrument for education, exploiting compulsory schooling laws.
+
+\textbf{Dataset:} Simulate or use provided data with:
+\begin{itemize}
+    \item $Y$: Log annual earnings
+    \item $D$: Years of education
+    \item $Z$: Quarter of birth indicator (born in Q1)
+    \item $X$: Controls (age, region, etc.)
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item \textbf{Motivation:}
+    \begin{itemize}
+        \item Why is education endogenous?
+        \item Draw a DAG showing the endogeneity problem
+        \item Explain how quarter of birth could be a valid instrument
+    \end{itemize}
+
+    \item \textbf{Validity Checks:}
+    \begin{itemize}
+        \item Test relevance: Regress $D$ on $Z$ (first stage)
+        \item Compute first-stage F-statistic
+        \item Discuss exclusion restriction: Why might it fail?
+    \end{itemize}
+
+    \item \textbf{Estimation:}
+    \begin{itemize}
+        \item Estimate OLS (biased)
+        \item Estimate 2SLS
+        \item Compare coefficients
+        \item Compute heteroskedasticity-robust standard errors
+    \end{itemize}
+
+    \item \textbf{Interpretation:}
+    \begin{itemize}
+        \item What is the local average treatment effect (LATE)?
+        \item Who are the compliers?
+        \item Why might IV estimate differ from OLS?
+    \end{itemize}
+
+    \item \textbf{Sensitivity:}
+    \begin{itemize}
+        \item Add/remove controls
+        \item Test overidentification (if multiple instruments)
+        \item Discuss weak instruments problem
+    \end{itemize}
+\end{enumerate}
+\end{problem}
+
+\begin{problem}[Weak Instruments]
+Investigate the consequences of weak instruments.
+
+\textbf{Simulation:}
+\begin{enumerate}
+    \item Generate data: $n = 500$, instrument strength $\gamma \in \{0.05, 0.1, 0.3, 0.5\}$
+    \begin{align*}
+    D &= \gamma Z + \alpha U + \epsilon_D\\
+    Y &= \beta D + \alpha U + \epsilon_Y
+    \end{align*}
+    where $U$ is unobserved confounder.
+
+    \item For each $\gamma$:
+    \begin{itemize}
+        \item Estimate 2SLS
+        \item Compute first-stage F-statistic
+        \item Repeat 1000 times (Monte Carlo)
+    \end{itemize}
+
+    \item Analyze:
+    \begin{itemize}
+        \item Bias of 2SLS estimator
+        \item Coverage of 95\% confidence intervals
+        \item How weak is "weak"? (F < 10 rule of thumb)
+    \end{itemize}
+
+    \item Propose solutions:
+    \begin{itemize}
+        \item Limited information maximum likelihood (LIML)
+        \item Anderson-Rubin test
+        \item Weak instrument robust inference
+    \end{itemize}
+\end{enumerate}
+\end{problem}
+
+\section{Regression Discontinuity Design}
+
+\begin{problem}[Class Size and Student Achievement]
+Use RDD to estimate the effect of class size on test scores.
+
+\textbf{Setup:} Schools with enrollment above 40 students must split into two classes.
+
+\textbf{Data:}
+\begin{itemize}
+    \item Running variable: School enrollment (around cutoff of 40)
+    \item Treatment: Small class (enrollment $\leq$ 40) vs. large class
+    \item Outcome: Average test score
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item \textbf{Identification:}
+    \begin{itemize}
+        \item State the RDD identification assumptions
+        \item Why is continuity of potential outcomes crucial?
+        \item Draw a hypothetical RDD plot
+    \end{itemize}
+
+    \item \textbf{Validity Checks:}
+    \begin{itemize}
+        \item Density test: Check for manipulation of running variable (McCrary test)
+        \item Covariate balance: Test continuity of pre-treatment covariates
+        \item Placebo cutoffs: Test at other points
+    \end{itemize}
+
+    \item \textbf{Estimation:}
+    \begin{itemize}
+        \item Local linear regression (both sides of cutoff)
+        \item Optimal bandwidth selection (Imbens-Kalyanaraman or MSE-optimal)
+        \item Robust inference (bias-corrected CI)
+    \end{itemize}
+
+    \item \textbf{Sensitivity:}
+    \begin{itemize}
+        \item Bandwidth sensitivity plot
+        \item Polynomial order (linear vs. quadratic)
+        \item Donut RDD (exclude observations near cutoff)
+    \end{itemize}
+
+    \item \textbf{Interpretation:}
+    \begin{itemize}
+        \item Is this effect local or global?
+        \item What is the relevant population?
+        \item External validity concerns
+    \end{itemize}
+\end{enumerate}
+\end{problem}
+
+\begin{problem}[Fuzzy RDD]
+Extend to fuzzy RDD where treatment uptake is imperfect.
+
+\textbf{Scenario:} Assignment to small class at cutoff, but:
+\begin{itemize}
+    \item Some schools just above cutoff have small classes (non-compliance)
+    \item Some schools just below have large classes
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Explain the difference between sharp and fuzzy RDD
+    \item Show that fuzzy RDD can be seen as an IV problem
+    \item Estimate both the "first stage" (effect on treatment) and "reduced form" (effect on outcome)
+    \item Compute the fuzzy RDD estimand (ratio)
+    \item Interpret as local average treatment effect (LATE)
+\end{enumerate}
+\end{problem}
+
+\section{Difference-in-Differences}
+
+\begin{problem}[Minimum Wage and Employment]
+Replicate Card \& Krueger (1994) analysis of minimum wage effects.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Treatment: New Jersey minimum wage increase (April 1992)
+    \item Control: Pennsylvania (no increase)
+    \item Outcome: Employment at fast-food restaurants
+    \item Periods: Before (Feb 1992) and After (Nov 1992)
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item \textbf{Identification:}
+    \begin{itemize}
+        \item State parallel trends assumption
+        \item Why is it crucial?
+        \item Draw hypothetical trend plots
+    \end{itemize}
+
+    \item \textbf{Estimation:}
+    \begin{itemize}
+        \item Compute 2x2 DiD estimator (manual calculation)
+        \item Estimate regression specification:
+        $$Y_{it} = \alpha + \beta \text{Treat}_i + \gamma \text{Post}_t + \delta (\text{Treat}_i \times \text{Post}_t) + \epsilon_{it}$$
+        \item Interpret $\delta$ (the DiD estimator)
+        \item Compute cluster-robust standard errors (at state level)
+    \end{itemize}
+
+    \item \textbf{Parallel Trends Testing:}
+    \begin{itemize}
+        \item Test for pre-treatment differential trends
+        \item Event study plot (if multiple time periods available)
+        \item Placebo tests using pre-treatment periods
+    \end{itemize}
+
+    \item \textbf{Extensions:}
+    \begin{itemize}
+        \item Add covariates
+        \item Triple differences (add another control group)
+        \item Heterogeneous treatment effects by restaurant characteristics
+    \end{itemize}
+\end{enumerate}
+\end{problem}
+
+\begin{problem}[Staggered Adoption]
+Analyze staggered treatment adoption with recent methods.
+
+\textbf{Setup:} Multiple states adopt minimum wage increases at different times.
+
+\textbf{Problem:} Two-way fixed effects (TWFE) can give negative weights to some treatment effects (Goodman-Bacon decomposition).
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Simulate staggered adoption data with heterogeneous effects
+    \item Estimate naive TWFE:
+    $$Y_{it} = \alpha_i + \lambda_t + \delta D_{it} + \epsilon_{it}$$
+    \item Show that TWFE can be biased with:
+    \begin{itemize}
+        \item Treatment effect heterogeneity
+        \item Dynamic effects
+    \end{itemize}
+    \item Implement modern alternatives:
+    \begin{itemize}
+        \item Callaway \& Sant'Anna (2021)
+        \item Sun \& Abraham (2021)
+        \item Borusyak et al. (2021)
+    \end{itemize}
+    \item Compare all estimates and discuss
+\end{enumerate}
+\end{problem}
+
+\section{Matching and Propensity Scores}
+
+\begin{problem}[Propensity Score Matching]
+Estimate treatment effects using propensity score methods.
+
+\textbf{Scenario:} Effect of college degree on earnings.
+
+\textbf{Data:}
+\begin{itemize}
+    \item Treatment: College degree (vs. high school)
+    \item Outcome: Annual earnings
+    \item Covariates: Age, gender, parents' education, test scores, etc.
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item \textbf{Propensity Score Estimation:}
+    \begin{itemize}
+        \item Fit logistic regression: $P(D = 1 | X)$
+        \item Check for common support
+        \item Plot propensity score distributions by treatment group
+    \end{itemize}
+
+    \item \textbf{Matching Methods:}
+    \begin{itemize}
+        \item Nearest neighbor matching (1:1, 1:k)
+        \item Caliper matching
+        \item Kernel matching
+    \end{itemize}
+
+    \item \textbf{Balance Checking:}
+    \begin{itemize}
+        \item Standardized mean differences before/after matching
+        \item Love plot
+        \item Variance ratios
+    \end{itemize}
+
+    \item \textbf{Estimate ATT:}
+    \begin{itemize}
+        \item Using matched samples
+        \item IPW (inverse probability weighting)
+        \item Doubly robust estimation
+    \end{itemize}
+
+    \item \textbf{Sensitivity Analysis:}
+    \begin{itemize}
+        \item Rosenbaum bounds
+        \item How strong would hidden bias need to be?
+    \end{itemize}
+\end{enumerate}
+\end{problem}
+
+\section{Synthetic Control Methods}
+
+\begin{problem}[Policy Evaluation]
+Use synthetic control method to evaluate a policy intervention.
+
+\textbf{Example:} German reunification effect on West German GDP (Abadie et al. 2015).
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item Explain the synthetic control idea
+    \item Construct synthetic control as weighted average of donor units:
+    $$\hat{Y}_{0t} = \sum_{j=2}^{J+1} w_j Y_{jt}$$
+    where weights minimize pre-treatment fit
+    \item Estimate treatment effect: $\hat{\tau}_t = Y_{1t} - \hat{Y}_{0t}$
+    \item Placebo tests: Apply method to control units
+    \item Inference: Permutation-based p-values
+    \item Sensitivity: Leave-one-out analysis
+\end{enumerate}
+\end{problem}
+
+\section{Submission Guidelines}
+
+\subsection{Format}
+\begin{itemize}
+    \item Python (Jupyter notebook) or R (R Markdown)
+    \item Include all code, results, and visualizations
+    \item Clear explanations and interpretations
+    \item Well-documented code
+\end{itemize}
+
+\subsection{Evaluation}
+\begin{itemize}
+    \item \textbf{Identification (30\%):} Understanding of causal assumptions
+    \item \textbf{Implementation (30\%):} Correct estimation procedures
+    \item \textbf{Interpretation (25\%):} Thoughtful discussion of results
+    \item \textbf{Validity Checks (15\%):} Robustness and sensitivity analyses
+\end{itemize}
+
+\section{Resources}
+
+\textbf{Code:} \texttt{code/causal\_inference/}\\
+\textbf{Bibliography:} \texttt{bibliographies/causal\_inference\_references.bib}\\
+\textbf{Key Papers:}
+\begin{itemize}
+    \item Angrist \& Pischke (2008). \textit{Mostly Harmless Econometrics}
+    \item Pearl (2009). \textit{Causality}
+    \item Imbens \& Rubin (2015). \textit{Causal Inference for Statistics, Social, and Biomedical Sciences}
+\end{itemize}
+
+\vfill
+\hrule
+\vspace{0.5cm}
+\noindent\textbf{Contact:} Diogo Ribeiro, dfr@esmad.ipp.pt
+
+\end{document}
