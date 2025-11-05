@@ -1,0 +1,781 @@
+% ================================================================
+% CAPSTONE PROJECTS - PREREQUISITES AND LEARNING PATHS
+% Appendix slides for capstone_projects_enhancements.tex
+%
+% Topics Covered:
+% - Technical Prerequisites
+% - Self-Assessment Checklist
+% - Learning Paths by Background
+% - Skill Development Timeline
+%
+% Total: ~8 slides
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+% NOTE: These slides should be presented in Week 0 or as pre-semester materials
+% Can be integrated at the beginning of capstone_projects_enhancements.tex
+
+% ================================================================
+% PREREQUISITES SECTION
+% ================================================================
+
+\section{Prerequisites and Preparation}
+
+% -------------------- Prerequisites Overview --------------------
+
+\begin{frame}{Capstone Project Prerequisites}
+\textbf{What you need to know before starting}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Technical Prerequisites:}
+
+\begin{block}{Programming (Required)}
+\begin{itemize}
+\item \textbf{Python:} Proficient (read/write/debug)
+\item \textbf{Libraries:} pandas, numpy, scikit-learn
+\item \textbf{Jupyter:} Notebooks and lab environments
+\item \textbf{Git:} Version control basics (clone, commit, push)
+\end{itemize}
+\end{block}
+
+\begin{block}{Mathematics (Required)}
+\begin{itemize}
+\item \textbf{Statistics:} Hypothesis testing, confidence intervals
+\item \textbf{Probability:} Distributions, expectation, conditional probability
+\item \textbf{Linear Algebra:} Matrix operations, eigenvalues
+\item \textbf{Calculus:} Derivatives, gradients, optimization
+\end{itemize}
+\end{block}
+
+\begin{block}{Machine Learning (Required)}
+\begin{itemize}
+\item Supervised learning (regression, classification)
+\item Model evaluation (cross-validation, metrics)
+\item Overfitting and regularization
+\item Train/validation/test splits
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Conceptual Prerequisites:}
+
+\begin{block}{Data Science Workflow}
+\begin{itemize}
+\item Problem formulation
+\item Exploratory data analysis
+\item Feature engineering
+\item Model selection and evaluation
+\item Result interpretation
+\end{itemize}
+\end{block}
+
+\begin{block}{Software Engineering (Helpful)}
+\begin{itemize}
+\item Function and class design
+\item Code modularity and reusability
+\item Basic testing concepts
+\item Command-line proficiency
+\end{itemize}
+\end{block}
+
+\begin{block}{Soft Skills (Important)}
+\begin{itemize}
+\item \textbf{Communication:} Technical writing, presentations
+\item \textbf{Time management:} Meeting deadlines
+\item \textbf{Self-directed learning:} Reading documentation
+\item \textbf{Collaboration:} Giving/receiving feedback
+\end{itemize}
+\end{block}
+
+\vspace{0.3cm}
+
+\textbf{Recommended Courses:}
+\begin{itemize}
+\item Intro to Machine Learning
+\item Statistical Inference
+\item Data Structures \& Algorithms
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Self-Assessment Checklist --------------------
+
+\begin{frame}{Self-Assessment Checklist}
+\textbf{Are you ready for a capstone project?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Python \& Data Manipulation:}
+
+\begin{block}{Can you...}
+\begin{itemize}
+\item[$\square$] Load and clean CSV/JSON data with pandas?
+\item[$\square$] Handle missing values (imputation strategies)?
+\item[$\square$] Create new features from existing ones?
+\item[$\square$] Merge/join datasets on common keys?
+\item[$\square$] Group and aggregate data (groupby)?
+\item[$\square$] Create informative visualizations?
+\item[$\square$] Write functions to avoid code duplication?
+\item[$\square$] Debug code using print statements/debugger?
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Machine Learning:}
+
+\begin{block}{Can you...}
+\begin{itemize}
+\item[$\square$] Split data into train/validation/test sets?
+\item[$\square$] Train and evaluate sklearn models?
+\item[$\square$] Interpret accuracy, precision, recall, F1?
+\item[$\square$] Explain overfitting and how to prevent it?
+\item[$\square$] Perform cross-validation?
+\item[$\square$] Choose appropriate metrics for a problem?
+\item[$\square$] Tune hyperparameters systematically?
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Statistics:}
+
+\begin{block}{Can you...}
+\begin{itemize}
+\item[$\square$] Calculate and interpret confidence intervals?
+\item[$\square$] Perform hypothesis tests (t-test, chi-square)?
+\item[$\square$] Explain p-values and statistical significance?
+\item[$\square$] Identify appropriate statistical tests?
+\item[$\square$] Interpret correlation vs. causation?
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Software Engineering:}
+
+\begin{block}{Can you...}
+\begin{itemize}
+\item[$\square$] Use Git for version control?
+\item[$\square$] Navigate terminal/command line?
+\item[$\square$] Install packages with pip/conda?
+\item[$\square$] Write clear code comments?
+\item[$\square$] Structure code into modules?
+\item[$\square$] Read and understand error messages?
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Communication:}
+
+\begin{block}{Can you...}
+\begin{itemize}
+\item[$\square$] Write clear technical documentation?
+\item[$\square$] Create presentation slides?
+\item[$\square$] Explain technical concepts to non-experts?
+\item[$\square$] Accept and incorporate feedback?
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{alertblock}{Assessment}
+\textbf{16-20 checks:} Ready! \quad \textbf{11-15 checks:} Review gaps \quad \textbf{$<$10 checks:} Need prep work
+\end{alertblock}
+\end{frame}
+
+% -------------------- Learning Paths by Background --------------------
+
+\begin{frame}{Learning Paths by Background}
+\textbf{Personalized preparation based on your experience}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Path 1: Software Engineer → Data Science}
+
+\vspace{0.2cm}
+
+\textcolor{forest}{\textbf{Your Strengths:}}
+\begin{itemize}
+\item Strong programming skills
+\item Git and software engineering practices
+\item Code quality and testing
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textcolor{crimson}{\textbf{Gaps to Fill:}}
+\begin{itemize}
+\item Statistical inference
+\item Machine learning theory
+\item Experimental design
+\item Domain knowledge (healthcare, finance, etc.)
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Preparation Timeline (4-6 weeks):}
+
+\begin{enumerate}
+\item \textbf{Week 1-2:} Statistics refresher
+   \begin{itemize}
+   \item \textit{Book:} "Think Stats" (Downey)
+   \item \textit{Course:} Khan Academy Statistics
+   \end{itemize}
+
+\item \textbf{Week 3-4:} ML fundamentals
+   \begin{itemize}
+   \item \textit{Course:} Andrew Ng's ML course
+   \item \textit{Book:} "Hands-On ML" (Géron)
+   \end{itemize}
+
+\item \textbf{Week 5-6:} Practice projects
+   \begin{itemize}
+   \item Kaggle competitions (Titanic, House Prices)
+   \item Focus on: EDA, feature engineering, model evaluation
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Path 2: Statistics/Math → Data Science}
+
+\vspace{0.2cm}
+
+\textcolor{forest}{\textbf{Your Strengths:}}
+\begin{itemize}
+\item Strong mathematical foundation
+\item Statistical inference and hypothesis testing
+\item Experimental design
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textcolor{crimson}{\textbf{Gaps to Fill:}}
+\begin{itemize}
+\item Programming fluency (Python)
+\item Software engineering practices
+\item Production ML systems
+\item Modern ML tools and libraries
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Preparation Timeline (4-6 weeks):}
+
+\begin{enumerate}
+\item \textbf{Week 1-2:} Python for data science
+   \begin{itemize}
+   \item \textit{Course:} "Python Data Science Handbook"
+   \item \textit{Practice:} Daily coding challenges
+   \end{itemize}
+
+\item \textbf{Week 3-4:} ML libraries
+   \begin{itemize}
+   \item scikit-learn documentation tutorials
+   \item pandas and numpy mastery
+   \end{itemize}
+
+\item \textbf{Week 5-6:} Software practices
+   \begin{itemize}
+   \item Git tutorial and practice
+   \item Code organization and modularization
+   \item Testing with pytest
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{block}{Path 3: Domain Expert → Data Science}
+\textbf{Strengths:} Domain knowledge, problem formulation \quad \textbf{Gaps:} Programming + ML + Statistics\\
+\textbf{Timeline:} 8-12 weeks \quad \textbf{Focus:} Start with Python basics → Statistics → ML → Practice
+\end{block}
+\end{frame}
+
+% -------------------- Pre-Capstone Preparation Plan --------------------
+
+\begin{frame}{8-Week Pre-Capstone Preparation Plan}
+\textbf{Intensive preparation for students with gaps}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{|l|l|p{6cm}|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Week} & \textbf{Focus Area} & \textbf{Activities} & \textbf{Assessment} \\
+\hline
+1 & \textcolor{forest}{\textbf{Python Basics}} & Variables, loops, functions, data structures & Coding exercises (50) \\
+\hline
+2 & \textcolor{forest}{\textbf{Pandas \& NumPy}} & Data manipulation, aggregation, vectorization & Mini-project: EDA \\
+\hline
+3 & \textcolor{navyblue}{\textbf{Statistics}} & Descriptive stats, hypothesis tests, intervals & Problem set (20) \\
+\hline
+4 & \textcolor{navyblue}{\textbf{Probability}} & Distributions, expectation, Bayes' theorem & Problem set (20) \\
+\hline
+5 & \textcolor{crimson}{\textbf{ML Fundamentals}} & Supervised learning, train/test, metrics & Implement from scratch \\
+\hline
+6 & \textcolor{crimson}{\textbf{Sklearn \& Tools}} & Pipelines, CV, hyperparameter tuning & Kaggle competition \\
+\hline
+7 & \textcolor{purple}{\textbf{Software Eng}} & Git, testing, code organization, documentation & Build ML package \\
+\hline
+8 & \textcolor{gold}{\textbf{End-to-End}} & Complete mini-project with all components & Portfolio project \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.4cm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Weekly Time Commitment:}
+\begin{itemize}
+\item 10-15 hours per week
+\item 4-6 hours: Video lectures/reading
+\item 4-6 hours: Coding practice
+\item 2-3 hours: Projects
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Resources:}
+\begin{itemize}
+\item \textbf{Python:} Codecademy, DataCamp
+\item \textbf{Statistics:} Khan Academy, StatQuest
+\item \textbf{ML:} fast.ai, Andrew Ng course
+\item \textbf{Practice:} Kaggle Learn, LeetCode
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Week 8 Final Project:}
+
+\begin{block}{Requirements}
+Build a complete ML project:
+\begin{enumerate}
+\item Choose dataset (UCI/Kaggle)
+\item Perform EDA with visualizations
+\item Engineer 5+ features
+\item Train 3+ models
+\item Evaluate with appropriate metrics
+\item Document in README
+\item Push to GitHub
+\end{enumerate}
+
+\textbf{Success criteria:}
+\begin{itemize}
+\item Code runs without errors
+\item Beats naive baseline
+\item Clear documentation
+\item Professional presentation
+\end{itemize}
+\end{block}
+
+\textbf{Pass this?} You're ready for capstone!
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Just-in-Time Learning --------------------
+
+\begin{frame}{Just-in-Time Learning During Capstone}
+\textbf{You don't need to know everything upfront!}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Learning Philosophy:}
+
+\begin{itemize}
+\item \textcolor{forest}{\textbf{Core prerequisite:}} Solid Python, basic ML, statistics
+\item \textcolor{navyblue}{\textbf{Learn as you go:}} Advanced methods, domain-specific techniques
+\item \textcolor{crimson}{\textbf{Leverage resources:}} Documentation, papers, mentors, peers
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Skills by Milestone:}
+
+\begin{block}{Milestone 1 (Weeks 1-3)}
+\textbf{Need now:}
+\begin{itemize}
+\item Data loading and cleaning
+\item Descriptive statistics
+\item Visualization (matplotlib, seaborn)
+\item Problem formulation
+\end{itemize}
+\end{block}
+
+\begin{block}{Milestone 2 (Weeks 4-6)}
+\textbf{Learn during M1-M2:}
+\begin{itemize}
+\item Advanced imputation methods
+\item Feature engineering techniques
+\item Sklearn pipelines
+\item Cross-validation strategies
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{block}{Milestone 3 (Weeks 7-10)}
+\textbf{Learn during M2-M3:}
+\begin{itemize}
+\item Advanced ML methods (XGBoost, neural nets)
+\item Hyperparameter tuning (Optuna, Ray Tune)
+\item Model interpretation (SHAP, LIME)
+\item Statistical testing for model comparison
+\end{itemize}
+\end{block}
+
+\begin{block}{Milestone 4 (Weeks 11-13)}
+\textbf{Learn during M3-M4:}
+\begin{itemize}
+\item Testing (pytest, unittest)
+\item API development (Flask, FastAPI)
+\item Docker containerization
+\item CI/CD pipelines
+\item Documentation tools (Sphinx)
+\end{itemize}
+\end{block}
+
+\vspace{0.3cm}
+
+\textbf{Learning Resources by Phase:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|p{4cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{When} & \textbf{What to Learn} \\
+\hline
+Week 1 & Specific dataset format (EHR, time series, etc.) \\
+\hline
+Week 4 & Domain-specific feature engineering \\
+\hline
+Week 7 & Advanced method from recent paper \\
+\hline
+Week 11 & Deployment tools and best practices \\
+\hline
+\end{tabular}
+\end{table}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Key Insight}
+The capstone is a \textbf{learning experience}. You'll develop new skills throughout. Embrace the growth!
+\end{alertblock}
+\end{frame}
+
+% -------------------- Growth Mindset --------------------
+
+\begin{frame}{Cultivating a Growth Mindset}
+\textbf{How to approach challenges and setbacks}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Fixed vs. Growth Mindset:}
+
+\begin{table}
+\small
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|}
+\hline
+\rowcolor{crimson!20}
+\textbf{Fixed Mindset} & \textbf{Growth Mindset} \\
+\hline
+"I'm not a math person" & "I can learn this with practice" \\
+\hline
+"This is too hard" & "This is challenging, but I'll figure it out" \\
+\hline
+"I failed" & "I learned what doesn't work" \\
+\hline
+"I give up" & "I'll try a different strategy" \\
+\hline
+"I can't do this" & "I can't do this \textit{yet}" \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Common Capstone Challenges:}
+
+\begin{enumerate}
+\item \textcolor{crimson}{\textbf{Week 3:}} "My dataset is too messy"
+   \begin{itemize}
+   \item[\checkmark] \textit{Growth:} Real data is messy! This is a learning opportunity.
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Week 6:}} "My model isn't improving"
+   \begin{itemize}
+   \item[\checkmark] \textit{Growth:} Time to try new features or methods. Ask for help.
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Week 10:}} "My results aren't impressive"
+   \begin{itemize}
+   \item[\checkmark] \textit{Growth:} Process matters. Document what you learned.
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Strategies for Success:}
+
+\begin{block}{When Stuck...}
+\begin{enumerate}
+\item \textbf{Read documentation} - Most answers are there
+\item \textbf{Google the error} - Someone has seen it before
+\item \textbf{Ask peers} - They might have faced similar issues
+\item \textbf{Office hours} - Instructors are there to help
+\item \textbf{Take a break} - Fresh eyes help
+\end{enumerate}
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Debugging Mindset}
+\begin{itemize}
+\item Bugs are \textbf{opportunities to learn}
+\item Error messages are \textbf{helpful hints}
+\item Debugging is a \textbf{core skill}
+\item Everyone struggles - even experts!
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Celebrate Small Wins}
+\begin{itemize}
+\item Data loaded successfully? \textcolor{forest}{\textbf{Win!}}
+\item First model trained? \textcolor{forest}{\textbf{Win!}}
+\item Code pushed to GitHub? \textcolor{forest}{\textbf{Win!}}
+\item Peer review completed? \textcolor{forest}{\textbf{Win!}}
+\end{itemize}
+
+Progress compounds. Each small win builds momentum!
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Remember}
+\textbf{The goal isn't perfection - it's growth.} Every challenge you overcome makes you a better data scientist.
+\end{alertblock}
+\end{frame}
+
+% -------------------- Getting Help --------------------
+
+\begin{frame}{Getting Help: Resources and Strategies}
+\textbf{How to get unstuck effectively}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The 30-Minute Rule:}
+
+\begin{block}{When facing a problem...}
+\begin{enumerate}
+\item \textbf{0-15 min:} Try to solve it yourself
+   \begin{itemize}
+   \item Read error messages carefully
+   \item Google the specific error
+   \item Check documentation
+   \item Review lecture notes
+   \end{itemize}
+
+\item \textbf{15-30 min:} Structured debugging
+   \begin{itemize}
+   \item Isolate the problem (minimal example)
+   \item Print intermediate values
+   \item Test components individually
+   \item Check assumptions
+   \end{itemize}
+
+\item \textbf{After 30 min:} Ask for help!
+   \begin{itemize}
+   \item Don't waste hours being stuck
+   \item Document what you've tried
+   \item Formulate specific question
+   \end{itemize}
+\end{enumerate}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Where to Ask:}
+\begin{enumerate}
+\item Course Slack: \#capstone-help
+\item Office hours (in-person/virtual)
+\item Peer study groups
+\item Stack Overflow (for general questions)
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{How to Ask Good Questions:}
+
+\begin{block}{Bad Question}
+\textcolor{crimson}{"My code doesn't work. Help!"}
+
+\textbf{Problem:} Vague, no context, no effort shown
+\end{block}
+
+\begin{block}{Good Question}
+\textcolor{forest}{"I'm getting a KeyError in my feature engineering function (line 42). I've verified the column exists in the DataFrame. I've tried [X, Y, Z]. Here's a minimal example: [code snippet]. Any ideas?"}
+
+\textbf{Why good:} Specific error, shows effort, provides context
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Question Template:}
+
+\begin{enumerate}
+\item \textbf{Context:} What are you trying to do?
+\item \textbf{Problem:} What's going wrong? (error message)
+\item \textbf{Attempted:} What have you tried?
+\item \textbf{Code:} Minimal reproducible example
+\item \textbf{Question:} Specific question
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Office Hours Etiquette:}
+\begin{itemize}
+\item Come prepared with specific questions
+\item Share screen/code in advance if possible
+\item Take notes during discussion
+\item Follow up if solution works
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Time Management --------------------
+
+\begin{frame}{Time Management for Capstone Success}
+\textbf{Balancing capstone with other commitments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Expected Weekly Time Investment:}
+
+\begin{table}
+\small
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Activity} & \textbf{Hours/Week} \\
+\hline
+Active coding/analysis & 6-8 \\
+\hline
+Reading (papers, docs) & 2-3 \\
+\hline
+Meetings (mentor, peers) & 1-2 \\
+\hline
+Writing (reports, docs) & 2-4 \\
+\hline
+Debugging/troubleshooting & 2-3 \\
+\hline
+\textbf{Total} & \textbf{13-20} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Time by Milestone:}
+\begin{itemize}
+\item M1: 12-15 hrs/week (exploration heavy)
+\item M2: 15-18 hrs/week (coding intensive)
+\item M3: 16-20 hrs/week (peak workload)
+\item M4: 14-18 hrs/week (documentation focus)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Planning Strategies:}
+\begin{enumerate}
+\item \textbf{Block time:} Dedicate 2-3 hour blocks for deep work
+\item \textbf{Daily commits:} Work consistently, not last-minute
+\item \textbf{Buffer time:} Assume things take 1.5x longer than expected
+\item \textbf{Weekly review:} Assess progress every Friday
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Sample Weekly Schedule:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|l|p{3cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Day} & \textbf{Time} & \textbf{Activity} \\
+\hline
+Monday & 10-12pm & Coding (data/features) \\
+ & 7-9pm & Reading papers \\
+\hline
+Tuesday & 3-5pm & Coding (modeling) \\
+\hline
+Wednesday & 10-12pm & Mentor/peer meeting \\
+ & 2-5pm & Coding (experiments) \\
+\hline
+Thursday & 7-10pm & Debugging/refinement \\
+\hline
+Friday & 9-12pm & Writing/documentation \\
+ & 2-3pm & Weekly review \\
+\hline
+Weekend & 3-4hrs & Catch-up if needed \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Avoiding Burnout:}
+
+\begin{block}{Warning Signs}
+\begin{itemize}
+\item Working $>25$ hours/week consistently
+\item Skipping meals or sleep
+\item Avoiding social activities
+\item Feeling overwhelmed constantly
+\end{itemize}
+\end{block}
+
+\begin{block}{Self-Care}
+\begin{itemize}
+\item Take real breaks (no screens)
+\item Exercise and sleep
+\item Talk to instructor if struggling
+\item It's okay to adjust scope
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Scope Management:}
+\begin{itemize}
+\item \textcolor{crimson}{\textbf{Week 4:}} Reassess if behind schedule
+\item \textcolor{crimson}{\textbf{Week 8:}} Finalize scope (no new features)
+\item \textcolor{forest}{\textbf{Week 12:}} Focus on polish, not new work
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% END OF PREREQUISITES APPENDIX
+% ================================================================

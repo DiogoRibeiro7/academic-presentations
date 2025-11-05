@@ -1,0 +1,1078 @@
+% ============================================================================
+% CAUSAL INFERENCE ASSESSMENT MATERIALS
+% ============================================================================
+% Comprehensive assessment for causal inference enhancements
+% - Multiple choice questions with explanations
+% - Conceptual problems
+% - Coding challenges (see .py files)
+%
+% Author: Diogo Ribeiro
+% Last Updated: January 5, 2025
+% ============================================================================
+
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+% Custom commands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+
+% Code listing settings
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title{Causal Inference: Assessment Materials}
+\author{ESMAD -- Data Science Applications\\Diogo Ribeiro}
+\date{January 5, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{Instructions}
+
+This assessment covers four major topics:
+\begin{enumerate}
+\item Double Machine Learning
+\item Causal Forests
+\item Sensitivity Analysis
+\item Causal Discovery and Policy Evaluation
+\end{enumerate}
+
+Each section contains:
+\begin{itemize}
+\item Multiple choice questions (4 points each)
+\item Conceptual problems (10-15 points each)
+\item Coding challenges (20-25 points each, see separate Python files)
+\end{itemize}
+
+\textbf{Total Points:} 100 points
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Double Machine Learning}
+% ============================================================================
+
+\subsection{Multiple Choice Questions}
+
+\textbf{Question 1.1 (4 points):} What is the primary purpose of cross-fitting in Double Machine Learning?
+
+\begin{enumerate}[label=\Alph*.]
+\item To reduce overfitting in the final treatment effect estimate
+\item To avoid using the same data for both nuisance parameter estimation and treatment effect estimation
+\item To improve the computational efficiency of the algorithm
+\item To handle missing data in the treatment variable
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Cross-fitting ensures that the residuals used in the final stage regression are out-of-sample predictions. This prevents overfitting bias that would occur if we used the same data to estimate $\E[Y|X]$, $\E[D|X]$ and then regressed residuals on each other. This is crucial for valid inference.
+\item \textbf{Why A is wrong:} While cross-fitting does help with overfitting, this is a means to an end. The primary purpose is to enable valid statistical inference through sample splitting.
+\item \textbf{Why C is wrong:} Cross-fitting actually increases computational cost (requires fitting K models instead of 1). The benefit is statistical, not computational.
+\item \textbf{Why D is wrong:} Cross-fitting does not address missing data. Missing data must be handled separately (imputation, complete case analysis, etc.).
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 1.2 (4 points):} In the partially linear model $Y = \theta D + g(X) + \epsilon$, what property must the score function satisfy for the DML estimator to be valid?
+
+\begin{enumerate}[label=\Alph*.]
+\item The score must be linear in the treatment variable
+\item The score must be Neyman orthogonal with respect to nuisance parameters
+\item The score must be differentiable everywhere
+\item The score must have zero mean
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Neyman orthogonality means that the score has zero derivative with respect to the nuisance parameters (at the true values). This ensures that small estimation errors in $g$ and $m$ don't substantially affect the treatment effect estimate. Formally: $\partial_{\eta} \E[\psi(W; \theta_0, \eta_0)] = 0$ where $\eta = (g, m)$.
+\item \textbf{Why A is wrong:} The score can be nonlinear in $D$. What matters is orthogonality to nuisance parameters.
+\item \textbf{Why C is wrong:} Differentiability is not the key property. Many valid score functions have kinks (e.g., in quantile regression).
+\item \textbf{Why D is wrong:} Zero mean is a property we want at the solution, not a requirement for validity.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 1.3 (4 points):} When should you use Double ML instead of standard regression with controls?
+
+\begin{enumerate}[label=\Alph*.]
+\item When you have more than 10 control variables
+\item When the relationship between $Y$ and $X$ is highly nonlinear and you want to use flexible ML models
+\item When you want to include interaction terms
+\item When your treatment is continuous rather than binary
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Double ML is specifically designed to allow flexible, nonparametric estimation of nuisance functions $g(X)$ and $m(X)$ using random forests, gradient boosting, neural networks, etc., while maintaining valid inference for $\theta$. Standard regression requires correct specification of functional forms.
+\item \textbf{Why A is wrong:} The number of controls alone doesn't determine method choice. Standard regression can handle many controls if relationships are linear.
+\item \textbf{Why C is wrong:} Interaction terms can be included in standard regression. Double ML is about functional form flexibility, not just interactions.
+\item \textbf{Why D is wrong:} Both methods can handle continuous treatments. This is not a distinguishing factor.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Conceptual Problems}
+
+\textbf{Problem 1.4 (12 points):} Explain the "regularization bias" problem that arises when using regularized machine learning methods (like LASSO or Ridge) in causal inference, and how Double ML addresses it.
+
+\textit{Solution:}
+
+\textbf{The Problem (6 points):}
+When we use regularized methods (LASSO, Ridge, Elastic Net) directly in a causal regression like $Y = \theta D + \beta' X + \epsilon$, the regularization shrinks ALL coefficients toward zero, including the treatment effect $\theta$ that we care about. This creates "regularization bias":
+\begin{itemize}
+\item LASSO: $\min_{\theta, \beta} \sum (Y_i - \theta D_i - \beta' X_i)^2 + \lambda \|\theta, \beta\|_1$
+\item The penalty term $\lambda |\theta|$ shrinks our causal estimate toward zero
+\item Even if $\lambda$ is chosen optimally for prediction, it's wrong for causal inference
+\item Result: Biased treatment effect estimates
+\end{itemize}
+
+\textbf{How Double ML Solves This (6 points):}
+Double ML separates prediction from causal estimation:
+\begin{enumerate}
+\item \textbf{Stage 1:} Use regularized ML to predict $Y$ and $D$ from $X$:
+\begin{align*}
+\hat{Y}_i &= \hat{g}(X_i) \text{ (can use LASSO, Ridge, etc.)} \\
+\hat{D}_i &= \hat{m}(X_i) \text{ (can use LASSO, Ridge, etc.)}
+\end{align*}
+Here, regularization is appropriate because we only care about prediction accuracy.
+
+\item \textbf{Stage 2:} Compute residuals:
+\begin{align*}
+\tilde{Y}_i &= Y_i - \hat{Y}_i \\
+\tilde{D}_i &= D_i - \hat{D}_i
+\end{align*}
+
+\item \textbf{Stage 3:} Estimate treatment effect WITHOUT regularization:
+$$\hat{\theta}_{DML} = \frac{\sum \tilde{D}_i \tilde{Y}_i}{\sum \tilde{D}_i^2}$$
+This is an unregularized estimate, so no shrinkage bias.
+\end{enumerate}
+
+Key insight: Regularization is used only in nuisance function estimation (where it helps), not in treatment effect estimation (where it hurts).
+
+\vspace{0.5cm}
+
+\textbf{Problem 1.5 (15 points):} Consider a job training program evaluation where we want to estimate the effect of training (D) on wages (Y), controlling for a high-dimensional set of pre-treatment characteristics (X).
+
+\begin{enumerate}[label=\alph*.]
+\item (5 points) Write out the partially linear model and explain what assumption is required for $\theta$ to have a causal interpretation.
+
+\item (5 points) Suppose we fit $\E[Y|X]$ and $\E[D|X]$ using random forests with default settings. What could go wrong if we don't use cross-fitting?
+
+\item (5 points) After implementing DML, you get $\hat{\theta} = 2500$ (dollars/year) with standard error 800. The selection-on-observables (unconfoundedness) assumption seems strong. What additional analyses would you conduct to assess robustness?
+\end{enumerate}
+
+\textit{Solution:}
+
+\textbf{(a) Model and assumptions (5 points):}
+
+Partially linear model:
+$$Y_i = \theta D_i + g(X_i) + \epsilon_i$$
+$$D_i = m(X_i) + \eta_i$$
+
+where:
+\begin{itemize}
+\item $Y_i$ = wage after program
+\item $D_i$ = training participation (binary or continuous hours)
+\item $X_i$ = pre-treatment characteristics (education, experience, prior wages, etc.)
+\item $g(X_i) = \E[Y_i | X_i, D_i=0]$ = baseline wage function
+\item $m(X_i) = \E[D_i | X_i]$ = propensity to enroll
+\end{itemize}
+
+\textbf{Causal interpretation requires:}
+$$\E[\epsilon_i | X_i, D_i] = 0 \quad \text{and} \quad \E[\eta_i | X_i] = 0$$
+
+This is the \textbf{conditional independence assumption} (CIA) or \textbf{unconfoundedness}:
+$$(Y_i(0), Y_i(1)) \perp D_i \mid X_i$$
+
+Interpretation: All confounders are observed in $X$. There are no unobserved variables that jointly affect both training participation and wages. This is a strong assumption.
+
+\textbf{(b) What could go wrong without cross-fitting (5 points):}
+
+Without cross-fitting, we would:
+\begin{enumerate}
+\item Fit $\hat{g}(X)$ and $\hat{m}(X)$ on full data
+\item Compute residuals $\tilde{Y}_i = Y_i - \hat{g}(X_i)$ and $\tilde{D}_i = D_i - \hat{m}(X_i)$ on same data
+\item Regress $\tilde{Y}$ on $\tilde{D}$
+\end{enumerate}
+
+\textbf{Problems:}
+\begin{itemize}
+\item \textbf{Overfitting bias:} Random forests typically achieve near-perfect fit on training data. This means $\hat{g}(X_i) \approx Y_i$ and $\hat{m}(X_i) \approx D_i$ in-sample.
+\item \textbf{Residual correlation:} The residuals $\tilde{Y}_i$ and $\tilde{D}_i$ will be spuriously correlated due to overfitting, not true causal effects.
+\item \textbf{Invalid inference:} Standard errors will be too small because we're using the same data twice. The resulting confidence intervals won't have correct coverage.
+\item \textbf{Biased estimate:} The treatment effect estimate $\hat{\theta}$ will be biased, typically toward zero (attenuation bias).
+\end{itemize}
+
+Cross-fitting solves this by ensuring residuals are computed from out-of-sample predictions.
+
+\textbf{(c) Robustness analyses (5 points):}
+
+Since unconfoundedness is untestable, conduct:
+
+\begin{enumerate}
+\item \textbf{Sensitivity analysis (Rosenbaum bounds):}
+\begin{itemize}
+\item How strong would unmeasured confounding need to be to overturn the result?
+\item Test: "Would our conclusion change if there's an unobserved confounder with $\Gamma = 2$ effect?"
+\end{itemize}
+
+\item \textbf{Omitted variable bias formula (Cinelli \& Hazlett):}
+\begin{itemize}
+\item Calculate: "If unobserved confounder explains 10\% of residual variance in both Y and D, what would bias be?"
+\item Compute robustness value: How much of residual variance must confounder explain to make effect insignificant?
+\end{itemize}
+
+\item \textbf{Placebo tests:}
+\begin{itemize}
+\item Test for "effect" of training on pre-treatment wages (should be zero)
+\item Test for "effect" on outcomes that shouldn't be affected (e.g., height)
+\end{itemize}
+
+\item \textbf{Subgroup analysis:}
+\begin{itemize}
+\item Check if effect is stable across subgroups (by age, education, geography)
+\item Inconsistent effects may suggest confounding
+\end{itemize}
+
+\item \textbf{Compare to RCT benchmarks:}
+\begin{itemize}
+\item If similar programs have been evaluated with RCTs, compare your estimate
+\item Large discrepancy suggests possible confounding
+\end{itemize}
+
+\item \textbf{E-value calculation:}
+\begin{itemize}
+\item Minimum strength of association (on risk ratio scale) that an unmeasured confounder would need to have with both treatment and outcome to fully explain away the observed effect
+\end{itemize}
+\end{enumerate}
+
+\vspace{0.5cm}
+
+% ============================================================================
+\section{Causal Forests}
+% ============================================================================
+
+\subsection{Multiple Choice Questions}
+
+\textbf{Question 2.1 (4 points):} What is "honest splitting" in causal forests?
+
+\begin{enumerate}[label=\Alph*.]
+\item Using the same data to determine tree structure and estimate treatment effects within leaves
+\item Using separate data samples to determine tree structure and estimate treatment effects
+\item Only using data from randomized experiments
+\item Balancing treatment and control groups in each leaf
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Honest splitting divides the sample into two subsets: (1) one for building the tree (choosing split points), and (2) another for estimating treatment effects in the final leaves. This prevents overfitting and ensures valid confidence intervals. Without honesty, treatment effect estimates are biased upward.
+\item \textbf{Why A is wrong:} This describes "adaptive" (non-honest) splitting, which leads to overfitting and overoptimistic estimates.
+\item \textbf{Why C is wrong:} Causal forests can be applied to observational data with unconfoundedness, not just RCTs.
+\item \textbf{Why D is wrong:} While balance is desirable, it's not what "honest splitting" refers to.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 2.2 (4 points):} In causal forests, what does heterogeneity in treatment effects mean?
+
+\begin{enumerate}[label=\Alph*.]
+\item Different units have different baseline outcomes (different $Y_i(0)$)
+\item Different units have different treatment effects $\tau_i = Y_i(1) - Y_i(0)$
+\item The treatment has effects on multiple outcomes
+\item The variance of outcomes is different in treatment and control groups
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Treatment effect heterogeneity (TEH) means the causal effect varies across units. Formally: $\tau(x) = \E[Y_i(1) - Y_i(0) | X_i = x]$ is not constant. Example: Training program has larger effect for younger workers ($\tau$ varies with age).
+\item \textbf{Why A is wrong:} This is heterogeneity in baseline outcomes, not treatment effects. Even if all units have the same $\tau$, they can have different $Y(0)$.
+\item \textbf{Why C is wrong:} This describes multiple outcomes, not heterogeneous effects on a single outcome.
+\item \textbf{Why D is wrong:} This describes heteroskedasticity, not treatment effect heterogeneity.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 2.3 (4 points):} How do causal forests differ from standard random forests?
+
+\begin{enumerate}[label=\Alph*.]
+\item Causal forests use more trees
+\item Causal forests split on variables that maximize treatment effect heterogeneity, not prediction accuracy
+\item Causal forests only work with binary outcomes
+\item Causal forests don't use bootstrap sampling
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Standard random forests split to minimize prediction error (e.g., MSE for regression). Causal forests split to maximize variation in estimated treatment effects across child nodes. The splitting criterion is designed to find heterogeneous treatment effects, not just predict outcomes.
+\item \textbf{Why A is wrong:} The number of trees is a hyperparameter in both methods, not a fundamental difference.
+\item \textbf{Why C is wrong:} Causal forests work with continuous outcomes (most common case).
+\item \textbf{Why D is wrong:} Causal forests do use bootstrap sampling (subsampling) like random forests.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Conceptual Problems}
+
+\textbf{Problem 2.4 (12 points):} Suppose you're analyzing a dataset from an e-commerce company that randomly assigned customers to see a discount promotion ($D=1$) or not ($D=0$). You want to understand if the effect on purchase amount ($Y$) varies by customer characteristics (age, past purchase history, etc.).
+
+\begin{enumerate}[label=\alph*.]
+\item (4 points) Why is this a good application for causal forests rather than just computing average treatment effect?
+
+\item (4 points) After fitting a causal forest, you plot predicted treatment effects $\hat{\tau}(x)$ against customer age and see that the effect is largest for customers aged 18-25. How would you test if this heterogeneity is statistically significant?
+
+\item (4 points) A colleague suggests: "Just run a regression $Y \sim D + \text{Age} + D \times \text{Age}$". What are the advantages of causal forests over this approach?
+\end{enumerate}
+
+\textit{Solution:}
+
+\textbf{(a) Why causal forests for heterogeneity (4 points):}
+
+This is an ideal application for causal forests because:
+\begin{itemize}
+\item \textbf{Actionable insights:} Knowing which customers respond most to discounts allows targeted promotions (maximize ROI by targeting high-$\tau$ customers)
+\item \textbf{Multiple covariates:} Customer behavior likely depends on interactions of age, purchase history, browsing patterns, etc. Causal forests automatically discover these interactions without pre-specification
+\item \textbf{Nonlinear effects:} Treatment effect might be nonlinear in age (e.g., highest for young adults, lower for teens and middle-aged). Forests capture this naturally.
+\item \textbf{Data-driven discovery:} We don't know a priori which variables drive heterogeneity. Forests explore all variables and interactions.
+\end{itemize}
+
+Average treatment effect (ATE) would just give one number (e.g., "discounts increase purchases by \$15 on average"), missing the heterogeneity that enables targeting.
+
+\textbf{(b) Testing significance of heterogeneity (4 points):}
+
+Several approaches:
+
+\begin{enumerate}
+\item \textbf{Best Linear Predictor (BLP) test:}
+\begin{itemize}
+\item Regress true outcomes on predictions: $Y_i = \alpha + \beta_1 D_i + \beta_2 \hat{\tau}(X_i) + \beta_3 D_i \hat{\tau}(X_i) + \epsilon_i$
+\item Test $H_0: \beta_3 = 0$ (no heterogeneity)
+\item If $\beta_3 \neq 0$, predicted heterogeneity correlates with true heterogeneity
+\end{itemize}
+
+\item \textbf{Calibration test:}
+\begin{itemize}
+\item Split data into training and test sets
+\item Fit causal forest on training data
+\item On test data, divide into quintiles by $\hat{\tau}(X_i)$
+\item Compute actual ATE within each quintile using test data
+\item Test if ATEs differ significantly across quintiles (e.g., ANOVA or pairwise tests)
+\end{itemize}
+
+\item \textbf{Subgroup analysis:}
+\begin{itemize}
+\item Divide customers into age bins (18-25, 26-35, 36-45, 46+)
+\item Compute ATE within each bin: $\hat{\tau}_{\text{bin}} = \frac{1}{n_{\text{bin}}} \sum_{i \in \text{bin}} (Y_i(1) - Y_i(0))$
+\item Test $H_0:$ all $\tau_{\text{bin}}$ are equal (ANOVA or pairwise t-tests)
+\end{itemize}
+
+\item \textbf{Variable importance:}
+\begin{itemize}
+\item Use causal forest's variable importance measure for Age
+\item Bootstrap confidence interval: If CI excludes zero, Age is important for heterogeneity
+\end{itemize}
+\end{enumerate}
+
+\textbf{(c) Advantages over linear interaction model (4 points):}
+
+\textbf{Linear regression approach:}
+$$Y_i = \beta_0 + \beta_1 D_i + \beta_2 \text{Age}_i + \beta_3 D_i \times \text{Age}_i + \epsilon_i$$
+
+Treatment effect: $\tau(\text{Age}) = \beta_1 + \beta_3 \times \text{Age}$ (linear in age)
+
+\textbf{Causal Forest Advantages:}
+
+\begin{enumerate}
+\item \textbf{Nonlinearity:}
+\begin{itemize}
+\item Regression assumes linear effect: $\tau$ changes by constant $\beta_3$ per year of age
+\item Causal forest captures nonlinear patterns (e.g., U-shaped, step functions)
+\item Example: Effect might be high for 18-25, drop for 26-45, rise again for 46+
+\end{itemize}
+
+\item \textbf{Automatic interaction discovery:}
+\begin{itemize}
+\item Regression requires specifying $D \times \text{Age}$, $D \times \text{History}$, $D \times \text{Age} \times \text{History}$, etc.
+\item With $p$ variables, there are $2^p$ possible interactions—infeasible to test all
+\item Causal forest automatically finds relevant interactions (e.g., young customers with high purchase history)
+\end{itemize}
+
+\item \textbf{High-dimensional covariates:}
+\begin{itemize}
+\item With 20+ customer features, regression with all interactions is overparameterized
+\item Causal forest handles high dimensions naturally (like random forest)
+\end{itemize}
+
+\item \textbf{No functional form assumptions:}
+\begin{itemize}
+\item Regression imposes strong parametric assumptions
+\item Causal forest is nonparametric—lets data determine functional form
+\end{itemize}
+
+\item \textbf{Targeting:}
+\begin{itemize}
+\item Regression gives $\tau(\text{Age})$ for any age but requires choosing threshold manually
+\item Causal forest gives $\hat{\tau}(x)$ for full covariate vector—can directly rank customers by predicted treatment effect for targeting
+\end{itemize}
+\end{enumerate}
+
+\textbf{When regression might be better:}
+\begin{itemize}
+\item Small sample size (causal forests need $n > 1000$ typically)
+\item True effect is linear (but we rarely know this)
+\item Want simple, interpretable coefficient ($\beta_3 = $ effect per year)
+\end{itemize}
+
+\vspace{0.5cm}
+
+% ============================================================================
+\section{Sensitivity Analysis}
+% ============================================================================
+
+\subsection{Multiple Choice Questions}
+
+\textbf{Question 3.1 (4 points):} What does a Rosenbaum sensitivity parameter $\Gamma = 2$ mean?
+
+\begin{enumerate}[label=\Alph*.]
+\item Two treated units can differ in their odds of treatment by a factor of 2 due to unobserved confounders
+\item The treatment effect could be twice as large as estimated
+\item We need to double our sample size for valid inference
+\item There are two unobserved confounders
+\end{enumerate}
+
+\textit{Correct Answer: A}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why A is correct:} $\Gamma$ bounds the ratio of odds of treatment assignment for two units with the same observed covariates. $\Gamma=2$ means: even after matching on $X$, two units could differ in their odds of treatment by up to 2-to-1 due to unobserved factors. Formally: $\frac{1}{\Gamma} \leq \frac{\pi_i(X) / (1-\pi_i(X))}{\pi_j(X) / (1-\pi_j(X))} \leq \Gamma$ where $\pi(X) = P(D=1|X)$.
+\item \textbf{Why B is wrong:} $\Gamma$ is about treatment assignment, not treatment effect magnitude.
+\item \textbf{Why C is wrong:} $\Gamma$ has nothing to do with sample size.
+\item \textbf{Why D is wrong:} $\Gamma$ doesn't count confounders—it bounds their total strength.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 3.2 (4 points):} The "robustness value" (RV) in omitted variable bias analysis represents:
+
+\begin{enumerate}[label=\Alph*.]
+\item The p-value from a robustness check
+\item The partial $R^2$ an unobserved confounder would need to explain to invalidate the result
+\item The number of robustness checks that passed
+\item The minimum sample size needed for robust inference
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} RV is the minimum $R^2$ value that an unobserved confounder would need to have with both treatment and outcome (after controlling for observed covariates) to reduce the estimate to zero or make it statistically insignificant. For example, RV = 0.10 means: "confounder would need to explain 10\% of residual variance in both D and Y to eliminate the effect."
+\item \textbf{Why A is wrong:} RV is not a p-value. It's a partial $R^2$ threshold.
+\item \textbf{Why C is wrong:} RV is a continuous measure, not a count.
+\item \textbf{Why D is wrong:} RV is about confounding strength, not sample size.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 3.3 (4 points):} Why is sensitivity analysis particularly important for observational causal inference?
+
+\begin{enumerate}[label=\Alph*.]
+\item It replaces the need for randomization
+\item It allows us to test the unconfoundedness assumption
+\item It provides bounds on treatment effects under violations of unconfoundedness
+\item It eliminates bias from unobserved confounders
+\end{enumerate}
+
+\textit{Correct Answer: C}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why C is correct:} Unconfoundedness cannot be tested with observed data. Sensitivity analysis addresses this by asking: "How strong would unobserved confounding need to be to change our conclusions?" It provides worst-case bounds or thresholds, helping assess whether findings are fragile or robust.
+\item \textbf{Why A is wrong:} Nothing replaces randomization for ensuring causal identification. Sensitivity analysis is diagnostic, not a substitute for design.
+\item \textbf{Why B is wrong:} Unconfoundedness is fundamentally untestable (it concerns unobserved variables by definition). Sensitivity analysis assesses robustness to violations, not tests the assumption.
+\item \textbf{Why D is wrong:} Sensitivity analysis doesn't eliminate bias—it quantifies how much bias would be needed to overturn results.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Conceptual Problems}
+
+\textbf{Problem 3.4 (15 points):} You conducted an observational study on the effect of a job training program on earnings. Using propensity score matching, you estimated an average treatment effect of \$3,000 per year with a 95\% confidence interval of [\$1,800, \$4,200].
+
+\begin{enumerate}[label=\alph*.]
+\item (5 points) A skeptic argues: "There could be unmeasured motivation that affects both training participation and earnings. Your estimate is biased." How would you respond using Rosenbaum bounds?
+
+\item (5 points) You perform sensitivity analysis and find that with $\Gamma = 1.5$, the p-value becomes 0.07 (no longer significant at $\alpha = 0.05$). With $\Gamma = 2$, the p-value is 0.24. Interpret these results for a policy maker.
+
+\item (5 points) Using the omitted variable bias formula, you calculate that an unobserved confounder would need partial $R^2_{Y \sim U | D, X} = 0.08$ and $R^2_{D \sim U | X} = 0.08$ to reduce your estimate to \$1,500 (below typical program costs). Is this a strong or weak robustness result? Explain.
+\end{enumerate}
+
+\textit{Solution:}
+
+\textbf{(a) Responding with Rosenbaum bounds (5 points):}
+
+"You're right that unmeasured confounders like motivation are a concern. Let me show you how strong that confounder would need to be to overturn our findings.
+
+I'll conduct a Rosenbaum sensitivity analysis:
+
+\begin{enumerate}
+\item \textbf{What we're testing:} How strong would an unobserved confounder need to be to make our result disappear?
+
+\item \textbf{Method:}
+\begin{itemize}
+\item After matching on observed characteristics (education, experience, past wages, etc.), we assume two matched individuals could still differ in their probability of treatment by a factor of $\Gamma$ due to unobserved factors
+\item $\Gamma = 1$: Perfect matching (no hidden bias)
+\item $\Gamma > 1$: Allows hidden bias
+\end{itemize}
+
+\item \textbf{What we'll find:} (Hypothetical results)
+\begin{itemize}
+\item $\Gamma = 1.0$: p-value < 0.001 (our original result)
+\item $\Gamma = 1.2$: p-value = 0.015 (still significant)
+\item $\Gamma = 1.5$: p-value = 0.07 (marginally significant)
+\item $\Gamma = 2.0$: p-value = 0.24 (not significant)
+\end{itemize}
+\end{enumerate}
+
+\textbf{Interpretation:} An unobserved confounder would need to increase the odds of treatment by a factor of 2 (doubling the odds) to eliminate our finding.
+
+\textbf{Benchmark:} To put $\Gamma=2$ in perspective:
+\begin{itemize}
+\item If motivation has the same effect on treatment as education (which we observe and control for), and education has $\Gamma \approx 1.3$, then motivation alone wouldn't be enough
+\item A $\Gamma=2$ confounder would need to be stronger than any single observed covariate
+\item This suggests our result is reasonably robust, though not bulletproof
+\end{itemize}
+
+\textbf{(b) Interpreting for policy maker (5 points):}
+
+"Here's what our sensitivity analysis means for policy:
+
+\textbf{Best case (no hidden bias):} The training program increases earnings by \$3,000/year (95\% CI: \$1,800-\$4,200).
+
+\textbf{Moderate hidden bias ($\Gamma = 1.5$):}
+\begin{itemize}
+\item This means two people with identical observed characteristics could differ in their odds of enrolling by 50\% due to unobserved factors
+\item Under this scenario, our effect becomes marginally significant (p=0.07)
+\item Lower bound estimate drops to around \$2,000/year
+\end{itemize}
+
+\textbf{Substantial hidden bias ($\Gamma = 2.0$):}
+\begin{itemize}
+\item Odds of enrollment could differ by 100\% (double) due to unobserved factors
+\item Effect is no longer statistically significant (p=0.24)
+\item Could not rule out zero effect
+\end{itemize}
+
+\textbf{Policy recommendation:}
+
+\textit{If you believe unobserved confounders are weak-to-moderate} (less than 50\% as strong as observed covariates), the program appears cost-effective with benefits around \$2,000-\$3,000/year.
+
+\textit{If you're very concerned about strong unobserved confounders} (doubling enrollment odds), then we cannot definitively rule out that the apparent effect is due to selection bias.
+
+\textbf{Next steps to strengthen evidence:}
+\begin{enumerate}
+\item Survey program participants and non-participants on motivation, career goals, etc., to directly measure suspected confounders
+\item Conduct a pilot RCT to get a gold-standard estimate
+\item Compare to effects from similar programs evaluated with RCTs (benchmark check)
+\item Implement program in limited rollout and monitor outcomes
+\end{enumerate}
+
+My recommendation: Proceed with cautious optimism. The evidence is suggestive but not definitive. Consider phased rollout with ongoing evaluation."
+
+\textbf{(c) Evaluating partial $R^2$ robustness (5 points):}
+
+\textbf{What the numbers mean:}
+\begin{itemize}
+\item An unobserved confounder would need to explain 8\% of residual variance in both earnings (Y) and training participation (D) to reduce the effect from \$3,000 to \$1,500
+\item "Residual variance" means variance remaining after controlling for all observed covariates
+\end{itemize}
+
+\textbf{Is $R^2 = 0.08$ large or small?}
+
+\textbf{Benchmarks:}
+\begin{itemize}
+\item Typical individual covariates (education, experience) explain 5-15\% of residual variance
+\item Strong confounders (ability, socioeconomic status) might explain 10-20\%
+\item An $R^2 = 0.08$ confounder is moderately strong—about as strong as a single important observed covariate
+\end{itemize}
+
+\textbf{Assessment: This is MODERATE robustness}
+
+\textbf{Reasons:}
+\begin{enumerate}
+\item \textbf{Not very strong:} An 8\% $R^2$ is plausible for variables like motivation, ability, or family support—all of which could be unobserved
+\item \textbf{Not very weak:} It would take more than just noise or minor omitted variables to reduce the effect by 50\%
+\item \textbf{Threshold is \$1,500, not \$0:} Even with this confounding, the effect is still \$1,500 (potentially still cost-effective depending on program cost)
+\end{enumerate}
+
+\textbf{Comparison to observed covariates:}
+
+If we calculate $R^2$ for observed important covariates:
+\begin{itemize}
+\item If education has $R^2_{Y \sim \text{Educ} | D,X_{-\text{Educ}}} = 0.12$ and $R^2_{D \sim \text{Educ} | X_{-\text{Educ}}} = 0.15$
+\item Then the robustness value (0.08, 0.08) is weaker than education
+\item Interpretation: A confounder 2/3 as strong as education could reduce effect by half
+\end{itemize}
+
+\textbf{Overall interpretation:}
+
+"The result is \textbf{moderately robust}. It would take a fairly strong confounder—comparable to major observed covariates like education—to substantially reduce the estimated effect. However, such confounders are plausible (e.g., unmeasured ability or motivation), so we should:
+\begin{enumerate}
+\item Not be overconfident in the \$3,000 estimate
+\item Consider \$1,500-\$3,000 as a more robust range
+\item Seek additional evidence (RCT, instrumental variables, additional controls)
+\item Recognize the finding is suggestive but not definitive
+\end{enumerate}"
+
+\vspace{0.5cm}
+
+% ============================================================================
+\section{Causal Discovery and Policy Evaluation}
+% ============================================================================
+
+\subsection{Multiple Choice Questions}
+
+\textbf{Question 4.1 (4 points):} What is the main limitation of causal discovery algorithms like PC and LiNGAM?
+
+\begin{enumerate}[label=\Alph*.]
+\item They are computationally expensive
+\item They require randomized experiments
+\item They often cannot determine causal direction from observational data alone (identification problem)
+\item They only work with linear relationships
+\end{enumerate}
+
+\textit{Correct Answer: C}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why C is correct:} The fundamental challenge is that observational data often only identifies the Markov equivalence class—a set of DAGs that imply the same conditional independences. For example, $X \to Y$ and $X \leftarrow Y$ may be indistinguishable without additional assumptions (e.g., non-Gaussianity in LiNGAM, or time ordering). This is the identification problem.
+\item \textbf{Why A is wrong:} While some algorithms are computationally intensive, this is a practical limitation, not the fundamental conceptual limitation.
+\item \textbf{Why B is wrong:} Causal discovery is designed for observational data. If we had experiments, causal direction would be known.
+\item \textbf{Why D is wrong:} PC algorithm doesn't assume linearity (it uses conditional independence tests). LiNGAM does assume linearity but also non-Gaussianity, which enables identification. The limitation is not linearity per se.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 4.2 (4 points):} In policy evaluation using difference-in-differences (DID), what is the key identifying assumption?
+
+\begin{enumerate}[label=\Alph*.]
+\item Treatment is randomly assigned
+\item Treated and control groups have identical pre-treatment characteristics
+\item Treated and control groups would have followed parallel trends in the absence of treatment
+\item There is no spillover between treated and control units
+\end{enumerate}
+
+\textit{Correct Answer: C}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why C is correct:} The parallel trends assumption states: $\E[Y_{t}(0) - Y_{t-1}(0) | D=1] = \E[Y_{t}(0) - Y_{t-1}(0) | D=0]$. In words: the change in outcomes for the treated group (absent treatment) would have been the same as the change for the control group. This is untestable but can be assessed by checking pre-treatment trends.
+\item \textbf{Why A is wrong:} DID is used precisely because treatment is not randomly assigned. If it were random, we could just compare means.
+\item \textbf{Why B is wrong:} DID allows groups to differ in levels, as long as trends are parallel. This is weaker than requiring identical characteristics.
+\item \textbf{Why D is wrong:} No spillover (SUTVA) is an assumption, but not the key identifying assumption specific to DID.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question 4.3 (4 points):} Why is regression discontinuity design (RDD) considered one of the most credible quasi-experimental methods?
+
+\begin{enumerate}[label=\Alph*.]
+\item It uses randomization
+\item Treatment assignment is based on an observable running variable crossing a threshold, creating local randomization
+\item It controls for all confounders
+\item It doesn't require any assumptions
+\end{enumerate}
+
+\textit{Correct Answer: B}
+
+\textit{Explanation:}
+\begin{itemize}
+\item \textbf{Why B is correct:} Near the threshold, units just above and just below are arguably similar in all respects except treatment. For example, students scoring 69 vs. 70 on a test (with 70 as passing threshold) are nearly identical, so any difference in outcomes is plausibly causal. This is "quasi-randomization" at the discontinuity.
+\item \textbf{Why A is wrong:} RDD is quasi-experimental, not truly randomized. Treatment assignment is deterministic given the running variable.
+\item \textbf{Why C is wrong:} RDD identifies local effects (at the threshold) by leveraging discontinuity, not by controlling for confounders globally.
+\item \textbf{Why D is wrong:} RDD requires several assumptions: no manipulation of running variable, continuity of potential outcomes at threshold, correct functional form.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Conceptual Problems}
+
+\textbf{Problem 4.4 (15 points):} A city implemented a $15 minimum wage in January 2022. Neighboring cities kept the lower state minimum of $12. You want to evaluate the effect on employment in the restaurant industry.
+
+\begin{enumerate}[label=\alph*.]
+\item (5 points) Explain how you would use difference-in-differences to estimate the causal effect. Write out the estimating equation and interpret each term.
+
+\item (5 points) What threats to validity should you worry about? For each threat, propose a robustness check.
+
+\item (5 points) After running DID, you find that restaurant employment decreased by 3\% in the treated city relative to control cities. A policy maker asks: "Should we roll back the minimum wage?" What additional information would you need to provide a complete policy recommendation?
+\end{enumerate}
+
+\textit{Solution:}
+
+\textbf{(a) DID setup and equation (5 points):}
+
+\textbf{Setup:}
+\begin{itemize}
+\item \textbf{Treated group:} Restaurants in city with \$15 minimum wage
+\item \textbf{Control group:} Restaurants in neighboring cities with \$12 minimum wage
+\item \textbf{Pre-period:} Before January 2022
+\item \textbf{Post-period:} After January 2022
+\item \textbf{Outcome:} Restaurant employment (number of workers or log employment)
+\end{itemize}
+
+\textbf{Estimating equation:}
+$$Y_{it} = \alpha + \beta_1 \text{Treated}_i + \beta_2 \text{Post}_t + \beta_3 (\text{Treated}_i \times \text{Post}_t) + \epsilon_{it}$$
+
+where:
+\begin{itemize}
+\item $Y_{it}$ = employment in restaurant $i$ at time $t$
+\item $\text{Treated}_i = 1$ if restaurant in treated city, 0 otherwise
+\item $\text{Post}_t = 1$ if after January 2022, 0 otherwise
+\item $\text{Treated}_i \times \text{Post}_t$ = interaction term
+\end{itemize}
+
+\textbf{Interpretation of coefficients:}
+\begin{align*}
+\alpha &= \text{Average employment in control cities before policy} \\
+\beta_1 &= \text{Baseline difference between treated and control cities (pre-treatment)} \\
+\beta_2 &= \text{Time trend affecting both groups (e.g., seasonal effects, economy)} \\
+\beta_3 &= \text{\textbf{Causal effect of minimum wage (DID estimator)}}
+\end{align*}
+
+\textbf{DID in differences:}
+
+Can also compute as:
+$$\hat{\beta}_3 = (\bar{Y}_{\text{treated,post}} - \bar{Y}_{\text{treated,pre}}) - (\bar{Y}_{\text{control,post}} - \bar{Y}_{\text{control,pre}})$$
+
+This removes:
+\begin{itemize}
+\item Time-invariant differences between cities (first difference)
+\item Common time trends affecting both groups (second difference)
+\end{itemize}
+
+\textbf{Identification assumption:} Parallel trends—without the policy, both groups would have had the same change in employment.
+
+\textbf{(b) Threats to validity and robustness checks (5 points):}
+
+\textbf{Threat 1: Violation of parallel trends}
+
+\textit{Description:} Treated and control cities may have been on different employment trajectories even before the policy.
+
+\textit{Example:} Treated city was gentrifying rapidly, with employment growing faster than control cities, even before minimum wage.
+
+\textit{Robustness check:}
+\begin{itemize}
+\item \textbf{Pre-trends test:} Plot employment trends for treated and control groups for 12-24 months before policy. Test for differential trends: $Y_{it} = \alpha + \beta_1 \text{Treated}_i + \sum_{k=-24}^{-1} \gamma_k (\text{Treated}_i \times \text{Month}_k) + \epsilon_{it}$
+\item Test: $H_0: \gamma_{-24} = \cdots = \gamma_{-1} = 0$ (no differential pre-trends)
+\item If pre-trends differ, DID is invalid. Consider: (a) control for trends, (b) use synthetic control method, or (c) acknowledge limitation
+\end{itemize}
+
+\textbf{Threat 2: Compositional changes (selection)}
+
+\textit{Description:} The set of restaurants may change differently in treated vs. control cities.
+
+\textit{Example:} After policy, low-profit restaurants in treated city close. Remaining restaurants are more successful and were always larger. This creates spurious "decrease" in average employment.
+
+\textit{Robustness check:}
+\begin{itemize}
+\item \textbf{Balanced panel:} Restrict analysis to restaurants operating in both pre and post periods (drop entrants and exiters)
+\item \textbf{Extensive margin:} Separately analyze: (a) intensive margin (employment per restaurant), (b) extensive margin (number of restaurants)
+\item \textbf{Entry/exit analysis:} Test if closure rates differ between treated and control cities
+\end{itemize}
+
+\textbf{Threat 3: Spillovers and contamination}
+
+\textit{Description:} Control cities might be affected by treated city's policy.
+
+\textit{Example:} Workers from neighboring cities commute to treated city for higher wages, reducing employment in control cities. This makes the DID estimate too large (overestimates negative effect).
+
+\textit{Robustness check:}
+\begin{itemize}
+\item \textbf{Distance analysis:} Estimate effects separately for control cities at different distances from treated city. If spillover exists, nearby control cities are "contaminated."
+\item \textbf{Alternative control group:} Use control cities farther away (but check parallel trends still hold)
+\item \textbf{Donut RDD:} Exclude restaurants very close to city boundary
+\end{itemize}
+
+\textbf{Threat 4: Concurrent policies or shocks}
+
+\textit{Description:} Other policy changes or economic shocks coincide with minimum wage change.
+
+\textit{Example:} Treated city also expanded public transit in January 2022, increasing access to restaurants and employment. Effect attributed to minimum wage is actually transit expansion.
+
+\textit{Robustness check:}
+\begin{itemize}
+\item \textbf{Policy inventory:} Research all policy changes in treated and control cities during study period
+\item \textbf{Placebo outcomes:} Test for "effects" on industries not affected by minimum wage (e.g., lawyers, which have wages > \$15). Should find no effect.
+\item \textbf{Event study:} Estimate effects month-by-month: $Y_{it} = \alpha + \sum_{k=-24}^{24} \beta_k (\text{Treated}_i \times \text{Month}_k) + \epsilon_{it}$. Effect should appear exactly at policy implementation, not before or delayed.
+\end{itemize}
+
+\textbf{Threat 5: Measurement error or data quality}
+
+\textit{Description:} Employment data may be measured differently in treated vs. control cities, or measured with error.
+
+\textit{Robustness check:}
+\begin{itemize}
+\item \textbf{Multiple data sources:} Verify findings with alternative data (unemployment insurance claims, survey data, Census)
+\item \textbf{Placebo groups:} Test for effects in large chains (multi-city presence) vs. single-location restaurants. Chains may have different reporting.
+\end{itemize}
+
+\textbf{(c) Additional information for policy recommendation (5 points):}
+
+Finding: Restaurant employment decreased by 3\% in treated city.
+
+\textbf{This is NOT sufficient for policy recommendation. We need:}
+
+\textbf{1. Worker welfare effects:}
+\begin{itemize}
+\item \textbf{Intensive margin:} Among workers who kept jobs, did hours/earnings increase? (Likely yes—25\% wage increase)
+\item \textbf{Extensive margin:} 3\% fewer jobs, but for those still employed, earnings up 25\%
+\item \textbf{Net welfare:} Did total wage income for restaurant workers increase or decrease?
+\item \textbf{Inequality:} Are the workers who lost jobs different from those who kept them? (e.g., did teens lose jobs but adults keep them?)
+\end{itemize}
+
+\textbf{2. Distributional effects:}
+\begin{itemize}
+\item \textbf{Who benefits:} Low-wage workers who kept jobs (97\% of workers, +25\% earnings)
+\item \textbf{Who loses:} Workers who lost jobs (3\% of workers, -100\% earnings), restaurant owners (lower profits)
+\item \textbf{Value judgment:} Is benefit to 97\% worth cost to 3\%?
+\end{itemize}
+
+\textbf{3. Longer-term effects:}
+\begin{itemize}
+\item 3-month post-policy effects may differ from 1-2 year effects
+\item Restaurants may adjust through: automation, menu price increases, efficiency improvements
+\item Initial job losses may reverse if demand for dining out is inelastic
+\end{itemize}
+
+\textbf{4. Spillover effects:}
+\begin{itemize}
+\item Did workers who lost restaurant jobs find employment elsewhere? (unemployment rate, job transitions)
+\item Did restaurant prices increase? By how much? (inflation effect)
+\item Did consumer welfare change? (fewer restaurants, higher prices, but workers have more income)
+\end{itemize}
+
+\textbf{5. Context and alternatives:}
+\begin{itemize}
+\item Why was minimum wage raised? (e.g., cost of living, poverty reduction)
+\item Alternative policies: Earned income tax credit (EITC), wage subsidies, training programs
+\item How does 3\% job loss compare to other cities' experiences? (benchmark)
+\end{itemize}
+
+\textbf{6. Mechanism and heterogeneity:}
+\begin{itemize}
+\item Which types of restaurants cut employment? (fast food vs. full service, chains vs. independents)
+\item Are there substitute jobs available? (unemployment duration for displaced workers)
+\item Did workers move to neighboring cities? (commuting patterns)
+\end{itemize}
+
+\textbf{Recommendation framework:}
+
+\begin{enumerate}
+\item \textbf{Calculate total welfare:}
+\begin{itemize}
+\item Before: 100 workers × \$12/hr × 2000 hrs/yr = \$2.4M annual wages
+\item After: 97 workers × \$15/hr × 2000 hrs/yr = \$2.91M annual wages
+\item \textbf{Net effect: +\$510K total wages despite 3\% job loss}
+\end{itemize}
+
+\item \textbf{Assess distributional fairness:}
+\begin{itemize}
+\item Most workers benefit
+\item Small fraction harmed
+\item Can we compensate the 3\% who lost jobs? (job placement, EITC expansion)
+\end{itemize}
+
+\item \textbf{Compare to alternatives:}
+\begin{itemize}
+\item EITC might increase worker income without job losses, but requires federal funding
+\item Training might increase wages without mandate, but takes longer
+\end{itemize}
+
+\item \textbf{Monitor and adjust:}
+\begin{itemize}
+\item Continue tracking employment over next 1-2 years
+\item If job losses worsen, consider exemptions (small businesses, teens)
+\item If job losses reverse, consider further increases
+\end{itemize}
+\end{enumerate}
+
+\textbf{Example recommendation:}
+
+"Based on a comprehensive analysis:
+
+\textbf{Maintain the \$15 minimum wage, but with monitoring and support for displaced workers.}
+
+\textit{Rationale:}
+\begin{itemize}
+\item Total worker income increased by \$510K (21\% gain) despite 3\% job loss
+\item 97\% of workers gained \$6,000/year in earnings
+\item 3\% job loss is at lower end of empirical literature (typical range: 0-10\%)
+\item Long-run employment effects may be smaller as market adjusts
+\end{itemize}
+
+\textit{Mitigation:}
+\begin{itemize}
+\item Establish job placement services for displaced workers
+\item Expand EITC for workers in neighboring cities (to address equity)
+\item Monitor restaurant industry for 2 years; revisit if employment falls >5\%
+\end{itemize}
+
+\textit{Alternative not recommended:}
+Rolling back would restore 3 jobs but reduce income for 97 workers by \$6,000 each—a poor tradeoff."
+
+\vspace{1cm}
+
+% ============================================================================
+\section{Coding Challenges}
+% ============================================================================
+
+\subsection{Overview}
+
+Comprehensive coding challenges with auto-graders are provided in separate Python files:
+
+\begin{itemize}
+\item \texttt{causal\_challenge\_1\_double\_ml.py} - Implement Double ML from scratch
+\item \texttt{causal\_challenge\_2\_sensitivity.py} - Conduct sensitivity analysis
+\item \texttt{causal\_challenge\_3\_did.py} - Implement difference-in-differences
+\item \texttt{test\_causal\_challenges.py} - Auto-grader with pytest
+\end{itemize}
+
+See the separate coding challenge files for details. Each challenge includes:
+\begin{itemize}
+\item Problem description
+\item Starter code with TODOs
+\item Test cases (visible and hidden)
+\item Grading rubric
+\item Solution file (for instructors only)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Challenge 1: Implement Double ML (25 points)}
+
+\textbf{File:} \texttt{causal\_challenge\_1\_double\_ml.py}
+
+\textbf{Task:} Implement the Double ML estimator for a partially linear model with cross-fitting.
+
+\textbf{Skills tested:}
+\begin{itemize}
+\item Understanding of cross-fitting
+\item Implementation of two-stage estimation
+\item Scikit-learn model training
+\item Residual regression
+\end{itemize}
+
+\textbf{Grading:}
+\begin{itemize}
+\item Correct implementation of K-fold cross-fitting (10 points)
+\item Correct computation of residuals (5 points)
+\item Correct final treatment effect estimate (5 points)
+\item Correct standard error calculation (5 points)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Challenge 2: Sensitivity Analysis (20 points)}
+
+\textbf{File:} \texttt{causal\_challenge\_2\_sensitivity.py}
+
+\textbf{Task:} Implement omitted variable bias formula and compute robustness value.
+
+\textbf{Skills tested:}
+\begin{itemize}
+\item Understanding of partial $R^2$
+\item Bias calculation under confounding
+\item Critical thinking about robustness
+\end{itemize}
+
+\textbf{Grading:}
+\begin{itemize}
+\item Correct bias formula implementation (8 points)
+\item Correct robustness value calculation (7 points)
+\item Correct interpretation (5 points)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection{Challenge 3: Difference-in-Differences (25 points)}
+
+\textbf{File:} \texttt{causal\_challenge\_3\_did.py}
+
+\textbf{Task:} Implement DID estimator and conduct pre-trends test.
+
+\textbf{Skills tested:}
+\begin{itemize}
+\item Panel data manipulation
+\item Regression with interaction terms
+\item Pre-trends testing
+\item Event study visualization
+\end{itemize}
+
+\textbf{Grading:}
+\begin{itemize}
+\item Correct DID estimate (8 points)
+\item Correct standard errors (5 points)
+\item Pre-trends test implementation (7 points)
+\item Event study plot (5 points)
+\end{itemize}
+
+\vspace{1cm}
+
+\section*{Grading Rubric Summary}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Component} & \textbf{Points} & \textbf{Weight} & \textbf{Total} \\
+\midrule
+Multiple Choice (12 questions) & 4 each & -- & 48 \\
+Conceptual Problems (6 problems) & 12-15 each & -- & 82 \\
+Coding Challenges (3 challenges) & 20-25 each & -- & 70 \\
+\midrule
+\textbf{Total} & & & \textbf{200} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Suggested weighting for final grade:}
+\begin{itemize}
+\item Multiple Choice: 24\% (48/200)
+\item Conceptual: 41\% (82/200)
+\item Coding: 35\% (70/200)
+\end{itemize}
+
+Or scale to 100 points for course grade.
+
+\end{document}

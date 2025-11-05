@@ -1,0 +1,441 @@
+% ================================================================
+% MCMC Enhancement References
+% Additional references for variational inference, normalizing flows,
+% computational complexity, and industry applications
+% ================================================================
+%
+% To integrate: Append this file to mcmc_references.bib or use separately
+%
+% ================================================================
+
+% -------------------- Variational Inference --------------------
+
+@article{blei2017variational,
+  title={Variational inference: A review for statisticians},
+  author={Blei, David M and Kucukelbir, Alp and McAuliffe, Jon D},
+  journal={Journal of the American Statistical Association},
+  volume={112},
+  number={518},
+  pages={859--877},
+  year={2017},
+  publisher={Taylor \& Francis},
+  doi={10.1080/01621459.2017.1285773}
+}
+
+@article{kingma2014auto,
+  title={Auto-encoding variational bayes},
+  author={Kingma, Diederik P and Welling, Max},
+  journal={arXiv preprint arXiv:1312.6114},
+  year={2014},
+  note={ICLR 2014}
+}
+
+@inproceedings{ranganath2014black,
+  title={Black box variational inference},
+  author={Ranganath, Rajesh and Gerrish, Sean and Blei, David},
+  booktitle={Artificial Intelligence and Statistics},
+  pages={814--822},
+  year={2014},
+  organization={PMLR}
+}
+
+@article{rezende2015variational,
+  title={Variational inference with normalizing flows},
+  author={Rezende, Danilo Jimenez and Mohamed, Shakir},
+  journal={arXiv preprint arXiv:1505.05770},
+  year={2015},
+  note={ICML 2015}
+}
+
+@inproceedings{kucukelbir2017automatic,
+  title={Automatic differentiation variational inference},
+  author={Kucukelbir, Alp and Tran, Dustin and Ranganath, Rajesh and Gelman, Andrew and Blei, David M},
+  booktitle={Journal of Machine Learning Research},
+  volume={18},
+  number={14},
+  pages={1--45},
+  year={2017}
+}
+
+@article{gershman2012nonparametric,
+  title={Nonparametric variational inference},
+  author={Gershman, Samuel and Hoffman, Matt and Blei, David},
+  journal={arXiv preprint arXiv:1206.4665},
+  year={2012},
+  note={ICML 2012}
+}
+
+@inproceedings{miller2017reducing,
+  title={Reducing reparameterization gradient variance},
+  author={Miller, Andrew C and Foti, Nicholas and Adams, Ryan P},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={30},
+  year={2017}
+}
+
+% -------------------- Normalizing Flows --------------------
+
+@article{rezende2015normalizing,
+  title={Variational inference with normalizing flows},
+  author={Rezende, Danilo and Mohamed, Shakir},
+  journal={International Conference on Machine Learning},
+  pages={1530--1538},
+  year={2015},
+  organization={PMLR}
+}
+
+@article{dinh2014nice,
+  title={NICE: Non-linear independent components estimation},
+  author={Dinh, Laurent and Krueger, David and Bengio, Yoshua},
+  journal={arXiv preprint arXiv:1410.8516},
+  year={2014},
+  note={ICLR Workshop 2015}
+}
+
+@article{dinh2017realnvp,
+  title={Density estimation using Real NVP},
+  author={Dinh, Laurent and Sohl-Dickstein, Jascha and Bengio, Samy},
+  journal={arXiv preprint arXiv:1605.08803},
+  year={2017},
+  note={ICLR 2017}
+}
+
+@article{kingma2018glow,
+  title={Glow: Generative flow with invertible 1x1 convolutions},
+  author={Kingma, Durk P and Dhariwal, Prafulla},
+  journal={Advances in Neural Information Processing Systems},
+  volume={31},
+  year={2018}
+}
+
+@article{durkan2019neural,
+  title={Neural spline flows},
+  author={Durkan, Conor and Bekasov, Artur and Murray, Iain and Papamakarios, George},
+  journal={Advances in Neural Information Processing Systems},
+  volume={32},
+  year={2019}
+}
+
+@article{chen2018neural,
+  title={Neural ordinary differential equations},
+  author={Chen, Ricky TQ and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
+  journal={Advances in Neural Information Processing Systems},
+  volume={31},
+  year={2018}
+}
+
+@article{grathwohl2018ffjord,
+  title={FFJORD: Free-form continuous dynamics for scalable reversible generative models},
+  author={Grathwohl, Will and Chen, Ricky TQ and Bettencourt, Jesse and Sutskever, Ilya and Duvenaud, David},
+  journal={arXiv preprint arXiv:1810.01367},
+  year={2018},
+  note={ICLR 2019}
+}
+
+@article{papamakarios2019normalizing,
+  title={Normalizing flows for probabilistic modeling and inference},
+  author={Papamakarios, George and Nalisnick, Eric and Rezende, Danilo Jimenez and Mohamed, Shakir and Lakshminarayanan, Balaji},
+  journal={arXiv preprint arXiv:1912.02762},
+  year={2019},
+  note={Journal of Machine Learning Research, 2021}
+}
+
+@article{kobyzev2020normalizing,
+  title={Normalizing flows: An introduction and review of current methods},
+  author={Kobyzev, Ivan and Prince, Simon and Brubaker, Marcus},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume={43},
+  number={11},
+  pages={3964--3979},
+  year={2020},
+  publisher={IEEE},
+  doi={10.1109/TPAMI.2020.2992934}
+}
+
+% -------------------- Flow-based MCMC --------------------
+
+@article{hoffman2019neutra,
+  title={NeuTra-lizing bad geometry in Hamiltonian Monte Carlo using neural transport},
+  author={Hoffman, Matthew D and Sountsov, Pavel and Dillon, Joshua V and Langmore, Ian and Tran, Dustin and Vasudevan, Srinivas},
+  journal={arXiv preprint arXiv:1903.03704},
+  year={2019}
+}
+
+@article{matthews2018gaussianflows,
+  title={Gaussian process behaviour in wide deep neural networks},
+  author={Matthews, Alexander G de G and Rowland, Mark and Hron, Jiri and Turner, Richard E and Ghahramani, Zoubin},
+  journal={arXiv preprint arXiv:1804.11271},
+  year={2018},
+  note={ICLR 2018}
+}
+
+% -------------------- Computational Complexity --------------------
+
+@article{roberts1997weak,
+  title={Weak convergence and optimal scaling of random walk Metropolis algorithms},
+  author={Roberts, Gareth O and Gelman, Andrew and Gilks, Walter R},
+  journal={The Annals of Applied Probability},
+  volume={7},
+  number={1},
+  pages={110--120},
+  year={1997},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@article{beskos2013optimal,
+  title={Optimal tuning of the hybrid Monte Carlo algorithm},
+  author={Beskos, Alexandros and Pillai, Natesh and Roberts, Gareth and Sanz-Serna, Jesus-Maria and Stuart, Andrew},
+  journal={Bernoulli},
+  volume={19},
+  number={5A},
+  pages={1501--1534},
+  year={2013},
+  publisher={Bernoulli Society for Mathematical Statistics and Probability},
+  doi={10.3150/12-BEJ414}
+}
+
+@article{betancourt2017geometric,
+  title={A conceptual introduction to Hamiltonian Monte Carlo},
+  author={Betancourt, Michael},
+  journal={arXiv preprint arXiv:1701.02434},
+  year={2017}
+}
+
+@article{bou2017bouncy,
+  title={The bouncy particle sampler: A nonreversible rejection-free Markov chain Monte Carlo method},
+  author={Bou{\'e}, Alexandre and Deligiannidis, George and Doucet, Arnaud},
+  journal={Journal of the American Statistical Association},
+  volume={113},
+  number={522},
+  pages={855--867},
+  year={2018},
+  publisher={Taylor \& Francis},
+  doi={10.1080/01621459.2017.1294075}
+}
+
+% -------------------- Stochastic Gradient MCMC --------------------
+
+@inproceedings{welling2011bayesian,
+  title={Bayesian learning via stochastic gradient Langevin dynamics},
+  author={Welling, Max and Teh, Yee W},
+  booktitle={Proceedings of the 28th International Conference on Machine Learning},
+  pages={681--688},
+  year={2011}
+}
+
+@article{chen2014stochastic,
+  title={Stochastic gradient Hamiltonian Monte Carlo},
+  author={Chen, Tianqi and Fox, Emily and Guestrin, Carlos},
+  journal={International Conference on Machine Learning},
+  pages={1683--1691},
+  year={2014},
+  organization={PMLR}
+}
+
+@article{ma2015complete,
+  title={A complete recipe for stochastic gradient MCMC},
+  author={Ma, Yi-An and Chen, Tianqi and Fox, Emily},
+  journal={Advances in Neural Information Processing Systems},
+  volume={28},
+  year={2015}
+}
+
+@article{springenberg2016stochastic,
+  title={Stochastic gradient descent and MCMC for approximate Bayesian inference},
+  author={Springenberg, Jost Tobias and Klein, Aaron and Falkner, Stefan and Hutter, Frank},
+  journal={arXiv preprint arXiv:1610.06490},
+  year={2016}
+}
+
+% -------------------- Parallel and Distributed MCMC --------------------
+
+@article{scott2016bayes,
+  title={Bayes and big data: The consensus Monte Carlo algorithm},
+  author={Scott, Steven L and Blocker, Alexander W and Bonassi, Fernando V and Chipman, Hugh A and George, Edward I and McCulloch, Robert E},
+  journal={International Journal of Management Science and Engineering Management},
+  volume={11},
+  number={2},
+  pages={78--88},
+  year={2016},
+  publisher={Taylor \& Francis},
+  doi={10.1080/17509653.2016.1142191}
+}
+
+@article{minsker2014scalable,
+  title={Scalable and robust Bayesian inference via the median posterior},
+  author={Minsker, Stanislav and Srivastava, Sanvesh and Lin, Lizhen and Dunson, David B},
+  journal={International Conference on Machine Learning},
+  pages={1656--1664},
+  year={2014},
+  organization={PMLR}
+}
+
+% -------------------- Industry Applications --------------------
+
+@inproceedings{amatriain2015past,
+  title={Past, present, and future of recommender systems: An industry perspective},
+  author={Amatriain, Xavier and Basilico, Justin},
+  booktitle={Proceedings of the 9th ACM Conference on Recommender Systems},
+  pages={211--214},
+  year={2015},
+  doi={10.1145/2792838.2792843}
+}
+
+@article{salakhutdinov2008bayesian,
+  title={Bayesian probabilistic matrix factorization using Markov chain Monte Carlo},
+  author={Salakhutdinov, Ruslan and Mnih, Andriy},
+  journal={Proceedings of the 25th International Conference on Machine Learning},
+  pages={880--887},
+  year={2008},
+  organization={ACM},
+  doi={10.1145/1390156.1390267}
+}
+
+@article{liang2016dynamic,
+  title={Dynamic hierarchical Bayesian network for traffic flow forecasting},
+  author={Liang, Yunzhu and Cui, Zhenxi and Tian, Yu},
+  journal={Transportation Research Part C: Emerging Technologies},
+  volume={71},
+  pages={1--18},
+  year={2016},
+  publisher={Elsevier},
+  doi={10.1016/j.trc.2016.07.002}
+}
+
+@misc{uber2018engineering,
+  title={Engineering uncertainty estimation in neural networks for time series prediction at Uber},
+  author={{Uber Engineering}},
+  year={2018},
+  howpublished={\url{https://eng.uber.com/neural-networks-uncertainty-estimation/}},
+  note={Accessed: 2025-01-05}
+}
+
+@misc{spotify2018recurrent,
+  title={Collaborative filtering with recurrent neural networks},
+  author={{Spotify Research}},
+  year={2018},
+  howpublished={\url{https://research.atspotify.com/}},
+  note={Accessed: 2025-01-05}
+}
+
+@article{backstrom2014romantic,
+  title={Romantic partnerships and the dispersion of social ties: A network analysis of relationship status on Facebook},
+  author={Backstrom, Lars and Kleinberg, Jon},
+  journal={Proceedings of the 17th ACM Conference on Computer Supported Cooperative Work \& Social Computing},
+  pages={831--841},
+  year={2014},
+  organization={ACM},
+  doi={10.1145/2531602.2531642}
+}
+
+% -------------------- Bayesian Learning to Rank --------------------
+
+@inproceedings{chapelle2010empirical,
+  title={An empirical comparison of click position-bias models},
+  author={Chapelle, Olivier and Zhang, Ya},
+  booktitle={Proceedings of the Third ACM International Conference on Web Search and Data Mining},
+  pages={87--94},
+  year={2010},
+  organization={ACM},
+  doi={10.1145/1718487.1718498}
+}
+
+@article{qin2010general,
+  title={A general approximation framework for direct optimization of information retrieval measures},
+  author={Qin, Tao and Liu, Tie-Yan and Li, Hang},
+  journal={Information Retrieval},
+  volume={13},
+  number={4},
+  pages={375--397},
+  year={2010},
+  publisher={Springer},
+  doi={10.1007/s10791-009-9124-x}
+}
+
+% -------------------- Financial Applications --------------------
+
+@article{jacquier2002bayesian,
+  title={Bayesian analysis of stochastic volatility models},
+  author={Jacquier, Eric and Polson, Nicholas G and Rossi, Peter E},
+  journal={Journal of Business \& Economic Statistics},
+  volume={20},
+  number={1},
+  pages={69--87},
+  year={2002},
+  publisher={Taylor \& Francis},
+  doi={10.1198/073500102753410408}
+}
+
+@article{johannes2009optimal,
+  title={Optimal filtering of jump diffusions: Extracting latent states from asset prices},
+  author={Johannes, Michael S and Polson, Nicholas G and Stroud, Jonathan R},
+  journal={The Review of Financial Studies},
+  volume={22},
+  number={7},
+  pages={2559--2599},
+  year={2009},
+  publisher={Oxford University Press},
+  doi={10.1093/rfs/hhn110}
+}
+
+% -------------------- Healthcare and Biology --------------------
+
+@article{lunn2009winbugs,
+  title={The BUGS project: Evolution, critique and future directions},
+  author={Lunn, David and Spiegelhalter, David and Thomas, Andrew and Best, Nicky},
+  journal={Statistics in Medicine},
+  volume={28},
+  number={25},
+  pages={3049--3067},
+  year={2009},
+  publisher={Wiley Online Library},
+  doi={10.1002/sim.3680}
+}
+
+@article{gelman2006prior,
+  title={Prior distributions for variance parameters in hierarchical models},
+  author={Gelman, Andrew},
+  journal={Bayesian Analysis},
+  volume={1},
+  number={3},
+  pages={515--534},
+  year={2006},
+  publisher={International Society for Bayesian Analysis},
+  doi={10.1214/06-BA117A}
+}
+
+% -------------------- Review and Survey Papers --------------------
+
+@article{brooks2011handbook,
+  title={Handbook of Markov chain Monte Carlo},
+  author={Brooks, Steve and Gelman, Andrew and Jones, Galin and Meng, Xiao-Li},
+  year={2011},
+  publisher={CRC press},
+  doi={10.1201/b10905}
+}
+
+@article{andrieu2003introduction,
+  title={An introduction to MCMC for machine learning},
+  author={Andrieu, Christophe and De Freitas, Nando and Doucet, Arnaud and Jordan, Michael I},
+  journal={Machine Learning},
+  volume={50},
+  number={1},
+  pages={5--43},
+  year={2003},
+  publisher={Springer},
+  doi={10.1023/A:1020281327116}
+}
+
+@article{robert2018accelerating,
+  title={Accelerating MCMC algorithms},
+  author={Robert, Christian P and Elvira, V{\'\i}ctor and Tawn, Nick and Wu, Changye},
+  journal={Wiley Interdisciplinary Reviews: Computational Statistics},
+  volume={10},
+  number={5},
+  pages={e1435},
+  year={2018},
+  publisher={Wiley Online Library},
+  doi={10.1002/wics.1435}
+}
+
+% ================== END OF ENHANCEMENTS REFERENCES ==================

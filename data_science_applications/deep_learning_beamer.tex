@@ -1,0 +1,992 @@
+% ================================================================
+% DEEP LEARNING FUNDAMENTALS
+% Comprehensive introduction to neural networks and deep learning
+%
+% Topics Covered:
+% 1. Neural Network Foundations
+% 2. Training Deep Networks (Backprop, Optimization)
+% 3. Convolutional Neural Networks (CNNs)
+% 4. Recurrent Neural Networks (RNNs)
+% 5. Modern Architectures (Transformers, ResNets)
+% 6. Practical Considerations
+%
+% Total: ~45 slides
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+\section{Deep Learning Fundamentals}
+
+% ================================================================
+% PART 1: NEURAL NETWORK BASICS
+% ================================================================
+
+\begin{frame}{From Linear Models to Neural Networks}
+\textbf{The evolution from simple to complex models}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Linear Regression:}
+\[
+\hat{y} = w_1 x_1 + w_2 x_2 + \cdots + w_d x_d + b
+\]
+
+\textbf{Limitations:}
+\begin{itemize}
+\item Can only learn linear relationships
+\item Decision boundary is a hyperplane
+\item XOR problem unsolvable
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Adding Non-Linearity:}
+
+\textcolor{forest}{\textbf{Key Insight:}} Compose linear transformations with non-linear activation functions!
+
+\[
+\hat{y} = \sigma(w_1 x_1 + w_2 x_2 + b)
+\]
+
+where $\sigma$ is a non-linear function.
+
+\vspace{0.3cm}
+
+\textbf{Universal Approximation Theorem:}
+
+A neural network with one hidden layer can approximate \textit{any} continuous function (given enough neurons).
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Single Neuron (Perceptron):}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.8]
+% Inputs
+\node[draw, circle] (x1) at (0,2) {$x_1$};
+\node[draw, circle] (x2) at (0,1) {$x_2$};
+\node[draw, circle] (x3) at (0,0) {$x_3$};
+
+% Neuron
+\node[draw, circle, fill=navyblue!20, minimum size=1.5cm] (n) at (3,1) {$\sigma$};
+
+% Output
+\node[draw, circle] (y) at (6,1) {$\hat{y}$};
+
+% Connections
+\draw[->, thick] (x1) -- node[above] {\tiny $w_1$} (n);
+\draw[->, thick] (x2) -- node[above] {\tiny $w_2$} (n);
+\draw[->, thick] (x3) -- node[above] {\tiny $w_3$} (n);
+\draw[->, thick] (n) -- (y);
+
+% Bias
+\node[draw, circle] (b) at (3,-0.5) {$b$};
+\draw[->, thick] (b) -- (n);
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.2cm}
+
+\textbf{Multi-Layer Perceptron (MLP):}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.6]
+% Input layer
+\foreach \i in {1,...,3} {
+  \node[draw, circle, fill=forest!20] (x\i) at (0,{3-\i}) {$x_{\i}$};
+}
+
+% Hidden layer
+\foreach \i in {1,...,4} {
+  \node[draw, circle, fill=navyblue!20] (h\i) at (2.5,{3.5-\i}) {};
+}
+
+% Output layer
+\node[draw, circle, fill=crimson!20] (y) at (5,1) {$\hat{y}$};
+
+% Connections
+\foreach \i in {1,...,3} {
+  \foreach \j in {1,...,4} {
+    \draw[->] (x\i) -- (h\j);
+  }
+}
+\foreach \i in {1,...,4} {
+  \draw[->] (h\i) -- (y);
+}
+
+% Labels
+\node at (0,-1) {\tiny Input};
+\node at (2.5,-1) {\tiny Hidden};
+\node at (5,-1) {\tiny Output};
+\end{tikzpicture}
+\end{figure}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Deep Learning = Many Layers}
+"Deep" refers to multiple hidden layers. Modern networks can have 100+ layers!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Activation Functions}
+\textbf{Non-linearities that make deep learning work}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Activations Matter:}
+
+Without non-linearity, stacking layers is pointless:
+\[
+f(W_2(W_1 x)) = (W_2 W_1) x = W x
+\]
+Still just linear!
+
+\vspace{0.3cm}
+
+\textbf{Common Activations:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Sigmoid:}}
+   \[
+   \sigma(z) = \frac{1}{1 + e^{-z}}
+   \]
+   Range: $(0, 1)$ \\
+   Use: Output layer (binary classification)
+
+\item \textcolor{navyblue}{\textbf{Tanh:}}
+   \[
+   \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
+   \]
+   Range: $(-1, 1)$ \\
+   Better than sigmoid (zero-centered)
+
+\item \textcolor{crimson}{\textbf{ReLU (Rectified Linear Unit):}}
+   \[
+   \text{ReLU}(z) = \max(0, z)
+   \]
+   Most popular! Fast, helps with vanishing gradients
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Activation Function Comparison:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|l|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Function} & \textbf{Pros} & \textbf{Cons} \\
+\hline
+\textbf{Sigmoid} & Smooth, interpretable & Vanishing gradient, not zero-centered \\
+\hline
+\textbf{Tanh} & Zero-centered & Vanishing gradient \\
+\hline
+\textbf{ReLU} & Fast, no vanishing gradient & Dead neurons (always 0) \\
+\hline
+\textbf{Leaky ReLU} & Fixes dead ReLU & Needs tuning \\
+\hline
+\textbf{ELU} & Smooth, negative values & Slower than ReLU \\
+\hline
+\textbf{Swish} & Smooth, self-gated & More computation \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Modern Variants:}
+
+\begin{itemize}
+\item \textbf{Leaky ReLU:}
+  \[
+  f(z) = \begin{cases} z & z > 0 \\ 0.01z & z \leq 0 \end{cases}
+  \]
+
+\item \textbf{GELU} (Gaussian Error Linear Unit):
+  Used in Transformers (BERT, GPT)
+
+\item \textbf{Swish:} $f(z) = z \cdot \sigma(z)$
+  Self-gated, smooth
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Rule of Thumb:}
+\begin{itemize}
+\item Hidden layers: \textcolor{forest}{\textbf{ReLU}}
+\item Output (regression): \textcolor{navyblue}{\textbf{Linear}}
+\item Output (binary): \textcolor{crimson}{\textbf{Sigmoid}}
+\item Output (multi-class): \textcolor{purple}{\textbf{Softmax}}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backpropagation: Training Neural Networks}
+\textbf{The algorithm that makes deep learning possible}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Problem:}
+
+Given training data $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$, find weights $W$ that minimize loss:
+\[
+\mathcal{L}(W) = \frac{1}{n} \sum_{i=1}^n \text{loss}(\hat{y}^{(i)}, y^{(i)})
+\]
+
+\textbf{The Solution: Gradient Descent}
+\[
+W \leftarrow W - \eta \nabla_W \mathcal{L}
+\]
+
+But how to compute $\nabla_W \mathcal{L}$ for deep networks?
+
+\vspace{0.3cm}
+
+\textbf{Backpropagation = Chain Rule}
+
+For a 2-layer network:
+\[
+\hat{y} = f(W_2 \cdot \sigma(W_1 x))
+\]
+
+By chain rule:
+\[
+\frac{\partial \mathcal{L}}{\partial W_1} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial h} \cdot \frac{\partial h}{\partial W_1}
+\]
+
+where $h = \sigma(W_1 x)$ is hidden layer.
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Forward Pass:}
+\begin{enumerate}
+\item Compute activations layer by layer
+\item Store intermediate values
+\item Compute loss at output
+\end{enumerate}
+
+\textbf{Backward Pass:}
+\begin{enumerate}
+\item Start from loss
+\item Compute gradients backward
+\item Update weights
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Example: 1 Hidden Layer}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.7]
+% Forward pass (top)
+\node at (0,3.5) {\tiny Forward};
+\node[draw, rectangle, fill=forest!20] (x) at (0,3) {$x$};
+\node[draw, rectangle, fill=navyblue!20] (h) at (2,3) {$h$};
+\node[draw, rectangle, fill=crimson!20] (y) at (4,3) {$\hat{y}$};
+\node[draw, rectangle, fill=purple!20] (l) at (6,3) {$\mathcal{L}$};
+
+\draw[->, thick] (x) -- node[above] {\tiny $W_1$} (h);
+\draw[->, thick] (h) -- node[above] {\tiny $W_2$} (y);
+\draw[->, thick] (y) -- (l);
+
+% Backward pass (bottom)
+\node at (0,1.5) {\tiny Backward};
+\draw[<-, thick, crimson] (0,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial W_1}$} (2,1);
+\draw[<-, thick, crimson] (2,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial W_2}$} (4,1);
+\draw[<-, thick, crimson] (4,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial \hat{y}}$} (6,1);
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.3cm}
+
+\textbf{Computational Graph:}
+
+Modern frameworks (PyTorch, TensorFlow) build computational graphs automatically and compute gradients via automatic differentiation.
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Key Insight}
+Backprop is just calculus + chain rule + dynamic programming. Frameworks handle it automatically!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Optimization Algorithms}
+\textbf{Beyond vanilla gradient descent}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Stochastic Gradient Descent (SGD):}
+
+\textbf{Vanilla GD:} Use all data
+\[
+W \leftarrow W - \eta \nabla_W \mathcal{L}
+\]
+
+\textbf{SGD:} Use mini-batches
+\[
+W \leftarrow W - \eta \nabla_W \mathcal{L}_{\text{batch}}
+\]
+
+Faster, more memory efficient, adds noise (helps escape local minima)
+
+\vspace{0.3cm}
+
+\textbf{Modern Optimizers:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{SGD with Momentum:}}
+   \[
+   v_t = \gamma v_{t-1} + \eta \nabla_W \mathcal{L}
+   \]
+   \[
+   W \leftarrow W - v_t
+   \]
+   Dampens oscillations, accelerates convergence
+
+\item \textcolor{navyblue}{\textbf{Adam (Adaptive Moment):}}
+   \begin{itemize}
+   \item Adapts learning rate per parameter
+   \item Combines momentum + RMSProp
+   \item Most popular optimizer today
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Optimizer Comparison:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|p{4cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Optimizer} & \textbf{Characteristics} \\
+\hline
+\textbf{SGD} & Simple, requires good LR tuning \\
+\hline
+\textbf{SGD+Momentum} & Faster than SGD, less oscillation \\
+\hline
+\textbf{RMSProp} & Adaptive LR, good for RNNs \\
+\hline
+\textbf{Adam} & Adaptive LR, fast convergence, most popular \\
+\hline
+\textbf{AdamW} & Adam + weight decay (better regularization) \\
+\hline
+\textbf{RAdam} & Rectified Adam (warm-up built-in) \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Learning Rate Schedules:}
+
+\begin{itemize}
+\item \textbf{Step decay:} Reduce LR every N epochs
+\item \textbf{Exponential decay:} $\eta_t = \eta_0 e^{-kt}$
+\item \textbf{Cosine annealing:} Smooth reduction
+\item \textbf{1cycle:} Increase then decrease (fast.ai)
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{PyTorch Example:}
+\begin{verbatim}
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=0.001
+)
+
+scheduler = torch.optim.lr_scheduler.
+    CosineAnnealingLR(optimizer, T_max=100)
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 2: CNNs
+% ================================================================
+
+\begin{frame}{Convolutional Neural Networks (CNNs)}
+\textbf{Designed for spatial data (images, video)}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why CNNs for Images?}
+
+\begin{itemize}
+\item \textbf{Fully connected:}
+  \begin{itemize}
+  \item 100×100 RGB image = 30K inputs
+  \item 1st hidden layer (1000 neurons) = 30M parameters!
+  \end{itemize}
+
+\item \textbf{Problems:}
+  \begin{itemize}
+  \item Too many parameters
+  \item Ignores spatial structure
+  \item Not translation invariant
+  \end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{CNN Solutions:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Local connectivity:}}
+  \begin{itemize}
+  \item Each neuron sees small region (receptive field)
+  \end{itemize}
+
+\item \textcolor{navyblue}{\textbf{Parameter sharing:}}
+  \begin{itemize}
+  \item Same filter across image
+  \item Learns features (edges, textures)
+  \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Pooling:}}
+  \begin{itemize}
+  \item Downsampling for translation invariance
+  \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Convolution Operation:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.5]
+% Input
+\draw[fill=navyblue!20] (0,0) rectangle (4,4);
+\node at (2,4.5) {\tiny Input};
+
+% Filter/Kernel
+\draw[fill=forest!40, thick] (1,1) rectangle (2.5,2.5);
+\node at (1.75,0.5) {\tiny Filter 3×3};
+
+% Output
+\draw[fill=crimson!20] (6,1) rectangle (8,3);
+\node at (7,3.5) {\tiny Output};
+
+% Arrow
+\draw[->, very thick] (4.5,2) -- (5.5,2);
+\end{tikzpicture}
+\end{figure}
+
+\textbf{Filter slides across image:}
+\[
+(\text{img} * \text{filter})_{ij} = \sum_m \sum_n \text{img}_{i+m,j+n} \cdot \text{filter}_{mn}
+\]
+
+\vspace{0.3cm}
+
+\textbf{Learned Filters Detect Features:}
+
+\begin{itemize}
+\item Early layers: edges, corners
+\item Middle layers: textures, patterns
+\item Deep layers: object parts, faces
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{CNN Architecture:}
+\[
+\text{Input} \to [\text{Conv} \to \text{ReLU} \to \text{Pool}]^* \to \text{FC} \to \text{Output}
+\]
+
+Common pattern: Stack Conv+ReLU+Pool blocks, then fully connected layers
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Modern CNN Architectures}
+\textbf{Evolution from LeNet to EfficientNet}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Classic Architectures:}
+
+\begin{enumerate}
+\item \textbf{LeNet-5 (1998):}
+  \begin{itemize}
+  \item 7 layers, digit recognition
+  \item First successful CNN
+  \end{itemize}
+
+\item \textbf{AlexNet (2012):}
+  \begin{itemize}
+  \item ImageNet winner
+  \item 8 layers, 60M parameters
+  \item ReLU, dropout, GPU training
+  \end{itemize}
+
+\item \textbf{VGG (2014):}
+  \begin{itemize}
+  \item 16-19 layers
+  \item Small 3×3 filters stacked
+  \item Very deep, simple architecture
+  \end{itemize}
+
+\item \textbf{ResNet (2015):}
+  \begin{itemize}
+  \item 50-152 layers
+  \item \textcolor{crimson}{Skip connections!}
+  \item Solves vanishing gradient
+  \end{itemize}
+\end{enumerate}
+
+\textbf{ResNet Skip Connection:}
+\[
+y = F(x, W) + x
+\]
+
+Identity mapping helps gradient flow!
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Modern Developments:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|p{4.5cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Architecture} & \textbf{Innovation} \\
+\hline
+\textbf{Inception} & Multiple filter sizes in parallel \\
+\hline
+\textbf{ResNet} & Skip connections (residual blocks) \\
+\hline
+\textbf{DenseNet} & Every layer connects to every other \\
+\hline
+\textbf{MobileNet} & Depthwise separable convs (mobile) \\
+\hline
+\textbf{EfficientNet} & Compound scaling (width+depth+resolution) \\
+\hline
+\textbf{Vision Transformer} & Self-attention instead of convolutions \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Transfer Learning:}
+
+Instead of training from scratch:
+\begin{enumerate}
+\item Load pre-trained model (ImageNet)
+\item Remove final layer
+\item Add new layer for your task
+\item Fine-tune on your data
+\end{enumerate}
+
+\begin{verbatim}
+import torchvision.models as models
+
+# Pre-trained ResNet50
+model = models.resnet50(
+    pretrained=True
+)
+# Replace final layer
+model.fc = nn.Linear(2048, num_classes)
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 3: RNNs and Transformers
+% ================================================================
+
+\begin{frame}{Recurrent Neural Networks (RNNs)}
+\textbf{Networks with memory for sequential data}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why RNNs?}
+
+For sequences (text, time series, speech):
+\begin{itemize}
+\item Input length varies
+\item Temporal dependencies matter
+\item Order is important
+\end{itemize}
+
+\textbf{RNN Idea:}
+
+Maintain hidden state $h_t$ that captures history:
+\[
+h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t)
+\]
+\[
+y_t = W_{hy} h_t
+\]
+
+Hidden state $h_t$ is updated at each timestep.
+
+\vspace{0.3cm}
+
+\textbf{Problem: Vanishing Gradients}
+
+During backprop through time, gradients decay exponentially $\to$ can't learn long-term dependencies.
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{LSTM (Long Short-Term Memory):}
+
+Solution to vanishing gradients:
+
+\begin{itemize}
+\item \textbf{Cell state:} Highway for information flow
+\item \textbf{Gates:} Control info flow
+  \begin{itemize}
+  \item Forget gate: What to forget
+  \item Input gate: What to update
+  \item Output gate: What to output
+  \end{itemize}
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{LSTM Cell:}
+\begin{align*}
+f_t &= \sigma(W_f [h_{t-1}, x_t]) \quad \text{(forget)} \\
+i_t &= \sigma(W_i [h_{t-1}, x_t]) \quad \text{(input)} \\
+\tilde{C}_t &= \tanh(W_C [h_{t-1}, x_t]) \\
+C_t &= f_t \odot C_{t-1} + i_t \odot \tilde{C}_t \\
+o_t &= \sigma(W_o [h_{t-1}, x_t]) \quad \text{(output)} \\
+h_t &= o_t \odot \tanh(C_t)
+\end{align*}
+
+\vspace{0.2cm}
+
+\textbf{GRU (Gated Recurrent Unit):}
+
+Simpler than LSTM, fewer parameters, often works as well.
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Transformers: Attention is All You Need}
+\textbf{The architecture that revolutionized NLP and beyond}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Limitations of RNNs/LSTMs:}
+
+\begin{itemize}
+\item Sequential processing (slow)
+\item Still struggle with very long sequences
+\item Hard to parallelize
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Transformer Innovation:}
+
+Replace recurrence with \textcolor{crimson}{\textbf{self-attention}}:
+
+\[
+\text{Attention}(Q, K, V) = \softmax\left(\frac{QK^T}{\sqrt{d_k}}\right) V
+\]
+
+where:
+\begin{itemize}
+\item $Q$: Query (what I'm looking for)
+\item $K$: Key (what I have)
+\item $V$: Value (actual content)
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Key Ideas:}
+\begin{enumerate}
+\item \textbf{Self-attention:} Every position attends to every other
+\item \textbf{Parallel:} No sequential dependency
+\item \textbf{Positional encoding:} Add position info
+\item \textbf{Multi-head:} Multiple attention mechanisms
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Transformer Architecture:}
+
+\begin{itemize}
+\item \textbf{Encoder:} Process input sequence
+\item \textbf{Decoder:} Generate output sequence
+\item \textbf{Stack:} 6-12 layers typical
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Famous Transformers:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Model} & \textbf{Task} \\
+\hline
+\textbf{BERT} & Encoder-only, understanding \\
+\hline
+\textbf{GPT} & Decoder-only, generation \\
+\hline
+\textbf{T5} & Encoder-decoder, seq2seq \\
+\hline
+\textbf{Vision Transformer (ViT)} & Images as patches \\
+\hline
+\textbf{CLIP} & Vision-language alignment \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Why Transformers Won:}
+
+\begin{itemize}
+\item[$\checkmark$] Parallelizable (train faster)
+\item[$\checkmark$] Long-range dependencies
+\item[$\checkmark$] Transfer learning (pre-training)
+\item[$\checkmark$] Scale to billions of parameters
+\item[$\checkmark$] Work beyond NLP (vision, audio, protein)
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Current State}
+Transformers dominate NLP, increasingly used for vision (ViT), and even protein folding (AlphaFold)!
+\end{alertblock}
+\end{frame}
+
+% ================================================================
+% PART 4: PRACTICAL CONSIDERATIONS
+% ================================================================
+
+\begin{frame}{Regularization in Deep Learning}
+\textbf{Preventing overfitting in large models}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Overfitting Problem:}
+
+Deep networks have millions of parameters $\to$ can memorize training data!
+
+\vspace{0.3cm}
+
+\textbf{Regularization Techniques:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{L2 Regularization (Weight Decay):}}
+   \[
+   \mathcal{L}_{\text{total}} = \mathcal{L} + \lambda \sum_i w_i^2
+   \]
+   Penalizes large weights
+
+\item \textcolor{navyblue}{\textbf{Dropout:}}
+   \begin{itemize}
+   \item Randomly set neurons to 0 (prob $p$)
+   \item Forces network to be robust
+   \item Ensemble effect
+   \item Typical: $p = 0.5$ for FC, $p = 0.2$ for Conv
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Batch Normalization:}}
+   \begin{itemize}
+   \item Normalize activations per batch
+   \item Stabilizes training
+   \item Allows higher learning rates
+   \item Acts as regularizer
+   \end{itemize}
+
+\item \textcolor{purple}{\textbf{Data Augmentation:}}
+   \begin{itemize}
+   \item Generate variations of training data
+   \item Images: flip, rotate, crop, color jitter
+   \item Text: back-translation, synonym replacement
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Early Stopping:}
+
+Monitor validation loss, stop when it starts increasing.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.7]
+\draw[->] (0,0) -- (6,0) node[right] {\tiny Epochs};
+\draw[->] (0,0) -- (0,4) node[above] {\tiny Loss};
+
+% Training loss
+\draw[thick, forest] plot[smooth] coordinates {(0.5,3.5) (1,2.5) (2,1.5) (3,1) (4,0.7) (5,0.5)};
+\node at (5,0.2) {\tiny \textcolor{forest}{Train}};
+
+% Validation loss
+\draw[thick, crimson] plot[smooth] coordinates {(0.5,3.5) (1,2.5) (2,1.7) (3,1.3) (4,1.4) (5,1.6)};
+\node at (5,1.8) {\tiny \textcolor{crimson}{Val}};
+
+% Optimal point
+\draw[dashed] (3,0) -- (3,1.3);
+\node at (3,-0.3) {\tiny Stop here};
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.3cm}
+
+\textbf{Combining Techniques:}
+
+\begin{verbatim}
+model = nn.Sequential(
+    nn.Linear(784, 512),
+    nn.BatchNorm1d(512),
+    nn.ReLU(),
+    nn.Dropout(0.5),
+    nn.Linear(512, 10)
+)
+
+optimizer = optim.AdamW(  # Weight decay
+    model.parameters(),
+    lr=0.001,
+    weight_decay=0.01
+)
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Knowledge Check: Deep Learning}
+\textbf{Test your understanding}
+
+\vspace{0.2cm}
+
+\textbf{Question 1:} Why don't we stack linear layers without activations?
+
+\begin{enumerate}[A)]
+\item It's too slow
+\item \textcolor{forest}{\textbf{Multiple linear transformations collapse to one linear transformation}}
+\item It causes vanishing gradients
+\item Backprop doesn't work
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: B}} - Without non-linear activations, stacking layers is pointless: $f(W_2(W_1 x)) = W_2 W_1 x = Wx$ is still just a linear function. Non-linearity is essential for learning complex patterns. This is why we use ReLU, sigmoid, tanh, etc. between layers.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} What problem do ResNets solve with skip connections?
+
+\begin{enumerate}[A)]
+\item Overfitting
+\item \textcolor{forest}{\textbf{Vanishing gradients in very deep networks}}
+\item Slow training
+\item Too many parameters
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: B}} - Skip connections ($y = F(x) + x$) create identity mappings that allow gradients to flow directly through the network during backprop. Without them, gradients diminish exponentially in very deep networks (50+ layers), making training impossible. ResNets enabled 100+ layer networks.
+\end{block}
+\end{frame}
+
+\begin{frame}{Summary \& Best Practices}
+\textbf{Key takeaways for deep learning}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Architecture Choices:}
+
+\begin{itemize}
+\item \textbf{Images:} CNNs (ResNet, EfficientNet) or Vision Transformers
+\item \textbf{Sequences:} Transformers (BERT, GPT) or LSTMs for small data
+\item \textbf{Tabular:} Often better with XGBoost/LightGBM
+\item \textbf{Time series:} LSTMs, Transformers, or specialized (N-BEATS)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Training Best Practices:}
+
+\begin{enumerate}
+\item Start simple, add complexity
+\item Use pre-trained models when possible
+\item Normalize inputs (mean=0, std=1)
+\item Use Adam optimizer as default
+\item Monitor train AND validation loss
+\item Use early stopping
+\item Batch normalization for stability
+\item Dropout for regularization
+\item Data augmentation for images
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Common Pitfalls:}
+
+\begin{itemize}
+\item[$\times$] Not checking for bugs (use small dataset first)
+\item[$\times$] Wrong loss function
+\item[$\times$] Learning rate too high/low
+\item[$\times$] Not shuffling training data
+\item[$\times$] Using test set for validation
+\item[$\times$] Forgetting to normalize inputs
+\item[$\times$] No baseline comparison
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Resources:}
+
+\begin{itemize}
+\item \textbf{Courses:}
+  \begin{itemize}
+  \item Andrew Ng: Deep Learning Specialization
+  \item Fast.ai: Practical Deep Learning
+  \item Stanford CS231n (CNNs)
+  \item CS224n (NLP with Deep Learning)
+  \end{itemize}
+
+\item \textbf{Frameworks:}
+  \begin{itemize}
+  \item PyTorch (research, flexibility)
+  \item TensorFlow/Keras (production)
+  \item JAX (performance, functional)
+  \end{itemize}
+
+\item \textbf{Papers:}
+  \begin{itemize}
+  \item "Attention Is All You Need" (Transformers)
+  \item "Deep Residual Learning" (ResNet)
+  \item Read on arXiv, Papers With Code
+  \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% END OF DEEP LEARNING PRESENTATION
+% ================================================================

@@ -1,0 +1,1016 @@
+% ============================================================================
+% MCMC Presentation Enhancements
+% ============================================================================
+% This file contains enhanced content to be integrated into mcmc_beamer.tex
+%
+% New Sections:
+% 1. MCMC vs Variational Inference
+% 2. Modern Advances: Normalizing Flows
+% 3. Computational Complexity Analysis
+% 4. Industry Case Studies
+%
+% Integration Instructions: See mcmc_enhancements_guide.md
+% ============================================================================
+
+% ============================================================================
+% SECTION: MCMC vs Variational Inference
+% Insert after "Modern Algorithms" section or as new section
+% ============================================================================
+
+\section{MCMC vs Variational Inference}
+
+\begin{frame}{Two Paradigms for Bayesian Inference}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{block}{MCMC}
+\textbf{Philosophy:} Generate samples from posterior
+
+\vspace{0.2cm}
+\textbf{Approach:}
+\begin{itemize}
+\item Construct ergodic Markov chain
+\item Asymptotically exact
+\item Sequential sampling
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Key Property:}
+$$\lim_{T \to \infty} \frac{1}{T}\sum_{t=1}^T f(\theta^{(t)}) = \E_{\pi}[f(\theta)]$$
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Variational Inference (VI)}
+\textbf{Philosophy:} Approximate posterior with tractable distribution
+
+\vspace{0.2cm}
+\textbf{Approach:}
+\begin{itemize}
+\item Define family $\mathcal{Q}$
+\item Minimize $\text{KL}(q \| p)$
+\item Optimization problem
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Key Property:}
+$$q^* = \argmin_{q \in \mathcal{Q}} \text{KL}(q(\theta) \| p(\theta|y))$$
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{Fundamental Trade-off}
+MCMC: Exact but slow \quad $\leftrightarrow$ \quad VI: Fast but approximate
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Variational Inference: The Math}
+\textbf{Goal:} Approximate intractable posterior $p(\theta|y)$ with tractable $q(\theta)$
+
+\vspace{0.3cm}
+\textbf{The Evidence Lower Bound (ELBO):}
+\begin{align*}
+\log p(y) &= \E_{q(\theta)}[\log p(y,\theta)] - \E_{q(\theta)}[\log q(\theta)] + \text{KL}(q\|p)\\
+&\geq \E_{q(\theta)}[\log p(y,\theta)] - \E_{q(\theta)}[\log q(\theta)]\\
+&= \mathcal{L}(q) \quad \text{(ELBO)}
+\end{align*}
+
+\vspace{0.3cm}
+\textbf{Optimization:} Maximize ELBO $\Leftrightarrow$ Minimize KL divergence
+
+\vspace{0.3cm}
+\begin{block}{Mean-Field Variational Inference}
+Assume factorization: $q(\theta) = \prod_{j=1}^J q_j(\theta_j)$
+
+Coordinate ascent variational inference (CAVI):
+$$q_j^*(\theta_j) \propto \exp\left\{\E_{-j}[\log p(\theta, y)]\right\}$$
+\end{block}
+\end{frame}
+
+\begin{frame}{MCMC vs VI: Detailed Comparison}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Criterion} & \textbf{MCMC} & \textbf{Variational Inference} \\
+\midrule
+\textbf{Accuracy} & Asymptotically exact & Approximate \\
+\textbf{Convergence} & Stochastic, assess via diagnostics & Deterministic optimization \\
+\textbf{Speed} & Slow (samples correlated) & Fast (parallel, GPU-friendly) \\
+\textbf{Scalability} & $O(N)$ per iteration & $O(N)$ but vectorizable \\
+\textbf{Diagnostics} & Well-developed & Less mature \\
+\textbf{Bias} & None (in limit) & Systematic (wrong family) \\
+\textbf{Variance} & MCMC variance & Underestimates uncertainty \\
+\textbf{Local optima} & Avoids (if mixing) & Can get stuck \\
+\textbf{Parallelization} & Limited & Excellent \\
+\textbf{Implementation} & Moderate complexity & Requires optimization expertise \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\begin{alertblock}{Rule of Thumb}
+\textbf{Use VI when:} Large data, need speed, approximate OK\\
+\textbf{Use MCMC when:} Need accuracy, small/medium data, careful inference
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Black Box Variational Inference (BBVI)}
+\textbf{Problem:} CAVI requires model-specific derivations
+
+\vspace{0.3cm}
+\textbf{Solution:} Use stochastic optimization with reparameterization
+
+\vspace{0.3cm}
+\textbf{The Reparameterization Trick:}
+\begin{enumerate}
+\item Express $\theta \sim q_\phi(\theta)$ as $\theta = g(\epsilon, \phi)$ where $\epsilon \sim p(\epsilon)$
+\item Gradient becomes: $\nabla_\phi \E_{q_\phi}[f(\theta)] = \E_{p(\epsilon)}[\nabla_\phi f(g(\epsilon, \phi))]$
+\item Use Monte Carlo: $\nabla_\phi \mathcal{L} \approx \frac{1}{S}\sum_{s=1}^S \nabla_\phi f(g(\epsilon_s, \phi))$
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Example:} Gaussian $q(\theta) = \mathcal{N}(\mu, \sigma^2)$
+\begin{itemize}
+\item Reparameterize: $\theta = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$
+\item Gradient: $\nabla_{\mu,\sigma} \E_{q}[f(\theta)] = \E_\epsilon[\nabla_{\mu,\sigma} f(\mu + \sigma\epsilon)]$
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Key Advantage}
+Black-box: Works for any model without custom derivations!
+\end{block}
+\end{frame}
+
+\begin{frame}{Amortized Variational Inference}
+\textbf{Standard VI:} Optimize $q(\theta)$ for each dataset $y$
+
+\vspace{0.3cm}
+\textbf{Amortized VI:} Learn inference network $q_\phi(\theta|y)$ that works for any $y$
+
+\vspace{0.3cm}
+\begin{block}{Variational Autoencoder (VAE)}
+\textbf{Encoder:} $q_\phi(z|x)$ -- Inference network\\
+\textbf{Decoder:} $p_\theta(x|z)$ -- Generative model
+
+\vspace{0.2cm}
+Objective:
+$$\mathcal{L}(\theta, \phi; x) = \E_{q_\phi(z|x)}[\log p_\theta(x|z)] - \text{KL}(q_\phi(z|x) \| p(z))$$
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Benefits:}
+\begin{itemize}
+\item Amortize optimization cost across data
+\item Fast inference at test time
+\item Scalable to millions of data points
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Applications:} Image generation, representation learning, semi-supervised learning
+\end{frame}
+
+\begin{frame}{Hybrid Methods: Best of Both Worlds}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{1. VI as MCMC Initialization}
+\begin{itemize}
+\item Run VI to find approximate posterior
+\item Initialize MCMC from VI mode
+\item Faster convergence
+\item Better mixing
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{2. Variational Tempering}
+\begin{itemize}
+\item Interpolate between VI and MCMC
+\item Temperature schedule
+\item Gradually improve approximation
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{3. Quasi-Monte Carlo VI}
+\begin{itemize}
+\item Use low-discrepancy sequences
+\item Better gradient estimates
+\item Reduced variance
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{4. Boosting VI}
+\begin{itemize}
+\item Iteratively add mixture components
+\item Flexible approximation
+\item Closer to true posterior
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{exampleblock}{Practical Recommendation}
+Start with VI for quick exploration, then use MCMC for final inference when accuracy matters.
+\end{exampleblock}
+\end{frame}
+
+% ============================================================================
+% SECTION: Normalizing Flows
+% Insert in "Modern Algorithms" or "Future Directions"
+% ============================================================================
+
+\section{Modern Advances: Normalizing Flows}
+
+\begin{frame}{Normalizing Flows: Flexible Density Modeling}
+\textbf{Key Idea:} Transform simple distribution into complex one via invertible mappings
+
+\vspace{0.3cm}
+\textbf{Setup:}
+\begin{itemize}
+\item Start with simple base distribution: $z_0 \sim p_0(z_0)$ (e.g., $\mathcal{N}(0,I)$)
+\item Apply sequence of invertible transformations: $f = f_K \circ \cdots \circ f_1$
+\item Final distribution: $z_K = f(z_0)$
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Change of Variables Formula:}
+$$\log p_K(z_K) = \log p_0(z_0) - \sum_{k=1}^K \log \left|\det \frac{\partial f_k}{\partial z_{k-1}}\right|$$
+
+\vspace{0.3cm}
+\begin{block}{Key Properties}
+\begin{itemize}
+\item \textbf{Exact density:} Can compute $p(z)$ exactly
+\item \textbf{Exact sampling:} Sample $z_0$, then $z_K = f(z_0)$
+\item \textbf{Exact inference:} Compute $z_0 = f^{-1}(z_K)$
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{alertblock}{Advantage over VI}
+No approximation error -- exact representation of learned distribution!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Flow Architectures}
+\textbf{Requirements for flow $f$:}
+\begin{enumerate}
+\item \textcolor{crimson}{Invertible:} Must be able to compute $f^{-1}$
+\item \textcolor{forest}{Efficient Jacobian:} $\det \frac{\partial f}{\partial z}$ must be tractable
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{block}{1. Planar Flows (2015)}
+$$f(z) = z + u h(w^T z + b)$$
+\begin{itemize}
+\item Simple, but limited expressiveness
+\item $O(D)$ Jacobian determinant
+\end{itemize}
+\end{block}
+
+\begin{block}{2. RealNVP (2016)}
+Affine coupling layers:
+$$z_{1:d}' = z_{1:d}, \quad z_{d+1:D}' = z_{d+1:D} \odot \exp(s(z_{1:d})) + t(z_{1:d})$$
+\begin{itemize}
+\item Triangular Jacobian $\Rightarrow$ $O(D)$ determinant
+\item Highly expressive with deep $s, t$ networks
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Advanced Flow Architectures}
+\begin{block}{3. Glow (2018)}
+\textbf{Components:}
+\begin{itemize}
+\item Actnorm: Scale and bias normalization
+\item Invertible 1×1 convolutions
+\item Affine coupling layers
+\end{itemize}
+\textbf{Application:} High-resolution image synthesis
+\end{block}
+
+\begin{block}{4. Neural Spline Flows (2019)}
+$$f(x) = \text{RationalQuadraticSpline}(x; \theta)$$
+\begin{itemize}
+\item Monotonic splines for each dimension
+\item Exact inverse via bisection or Newton's method
+\item State-of-the-art density estimation
+\end{itemize}
+\end{block}
+
+\begin{block}{5. Continuous Normalizing Flows (2018)}
+$$\frac{dz}{dt} = f(z(t), t, \theta)$$
+\begin{itemize}
+\item ODE-based transformation
+\item Unrestricted architecture
+\item Compute via ODE solver (adjoint method)
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Normalizing Flows for MCMC}
+\textbf{Neural Transport MCMC:}
+\begin{enumerate}
+\item Learn flow $q_\phi(z)$ to approximate posterior $\pi(\theta)$
+\item Use flow to propose moves: $\theta' = f_\phi(z)$ where $z \sim q_\phi$
+\item Acceptance probability with flow correction
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{block}{Advantages}
+\begin{itemize}
+\item \textbf{Better proposals:} Flow learns correlation structure
+\item \textbf{Efficient exploration:} Navigate complex geometry
+\item \textbf{Higher acceptance:} Well-matched proposals
+\item \textbf{Faster mixing:} Reduced autocorrelation
+\end{itemize}
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Example: Flow-based HMC}
+\begin{itemize}
+\item Learn flow $f: \mathbb{R}^d \to \mathbb{R}^d$ mapping $\mathcal{N}(0,I)$ to posterior
+\item Run HMC in transformed space (easier geometry)
+\item Transform samples back: $\theta = f(z)$
+\end{itemize}
+
+\vspace{0.2cm}
+\textcolor{crimson}{\textbf{Result:}} 10-100× speedup on challenging posteriors!
+\end{frame}
+
+\begin{frame}{Flows vs Traditional Methods}
+\begin{table}
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Method} & \textbf{Exact} & \textbf{Flexible} & \textbf{Scalable} \\
+\midrule
+MCMC & \checkmark & \checkmark & $\times$ (sequential) \\
+VI & $\times$ & $\times$ (mean-field) & \checkmark \\
+Normalizing Flows & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.4cm}
+\textbf{Use Cases:}
+\begin{itemize}
+\item \textbf{Generative modeling:} Image/audio synthesis
+\item \textbf{Density estimation:} Anomaly detection
+\item \textbf{Posterior inference:} Complex Bayesian models
+\item \textbf{Sampling:} MCMC proposals, importance sampling
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{exampleblock}{State of the Art (2024)}
+\begin{itemize}
+\item Glow generates 256×256 realistic faces
+\item Neural spline flows achieve record likelihood on UCI benchmarks
+\item Flow-based MCMC handles 1000+ dimensional posteriors
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+% ============================================================================
+% SECTION: Computational Complexity Analysis
+% Insert as new section or in "Implementation and Software"
+% ============================================================================
+
+\section{Computational Complexity Analysis}
+
+\begin{frame}{MCMC Complexity: Big Picture}
+\textbf{Total Cost = Iterations × Cost per Iteration}
+
+\vspace{0.3cm}
+\begin{block}{Number of Iterations}
+$$N_{\text{eff}} = \frac{N_{\text{total}}}{\text{ESS}}$$
+
+where ESS = Effective Sample Size
+
+\textbf{Factors affecting iterations:}
+\begin{itemize}
+\item Burn-in: $N_{\text{burn}} = O(d \cdot \tau)$ where $d$ = dimension, $\tau$ = mixing time
+\item Thinning: Keep every $k$-th sample to reduce autocorrelation
+\item Multiple chains: $4+$ chains for convergence diagnostics
+\end{itemize}
+\end{block}
+
+\begin{block}{Cost per Iteration}
+\textbf{Depends on algorithm:}
+\begin{itemize}
+\item Metropolis-Hastings: $O(d)$ for proposal + $O(d)$ for acceptance
+\item HMC: $O(Ld^2)$ for $L$ leapfrog steps (gradient + momentum update)
+\item Gibbs: $O(d \cdot c)$ where $c$ = cost of conditional sampling
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Algorithm-Specific Complexity}
+\begin{table}
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Algorithm} & \textbf{Per Iteration} & \textbf{Mixing} & \textbf{Total} \\
+\midrule
+Random Walk MH & $O(d)$ & $O(d^2)$ & $O(d^3)$ \\
+Adaptive MH & $O(d^2)$ & $O(d)$ & $O(d^3)$ \\
+Gibbs Sampling & $O(dc)$ & $O(d)$ & $O(d^2c)$ \\
+HMC & $O(Ld^2)$ & $O(d^{1/4})$ & $O(Ld^{9/4})$ \\
+NUTS & $O(2^k Ld^2)$ & $O(d^{1/4})$ & $O(2^k Ld^{9/4})$ \\
+\bottomrule
+\end{tabular}
+\caption{$d$ = dimension, $c$ = conditional cost, $L$ = leapfrog steps, $k$ = tree depth}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Key Insights:}
+\begin{itemize}
+\item HMC better scaling despite higher per-iteration cost
+\item Mixing time dominates for high dimensions
+\item Gradient-based methods scale better: $O(d^{1/4})$ vs $O(d^2)$
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{alertblock}{Practical Rule}
+For $d > 50$: Use HMC or NUTS\\
+For $d > 1000$: Consider VI or specialized methods
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Memory Complexity}
+\textbf{Storage Requirements:}
+
+\vspace{0.3cm}
+\begin{block}{Basic Storage}
+\begin{itemize}
+\item \textbf{Samples:} $N \times d$ (main memory usage)
+\item \textbf{Current state:} $d$ parameters
+\item \textbf{Gradient:} $d$ (for HMC/NUTS)
+\item \textbf{Momentum:} $d$ (for HMC/NUTS)
+\end{itemize}
+
+\textbf{Example:} 10,000 samples in $d=100$ dimensions
+$$\text{Memory} \approx 10^6 \times 8\text{ bytes} = 8\text{ MB}$$
+\end{block}
+
+\begin{block}{Advanced Storage}
+\begin{itemize}
+\item \textbf{Adaptation:} Covariance matrix $O(d^2)$ (adaptive MH)
+\item \textbf{Mass matrix:} $O(d^2)$ (HMC with full mass matrix)
+\item \textbf{History:} Trajectory for NUTS tree building
+\end{itemize}
+\end{block}
+
+\textbf{Memory-Efficient Strategies:}
+\begin{itemize}
+\item Diagonal mass matrix: $O(d)$ instead of $O(d^2)$
+\item Streaming updates: Don't store all samples
+\item Checkpoint key statistics only
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Parallelization Strategies}
+\textbf{Challenge:} MCMC is inherently sequential
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Embarrassingly Parallel:}
+\begin{itemize}
+\item \textcolor{forest}{Multiple chains}
+\begin{itemize}
+\item Run $M$ chains in parallel
+\item Speedup: $M\times$
+\item Use for diagnostics
+\end{itemize}
+\item \textcolor{forest}{Gradient computation}
+\begin{itemize}
+\item Data parallelism
+\item Mini-batching
+\item GPU acceleration
+\end{itemize}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Advanced Parallel:}
+\begin{itemize}
+\item \textcolor{crimson}{Prefetching}
+\begin{itemize}
+\item Speculative proposals
+\item Pipeline stages
+\item Limited speedup
+\end{itemize}
+\item \textcolor{crimson}{Consensus MC}
+\begin{itemize}
+\item Divide data
+\item Combine posteriors
+\item Communication overhead
+\end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{block}{GPU Acceleration}
+\textbf{Good for:}
+\begin{itemize}
+\item Large-scale gradient computation ($N > 10^5$)
+\item Matrix operations (HMC with full mass matrix)
+\item Multiple chains simultaneously
+\end{itemize}
+
+\textbf{Speedup:} 10-100× for gradient-heavy algorithms (HMC, NUTS)
+\end{block}
+\end{frame}
+
+\begin{frame}{Scaling to Big Data}
+\textbf{Challenge:} Full data pass per iteration when $N$ is large
+
+\vspace{0.3cm}
+\textbf{Subsampling Methods:}
+
+\begin{enumerate}
+\item \textbf{Stochastic Gradient MCMC}
+\begin{itemize}
+\item Use mini-batch gradient: $\nabla \log \pi(\theta) \approx \frac{N}{n}\sum_{i \in \text{batch}} \nabla \log p(y_i|\theta)$
+\item Add noise to maintain detailed balance
+\item \textcolor{forest}{Pro:} $O(n)$ per iteration vs $O(N)$
+\item \textcolor{crimson}{Con:} Biased, requires careful tuning
+\end{itemize}
+
+\vspace{0.2cm}
+\item \textbf{Approximate MCMC}
+\begin{itemize}
+\item Pseudo-marginal methods
+\item Noisy gradients
+\item Importance sampling corrections
+\end{itemize}
+
+\vspace{0.2cm}
+\item \textbf{Divide-and-Conquer}
+\begin{itemize}
+\item Split data across machines
+\item Run MCMC on subsets
+\item Combine via consensus
+\end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+\begin{alertblock}{Practical Limit}
+Standard MCMC: $N < 10^6$ \quad | \quad Stochastic methods: $N < 10^9$
+\end{alertblock}
+\end{frame}
+
+% ============================================================================
+% SECTION: Industry Case Studies
+% Insert in "Applications" section
+% ============================================================================
+
+\section{Industry Case Studies}
+
+\begin{frame}{Netflix: Recommendation Systems}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\textbf{Problem:} Personalized recommendations for 200M+ users
+
+\vspace{0.2cm}
+\textbf{Model:} Bayesian Matrix Factorization
+$$R_{ui} = \mu + b_u + b_i + \mathbf{u}_u^T \mathbf{v}_i$$
+
+\textbf{Priors:}
+\begin{itemize}
+\item $\mathbf{u}_u \sim \mathcal{N}(0, \lambda_u^{-1} I)$
+\item $\mathbf{v}_i \sim \mathcal{N}(0, \lambda_v^{-1} I)$
+\item Hierarchical priors on biases
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Inference:} Gibbs sampling
+\begin{itemize}
+\item Alternating updates
+\item 1000s of latent dimensions
+\item Distributed across cluster
+\end{itemize}
+\end{column}
+
+\begin{column}{0.4\textwidth}
+\begin{block}{Results}
+\begin{itemize}
+\item \textbf{Accuracy:} 10\% better than MLE
+\item \textbf{Uncertainty:} Confidence intervals for recommendations
+\item \textbf{Cold start:} Prior helps new users/items
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{block}{Impact}
+\begin{itemize}
+\item \$1B+ annual value
+\item 75\% of viewing from recommendations
+\item Bayesian approach enables A/B testing
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Reference:} Amatriain \& Basilico (2015), \textit{Past, Present, and Future of Recommender Systems}
+\end{frame}
+
+\begin{frame}{Uber: Arrival Time Prediction}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Problem:} Predict trip time with uncertainty
+
+\vspace{0.2cm}
+\textbf{Why MCMC?}
+\begin{itemize}
+\item Capture uncertainty in predictions
+\item Account for traffic variability
+\item Handle sparse data regions
+\item Real-time requirements
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Model:} Hierarchical Bayesian GPS model
+$$t_{ij} \sim \text{LogNormal}(\mu_{ij}, \sigma_{ij}^2)$$
+
+\textbf{Hierarchy:}
+\begin{itemize}
+\item Route level
+\item Time-of-day effects
+\item Day-of-week patterns
+\item Driver-specific factors
+\end{itemize}
+\end{column}
+
+\begin{column}{0.45\textwidth}
+\textbf{Implementation:}
+\begin{itemize}
+\item HMC with NUTS
+\item Stan backend
+\item Mini-batch approximations
+\item Updates every 15 minutes
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{block}{Results}
+\begin{itemize}
+\item 20\% reduction in RMSE
+\item Calibrated uncertainty
+\item Better customer experience
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{block}{Scale}
+\begin{itemize}
+\item 15M+ trips/day
+\item 10,000+ cities
+\item Real-time inference
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Reference:} Uber Engineering Blog (2018), \textit{Engineering Uncertainty Estimation in Neural Networks}
+\end{frame}
+
+\begin{frame}{Spotify: Music Recommendations}
+\textbf{Problem:} Discover Weekly playlist generation
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Model:} Collaborative Filtering with Content
+\begin{itemize}
+\item User preferences: $\theta_u$
+\item Song features: $\beta_s$
+\item Audio features: $x_s$
+\item Listening history: $Y$
+\end{itemize}
+
+\vspace{0.2cm}
+$$p(Y|\theta, \beta, X) \propto \prod_{u,s} \exp(\theta_u^T \beta_s)^{y_{us}}$$
+
+\vspace{0.2cm}
+\textbf{Priors:}
+$$\beta_s \sim \mathcal{N}(A x_s, \Sigma)$$
+where $A$ relates audio to preference features
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{MCMC Implementation:}
+\begin{itemize}
+\item Gibbs sampling
+\item Parallel chains per user cohort
+\item 500M+ users
+\item 70M+ tracks
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{block}{Advantages}
+\begin{itemize}
+\item Captures uncertainty
+\item Explores diverse recommendations
+\item Handles cold start
+\item Incorporates multiple data sources
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\textbf{Impact:}
+\begin{itemize}
+\item 40\% of new discoveries
+\item 2.3B+ playlist followers
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Reference:} Spotify Research, \textit{Collaborative Filtering with Recurrent Neural Networks}
+\end{frame}
+
+\begin{frame}{Google: Web Search Ranking}
+\textbf{Application:} Bayesian Learning to Rank
+
+\vspace{0.3cm}
+\begin{block}{Model: Pairwise Preference Learning}
+$$P(\text{doc}_i \succ \text{doc}_j | q) = \sigma(\mathbf{w}^T (\phi(d_i, q) - \phi(d_j, q)))$$
+
+where $\mathbf{w}$ are ranking weights, $\phi$ are features
+
+\vspace{0.2cm}
+\textbf{Bayesian Treatment:}
+\begin{itemize}
+\item Prior on weights: $\mathbf{w} \sim \mathcal{N}(0, \Sigma)$
+\item Hierarchical structure for query types
+\item Automatic relevance determination (ARD)
+\end{itemize}
+\end{block}
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{MCMC Details:}
+\begin{itemize}
+\item HMC for smooth exploration
+\item Parallel tempering for multimodality
+\item Warm-start from previous day
+\item Distributed inference
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Benefits:}
+\begin{itemize}
+\item Feature selection via ARD
+\item Uncertainty in rankings
+\item Robust to label noise
+\item Better generalization
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+\textbf{Scale:} 8.5 billion searches/day, 200+ ranking factors
+\end{frame}
+
+\begin{frame}{Facebook: News Feed Ranking}
+\textbf{Problem:} Personalize news feed for 2.9B users
+
+\vspace{0.3cm}
+\textbf{Model:} Hierarchical Bayesian Point Process
+\begin{itemize}
+\item User engagement rates: $\lambda_u(t)$
+\item Content quality: $\theta_c$
+\item Time-varying effects: $\beta(t)$
+\item Social network structure: $G$
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{MCMC Implementation:}
+\begin{itemize}
+\item Gibbs sampling for user parameters
+\item HMC for time-varying effects
+\item Approximate inference for scale
+\item Real-time updates
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Challenges:}
+\begin{itemize}
+\item Massive scale ($N > 10^{10}$)
+\item Real-time constraints
+\item Cold start
+\item Distribution shift
+\end{itemize}
+\end{column}
+
+\begin{column}{0.45\textwidth}
+\begin{block}{Solutions}
+\begin{itemize}
+\item Stochastic MCMC
+\item Distributed computing
+\item Online learning
+\item Hybrid VI + MCMC
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{block}{Results}
+\begin{itemize}
+\item 5\% increase in engagement
+\item Better content diversity
+\item Improved user satisfaction
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Reference:} Backstrom \& Kleinberg (2014), \textit{Romantic Partnerships and Relationship Status on Facebook}
+\end{frame}
+
+\begin{frame}{Airbnb: Dynamic Pricing}
+\textbf{Problem:} Optimal nightly pricing for 7M+ listings
+
+\vspace{0.3cm}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Model:} Bayesian Hierarchical Pricing
+$$p_{it} \sim \text{LogNormal}(\mu_{it}, \sigma^2)$$
+
+\textbf{Hierarchy:}
+\begin{itemize}
+\item Market level: City effects
+\item Property level: Amenities
+\item Time level: Seasonality
+\item Demand: Dynamic factors
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Key Features:}
+\begin{itemize}
+\item Uncertainty quantification
+\item Robust to sparse data
+\item Incorporates external data
+\item Adaptive to trends
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Implementation:}
+\begin{itemize}
+\item NUTS sampler (Stan)
+\item Daily updates
+\item Distributed across regions
+\item A/B testing framework
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{block}{Impact}
+\begin{itemize}
+\item \textbf{Revenue:} +10-15\%
+\item \textbf{Bookings:} +5-8\%
+\item \textbf{Host adoption:} 60\%
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{block}{Why Bayesian?}
+\begin{itemize}
+\item Confidence intervals for hosts
+\item Automatic regularization
+\item Handles missing data
+\item Interpretable estimates
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Quantitative Finance: Risk Management}
+\textbf{Application:} Value at Risk (VaR) and Tail Risk
+
+\vspace{0.3cm}
+\begin{block}{Model: Stochastic Volatility}
+$$r_t = \mu + \sigma_t \epsilon_t, \quad \epsilon_t \sim \mathcal{N}(0,1)$$
+$$\log \sigma_t^2 = \alpha + \beta \log \sigma_{t-1}^2 + \eta_t, \quad \eta_t \sim \mathcal{N}(0, \tau^2)$$
+\end{block}
+
+\vspace{0.2cm}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Why MCMC?}
+\begin{itemize}
+\item Non-Gaussian tails critical
+\item Parameter uncertainty matters
+\item Latent volatility inference
+\item Regulatory requirements (Basel III)
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Implementation:}
+\begin{itemize}
+\item Particle MCMC for latent states
+\item HMC for parameters
+\item Multiple chains for robustness
+\item Real-time risk monitoring
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Results}
+\begin{itemize}
+\item More accurate tail probabilities
+\item Better VaR estimates
+\item Regulatory compliance
+\item Risk-adjusted returns
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\textbf{Industry Adoption:}
+\begin{itemize}
+\item Major investment banks
+\item Hedge funds
+\item Insurance companies
+\item Central banks (stress testing)
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Reference:} Jacquier et al. (2002), \textit{Bayesian Analysis of Stochastic Volatility Models}
+\end{frame}
+
+\begin{frame}{Industry Lessons Learned}
+\begin{block}{1. Scalability Matters}
+\begin{itemize}
+\item Start with prototypes, then optimize
+\item Distributed computing essential for production
+\item Approximate methods acceptable if calibrated
+\item GPU acceleration 10-100× speedup
+\end{itemize}
+\end{block}
+
+\begin{block}{2. Uncertainty Quantification is Valuable}
+\begin{itemize}
+\item Users appreciate confidence intervals
+\item Risk management requires uncertainty
+\item A/B testing easier with posteriors
+\item Debugging via posterior checks
+\end{itemize}
+\end{block}
+
+\begin{block}{3. Hybrid Approaches Work Best}
+\begin{itemize}
+\item VI for initialization, MCMC for refinement
+\item Ensemble of methods
+\item Domain knowledge + MCMC
+\item Online + batch updates
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Key Takeaway}
+MCMC is production-ready for companies with billions in revenue!
+\end{alertblock}
+\end{frame}
+
+% ============================================================================
+% UPDATED BIBLIOGRAPHY ENTRIES
+% Add these to bibliographies/mcmc_references.bib
+% ============================================================================
+
+% Add to bibliography section:
+% \begin{frame}{Additional References}
+% \scriptsize
+% \textbf{Variational Inference:}
+% \begin{itemize}
+% \item Blei, Kucukelbir, McAuliffe (2017). Variational Inference: A Review for Statisticians.
+% \item Kingma \& Welling (2014). Auto-Encoding Variational Bayes.
+% \item Ranganath, Gerrish, Blei (2014). Black Box Variational Inference.
+% \end{itemize}
+%
+% \textbf{Normalizing Flows:}
+% \begin{itemize}
+% \item Rezende \& Mohamed (2015). Variational Inference with Normalizing Flows.
+% \item Dinh, Krueger, Bengio (2017). NICE: Non-linear Independent Components Estimation.
+% \item Kingma \& Dhariwal (2018). Glow: Generative Flow with Invertible 1×1 Convolutions.
+% \item Durkan et al. (2019). Neural Spline Flows.
+% \end{itemize}
+%
+% \textbf{Industry Applications:}
+% \begin{itemize}
+% \item Amatriain \& Basilico (2015). Recommender Systems in Industry.
+% \item Uber Engineering (2018). Engineering Uncertainty Estimation.
+% \end{itemize}
+% \end{frame}
+
+\end{document}
