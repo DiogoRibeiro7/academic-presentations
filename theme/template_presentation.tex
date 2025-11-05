@@ -1,0 +1,374 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% ESMAD Professional Academic Presentation Template
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Author information (these are the defaults, customize as needed)
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Template Presentation}
+\subtitle{Demonstrating the ESMAD Beamer Theme}
+\date{\today}
+
+% ================================================================
+% Document
+% ================================================================
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Table of contents
+\tocslide
+
+% ================================================================
+\section{Introduction}
+% ================================================================
+
+\begin{frame}{Welcome}
+  \begin{itemize}
+    \item This template demonstrates the ESMAD Beamer Theme
+    \item Designed for professional academic presentations
+    \item Consistent styling across all materials
+    \item Easy to use and customize
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{Key Features}
+    \begin{itemize}
+      \item Professional color scheme
+      \item Custom theorem and definition boxes
+      \item Integrated author information with ORCID
+      \item Mathematical notation helpers
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Theme Features}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Visual Elements:}
+    \begin{itemize}
+      \item Clean, modern design
+      \item Professional blue palette
+      \item Consistent typography
+      \item High-quality figures
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Content Support:}
+    \begin{itemize}
+      \item Mathematical notation
+      \item Code listings
+      \item Algorithms
+      \item References integration
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ================================================================
+\section{Custom Environments}
+% ================================================================
+
+\begin{frame}{Theorem Box}
+  \begin{theorembox}{Central Limit Theorem}
+    Let $X_1, X_2, \ldots, X_n$ be i.i.d. random variables with mean $\mu$ and variance $\sigma^2$. Then:
+    $$\frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}} \xrightarrow{d} \Normal(0, 1)$$
+    as $n \to \infty$.
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{Implications:}
+  \begin{itemize}
+    \item Sample means are approximately normally distributed
+    \item Foundation for many statistical tests
+    \item Justifies asymptotic approximations
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Definition Box}
+  \begin{definitionbox}{Definition: Markov Chain}
+    A \textbf{Markov chain} is a sequence of random variables $X_0, X_1, X_2, \ldots$ satisfying the Markov property:
+    $$\Prob(X_{n+1} = x | X_n, X_{n-1}, \ldots, X_0) = \Prob(X_{n+1} = x | X_n)$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Stationary Distribution}
+    A distribution $\pi$ is \textbf{stationary} if:
+    $$\pi(x) = \sum_{x'} \pi(x') P(x' \to x)$$
+    where $P(x' \to x)$ is the transition probability.
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{Example Box}
+  \begin{examplebox}{Example: Metropolis-Hastings}
+    To sample from $\pi(x) = \Normal(0, 1)$:
+
+    \begin{enumerate}
+      \item Start with initial state $x_0 = 0$
+      \item Propose $x' \sim \Normal(x_t, \sigma^2)$
+      \item Compute acceptance probability:
+      $$\alpha = \min\left(1, \frac{\pi(x')}{\pi(x_t)}\right)$$
+      \item Accept $x_{t+1} = x'$ with probability $\alpha$, else $x_{t+1} = x_t$
+    \end{enumerate}
+  \end{examplebox}
+
+  For $\sigma = 1$, this achieves acceptance rate $\approx$ 0.44 (optimal for 1D).
+\end{frame}
+
+\begin{frame}{Alert Box}
+  \begin{alertbox}{Important: Convergence Diagnostics}
+    Always check MCMC convergence before using samples for inference!
+
+    \begin{itemize}
+      \item \textbf{Trace plots:} Visual inspection of mixing
+      \item \textbf{$\hat{R}$ statistic:} Should be $< 1.01$
+      \item \textbf{Effective sample size:} Check for adequate samples
+      \item \textbf{Autocorrelation:} Should decay quickly
+    \end{itemize}
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \alert{Never trust results from poorly-converged chains!}
+\end{frame}
+
+% ================================================================
+\section{Mathematical Content}
+% ================================================================
+
+\begin{frame}{Mathematical Notation}
+  Using predefined commands from the theme:
+
+  \begin{itemize}
+    \item \textbf{Distributions:} $X \sim \Normal(\mu, \sigma^2)$, $Y \sim \Uniform(0, 1)$
+    \item \textbf{Expectations:} $\E[X]$, $\Var(X)$, $\Cov(X, Y)$
+    \item \textbf{Probability:} $\Prob(A \cap B)$
+    \item \textbf{Operators:} $\argmax_{x} f(x)$, $\argmin_{\theta} L(\theta)$
+    \item \textbf{Independence:} $X \indep Y | Z$
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{equation}
+    p(\theta | y) = \frac{p(y | \theta) p(\theta)}{\int p(y | \theta') p(\theta') d\theta'}
+  \end{equation}
+\end{frame}
+
+\begin{frame}{Equations and Algorithms}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Bayesian Update:}
+    \begin{align*}
+      \text{Prior:} && p(\theta) \\
+      \text{Likelihood:} && p(y | \theta) \\
+      \text{Posterior:} && p(\theta | y)
+    \end{align*}
+
+    \column{0.5\textwidth}
+    \textbf{Posterior Mean:}
+    \begin{equation*}
+      \hat{\theta} = \E[\theta | y] = \int \theta \, p(\theta | y) \, d\theta
+    \end{equation*}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{block}{Matrix Notation}
+    Linear model: $\vect{y} = \mat{X}\vect{\beta} + \vect{\epsilon}$
+
+    OLS estimator: $\hat{\vect{\beta}} = (\mat{X}^T\mat{X})^{-1}\mat{X}^T\vect{y}$
+  \end{block}
+\end{frame}
+
+% ================================================================
+\section{Code and Algorithms}
+% ================================================================
+
+\begin{frame}[fragile]{Python Code}
+  \begin{lstlisting}[language=Python, caption=Metropolis-Hastings Implementation]
+import numpy as np
+
+def metropolis_hastings(target, x0, n_samples, sigma=1.0):
+    """Basic Metropolis-Hastings sampler."""
+    samples = [x0]
+    accepted = 0
+
+    for i in range(n_samples):
+        x_current = samples[-1]
+        x_proposed = x_current + np.random.normal(0, sigma)
+
+        # Acceptance probability
+        alpha = min(1, target(x_proposed) / target(x_current))
+
+        if np.random.rand() < alpha:
+            samples.append(x_proposed)
+            accepted += 1
+        else:
+            samples.append(x_current)
+
+    return np.array(samples), accepted / n_samples
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{R Code}
+  \begin{lstlisting}[language=R, caption=Linear Regression with Diagnostics]
+# Fit model
+model <- lm(y ~ x1 + x2 + x3, data = df)
+
+# Summary statistics
+summary(model)
+
+# Robust standard errors
+library(sandwich)
+library(lmtest)
+coeftest(model, vcov = vcovHC(model, type = "HC1"))
+
+# Diagnostics
+par(mfrow = c(2, 2))
+plot(model)
+  \end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Figures and Results}
+% ================================================================
+
+\begin{frame}{Placeholder for Figures}
+  \begin{figure}
+    \centering
+    % Example: \includegraphics[width=0.7\textwidth]{figures/trace_plot.pdf}
+    \textcolor{ESMADGray}{[Insert trace plot here]}
+    \caption{MCMC trace plot showing good mixing}
+  \end{figure}
+
+  \begin{itemize}
+    \item Use vector graphics (PDF) when possible
+    \item Ensure high resolution (at least 300 DPI for raster images)
+    \item Keep color schemes consistent with theme
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tables}
+  \begin{table}
+    \centering
+    \caption{Estimation Results Comparison}
+    \begin{tabular}{lrrr}
+      \toprule
+      Method & Estimate & Std. Error & 95\% CI \\
+      \midrule
+      OLS & 1.234 & 0.056 & [1.124, 1.344] \\
+      IV/2SLS & 1.456 & 0.089 & [1.281, 1.631] \\
+      RDD & 1.389 & 0.102 & [1.189, 1.589] \\
+      DiD & 1.412 & 0.078 & [1.259, 1.565] \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \textbf{Note:} Use \texttt{booktabs} package for professional tables.
+\end{frame}
+
+% ================================================================
+\section{Best Practices}
+% ================================================================
+
+\begin{frame}{Presentation Tips}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Content:}
+    \begin{itemize}
+      \item One main idea per slide
+      \item Maximum 6-7 bullet points
+      \item Use examples liberally
+      \item Include intuition, not just math
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Visuals:}
+    \begin{itemize}
+      \item High-quality figures
+      \item Consistent color scheme
+      \item Clear axis labels
+      \item Large enough fonts
+    \end{itemize}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{alertbox}{Remember}
+    Your slides support your talk, they don't replace it!
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Academic Integrity}
+  \textbf{Always cite your sources:}
+
+  \begin{itemize}
+    \item Key papers and methods
+    \item Figures and data from others
+    \item Code and software packages
+    \item Collaborators and funding
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Available bibliographies in this repository:}
+  \begin{itemize}
+    \item \texttt{bibliographies/mcmc\_references.bib}
+    \item \texttt{bibliographies/causal\_inference\_references.bib}
+    \item \texttt{bibliographies/statistical\_learning\_references.bib}
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \begin{itemize}
+    \item The ESMAD Beamer Theme provides professional, consistent styling
+    \item Custom environments for theorems, definitions, examples
+    \item Built-in support for mathematical notation and code
+    \item Easy to customize and extend
+    \item Includes author information with ORCID
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{Get Started}
+    \begin{enumerate}
+      \item Copy \texttt{theme/template\_presentation.tex}
+      \item Customize author information
+      \item Add your content
+      \item Compile with \texttt{pdflatex} or \texttt{latexmk}
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+% Acknowledgments slide
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for industry collaboration
+  \item Students and colleagues for feedback
+  \item Open source community for LaTeX and Beamer
+}
+
+% Contact information slide
+\contactslide
+
+\end{document}

@@ -1,0 +1,143 @@
+name: Compile LaTeX Documents
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**.tex'
+      - 'theme/**'
+      - 'bibliographies/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.tex'
+      - 'theme/**'
+      - 'bibliographies/**'
+  workflow_dispatch:
+
+jobs:
+  compile-presentations:
+    name: Compile All Presentations
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        presentation:
+          - time_series/time_series_beamer
+          - explainable_ai/interpretability_beamer
+          - deep_learning/deep_learning_beamer
+          - reinforcement_learning/rl_beamer
+          - optimization/optimization_beamer
+          - mcmc/mcmc_beamer
+          - causal_inference/causal_inference_beamer
+          - statistical_learning/statistical_learning_beamer
+          - bayesian_ml/bayesian_ml_beamer
+          - feature_engineering/feature_engineering_beamer
+          - ab_testing/ab_testing_beamer
+          - data_science/data_science_beamer
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ${{ matrix.presentation }}.tex
+          args: -pdf -interaction=nonstopmode -halt-on-error
+          latexmk_use_lualatex: false
+          latexmk_use_xelatex: false
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ${{ matrix.presentation }}-pdf
+          path: ${{ matrix.presentation }}.pdf
+          retention-days: 30
+
+  compile-exercises:
+    name: Compile Exercise Sets
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        exercise:
+          - exercises/mcmc/mcmc_exercises
+          - exercises/causal_inference/causal_inference_exercises
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ${{ matrix.exercise }}.tex
+          args: -pdf -interaction=nonstopmode -halt-on-error
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ${{ matrix.exercise }}-pdf
+          path: ${{ matrix.exercise }}.pdf
+          retention-days: 30
+
+  create-release:
+    name: Create Release with PDFs
+    needs: [compile-presentations, compile-exercises]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: compiled-pdfs
+
+      - name: Display structure of downloaded files
+        run: ls -R compiled-pdfs
+
+      - name: Create timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: build-${{ steps.timestamp.outputs.timestamp }}
+          name: Automated Build ${{ steps.timestamp.outputs.timestamp }}
+          body: |
+            Automatically compiled PDFs from latest commit.
+
+            **Commit:** ${{ github.sha }}
+            **Date:** ${{ steps.timestamp.outputs.timestamp }}
+
+            This release contains all compiled presentations and exercise sets.
+          files: compiled-pdfs/**/*.pdf
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  compilation-status:
+    name: Report Compilation Status
+    needs: [compile-presentations, compile-exercises]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Check compilation status
+        run: |
+          if [ "${{ needs.compile-presentations.result }}" == "success" ] && [ "${{ needs.compile-exercises.result }}" == "success" ]; then
+            echo "✅ All documents compiled successfully!"
+            exit 0
+          else
+            echo "❌ Some documents failed to compile"
+            echo "Presentations: ${{ needs.compile-presentations.result }}"
+            echo "Exercises: ${{ needs.compile-exercises.result }}"
+            exit 1
+          fi

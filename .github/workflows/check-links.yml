@@ -1,0 +1,170 @@
+name: Check Links
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly on Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-markdown-links:
+    name: Check Markdown Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check links in Markdown files
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'no'
+          use-verbose-mode: 'yes'
+          config-file: '.github/markdown-link-check-config.json'
+          folder-path: '.'
+          file-path: './README.md, ./CONTRIBUTING.md, ./CHANGELOG.md'
+          max-depth: -1
+
+  check-bibtex-dois:
+    name: Check BibTeX DOI Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Check DOI links
+        run: |
+          python - <<'EOF'
+          import re
+          import requests
+          import sys
+          from pathlib import Path
+
+          def extract_dois(bib_file):
+              """Extract DOIs from BibTeX file."""
+              with open(bib_file, 'r', encoding='utf-8') as f:
+                  content = f.read()
+              # Match DOI field in BibTeX entries
+              doi_pattern = r'doi\s*=\s*{([^}]+)}'
+              return re.findall(doi_pattern, content, re.IGNORECASE)
+
+          def check_doi(doi):
+              """Check if DOI resolves correctly."""
+              url = f"https://doi.org/{doi}"
+              try:
+                  response = requests.head(url, timeout=10, allow_redirects=True)
+                  return response.status_code < 400
+              except Exception as e:
+                  print(f"Error checking {doi}: {e}")
+                  return False
+
+          # Find all .bib files
+          bib_files = list(Path('bibliographies').glob('*.bib'))
+
+          all_valid = True
+          for bib_file in bib_files:
+              print(f"\nChecking {bib_file}...")
+              dois = extract_dois(bib_file)
+              print(f"Found {len(dois)} DOIs")
+
+              for doi in dois:
+                  if not check_doi(doi):
+                      print(f"❌ Invalid or unreachable DOI: {doi}")
+                      all_valid = False
+                  else:
+                      print(f"✅ Valid DOI: {doi}")
+
+          if not all_valid:
+              print("\n❌ Some DOI links are broken!")
+              sys.exit(1)
+          else:
+              print("\n✅ All DOI links are valid!")
+          EOF
+
+  check-github-urls:
+    name: Check GitHub URLs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check GitHub URLs in documentation
+        run: |
+          # Find all markdown files
+          markdown_files=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*")
+
+          broken_links=0
+
+          for file in $markdown_files; do
+            echo "Checking $file..."
+
+            # Extract GitHub URLs
+            urls=$(grep -oP 'https://github\.com/[^\s\)\]]+' "$file" || true)
+
+            for url in $urls; do
+              # Remove trailing punctuation
+              url=$(echo "$url" | sed 's/[.,;:)]$//')
+
+              # Check if URL is accessible
+              status=$(curl -o /dev/null -s -w "%{http_code}" -L "$url")
+
+              if [ "$status" -ge 400 ]; then
+                echo "❌ Broken link in $file: $url (HTTP $status)"
+                broken_links=$((broken_links + 1))
+              else
+                echo "✅ Valid link: $url"
+              fi
+            done
+          done
+
+          if [ $broken_links -gt 0 ]; then
+            echo "❌ Found $broken_links broken link(s)"
+            exit 1
+          else
+            echo "✅ All GitHub links are valid"
+          fi
+
+  link-check-report:
+    name: Link Check Summary
+    needs: [check-markdown-links, check-bibtex-dois, check-github-urls]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# Link Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Markdown Links | ${{ needs.check-markdown-links.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| BibTeX DOIs | ${{ needs.check-bibtex-dois.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| GitHub URLs | ${{ needs.check-github-urls.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Overall status
+        run: |
+          if [ "${{ needs.check-markdown-links.result }}" == "success" ] && \
+             [ "${{ needs.check-bibtex-dois.result }}" == "success" ] && \
+             [ "${{ needs.check-github-urls.result }}" == "success" ]; then
+            echo "✅ All link checks passed!"
+            exit 0
+          else
+            echo "❌ Some link checks failed"
+            exit 1
+          fi

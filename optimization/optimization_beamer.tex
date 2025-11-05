@@ -1,0 +1,1280 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Optimization for Data Science - Academic Presentation
+% ================================================================
+
+% Use the ESMAD theme
+\usepackage{../theme/esmad_beamer_theme}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Optimization for Data Science}
+\subtitle{From Convex Optimization to Evolutionary Algorithms}
+\date{\today}
+
+% ================================================================
+% Document
+% ================================================================
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Table of contents
+\tocslide
+
+% ================================================================
+\section{Introduction to Optimization}
+% ================================================================
+
+\begin{frame}{What is Optimization?}
+  \begin{definitionbox}{Optimization Problem}
+    Finding the best solution from a set of feasible alternatives:
+    $$\min_{\vect{x} \in \mathcal{X}} f(\vect{x})$$
+    where $f: \mathbb{R}^n \to \mathbb{R}$ is the objective function and $\mathcal{X}$ is the feasible set.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Components:}
+  \begin{itemize}
+    \item \textbf{Decision variables:} $\vect{x} = (x_1, \ldots, x_n)$
+    \item \textbf{Objective function:} $f(\vect{x})$ (cost, loss, error)
+    \item \textbf{Constraints:} $g_i(\vect{x}) \leq 0$, $h_j(\vect{x}) = 0$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Goal:} Find $\vect{x}^*$ that minimizes (or maximizes) $f(\vect{x})$.
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Note}
+    Maximizing $f(\vect{x})$ is equivalent to minimizing $-f(\vect{x})$.
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Optimization in Data Science}
+  \textbf{Machine Learning:}
+  \begin{itemize}
+    \item Training models: minimize loss function
+    \item Linear regression: minimize $\sum_i (y_i - \vect{w}^T\vect{x}_i)^2$
+    \item Logistic regression: minimize cross-entropy
+    \item Neural networks: backpropagation + gradient descent
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Statistics:}
+  \begin{itemize}
+    \item Maximum likelihood estimation
+    \item Bayesian inference (MAP estimation)
+    \item Robust estimation
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Operations Research:}
+  \begin{itemize}
+    \item Resource allocation
+    \item Scheduling and routing
+    \item Portfolio optimization
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Hyperparameter Tuning:}
+  \begin{itemize}
+    \item Grid search, random search
+    \item Bayesian optimization
+    \item AutoML
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Types of Optimization Problems}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{By Variable Type:}
+    \begin{itemize}
+      \item \textbf{Continuous:} $\vect{x} \in \mathbb{R}^n$
+      \item \textbf{Discrete:} $\vect{x} \in \mathbb{Z}^n$
+      \item \textbf{Mixed-integer:} Both types
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \textbf{By Constraints:}
+    \begin{itemize}
+      \item \textbf{Unconstrained:} $\mathcal{X} = \mathbb{R}^n$
+      \item \textbf{Constrained:} $\mathcal{X} \subset \mathbb{R}^n$
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{By Objective:}
+    \begin{itemize}
+      \item \textbf{Linear:} $f(\vect{x}) = \vect{c}^T\vect{x}$
+      \item \textbf{Quadratic:} $f(\vect{x}) = \frac{1}{2}\vect{x}^T\mat{Q}\vect{x} + \vect{c}^T\vect{x}$
+      \item \textbf{Convex:} $f$ is convex
+      \item \textbf{Non-convex:} General case
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \textbf{By Number of Objectives:}
+    \begin{itemize}
+      \item \textbf{Single-objective}
+      \item \textbf{Multi-objective}
+    \end{itemize}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{alertbox}{Complexity}
+    Convex problems are "easy" (polynomial time). Non-convex and discrete problems are generally NP-hard.
+  \end{alertbox}
+\end{frame}
+
+% ================================================================
+\section{Convex Optimization}
+% ================================================================
+
+\begin{frame}{Convex Sets and Functions}
+  \begin{definitionbox}{Convex Set}
+    A set $\mathcal{C}$ is convex if for any $\vect{x}, \vect{y} \in \mathcal{C}$ and $\theta \in [0,1]$:
+    $$\theta \vect{x} + (1-\theta)\vect{y} \in \mathcal{C}$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Convex Function}
+    A function $f: \mathbb{R}^n \to \mathbb{R}$ is convex if for any $\vect{x}, \vect{y}$ and $\theta \in [0,1]$:
+    $$f(\theta \vect{x} + (1-\theta)\vect{y}) \leq \theta f(\vect{x}) + (1-\theta) f(\vect{y})$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Equivalent conditions (differentiable $f$):}
+  \begin{itemize}
+    \item \textbf{First-order:} $f(\vect{y}) \geq f(\vect{x}) + \nabla f(\vect{x})^T(\vect{y} - \vect{x})$
+    \item \textbf{Second-order:} $\nabla^2 f(\vect{x}) \succeq 0$ (Hessian is positive semidefinite)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Properties of Convex Functions}
+  \textbf{Key properties:}
+  \begin{itemize}
+    \item \textbf{Local minimum is global minimum}
+    \item \textbf{Sublevel sets are convex:} $\{\vect{x} : f(\vect{x}) \leq \alpha\}$
+    \item \textbf{Closed under positive combinations:} If $f_1, f_2$ convex, then $\alpha f_1 + \beta f_2$ convex for $\alpha, \beta \geq 0$
+    \item \textbf{Composition rules:} $f(g(\vect{x}))$ may be convex under certain conditions
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Common convex functions:}
+  \begin{itemize}
+    \item Linear: $\vect{a}^T\vect{x} + b$
+    \item Quadratic (with $\mat{Q} \succeq 0$): $\vect{x}^T\mat{Q}\vect{x}$
+    \item Norms: $\|\vect{x}\|_p$ for $p \geq 1$
+    \item Exponential: $e^{ax}$
+    \item Logarithm: $-\log(x)$ on $\mathbb{R}_{++}$
+    \item Maximum: $\max\{x_1, \ldots, x_n\}$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Fundamental Property}
+    For convex $f$ over convex set $\mathcal{X}$: any local minimum is a global minimum.
+  \end{theorembox}
+</frame>
+
+\begin{frame}{Optimality Conditions}
+  \begin{theorembox}{First-Order Optimality (Unconstrained)}
+    For differentiable $f$, $\vect{x}^*$ is a minimum if and only if:
+    $$\nabla f(\vect{x}^*) = \vect{0}$$
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \begin{theorembox}{Second-Order Optimality}
+    \textbf{Necessary:} If $\vect{x}^*$ is a local minimum, then:
+    $$\nabla f(\vect{x}^*) = \vect{0} \quad \text{and} \quad \nabla^2 f(\vect{x}^*) \succeq 0$$
+
+    \textbf{Sufficient:} If $\nabla f(\vect{x}^*) = \vect{0}$ and $\nabla^2 f(\vect{x}^*) \succ 0$ (positive definite), then $\vect{x}^*$ is a strict local minimum.
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \textbf{For convex functions:}
+  \begin{itemize}
+    \item First-order condition is both necessary and sufficient
+    \item $\nabla f(\vect{x}^*) = \vect{0} \Rightarrow \vect{x}^*$ is global minimum
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Convex Optimization Problem}
+  \begin{definitionbox}{Standard Form}
+    \begin{align*}
+      \min_{\vect{x}} \quad & f(\vect{x}) \\
+      \text{subject to} \quad & g_i(\vect{x}) \leq 0, \quad i = 1, \ldots, m \\
+      & \mat{A}\vect{x} = \vect{b}
+    \end{align*}
+    where $f, g_i$ are convex functions.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Special cases:}
+  \begin{itemize}
+    \item \textbf{Linear Programming (LP):} $f$ and $g_i$ are affine
+    \item \textbf{Quadratic Programming (QP):} $f$ quadratic, $g_i$ affine
+    \item \textbf{Second-Order Cone Programming (SOCP):} Generalization of QP
+    \item \textbf{Semidefinite Programming (SDP):} Matrix optimization
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Example: Ridge Regression}
+    $$\min_{\vect{w}} \|\mat{X}\vect{w} - \vect{y}\|_2^2 + \lambda \|\vect{w}\|_2^2$$
+    This is a convex QP problem with closed-form solution.
+  \end{examplebox>
+\end{frame}
+
+% ================================================================
+\section{Gradient Descent Methods}
+% ================================================================
+
+\begin{frame}{Gradient Descent}
+  \textbf{Idea:} Iteratively move in the direction of steepest descent.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Gradient Descent Algorithm}
+    Starting from $\vect{x}_0$, iterate:
+    $$\vect{x}_{k+1} = \vect{x}_k - \alpha_k \nabla f(\vect{x}_k)$$
+    where $\alpha_k > 0$ is the step size (learning rate).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Convergence conditions:}
+  \begin{itemize}
+    \item For convex, $L$-Lipschitz continuous $\nabla f$: converges with $\alpha_k = \frac{1}{L}$
+    \item Convergence rate: $f(\vect{x}_k) - f(\vect{x}^*) = O(1/k)$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Step size selection:}
+  \begin{itemize}
+    \item \textbf{Constant:} $\alpha_k = \alpha$
+    \item \textbf{Decreasing:} $\alpha_k = \frac{\alpha_0}{k}$ or $\alpha_k = \frac{\alpha_0}{\sqrt{k}}$
+    \item \textbf{Backtracking line search:} Adaptively find good step size
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Batch vs Stochastic Gradient Descent}
+  \textbf{Batch Gradient Descent:}
+  \begin{itemize}
+    \item Use full dataset to compute gradient
+    \item For $f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \ell(y_i, \vect{w}^T\vect{x}_i)$:
+    $$\nabla f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \nabla \ell(y_i, \vect{w}^T\vect{x}_i)$$
+    \item Exact gradient, but expensive for large $n$
+  \end{itemize>
+
+  \vspace{0.5em}
+
+  \textbf{Stochastic Gradient Descent (SGD):}
+  \begin{itemize}
+    \item Use single random sample to estimate gradient
+    $$\vect{w}_{k+1} = \vect{w}_k - \alpha_k \nabla \ell(y_i, \vect{w}_k^T\vect{x}_i)$$
+    \item Fast updates, but noisy gradient estimates
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Mini-batch SGD:}
+  \begin{itemize}
+    \item Compromise: use batch of $b$ samples
+    \item Most common in practice (typical $b$: 32, 64, 128, 256)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Momentum Methods}
+  \textbf{Problem:} Standard GD can be slow in ill-conditioned problems.
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Gradient Descent with Momentum}
+    $$\vect{v}_{k+1} = \beta \vect{v}_k - \alpha \nabla f(\vect{x}_k)$$
+    $$\vect{x}_{k+1} = \vect{x}_k + \vect{v}_{k+1}$$
+    where $\beta \in [0,1)$ is the momentum coefficient (typically 0.9).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Intuition:}
+  \begin{itemize}
+    \item Accumulate velocity in directions of consistent gradient
+    \item Dampens oscillations in high-curvature directions
+    \item Accelerates progress in low-curvature directions
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Nesterov Accelerated Gradient (NAG)}
+    "Look-ahead" variant:
+    $$\vect{v}_{k+1} = \beta \vect{v}_k - \alpha \nabla f(\vect{x}_k + \beta \vect{v}_k)$$
+    $$\vect{x}_{k+1} = \vect{x}_k + \vect{v}_{k+1}$$
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{Adaptive Learning Rate Methods}
+  \textbf{AdaGrad (Adaptive Gradient):}
+  $$\vect{x}_{k+1} = \vect{x}_k - \frac{\alpha}{\sqrt{\vect{G}_k + \epsilon}} \odot \nabla f(\vect{x}_k)$$
+  where $\vect{G}_k = \sum_{i=0}^k (\nabla f(\vect{x}_i))^2$ (element-wise), $\epsilon \approx 10^{-8}$
+
+  \begin{itemize}
+    \item Adapts learning rate per parameter
+    \item Good for sparse gradients
+    \item Problem: Accumulated gradients can make learning rate too small
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{RMSProp:}
+  $$\vect{G}_k = \beta \vect{G}_{k-1} + (1-\beta)(\nabla f(\vect{x}_k))^2$$
+  $$\vect{x}_{k+1} = \vect{x}_k - \frac{\alpha}{\sqrt{\vect{G}_k + \epsilon}} \odot \nabla f(\vect{x}_k)$$
+
+  \begin{itemize}
+    \item Uses exponential moving average
+    \item Fixes AdaGrad's aggressive learning rate decay
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Adam Optimizer}
+  \begin{definitionbox}{Adam (Adaptive Moment Estimation)}
+    Combines momentum and adaptive learning rates:
+    \begin{align*}
+      \vect{m}_k &= \beta_1 \vect{m}_{k-1} + (1-\beta_1) \nabla f(\vect{x}_k) && \text{(first moment)} \\
+      \vect{v}_k &= \beta_2 \vect{v}_{k-1} + (1-\beta_2) (\nabla f(\vect{x}_k))^2 && \text{(second moment)} \\
+      \hat{\vect{m}}_k &= \frac{\vect{m}_k}{1-\beta_1^k} && \text{(bias correction)} \\
+      \hat{\vect{v}}_k &= \frac{\vect{v}_k}{1-\beta_2^k} && \text{(bias correction)} \\
+      \vect{x}_{k+1} &= \vect{x}_k - \frac{\alpha}{\sqrt{\hat{\vect{v}}_k} + \epsilon} \odot \hat{\vect{m}}_k
+    \end{align*}
+
+    \textbf{Default hyperparameters:} $\alpha = 0.001$, $\beta_1 = 0.9$, $\beta_2 = 0.999$, $\epsilon = 10^{-8}$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Why Adam is popular:}
+  \begin{itemize}
+    \item Works well with default hyperparameters
+    \item Computationally efficient
+    \item Suitable for problems with noisy/sparse gradients
+    \item Currently the most widely used optimizer in deep learning
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Other Modern Optimizers}
+  \textbf{AdamW:}
+  \begin{itemize}
+    \item Decoupled weight decay from gradient-based updates
+    \item Better regularization than Adam with L2 penalty
+    \item Becoming preferred over Adam for many applications
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{RAdam (Rectified Adam):}
+  \begin{itemize}
+    \item Addresses early training instability
+    \item Adaptive learning rate warm-up
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Lookahead:}
+  \begin{itemize}
+    \item Meta-optimizer that can wrap any base optimizer
+    \item Maintains slow and fast weights
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Second-order methods:}
+  \begin{itemize}
+    \item \textbf{Newton's method:} Use Hessian information
+    \item \textbf{L-BFGS:} Limited-memory quasi-Newton
+    \item Fast convergence but expensive per iteration
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Gradient Descent Variants Comparison}
+  \begin{table}
+    \centering
+    \small
+    \begin{tabular}{lcccc}
+      \toprule
+      Method & Momentum & Adaptive LR & Memory & Use Case \\
+      \midrule
+      SGD & No & No & Low & Simple, well-understood \\
+      SGD+Momentum & Yes & No & Low & Standard baseline \\
+      AdaGrad & No & Yes & Medium & Sparse features \\
+      RMSProp & No & Yes & Medium & RNNs, online learning \\
+      Adam & Yes & Yes & Medium & General purpose \\
+      AdamW & Yes & Yes & Medium & With weight decay \\
+      L-BFGS & - & - & High & Small datasets \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Practical Advice}
+    \begin{itemize}
+      \item Start with Adam/AdamW with default parameters
+      \item If overfitting, add weight decay or use AdamW
+      \item For final tuning, try SGD with momentum and learning rate schedule
+      \item Monitor training curves to detect issues
+    \end{itemize}
+  \end{alertbox}
+\end{frame>
+
+% ================================================================
+\section{Constrained Optimization}
+% ================================================================
+
+\begin{frame}{Lagrangian and Duality}
+  \textbf{Primal problem:}
+  \begin{align*}
+    \min_{\vect{x}} \quad & f(\vect{x}) \\
+    \text{s.t.} \quad & g_i(\vect{x}) \leq 0, \quad i = 1, \ldots, m \\
+    & h_j(\vect{x}) = 0, \quad j = 1, \ldots, p
+  \end{align*}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Lagrangian}
+    $$\mathcal{L}(\vect{x}, \vect{\lambda}, \vect{\nu}) = f(\vect{x}) + \sum_{i=1}^m \lambda_i g_i(\vect{x}) + \sum_{j=1}^p \nu_j h_j(\vect{x})$$
+    where $\vect{\lambda} \geq \vect{0}$ (inequality multipliers) and $\vect{\nu}$ (equality multipliers).
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Dual Function}
+    $$q(\vect{\lambda}, \vect{\nu}) = \inf_{\vect{x}} \mathcal{L}(\vect{x}, \vect{\lambda}, \vect{\nu})$$
+    Always concave, even if primal problem is non-convex.
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{KKT Conditions}
+  \begin{theorembox}{Karush-Kuhn-Tucker (KKT) Conditions}
+    For $\vect{x}^*$ to be optimal (assuming constraint qualifications hold):
+
+    \textbf{1. Stationarity:}
+    $$\nabla f(\vect{x}^*) + \sum_{i=1}^m \lambda_i^* \nabla g_i(\vect{x}^*) + \sum_{j=1}^p \nu_j^* \nabla h_j(\vect{x}^*) = \vect{0}$$
+
+    \textbf{2. Primal feasibility:}
+    $$g_i(\vect{x}^*) \leq 0, \quad h_j(\vect{x}^*) = 0$$
+
+    \textbf{3. Dual feasibility:}
+    $$\lambda_i^* \geq 0$$
+
+    \textbf{4. Complementary slackness:}
+    $$\lambda_i^* g_i(\vect{x}^*) = 0 \quad \forall i$$
+  \end{theorembox}
+
+  \vspace{0.5em}
+
+  \begin{alertbox}{Importance}
+    For convex problems, KKT conditions are necessary and sufficient for optimality.
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Penalty and Barrier Methods}
+  \textbf{Penalty Methods:}
+  \begin{itemize}
+    \item Convert constrained problem to unconstrained
+    \item Add penalty for constraint violations:
+    $$\min_{\vect{x}} f(\vect{x}) + \rho \sum_{i=1}^m \max(0, g_i(\vect{x}))^2 + \rho \sum_{j=1}^p h_j(\vect{x})^2$$
+    \item Increase penalty parameter $\rho$ iteratively
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Barrier Methods:}
+  \begin{itemize}
+    \item Add barrier function to prevent constraint violations
+    \item Logarithmic barrier:
+    $$\min_{\vect{x}} f(\vect{x}) - \frac{1}{\mu} \sum_{i=1}^m \log(-g_i(\vect{x}))$$
+    \item Decrease barrier parameter $\mu$ iteratively
+    \item Basis of interior-point methods
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Augmented Lagrangian:}
+  \begin{itemize}
+    \item Combines Lagrangian with penalty term
+    \item Better convergence properties than pure penalty methods
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Projected Gradient Descent}
+  \textbf{For problems with simple constraints:}
+  $$\min_{\vect{x} \in \mathcal{C}} f(\vect{x})$$
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Projected Gradient Descent}
+    $$\vect{x}_{k+1} = \Pi_{\mathcal{C}}(\vect{x}_k - \alpha \nabla f(\vect{x}_k))$$
+    where $\Pi_{\mathcal{C}}(\vect{y}) = \argmin_{\vect{x} \in \mathcal{C}} \|\vect{x} - \vect{y}\|_2$ is the projection onto $\mathcal{C}$.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Common projections:}
+  \begin{itemize}
+    \item \textbf{Box constraints:} $\mathcal{C} = [\vect{l}, \vect{u}]$
+    $$[\Pi_{\mathcal{C}}(\vect{y})]_i = \max(l_i, \min(y_i, u_i))$$
+
+    \item \textbf{$\ell_2$ ball:} $\mathcal{C} = \{\vect{x} : \|\vect{x}\|_2 \leq r\}$
+    $$\Pi_{\mathcal{C}}(\vect{y}) = \begin{cases} \vect{y} & \text{if } \|\vect{y}\|_2 \leq r \\ \frac{r}{\|\vect{y}\|_2}\vect{y} & \text{otherwise} \end{cases}$$
+
+    \item \textbf{Simplex:} $\mathcal{C} = \{\vect{x} : \vect{x} \geq \vect{0}, \sum_i x_i = 1\}$ (requires special algorithm)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Proximal Methods}
+  \textbf{For problems with non-smooth terms:}
+  $$\min_{\vect{x}} f(\vect{x}) + g(\vect{x})$$
+  where $f$ is smooth, $g$ is non-smooth but "simple" (e.g., $\ell_1$ norm).
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Proximal Operator}
+    $$\text{prox}_{\alpha g}(\vect{y}) = \argmin_{\vect{x}} \left\{g(\vect{x}) + \frac{1}{2\alpha}\|\vect{x} - \vect{y}\|_2^2\right\}$$
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Proximal Gradient Method}
+    $$\vect{x}_{k+1} = \text{prox}_{\alpha_k g}(\vect{x}_k - \alpha_k \nabla f(\vect{x}_k))$$
+  \end{definitionbox>
+
+  \vspace{0.5em}
+
+  \textbf{Example: Lasso regression}
+  $$\min_{\vect{w}} \frac{1}{2}\|\mat{X}\vect{w} - \vect{y}\|_2^2 + \lambda \|\vect{w}\|_1$$
+  Proximal operator for $\ell_1$ norm is soft-thresholding:
+  $$[\text{prox}_{\lambda \|\cdot\|_1}(\vect{y})]_i = \text{sign}(y_i) \max(|y_i| - \lambda, 0)$$
+\end{frame}
+
+% ================================================================
+\section{Evolutionary and Metaheuristic Algorithms}
+% ================================================================
+
+\begin{frame}{Evolutionary Algorithms Overview}
+  \textbf{Inspiration:} Biological evolution and natural selection.
+
+  \vspace{0.5em}
+
+  \textbf{Key concepts:}
+  \begin{itemize}
+    \item \textbf{Population:} Set of candidate solutions
+    \item \textbf{Fitness:} Quality of a solution (objective function value)
+    \item \textbf{Selection:} Choose better solutions for reproduction
+    \item \textbf{Crossover:} Combine two solutions to create offspring
+    \item \textbf{Mutation:} Random modifications to solutions
+    \item \textbf{Replacement:} Update population with new generation
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Advantages:}
+  \begin{itemize}
+    \item Don't require gradient information
+    \item Can handle non-convex, multimodal, discrete problems
+    \item Naturally handle constraints and multiple objectives
+    \item Global search capability
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Disadvantages:}
+  \begin{itemize}
+    \item Slow convergence compared to gradient methods
+    \item No convergence guarantees
+    \item Many hyperparameters to tune
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Genetic Algorithms (GA)}
+  \begin{examplebox}{Genetic Algorithm}
+    \textbf{1. Initialize:} Random population of size $N$
+
+    \textbf{2. Repeat until convergence:}
+    \begin{enumerate}
+      \item \textbf{Evaluate:} Compute fitness $f(\vect{x})$ for each individual
+      \item \textbf{Selection:} Select parents based on fitness
+      \begin{itemize}
+        \item Roulette wheel: probability $\propto$ fitness
+        \item Tournament: best of random subset
+        \item Rank-based: based on rank, not absolute fitness
+      \end{itemize}
+      \item \textbf{Crossover:} Create offspring from parents
+      \begin{itemize}
+        \item One-point, two-point, uniform crossover
+      \end{itemize}
+      \item \textbf{Mutation:} Randomly modify offspring
+      \begin{itemize}
+        \item Bit flip (binary), Gaussian noise (real-valued)
+      \end{itemize}
+      \item \textbf{Replacement:} Form new population
+    \end{enumerate}
+  \end{examplebox}
+
+  \textbf{Typical hyperparameters:} Population size $N = 50$-$200$, crossover rate $p_c = 0.6$-$0.9$, mutation rate $p_m = 0.01$-$0.1$
+\end{frame}
+
+\begin{frame}{Evolution Strategies (ES)}
+  \textbf{Designed for continuous optimization:}
+  \begin{itemize}
+    \item Represent solutions as real vectors
+    \item Self-adaptive mutation rates
+    \item Strong theoretical foundations
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{$(\mu, \lambda)$-ES}
+    \begin{itemize}
+      \item $\mu$ parents generate $\lambda$ offspring
+      \item Select best $\mu$ from offspring (no elitism)
+    \end{itemize}
+  \end{definitionbox>
+
+  \begin{definitionbox}{$(\mu + \lambda)$-ES}
+    \begin{itemize}
+      \item Select best $\mu$ from parents and offspring (elitism)
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{CMA-ES (Covariance Matrix Adaptation):}
+  \begin{itemize}
+    \item State-of-the-art evolution strategy
+    \item Adapts full covariance matrix of mutation distribution
+    \item Effective for continuous optimization
+    \item Often competitive with gradient-based methods for non-convex problems
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Particle Swarm Optimization (PSO)}
+  \textbf{Inspiration:} Social behavior of bird flocking or fish schooling.
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{PSO Algorithm}
+    For each particle $i$ with position $\vect{x}_i$ and velocity $\vect{v}_i$:
+
+    \begin{enumerate}
+      \item Track personal best: $\vect{p}_i = \text{best position particle } i \text{ has visited}$
+      \item Track global best: $\vect{g} = \text{best position any particle has visited}$
+      \item Update velocity:
+      $$\vect{v}_i \leftarrow \omega \vect{v}_i + c_1 r_1 (\vect{p}_i - \vect{x}_i) + c_2 r_2 (\vect{g} - \vect{x}_i)$$
+      where $r_1, r_2 \sim \text{Uniform}(0,1)$
+      \item Update position:
+      $$\vect{x}_i \leftarrow \vect{x}_i + \vect{v}_i$$
+    \end{enumerate}
+  \end{examplebox}
+
+  \vspace{0.5em}
+
+  \textbf{Parameters:}
+  \begin{itemize}
+    \item $\omega$: Inertia weight (typically 0.4-0.9)
+    \item $c_1, c_2$: Cognitive and social coefficients (typically $\approx 2$)
+    \item Population size: 20-50 particles
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Other Metaheuristics}
+  \textbf{Simulated Annealing:}
+  \begin{itemize}
+    \item Probabilistic local search with controlled randomness
+    \item Accepts worse solutions with probability $\exp(-\Delta f / T)$
+    \item Temperature $T$ decreases over time
+    \item Guarantees convergence to global optimum (in limit)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Differential Evolution (DE):}
+  \begin{itemize}
+    \item Create offspring by adding scaled difference of random individuals
+    \item Simple and effective for continuous optimization
+    \item Few hyperparameters
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Ant Colony Optimization (ACO):}
+  \begin{itemize}
+    \item Inspired by foraging behavior of ants
+    \item Good for combinatorial problems (TSP, routing)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Tabu Search:}
+  \begin{itemize}
+    \item Local search with memory to avoid cycling
+    \item Maintains tabu list of recently visited solutions
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Bayesian Optimization}
+% ================================================================
+
+\begin{frame}{Bayesian Optimization for Hyperparameter Tuning}
+  \textbf{Problem:} Optimize expensive black-box function $f(\vect{x})$.
+
+  \vspace{0.5em}
+
+  \textbf{Examples:}
+  \begin{itemize}
+    \item Hyperparameter tuning (training neural network expensive)
+    \item A/B testing (each evaluation requires collecting data)
+    \item Engineering design (simulations/experiments costly)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Bayesian Optimization}
+    \textbf{1. Surrogate model:} Probabilistic model of $f$ (typically Gaussian Process)
+    $$f(\vect{x}) \sim \mathcal{GP}(\mu(\vect{x}), k(\vect{x}, \vect{x}'))$$
+
+    \textbf{2. Acquisition function:} Determines next point to evaluate
+    \begin{itemize}
+      \item Balance exploration vs exploitation
+      \item Examples: Expected Improvement (EI), Upper Confidence Bound (UCB)
+    \end{itemize}
+
+    \textbf{3. Iterate:} Evaluate $f$ at point maximizing acquisition function, update model
+  \end{definitionbox}
+\end{frame}
+
+\begin{frame}{Gaussian Processes for Bayesian Optimization}
+  \begin{definitionbox}{Gaussian Process}
+    Distribution over functions specified by:
+    \begin{itemize}
+      \item Mean function: $\mu(\vect{x}) = \E[f(\vect{x})]$
+      \item Covariance (kernel) function: $k(\vect{x}, \vect{x}') = \text{Cov}(f(\vect{x}), f(\vect{x}'))$
+    \end{itemize}
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Common kernels:}
+  \begin{itemize}
+    \item \textbf{RBF (Gaussian):} $k(\vect{x}, \vect{x}') = \sigma^2 \exp\left(-\frac{\|\vect{x} - \vect{x}'\|^2}{2\ell^2}\right)$
+    \item \textbf{Matérn:} $k(\vect{x}, \vect{x}') = \sigma^2 \frac{2^{1-\nu}}{\Gamma(\nu)} \left(\sqrt{2\nu}\frac{r}{\ell}\right)^\nu K_\nu\left(\sqrt{2\nu}\frac{r}{\ell}\right)$
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Posterior after observing data $\mathcal{D} = \{(\vect{x}_i, y_i)\}$:}
+  $$f(\vect{x}) | \mathcal{D} \sim \mathcal{N}(\mu_{\mathcal{D}}(\vect{x}), \sigma_{\mathcal{D}}^2(\vect{x}))$$
+
+  \vspace{0.5em}
+
+  \textbf{Key property:} Uncertainty quantification - GP provides both prediction and confidence.
+\end{frame}
+
+\begin{frame}{Acquisition Functions}
+  \textbf{Expected Improvement (EI):}
+  $$\text{EI}(\vect{x}) = \E[\max(0, f(\vect{x}) - f(\vect{x}^+))]$$
+  where $\vect{x}^+ = \argmax_{\vect{x}_i \in \mathcal{D}} y_i$ is current best.
+
+  Closed form for GP:
+  $$\text{EI}(\vect{x}) = \begin{cases}
+    (\mu(\vect{x}) - f(\vect{x}^+))\Phi(Z) + \sigma(\vect{x})\phi(Z) & \text{if } \sigma(\vect{x}) > 0 \\
+    0 & \text{if } \sigma(\vect{x}) = 0
+  \end{cases}$$
+  where $Z = \frac{\mu(\vect{x}) - f(\vect{x}^+)}{\sigma(\vect{x})}$, $\Phi$ is standard normal CDF, $\phi$ is PDF.
+
+  \vspace{0.5em}
+
+  \textbf{Upper Confidence Bound (UCB):}
+  $$\text{UCB}(\vect{x}) = \mu(\vect{x}) + \kappa \sigma(\vect{x})$$
+  where $\kappa > 0$ controls exploration-exploitation tradeoff.
+
+  \vspace{0.5em}
+
+  \textbf{Probability of Improvement (PI):}
+  $$\text{PI}(\vect{x}) = \Prob(f(\vect{x}) > f(\vect{x}^+)) = \Phi(Z)$$
+\end{frame}
+
+\begin{frame}{Practical Bayesian Optimization}
+  \textbf{Libraries:}
+  \begin{itemize}
+    \item \textbf{scikit-optimize:} Simple BO for hyperparameter tuning
+    \item \textbf{Optuna:} Modern, efficient hyperparameter optimization
+    \item \textbf{Hyperopt:} Tree-structured Parzen estimator (TPE)
+    \item \textbf{GPyOpt, BoTorch:} Advanced GP-based optimization
+    \item \textbf{Ax/BoTorch (Facebook):} Production-ready BO platform
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Best practices:}
+  \begin{itemize}
+    \item Use log scale for hyperparameters spanning orders of magnitude
+    \item Parallel evaluations: batch Bayesian optimization
+    \item Early stopping: prune unpromising trials
+    \item Transfer learning: Use prior knowledge from related tasks
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{When to use Bayesian optimization:}
+  \begin{itemize}
+    \item Function evaluations are expensive
+    \item Derivatives not available
+    \item Low to moderate dimensionality ($d < 20$)
+    \item Need sample efficiency
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Practical Optimization in Data Science}
+% ================================================================
+
+\begin{frame}{Choosing an Optimization Algorithm}
+  \begin{table}
+    \centering
+    \footnotesize
+    \begin{tabular}{lp{4cm}p{4cm}}
+      \toprule
+      \textbf{Scenario} & \textbf{Method} & \textbf{Reason} \\
+      \midrule
+      Convex, smooth, small $n$ & Newton/L-BFGS & Fast convergence \\
+      Convex, large $n$ & SGD/Adam & Scalable \\
+      Deep learning & Adam/AdamW & Adaptive, robust \\
+      Non-smooth (e.g., Lasso) & Proximal gradient & Handles non-smoothness \\
+      Constrained, convex & Interior point & Polynomial time \\
+      Black-box, expensive & Bayesian opt. & Sample efficient \\
+      Non-convex, no gradients & CMA-ES, DE & Global search \\
+      Combinatorial & GA, ACO, tabu & Discrete optimization \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Regularization in Optimization}
+  \textbf{Purpose:} Prevent overfitting, improve generalization.
+
+  \vspace{0.5em}
+
+  \textbf{$\ell_2$ regularization (Ridge):}
+  $$\min_{\vect{w}} \mathcal{L}(\vect{w}) + \frac{\lambda}{2}\|\vect{w}\|_2^2$$
+  \begin{itemize}
+    \item Shrinks weights toward zero
+    \item Closed-form solution for linear models
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{$\ell_1$ regularization (Lasso):}
+  $$\min_{\vect{w}} \mathcal{L}(\vect{w}) + \lambda\|\vect{w}\|_1$$
+  \begin{itemize}
+    \item Induces sparsity (some weights exactly zero)
+    \item Performs feature selection
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Elastic Net:}
+  $$\min_{\vect{w}} \mathcal{L}(\vect{w}) + \lambda_1\|\vect{w}\|_1 + \frac{\lambda_2}{2}\|\vect{w}\|_2^2$$
+  \begin{itemize}
+    \item Combines benefits of $\ell_1$ and $\ell_2$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Learning Rate Schedules}
+  \textbf{Constant:} $\alpha_k = \alpha$
+  \begin{itemize}
+    \item Simple, but may not converge or converge slowly
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Step decay:} $\alpha_k = \alpha_0 \cdot \gamma^{\lfloor k/s \rfloor}$
+  \begin{itemize}
+    \item Reduce by factor $\gamma$ every $s$ epochs
+    \item Common: $\gamma = 0.1$, $s = 30$ epochs
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Exponential decay:} $\alpha_k = \alpha_0 e^{-\lambda k}$
+  \begin{itemize}
+    \item Smooth decay
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Cosine annealing:} $\alpha_k = \alpha_{\min} + \frac{1}{2}(\alpha_{\max} - \alpha_{\min})(1 + \cos(\frac{k\pi}{K}))$
+  \begin{itemize}
+    \item Popular in deep learning
+    \item Can restart periodically (SGDR)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Warm restarts:} Periodically reset learning rate to high value
+  \begin{itemize}
+    \item Helps escape local minima
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Debugging Optimization}
+  \begin{alertbox}{Common Issues}
+    \textbf{1. Loss not decreasing:}
+    \begin{itemize}
+      \item Learning rate too high or too low
+      \item Bug in gradient computation (use gradient checking!)
+      \item Inappropriate initialization
+    \end{itemize}
+
+    \textbf{2. Loss oscillating:}
+    \begin{itemize}
+      \item Learning rate too high
+      \item Reduce learning rate or use adaptive methods
+    \end{itemize}
+
+    \textbf{3. Slow convergence:}
+    \begin{itemize}
+      \item Learning rate too low
+      \item Poor conditioning (try normalization, preconditioning)
+      \item Use momentum or adaptive methods
+    \end{itemize}
+
+    \textbf{4. Overfitting:}
+    \begin{itemize}
+      \item Add regularization
+      \item Use early stopping
+      \item Increase training data or augmentation
+    \end{itemize}
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Monitoring and Visualization}
+  \textbf{What to plot:}
+  \begin{itemize}
+    \item \textbf{Loss curves:} Training and validation loss vs epochs/iterations
+    \item \textbf{Gradient norms:} Check for vanishing/exploding gradients
+    \item \textbf{Parameter norms:} Monitor weight magnitudes
+    \item \textbf{Learning rate:} Track current learning rate
+    \item \textbf{Evaluation metrics:} Accuracy, F1, etc.
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Tools:}
+  \begin{itemize}
+    \item \textbf{TensorBoard:} Comprehensive visualization for TensorFlow/PyTorch
+    \item \textbf{Weights \& Biases:} Experiment tracking and visualization
+    \item \textbf{MLflow:} Model tracking and management
+    \item \textbf{matplotlib/seaborn:} Custom plotting
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Best practices:}
+  \begin{itemize}
+    \item Log frequently but not excessively (every $N$ iterations)
+    \item Save checkpoints regularly
+    \item Track hyperparameters with results
+    \item Compare multiple runs
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Training a Model with PyTorch}
+  \begin{lstlisting}[language=Python, basicstyle=\tiny]
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Define model, loss, optimizer
+model = MyNeuralNetwork()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
+
+# Training loop
+for epoch in range(num_epochs):
+    model.train()
+    total_loss = 0
+
+    for batch_idx, (data, target) in enumerate(train_loader):
+        # Forward pass
+        output = model(data)
+        loss = criterion(output, target)
+
+        # Backward pass and optimization
+        optimizer.zero_grad()  # Clear gradients
+        loss.backward()        # Compute gradients
+
+        # Gradient clipping (optional, prevents exploding gradients)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+        optimizer.step()       # Update parameters
+        total_loss += loss.item()
+
+    # Learning rate scheduling
+    scheduler.step()
+
+    # Validation
+    model.eval()
+    val_loss = 0
+    with torch.no_grad():
+        for data, target in val_loader:
+            output = model(data)
+            val_loss += criterion(output, target).item()
+
+    # Logging
+    print(f'Epoch {epoch}: Train Loss: {total_loss/len(train_loader):.4f}, '
+          f'Val Loss: {val_loss/len(val_loader):.4f}, LR: {scheduler.get_last_lr()[0]:.6f}')
+  \end{lstlisting}
+\end{frame}
+
+% ================================================================
+\section{Advanced Topics}
+% ================================================================
+
+\begin{frame}{Multi-Objective Optimization}
+  \textbf{Problem:} Optimize multiple conflicting objectives simultaneously.
+  $$\min_{\vect{x}} \{f_1(\vect{x}), f_2(\vect{x}), \ldots, f_m(\vect{x})\}$$
+
+  \vspace{0.5em}
+
+  \begin{definitionbox}{Pareto Optimality}
+    $\vect{x}^*$ is Pareto optimal if there exists no $\vect{x}$ such that:
+    \begin{itemize}
+      \item $f_i(\vect{x}) \leq f_i(\vect{x}^*)$ for all $i$
+      \item $f_j(\vect{x}) < f_j(\vect{x}^*)$ for at least one $j$
+    \end{itemize}
+    The set of all Pareto optimal solutions forms the \textbf{Pareto front}.
+  \end{definitionbox}
+
+  \vspace{0.5em}
+
+  \textbf{Methods:}
+  \begin{itemize}
+    \item \textbf{Scalarization:} $\min \sum_i w_i f_i(\vect{x})$ with weights $w_i$
+    \item \textbf{$\epsilon$-constraint:} Optimize one objective, constrain others
+    \item \textbf{NSGA-II:} Non-dominated Sorting Genetic Algorithm
+    \item \textbf{MOEA/D:} Multi-objective EA based on decomposition
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Distributed and Parallel Optimization}
+  \textbf{Data parallelism:}
+  \begin{itemize}
+    \item Split data across workers
+    \item Each worker computes gradient on its subset
+    \item Aggregate gradients and update parameters
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Model parallelism:}
+  \begin{itemize}
+    \item Split model across devices (for very large models)
+    \item Pipeline parallelism: different layers on different devices
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Synchronous vs asynchronous:}
+  \begin{itemize}
+    \item \textbf{Synchronous SGD:} Wait for all workers before updating
+    \item \textbf{Asynchronous SGD:} Workers update independently (may be stale)
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Communication efficiency:}
+  \begin{itemize}
+    \item Gradient compression
+    \item Local SGD: multiple local updates before synchronization
+    \item AllReduce operations for efficient gradient aggregation
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Federated Learning}
+  \textbf{Setting:} Optimize model across decentralized data (e.g., mobile devices).
+
+  \vspace{0.5em}
+
+  \begin{examplebox}{Federated Averaging (FedAvg)}
+    \textbf{Server:}
+    \begin{enumerate}
+      \item Initialize global model $\vect{w}_0$
+      \item \textbf{For each round} $t = 1, 2, \ldots$:
+      \begin{itemize}
+        \item Select subset of clients
+        \item Send current $\vect{w}_t$ to selected clients
+        \item Receive local updates from clients
+        \item Average updates: $\vect{w}_{t+1} = \sum_k \frac{n_k}{n} \vect{w}_k^{(t+1)}$
+      \end{itemize}
+    \end{enumerate}
+
+    \textbf{Client} $k$:
+    \begin{itemize}
+      \item Perform local SGD on local data for $E$ epochs
+      \item Send updated model to server
+    \end{itemize}
+  \end{examplebox>
+
+  \vspace{0.5em}
+
+  \textbf{Challenges:} Non-IID data, communication cost, privacy, heterogeneity
+\end{frame}
+
+\begin{frame}{Neural Architecture Search (NAS)}
+  \textbf{Goal:} Automatically find optimal neural network architecture.
+
+  \vspace{0.5em}
+
+  \textbf{Search space:}
+  \begin{itemize}
+    \item Number of layers, layer types
+    \item Number of neurons/filters
+    \item Connections between layers
+    \item Activation functions
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Methods:}
+  \begin{itemize}
+    \item \textbf{Reinforcement learning:} Train controller to generate architectures
+    \item \textbf{Evolutionary algorithms:} Evolve architectures
+    \item \textbf{Gradient-based:} DARTS (differentiable architecture search)
+    \item \textbf{Bayesian optimization:} Model architecture performance
+  \end{itemize}
+
+  \vspace{0.5em}
+
+  \textbf{Efficiency techniques:}
+  \begin{itemize}
+    \item Weight sharing across architectures
+    \item Early stopping of poor architectures
+    \item Proxy tasks (smaller datasets, fewer epochs)
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Conclusion}
+% ================================================================
+
+\begin{frame}{Summary}
+  \textbf{Key Concepts:}
+  \begin{itemize}
+    \item Convex vs non-convex optimization
+    \item Gradient descent and variants (SGD, momentum, Adam)
+    \item Constrained optimization (Lagrangian, KKT conditions)
+    \item Evolutionary and metaheuristic algorithms
+    \item Bayesian optimization for hyperparameter tuning
+    \item Practical considerations (regularization, learning rates, debugging)
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{The Optimization Hierarchy}
+    \begin{enumerate}
+      \item If convex and small: Use Newton/L-BFGS
+      \item If convex and large: Use (mini-batch) SGD with momentum/Adam
+      \item If non-convex with gradients: Use Adam/AdamW with proper initialization
+      \item If black-box, expensive: Use Bayesian optimization
+      \item If no gradients or discrete: Use evolutionary/metaheuristic algorithms
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Practical Advice}
+  \begin{alertbox}{Best Practices}
+    \begin{enumerate}
+      \item \textbf{Start simple:} Try Adam with default settings
+      \item \textbf{Normalize data:} Zero mean, unit variance
+      \item \textbf{Use validation set:} Monitor for overfitting
+      \item \textbf{Visualize:} Plot loss curves, gradients
+      \item \textbf{Gradient checking:} Verify implementation with finite differences
+      \item \textbf{Tune hyperparameters:} Learning rate most important
+      \item \textbf{Use regularization:} Weight decay, dropout, early stopping
+      \item \textbf{Be patient:} Deep models may need many epochs
+    \end{enumerate}
+  \end{alertbox}
+
+  \vspace{0.5em}
+
+  \textbf{Resources:}
+  \begin{itemize}
+    \item Boyd \& Vandenberghe: "Convex Optimization" (2004)
+    \item Nocedal \& Wright: "Numerical Optimization" (2006)
+    \item Goodfellow et al.: "Deep Learning" (2016) - Chapter 8
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Future Directions}
+  \textbf{Emerging trends:}
+  \begin{itemize}
+    \item \textbf{AutoML:} Automated machine learning pipelines
+    \item \textbf{Neural ODEs:} Continuous-depth models, adjoint method
+    \item \textbf{Meta-learning:} Learning to optimize, learned optimizers
+    \item \textbf{Sparse optimization:} Efficient training of large models
+    \item \textbf{Quantum optimization:} Quantum algorithms for optimization
+    \item \textbf{Robust optimization:} Handling uncertainty and adversaries
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{block}{Final Thought}
+    Optimization is at the heart of machine learning and data science. Understanding optimization algorithms, their properties, and when to use them is essential for:
+    \begin{itemize}
+      \item Training models effectively
+      \item Solving real-world problems
+      \item Pushing the boundaries of what's possible with AI
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% Acknowledgments slide
+\acknowledgmentsslide{
+  \item ESMAD for institutional support
+  \item Mysense.ai for real-world optimization challenges
+  \item The optimization research community
+  \item Open-source contributors (PyTorch, TensorFlow, scikit-learn)
+}
+
+% Contact information slide
+\contactslide
+
+\end{document}
