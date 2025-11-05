@@ -1,0 +1,144 @@
+# Development Dependencies for Academic Presentations
+# Last Updated: January 2025
+#
+# Install with: pip install -r requirements-dev.txt
+
+# Include base requirements
+-r requirements.txt
+
+# ============================================================================
+# Code Quality & Formatting
+# ============================================================================
+black>=23.7.0
+isort>=5.12.0
+autopep8>=2.0.4
+flake8>=6.1.0
+flake8-docstrings>=1.7.0
+flake8-bugbear>=23.7.0
+flake8-comprehensions>=3.14.0
+pylint>=2.17.0
+mypy>=1.5.0
+bandit>=1.7.5
+safety>=2.3.0  # Check for known security vulnerabilities
+
+# ============================================================================
+# Testing
+# ============================================================================
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-xdist>=3.3.0
+pytest-mock>=3.11.0
+pytest-timeout>=2.1.0
+pytest-benchmark>=4.0.0
+hypothesis>=6.82.0
+tox>=4.6.0  # Test across multiple Python versions
+coverage[toml]>=7.3.0
+
+# ============================================================================
+# Documentation
+# ============================================================================
+sphinx>=7.1.0
+sphinx-rtd-theme>=1.3.0
+sphinx-autodoc-typehints>=1.24.0
+nbsphinx>=0.9.3
+myst-parser>=2.0.0  # Markdown support in Sphinx
+sphinx-copybutton>=0.5.2
+
+# ============================================================================
+# Pre-commit Hooks
+# ============================================================================
+pre-commit>=3.3.0
+
+# ============================================================================
+# Profiling & Performance
+# ============================================================================
+line_profiler>=4.0.0
+memory_profiler>=0.61.0
+py-spy>=0.3.14
+scalene>=1.5.31
+
+# ============================================================================
+# Notebook Tools
+# ============================================================================
+nbconvert>=7.7.0
+nbformat>=5.9.0
+jupyter-contrib-nbextensions>=0.7.0
+jupytext>=1.15.0  # Sync notebooks with .py files
+
+# ============================================================================
+# LaTeX & Spell Checking
+# ============================================================================
+pyspellchecker>=0.7.2
+pyenchant>=3.2.2
+language-tool-python>=2.7.1  # Grammar checking
+
+# ============================================================================
+# Git & Version Control
+# ============================================================================
+gitpython>=3.1.32
+pre-commit>=3.3.0
+
+# ============================================================================
+# Build & Distribution
+# ============================================================================
+build>=0.10.0
+twine>=4.0.2
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# ============================================================================
+# Debugging
+# ============================================================================
+ipdb>=0.13.13
+pdbpp>=0.10.3
+
+# ============================================================================
+# API Documentation
+# ============================================================================
+pdoc3>=0.10.0
+
+# ============================================================================
+# Type Stubs for Common Libraries
+# ============================================================================
+pandas-stubs>=2.0.0
+types-requests>=2.31.0
+types-PyYAML>=6.0.12
+
+# ============================================================================
+# Development Utilities
+# ============================================================================
+pipdeptree>=2.13.0  # Show package dependencies
+pip-tools>=7.0.0  # Pin dependencies
+watchdog>=3.0.0  # File system monitoring
+
+# ============================================================================
+# Installation Notes
+# ============================================================================
+#
+# Install development environment:
+#   pip install -r requirements-dev.txt
+#
+# Set up pre-commit hooks:
+#   pre-commit install
+#
+# Run all quality checks:
+#   make quality  # or see scripts/quality_check.sh
+#
+# Run tests:
+#   pytest
+#
+# Run tests with coverage:
+#   pytest --cov=code --cov-report=html
+#
+# Format code:
+#   black code/
+#   isort code/
+#
+# Lint code:
+#   flake8 code/
+#   pylint code/
+#   mypy code/
+#
+# Check security:
+#   bandit -r code/
+#   safety check
