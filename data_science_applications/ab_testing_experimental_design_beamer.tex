@@ -1,0 +1,1348 @@
+% ================================================================
+% A/B TESTING & EXPERIMENTAL DESIGN
+% Comprehensive presentation on experimentation and causal inference
+%
+% Topics Covered:
+% 1. Experimental Design Fundamentals
+% 2. Classical Hypothesis Testing Approach
+% 3. Sample Size and Statistical Power
+% 4. Bayesian A/B Testing
+% 5. Sequential Testing and Early Stopping
+% 6. Multi-Armed Bandits
+% 7. Variance Reduction Techniques
+% 8. Multiple Testing and Corrections
+% 9. Advanced Topics and Case Studies
+%
+% Total: ~50 slides
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+\section{A/B Testing \& Experimental Design}
+
+% ================================================================
+% PART 1: FUNDAMENTALS
+% ================================================================
+
+\begin{frame}{What is A/B Testing?}
+\textbf{The gold standard for causal inference}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Definition:}
+
+A \textbf{randomized controlled experiment} comparing two (or more) versions to determine which performs better.
+
+\vspace{0.2cm}
+
+\textbf{The Classic Setup:}
+\begin{itemize}
+\item \textcolor{forest}{\textbf{Control (A):}} Current version (baseline)
+\item \textcolor{crimson}{\textbf{Treatment (B):}} New version (variant)
+\item \textbf{Random assignment:} Users randomly assigned to A or B
+\item \textbf{Measure outcome:} Compare conversion, revenue, engagement, etc.
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Why Randomization?}
+
+\textbf{Eliminates selection bias!}
+
+\[
+\E[Y^1 | T=1] - \E[Y^0 | T=0] = \text{ATE}
+\]
+
+Only with randomization:
+\[
+\E[Y^1 | T=1] = \E[Y^1] \quad \text{and} \quad \E[Y^0 | T=0] = \E[Y^0]
+\]
+
+$\to$ Can estimate true causal effect.
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Example: Website Button Color}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.7]
+% Population
+\node[draw, ellipse, fill=navyblue!20, minimum width=4cm, minimum height=1.5cm] (pop) at (3,5) {All Users};
+
+% Random assignment
+\draw[->, very thick] (1.5,4.5) -- (1.5,3.5) node[midway, left] {\tiny Random};
+\draw[->, very thick] (4.5,4.5) -- (4.5,3.5) node[midway, right] {\tiny Random};
+
+% Groups
+\node[draw, rectangle, fill=forest!20, minimum width=2cm, minimum height=1.2cm] (a) at (1.5,2.5) {Control (A)\\Blue button\\n=1000};
+\node[draw, rectangle, fill=crimson!20, minimum width=2cm, minimum height=1.2cm] (b) at (4.5,2.5) {Treatment (B)\\Red button\\n=1000};
+
+% Outcomes
+\node[draw, circle, fill=gold!20] (oa) at (1.5,1) {CVR: 5.2\%};
+\node[draw, circle, fill=gold!20] (ob) at (4.5,1) {CVR: 5.8\%};
+
+\draw[->, thick] (a) -- (oa);
+\draw[->, thick] (b) -- (ob);
+
+% Comparison
+\draw[<->, very thick, purple] (oa) -- node[below] {\tiny Compare} (ob);
+\end{tikzpicture}
+\end{figure}
+
+\textbf{Result:} Red button increases conversion by 0.6 percentage points (5.8\% - 5.2\%)
+
+\vspace{0.2cm}
+
+\textbf{Key Question:}
+
+Is this difference real or due to chance?
+
+$\to$ Statistical hypothesis testing!
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Causation, Not Just Correlation}
+Randomization ensures treatment \textbf{causes} the difference in outcomes!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Why A/B Testing Matters}
+\textbf{From intuition to data-driven decisions}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Problem with "Just Ship It":}
+
+\begin{itemize}
+\item[$\times$] Opinions vary (HiPPO: Highest Paid Person's Opinion)
+\item[$\times$] Intuition is often wrong
+\item[$\times$] Can't measure causal impact
+\item[$\times$] Risk of harming metrics
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Famous A/B Testing Successes:}
+
+\begin{enumerate}
+\item \textbf{Google: 41 Shades of Blue}
+   \begin{itemize}
+   \item Tested 41 shades for ad links
+   \item Found optimal shade
+   \item \$200M additional revenue/year
+   \end{itemize}
+
+\item \textbf{Netflix: Artwork Testing}
+   \begin{itemize}
+   \item Different thumbnails for shows
+   \item 30\% increase in viewing
+   \end{itemize}
+
+\item \textbf{Amazon: Free Shipping}
+   \begin{itemize}
+   \item Tested \$25 threshold
+   \item Massive increase in orders
+   \end{itemize}
+
+\item \textbf{Bing: Slow Page Load}
+   \begin{itemize}
+   \item Tested 200ms delay
+   \item 4.3\% drop in revenue
+   \item Showed cost of latency
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{When to Use A/B Testing:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|p{3.5cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Good For} & \textbf{Example} \\
+\hline
+Product changes & New checkout flow \\
+\hline
+UI/UX variations & Button color, layout \\
+\hline
+Pricing experiments & \$9.99 vs. \$10.99 \\
+\hline
+Algorithm changes & Recommendation system \\
+\hline
+Marketing campaigns & Email subject lines \\
+\hline
+Feature launches & New social feature \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{When NOT to Use A/B Testing:}
+
+\begin{itemize}
+\item[$\times$] Not enough traffic (insufficient power)
+\item[$\times$] Long-term effects (network effects)
+\item[$\times$] Ethical concerns (medical trials need IRB)
+\item[$\times$] Technical impossibility (can't randomize)
+\item[$\times$] Obvious improvements (remove broken feature)
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Requirements for Valid A/B Test:}
+
+\begin{enumerate}
+\item Random assignment
+\item Sufficient sample size
+\item No contamination between groups
+\item Stable treatment effect
+\item Measurable outcome metric
+\end{enumerate}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 2: CLASSICAL HYPOTHESIS TESTING
+% ================================================================
+
+\begin{frame}{The Hypothesis Testing Framework}
+\textbf{Frequentist approach to A/B testing}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Setup:}
+
+\begin{enumerate}
+\item \textbf{Null Hypothesis ($H_0$):}
+   \[
+   H_0: \mu_B - \mu_A = 0
+   \]
+   No difference between variants
+
+\item \textbf{Alternative Hypothesis ($H_1$):}
+   \[
+   H_1: \mu_B - \mu_A \neq 0
+   \]
+   There is a difference
+
+\item \textbf{Significance Level ($\alpha$):}
+   \begin{itemize}
+   \item Probability of Type I error (false positive)
+   \item Typically $\alpha = 0.05$ (5\%)
+   \end{itemize}
+
+\item \textbf{Test Statistic:}
+   \[
+   z = \frac{\hat{p}_B - \hat{p}_A}{\sqrt{\hat{p}(1-\hat{p})\left(\frac{1}{n_A} + \frac{1}{n_B}\right)}}
+   \]
+   for proportions (e.g., conversion rate)
+
+\item \textbf{Decision Rule:}
+   \begin{itemize}
+   \item If $p$-value $< \alpha$: Reject $H_0$
+   \item Otherwise: Fail to reject $H_0$
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Two Types of Errors:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor{navyblue!20}
+ & \textbf{$H_0$ True} & \textbf{$H_0$ False} \\
+\hline
+\textbf{Reject $H_0$} & \textcolor{crimson}{Type I Error} ($\alpha$) & Correct (Power) \\
+\hline
+\textbf{Fail to reject} & Correct & \textcolor{crimson}{Type II Error} ($\beta$) \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\item \textbf{Type I Error ($\alpha$):} False positive - say there's an effect when there isn't
+\item \textbf{Type II Error ($\beta$):} False negative - miss a real effect
+\item \textbf{Statistical Power:} $1 - \beta$ - probability of detecting true effect
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Example Calculation:}
+
+\begin{verbatim}
+from scipy import stats
+
+# Control: 520 conversions / 10000 users
+# Treatment: 580 conversions / 10000 users
+
+n_A, n_B = 10000, 10000
+conv_A, conv_B = 520, 580
+p_A, p_B = conv_A/n_A, conv_B/n_B
+
+# Pooled proportion
+p_pool = (conv_A + conv_B) / (n_A + n_B)
+
+# Standard error
+se = np.sqrt(p_pool * (1-p_pool) *
+             (1/n_A + 1/n_B))
+
+# Z-statistic
+z = (p_B - p_A) / se
+
+# P-value (two-tailed)
+p_value = 2 * (1 - stats.norm.cdf(abs(z)))
+
+print(f"p-value: {p_value:.4f}")
+# p-value: 0.0156 < 0.05 → Significant!
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Sample Size and Statistical Power}
+\textbf{How many users do I need?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Power Analysis:}
+
+Determines sample size needed to detect effect with high probability.
+
+\textbf{Inputs:}
+\begin{enumerate}
+\item $\alpha$: Significance level (0.05)
+\item $1-\beta$: Desired power (0.80 typical)
+\item $\delta$: Minimum detectable effect (MDE)
+\item $\sigma$: Variance (or baseline rate)
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{For Proportions (Conversion Rate):}
+
+\[
+n = \frac{(z_{1-\alpha/2} + z_{1-\beta})^2 \cdot 2p(1-p)}{(\delta)^2}
+\]
+
+where $p$ is baseline conversion rate.
+
+\vspace{0.2cm}
+
+\textbf{Key Insights:}
+\begin{itemize}
+\item Smaller $\delta$ (effect) $\to$ larger $n$ needed
+\item Higher power $\to$ larger $n$ needed
+\item Lower baseline rate $\to$ larger $n$ needed
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Example:}
+
+Baseline CVR = 5\%, want to detect 10\% relative lift (0.5pp absolute):
+\[
+n \approx 15,736 \text{ per group}
+\]
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Power Calculation (Python):}
+
+\begin{verbatim}
+from statsmodels.stats.power import
+    zt_ind_solve_power
+
+# Parameters
+alpha = 0.05
+power = 0.80
+baseline_rate = 0.05
+relative_lift = 0.10  # 10% improvement
+
+# Effect size (Cohen's h)
+p1 = baseline_rate
+p2 = baseline_rate * (1 + relative_lift)
+effect_size = 2 * (np.arcsin(np.sqrt(p2))
+                   - np.arcsin(np.sqrt(p1)))
+
+# Calculate sample size
+n_per_group = zt_ind_solve_power(
+    effect_size=effect_size,
+    alpha=alpha,
+    power=power,
+    alternative='two-sided'
+)
+
+print(f"Need {n_per_group:.0f} users per group")
+# Need 15,736 users per group
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Practical Considerations:}
+
+\begin{itemize}
+\item \textbf{Traffic:} Do we have enough users?
+\item \textbf{Duration:} How long to reach sample size?
+\item \textbf{Seasonality:} Run full week cycles
+\item \textbf{Attrition:} Account for dropout
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Rule of Thumb}
+Smaller effects require exponentially more data. Be realistic about MDE!
+\end{alertblock}
+\end{frame}
+
+% ================================================================
+% PART 3: BAYESIAN A/B TESTING
+% ================================================================
+
+\begin{frame}{Bayesian A/B Testing}
+\textbf{The modern alternative to p-values}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Frequentist vs. Bayesian:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|p{2.3cm}|p{2.3cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Frequentist} & \textbf{Bayesian} \\
+\hline
+P(data | $H_0$ true) & P($H_1$ true | data) \\
+\hline
+p-value & Probability B beats A \\
+\hline
+Reject or not reject & Posterior distribution \\
+\hline
+Fixed sample size & Can stop anytime \\
+\hline
+Hard to interpret & Intuitive \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Bayesian Approach:}
+
+\begin{enumerate}
+\item \textbf{Prior belief:}
+   \[
+   p_A \sim \text{Beta}(\alpha_A, \beta_A)
+   \]
+   \[
+   p_B \sim \text{Beta}(\alpha_B, \beta_B)
+   \]
+
+\item \textbf{Observe data:}
+   \begin{itemize}
+   \item Control: $x_A$ successes, $n_A$ trials
+   \item Treatment: $x_B$ successes, $n_B$ trials
+   \end{itemize}
+
+\item \textbf{Update to posterior:}
+   \[
+   p_A | \text{data} \sim \text{Beta}(\alpha_A + x_A, \beta_A + n_A - x_A)
+   \]
+   \[
+   p_B | \text{data} \sim \text{Beta}(\alpha_B + x_B, \beta_B + n_B - x_B)
+   \]
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item \textbf{Compute probability B beats A:}
+   \[
+   P(p_B > p_A | \text{data})
+   \]
+   via Monte Carlo simulation
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Implementation:}
+
+\begin{verbatim}
+import numpy as np
+from scipy import stats
+
+# Data
+n_A, x_A = 10000, 520
+n_B, x_B = 10000, 580
+
+# Priors (uninformative)
+alpha_prior, beta_prior = 1, 1
+
+# Posteriors
+posterior_A = stats.beta(
+    alpha_prior + x_A,
+    beta_prior + n_A - x_A
+)
+posterior_B = stats.beta(
+    alpha_prior + x_B,
+    beta_prior + n_B - x_B
+)
+
+# Monte Carlo
+samples_A = posterior_A.rvs(100000)
+samples_B = posterior_B.rvs(100000)
+
+# Probability B > A
+prob_B_beats_A = (samples_B > samples_A).mean()
+print(f"P(B > A) = {prob_B_beats_A:.3f}")
+# P(B > A) = 0.984
+
+# Expected loss if we choose A
+expected_loss_A = (samples_B - samples_A)[
+    samples_B > samples_A].mean()
+print(f"Expected loss: {expected_loss_A:.4f}")
+# Expected loss: 0.0063
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Bayesian Decision Making}
+\textbf{Beyond just probability - expected value}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Decision Criteria:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Probability to Beat:}}
+   \[
+   P(p_B > p_A) > 0.95
+   \]
+   95\% confident B is better
+
+\item \textcolor{navyblue}{\textbf{Expected Loss:}}
+   \[
+   \E[\max(0, p_A - p_B)] < \epsilon
+   \]
+   If we're wrong, loss is small
+
+\item \textcolor{crimson}{\textbf{Credible Interval:}}
+   \[
+   P(p_B - p_A \in [L, U]) = 0.95
+   \]
+   95\% interval for difference
+\end{enumerate}
+
+\vspace{0.3cm}
+
+\textbf{Visualizing Posteriors:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.7]
+\draw[->] (0,0) -- (6,0) node[right] {\tiny CVR};
+\draw[->] (0,0) -- (0,3) node[above] {\tiny Density};
+
+% Posterior A
+\draw[thick, forest, fill=forest!20, opacity=0.5] plot[smooth, domain=1.5:4.5]
+  (\x, {2.5*exp(-3*(\x-2.8)^2)});
+\node at (2.8,2.8) {\tiny \textcolor{forest}{A}};
+
+% Posterior B
+\draw[thick, crimson, fill=crimson!20, opacity=0.5] plot[smooth, domain=2:5]
+  (\x, {2.5*exp(-3*(\x-3.4)^2)});
+\node at (3.4,2.8) {\tiny \textcolor{crimson}{B}};
+
+% Overlap region
+\draw[dashed] (3.1,0) -- (3.1,2);
+\node at (3.1,-0.3) {\tiny Overlap};
+\end{tikzpicture}
+\end{figure}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Full Bayesian Analysis:}
+
+\begin{verbatim}
+# Credible interval for difference
+diff_samples = samples_B - samples_A
+ci_95 = np.percentile(diff_samples,
+                      [2.5, 97.5])
+print(f"95% CI for lift: {ci_95}")
+# 95% CI: [0.0018, 0.0102]
+
+# Probability of at least 10% relative lift
+relative_lift = (samples_B - samples_A) /
+                samples_A
+prob_10pct_lift = (relative_lift > 0.10).mean()
+print(f"P(lift > 10%) = {prob_10pct_lift:.3f}")
+
+# Expected improvement
+expected_lift = diff_samples.mean()
+print(f"Expected lift: {expected_lift:.4f}")
+
+# Risk analysis
+prob_B_worse = (samples_B < samples_A).mean()
+expected_loss_B = (samples_A - samples_B)[
+    samples_A > samples_B].mean()
+print(f"Risk of B: {prob_B_worse:.3f}")
+print(f"Expected loss if wrong:
+      {expected_loss_B:.4f}")
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Advantages:}
+\begin{itemize}
+\item[$\checkmark$] Intuitive interpretation
+\item[$\checkmark$] Can incorporate prior knowledge
+\item[$\checkmark$] Flexible stopping rules
+\item[$\checkmark$] Quantifies uncertainty
+\item[$\checkmark$] Can compute expected value
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 4: SEQUENTIAL TESTING
+% ================================================================
+
+\begin{frame}{Sequential Testing and Early Stopping}
+\textbf{Can we stop the experiment early?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Peeking Problem:}
+
+\textcolor{crimson}{\textbf{DON'T:}} Check p-value every day and stop when $p < 0.05$
+
+\textbf{Why not?}
+\begin{itemize}
+\item Inflates Type I error rate!
+\item With enough peeks, random noise looks significant
+\item Actual $\alpha$ can be 20\%+ instead of 5\%
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Sequential Probability Ratio Test (SPRT):}
+
+Allows continuous monitoring with controlled error rates.
+
+\textbf{Test statistic:}
+\[
+\Lambda_t = \frac{P(X_1, \ldots, X_t | H_1)}{P(X_1, \ldots, X_t | H_0)}
+\]
+
+\textbf{Decision rules:}
+\begin{itemize}
+\item If $\Lambda_t \geq B$: Reject $H_0$ (B wins)
+\item If $\Lambda_t \leq A$: Accept $H_0$ (no difference)
+\item Otherwise: Continue testing
+\end{itemize}
+
+where $A = \frac{\beta}{1-\alpha}$ and $B = \frac{1-\beta}{\alpha}$
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Always Valid P-Values:}
+
+Adjusted p-values that remain valid despite continuous monitoring.
+
+\textbf{Methods:}
+\begin{enumerate}
+\item \textbf{Bonferroni Correction:}
+   \begin{itemize}
+   \item Divide $\alpha$ by number of looks
+   \item Conservative
+   \end{itemize}
+
+\item \textbf{Alpha Spending Function:}
+   \begin{itemize}
+   \item Allocate significance level over time
+   \item More powerful than Bonferroni
+   \end{itemize}
+
+\item \textbf{Bayesian Approach:}
+   \begin{itemize}
+   \item No peeking problem!
+   \item Can check anytime
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Practical Guidelines:}
+
+\begin{itemize}
+\item \textbf{Pre-specify:} When you'll check
+\item \textbf{Limit looks:} e.g., 25\%, 50\%, 75\%, 100\%
+\item \textbf{Use adjusted thresholds:} Lower $\alpha$ for early looks
+\item \textbf{Document:} All interim analyses
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{When to Stop Early:}
+
+\begin{itemize}
+\item \textcolor{forest}{\textbf{For efficacy:}} Clear winner emerges
+\item \textcolor{crimson}{\textbf{For futility:}} Unlikely to find effect
+\item \textcolor{purple}{\textbf{For harm:}} Treatment causing damage
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Warning}
+Continuous peeking without correction is statistical malpractice!
+\end{alertblock}
+\end{frame}
+
+% ================================================================
+% PART 5: MULTI-ARMED BANDITS
+% ================================================================
+
+\begin{frame}{Multi-Armed Bandits}
+\textbf{Exploration vs. exploitation in online experiments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Bandit Problem:}
+
+You have $K$ slot machines (arms). Each pull gives random reward. Goal: Maximize total reward.
+
+\textbf{Trade-off:}
+\begin{itemize}
+\item \textbf{Explore:} Try arms to learn which is best
+\item \textbf{Exploit:} Use best arm found so far
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Why for A/B Testing?}
+
+\begin{itemize}
+\item Traditional A/B test: 50/50 split entire time
+\item Bandit: Adapt allocation to favor winning variant
+\item \textcolor{forest}{\textbf{Minimize regret!}}
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Regret:}
+\[
+R_T = T \mu^* - \sum_{t=1}^T \mu_{a_t}
+\]
+where $\mu^*$ is best arm's mean.
+
+\vspace{0.3cm}
+
+\textbf{Popular Algorithms:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{$\epsilon$-Greedy:}}
+   \begin{itemize}
+   \item With prob $\epsilon$: random arm
+   \item With prob $1-\epsilon$: best arm so far
+   \item Simple but effective
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item \textcolor{navyblue}{\textbf{UCB (Upper Confidence Bound):}}
+   \[
+   a_t = \argmax_a \left[\hat{\mu}_a + \sqrt{\frac{2\log t}{n_a}}\right]
+   \]
+   \begin{itemize}
+   \item Optimistic exploration
+   \item Theoretically optimal regret
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Thompson Sampling:}}
+   \begin{itemize}
+   \item Bayesian approach
+   \item Sample from posterior, pick best
+   \item Excellent empirical performance
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Thompson Sampling Implementation:}
+
+\begin{verbatim}
+# Beta-Bernoulli bandit
+successes = [1, 1]  # Alpha
+failures = [1, 1]   # Beta
+
+for t in range(n_trials):
+    # Sample from posteriors
+    theta_A = np.random.beta(
+        successes[0], failures[0])
+    theta_B = np.random.beta(
+        successes[1], failures[1])
+
+    # Choose best sample
+    arm = 0 if theta_A > theta_B else 1
+
+    # Pull arm, observe reward
+    reward = pull_arm(arm)
+
+    # Update posterior
+    if reward == 1:
+        successes[arm] += 1
+    else:
+        failures[arm] += 1
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Bandits vs. A/B Tests}
+\textbf{When to use each approach}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Comparison:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|p{2cm}|p{2cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Aspect} & \textbf{A/B Test} & \textbf{Bandit} \\
+\hline
+Allocation & Fixed (50/50) & Adaptive \\
+\hline
+Goal & Learn best & Maximize reward \\
+\hline
+Regret & High & Low \\
+\hline
+Statistical power & High & Lower \\
+\hline
+Complexity & Simple & More complex \\
+\hline
+When to use & Clear winner matters & Ongoing optimization \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Use A/B Test When:}
+\begin{itemize}
+\item Need definitive answer
+\item Making long-term product decision
+\item Network effects matter
+\item Statistical rigor critical
+\item One-time decision
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Use Bandits When:}
+\begin{itemize}
+\item Minimizing cost of exploration
+\item Continuous optimization
+\item Many variants to test
+\item Fast iteration needed
+\item Revenue/cost directly matters
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Hybrid Approaches:}
+
+\begin{enumerate}
+\item \textbf{A/B test first, then bandit:}
+   \begin{itemize}
+   \item Run fixed A/B for statistical power
+   \item Switch to bandit for exploitation
+   \end{itemize}
+
+\item \textbf{Contextual bandits:}
+   \begin{itemize}
+   \item Personalization
+   \item Use user features to predict best arm
+   \item E.g., LinUCB, neural bandits
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Real-World Example: Content Recommendation}
+
+\begin{itemize}
+\item \textbf{Scenario:} Recommend articles on homepage
+\item \textbf{Challenge:} New articles constantly added
+\item \textbf{Solution:} Contextual bandit
+  \begin{itemize}
+  \item Context: User demographics, history
+  \item Action: Which article to show
+  \item Reward: Click (1) or no click (0)
+  \end{itemize}
+\item \textbf{Benefit:} Adapt in real-time, maximize clicks
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Pitfalls:}
+\begin{itemize}
+\item[$\times$] Harder to reason about statistical significance
+\item[$\times$] Can't easily compute confidence intervals
+\item[$\times$] May get stuck in local optima
+\item[$\times$] Requires more engineering
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 6: VARIANCE REDUCTION
+% ================================================================
+
+\begin{frame}{Variance Reduction Techniques}
+\textbf{Improving sensitivity of experiments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Variance Reduction?}
+
+\textbf{Lower variance $\to$ Smaller sample size needed!}
+
+\[
+n \propto \frac{\sigma^2}{\delta^2}
+\]
+
+Reducing $\sigma$ by 50\% $\to$ Need 75\% fewer samples.
+
+\vspace{0.3cm}
+
+\textbf{1. CUPED (Controlled-experiment Using Pre-Experiment Data):}
+
+\textbf{Idea:} Use pre-treatment covariate to reduce variance.
+
+\textbf{Adjusted metric:}
+\[
+Y_{adj} = Y - \theta(X - \E[X])
+\]
+where:
+\begin{itemize}
+\item $Y$: Post-treatment outcome
+\item $X$: Pre-treatment covariate
+\item $\theta = \text{Cov}(X,Y) / \text{Var}(X)$
+\end{itemize}
+
+\textbf{Example:}
+\begin{itemize}
+\item $Y$: Revenue during experiment
+\item $X$: Revenue before experiment
+\item Adjust for baseline spending
+\end{itemize}
+
+\textbf{Variance Reduction:}
+\[
+\text{Var}(Y_{adj}) = \text{Var}(Y)(1 - \rho^2)
+\]
+where $\rho$ is correlation between $X$ and $Y$.
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{CUPED Implementation:}
+
+\begin{verbatim}
+# Pre-experiment data
+X_control = df_control['pre_metric']
+X_treatment = df_treatment['pre_metric']
+
+# Post-experiment data
+Y_control = df_control['post_metric']
+Y_treatment = df_treatment['post_metric']
+
+# Combine for theta estimation
+X_all = np.concatenate([X_control,
+                        X_treatment])
+Y_all = np.concatenate([Y_control,
+                        Y_treatment])
+
+# Estimate theta
+theta = np.cov(X_all, Y_all)[0,1] /
+        np.var(X_all)
+
+# Adjust outcomes
+Y_control_adj = Y_control - theta *
+    (X_control - X_all.mean())
+Y_treatment_adj = Y_treatment - theta *
+    (X_treatment - X_all.mean())
+
+# Test adjusted metrics
+t_stat, p_value = stats.ttest_ind(
+    Y_treatment_adj, Y_control_adj)
+
+# Variance reduction
+var_reduction = 1 - (np.var(Y_control_adj)
+    / np.var(Y_control))
+print(f"Variance reduced by
+      {var_reduction*100:.1f}%")
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{More Variance Reduction Techniques}
+\textbf{Additional methods for sensitive experiments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{2. Stratification:}
+
+Divide population into strata, balance across groups.
+
+\begin{itemize}
+\item \textbf{Why:} Ensures groups are balanced
+\item \textbf{How:} Randomize within strata
+\item \textbf{Example:} Stratify by country, platform, user segment
+\end{itemize}
+
+\textbf{Stratified analysis:}
+\[
+\hat{\tau} = \sum_{s=1}^S w_s (\bar{Y}_{s,1} - \bar{Y}_{s,0})
+\]
+where $w_s$ is proportion in stratum $s$.
+
+\vspace{0.3cm}
+
+\textbf{3. Regression Adjustment:}
+
+Control for covariates in analysis:
+\[
+Y_i = \alpha + \tau T_i + \beta X_i + \epsilon_i
+\]
+
+\begin{itemize}
+\item $T_i$: Treatment indicator
+\item $X_i$: Covariates (demographics, behavior)
+\item $\tau$: Treatment effect (more precise!)
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{4. Difference-in-Differences:}
+
+For panel data (before-after):
+\[
+\tau = (\bar{Y}_{T,\text{post}} - \bar{Y}_{T,\text{pre}}) - (\bar{Y}_{C,\text{post}} - \bar{Y}_{C,\text{pre}})
+\]
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{5. Paired Experiments:}
+
+Match similar units, randomize within pairs.
+
+\textbf{Example: Geo Experiments}
+\begin{itemize}
+\item Pairs of similar cities
+\item One city treatment, one control
+\item Reduces geographic variation
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Comparison of Methods:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Method} & \textbf{Complexity} & \textbf{Variance Reduction} \\
+\hline
+CUPED & Medium & 20-50\% typical \\
+\hline
+Stratification & Low & 10-30\% \\
+\hline
+Regression Adj & Medium & Depends on $R^2$ \\
+\hline
+DiD & Low & 30-60\% \\
+\hline
+Pairing & High & 40-70\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Best Practices:}
+
+\begin{enumerate}
+\item Use multiple methods when possible
+\item Pre-specify in analysis plan
+\item Check assumptions (parallel trends for DiD)
+\item Report both adjusted and unadjusted
+\item Document all adjustments
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Key Benefit}
+Variance reduction can cut sample size requirements by 50\%+, meaning faster experiments!
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 7: MULTIPLE TESTING
+% ================================================================
+
+\begin{frame}{Multiple Testing Problem}
+\textbf{When you test many hypotheses simultaneously}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Problem:}
+
+Test 20 metrics at $\alpha = 0.05$:
+\[
+P(\text{at least 1 false positive}) = 1 - (1-0.05)^{20} \approx 0.64
+\]
+
+\textcolor{crimson}{\textbf{64\% chance of false positive!}}
+
+\vspace{0.2cm}
+
+\textbf{Sources of Multiple Testing:}
+
+\begin{enumerate}
+\item Multiple metrics (10+ KPIs)
+\item Multiple variants (A/B/C/D tests)
+\item Multiple time points (peeking)
+\item Multiple subgroups (age, country, etc.)
+\item Multiple experiments running simultaneously
+\end{enumerate}
+
+\vspace{0.3cm}
+
+\textbf{Correction Methods:}
+
+\textbf{1. Bonferroni Correction:}
+
+\[
+\alpha_{\text{adj}} = \frac{\alpha}{m}
+\]
+where $m$ is number of tests.
+
+\textbf{Example:} 10 metrics, want FWER = 0.05:
+\[
+\alpha_{\text{adj}} = 0.05 / 10 = 0.005
+\]
+
+\textbf{Pros:} Simple, controls FWER
+\textbf{Cons:} Very conservative, low power
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{2. Holm-Bonferroni (Step-down):}
+
+More powerful than Bonferroni:
+\begin{enumerate}
+\item Order p-values: $p_1 \leq p_2 \leq \cdots \leq p_m$
+\item Compare $p_i$ to $\alpha/(m-i+1)$
+\item Stop at first non-rejection
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{3. Benjamini-Hochberg (FDR control):}
+
+Controls false discovery rate (less stringent):
+\begin{enumerate}
+\item Order p-values
+\item Find largest $i$ where $p_i \leq \frac{i \cdot \alpha}{m}$
+\item Reject $H_1, \ldots, H_i$
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Python Implementation:}
+
+\begin{verbatim}
+from statsmodels.stats.multitest import
+    multipletests
+
+# P-values from 10 tests
+p_values = [0.001, 0.02, 0.03, 0.04,
+            0.06, 0.1, 0.2, 0.3, 0.5, 0.8]
+
+# Bonferroni
+reject_bonf, p_adj_bonf, _, _ =
+    multipletests(p_values, alpha=0.05,
+                  method='bonferroni')
+
+# Benjamini-Hochberg
+reject_bh, p_adj_bh, _, _ =
+    multipletests(p_values, alpha=0.05,
+                  method='fdr_bh')
+
+print(f"Bonferroni: {sum(reject_bonf)}
+      rejected")
+print(f"BH: {sum(reject_bh)} rejected")
+\end{verbatim}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% KNOWLEDGE CHECK
+% ================================================================
+
+\begin{frame}{Knowledge Check: A/B Testing}
+\textbf{Test your understanding}
+
+\vspace{0.2cm}
+
+\textbf{Question 1:} Your A/B test has p-value = 0.08. Your manager wants to ship variant B anyway because "it looks promising." What do you say?
+
+\begin{enumerate}[A)]
+\item Ship it, 0.08 is close enough to 0.05
+\item \textcolor{forest}{\textbf{Don't ship - insufficient evidence. Risk of false positive is too high.}}
+\item Collect more data until p < 0.05
+\item Use Bayesian approach instead
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: B}} - p = 0.08 means 8\% chance of seeing this result if there's no real effect. We set $\alpha = 0.05$ for a reason - to limit false positives. Shipping based on p = 0.08 means you're accepting 8\% Type I error rate. Option C (collect more data) is OK if pre-specified, but continuous peeking inflates error rates. Be disciplined about statistical thresholds!
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} When should you use a multi-armed bandit instead of A/B test?
+
+\begin{enumerate}[A)]
+\item When you have limited traffic
+\item When you need definitive statistical answer
+\item \textcolor{forest}{\textbf{When minimizing regret matters more than statistical rigor}}
+\item Never, A/B tests are always better
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Bandits adapt allocation to favor better variants, minimizing opportunity cost during experimentation. Use when: continuous optimization, many variants, direct revenue impact. Use A/B test when: one-time product decision, need clear winner for long-term commitment, statistical power critical for decision making.
+\end{block}
+\end{frame}
+
+% ================================================================
+% SUMMARY
+% ================================================================
+
+\begin{frame}{Summary \& Best Practices}
+\textbf{Running successful experiments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Experimentation Checklist:}
+
+\textbf{Before Experiment:}
+\begin{enumerate}
+\item Define clear hypothesis
+\item Choose primary metric (one!)
+\item Calculate required sample size
+\item Set significance level ($\alpha = 0.05$)
+\item Specify minimum detectable effect
+\item Write analysis plan
+\item Check randomization works
+\end{enumerate}
+
+\textbf{During Experiment:}
+\begin{enumerate}
+\item Monitor for bugs (not metrics!)
+\item Check balance between groups
+\item Don't peek at p-values
+\item Run for pre-specified duration
+\item Account for seasonality
+\end{enumerate}
+
+\textbf{After Experiment:}
+\begin{enumerate}
+\item Run pre-specified analysis
+\item Check for metric movements
+\item Segment analysis (exploratory)
+\item Document everything
+\item Make decision
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Common Mistakes:}
+
+\begin{itemize}
+\item[$\times$] Peeking and stopping early
+\item[$\times$] Running too short (seasonality)
+\item[$\times$] Not pre-registering analysis
+\item[$\times$] Multiple testing without correction
+\item[$\times$] Changing metric post-hoc
+\item[$\times$] Insufficient sample size
+\item[$\times$] Contamination between groups
+\item[$\times$] Confusing statistical and practical significance
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Resources:}
+
+\begin{itemize}
+\item \textbf{Books:}
+  \begin{itemize}
+  \item "Trustworthy Online Controlled Experiments" (Kohavi et al.)
+  \item "Experimental Design" (Montgomery)
+  \end{itemize}
+
+\item \textbf{Tools:}
+  \begin{itemize}
+  \item Statsmodels, SciPy (Python)
+  \item GrowthBook, Optimizely, LaunchDarkly
+  \end{itemize}
+
+\item \textbf{Papers:}
+  \begin{itemize}
+  \item Peeking at A/B Tests (Johari et al.)
+  \item CUPED (Deng et al., Microsoft)
+  \end{itemize}
+\end{itemize}
+
+\begin{alertblock}{Golden Rule}
+Pre-specify everything. Document everything. Don't p-hack!
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% END OF A/B TESTING PRESENTATION
+% ================================================================

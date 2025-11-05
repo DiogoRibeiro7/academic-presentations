@@ -1,0 +1,963 @@
+% ================================================================
+% MLOPS & MODEL DEPLOYMENT
+% Comprehensive presentation on production ML systems
+%
+% Topics Covered:
+% 1. MLOps Fundamentals and Lifecycle
+% 2. Model Training Pipeline and Experiment Tracking
+% 3. Model Deployment Strategies
+% 4. Monitoring and Maintenance
+% 5. CI/CD for ML
+% 6. Best Practices and Case Studies
+%
+% Total: ~45 slides
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+\section{MLOps \& Model Deployment}
+
+% ================================================================
+% PART 1: MLOPS FUNDAMENTALS
+% ================================================================
+
+\begin{frame}{The ML Production Gap}
+\textbf{Why 87\% of ML projects never make it to production}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Research vs. Production:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|p{2.2cm}|p{2.2cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Research/Notebook} & \textbf{Production} \\
+\hline
+Static dataset & Live, changing data \\
+\hline
+Batch processing & Real-time inference \\
+\hline
+Single model version & Multiple versions \\
+\hline
+Local machine & Distributed systems \\
+\hline
+Manual execution & Automated pipelines \\
+\hline
+No monitoring & 24/7 monitoring \\
+\hline
+Reproduce once & Reproduce always \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Challenges in Production:}
+
+\begin{enumerate}
+\item \textcolor{crimson}{Data drift}: Input distribution changes
+\item \textcolor{crimson}{Concept drift}: Relationship changes
+\item \textcolor{crimson}{Scale}: 1 prediction vs. 1M/sec
+\item \textcolor{crimson}{Latency}: Real-time requirements
+\item \textcolor{crimson}{Reliability}: 99.9\% uptime needed
+\item \textcolor{crimson}{Versioning}: Track code, data, models
+\item \textcolor{crimson}{Monitoring}: Detect issues early
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{What is MLOps?}
+
+\textbf{ML + DevOps + Data Engineering}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.7]
+\node[draw, circle, fill=forest!20, minimum size=1.8cm] (ml) at (0,1.5) {ML};
+\node[draw, circle, fill=navyblue!20, minimum size=1.8cm] (dev) at (2,1.5) {DevOps};
+\node[draw, circle, fill=crimson!20, minimum size=1.8cm] (data) at (1,0) {Data Eng};
+
+% Intersection
+\node[draw, circle, fill=purple!40, minimum size=0.8cm] (center) at (1,0.9) {\tiny MLOps};
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.2cm}
+
+\textbf{MLOps Goals:}
+
+\begin{itemize}
+\item \textbf{Automation}: Reduce manual work
+\item \textbf{Reproducibility}: Same inputs $\to$ same outputs
+\item \textbf{Reliability}: Systems that don't fail
+\item \textbf{Scalability}: Handle growing load
+\item \textbf{Governance}: Track everything
+\item \textbf{Collaboration}: Enable team work
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{MLOps = Practices + Tools + Culture}
+
+\begin{itemize}
+\item Not just technology
+\item Organizational mindset
+\item Cross-functional teams
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Key Insight}
+Only 13\% of ML projects reach production. MLOps bridges the gap!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{The ML Lifecycle}
+\textbf{From data to deployment and back}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Traditional Software:}
+
+\[
+\text{Code} \to \text{Build} \to \text{Deploy}
+\]
+
+\vspace{0.2cm}
+
+\textbf{Machine Learning:}
+
+\[
+\text{Code} + \text{Data} + \text{Config} \to \text{Model} \to \text{Deploy}
+\]
+
+More complex! Models are artifacts built from code AND data.
+
+\vspace{0.3cm}
+
+\textbf{Complete ML Lifecycle:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Data Collection}}
+   \begin{itemize}
+   \item Gather raw data
+   \item Set up pipelines
+   \end{itemize}
+
+\item \textcolor{navyblue}{\textbf{Data Preparation}}
+   \begin{itemize}
+   \item Clean, validate, transform
+   \item Feature engineering
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Model Training}}
+   \begin{itemize}
+   \item Experiment, tune
+   \item Select best model
+   \end{itemize}
+
+\item \textcolor{purple}{\textbf{Model Evaluation}}
+   \begin{itemize}
+   \item Validate performance
+   \item Check for bias
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item \textcolor{gold}{\textbf{Model Deployment}}
+   \begin{itemize}
+   \item Serve predictions
+   \item A/B testing
+   \end{itemize}
+
+\item \textcolor{orange}{\textbf{Monitoring}}
+   \begin{itemize}
+   \item Track performance
+   \item Detect drift
+   \end{itemize}
+
+\item \textcolor{teal}{\textbf{Retraining}}
+   \begin{itemize}
+   \item Update with new data
+   \item Close the loop
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{It's a Cycle, Not Linear!}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.6]
+\node[draw, circle, fill=forest!20] (data) at (0,2) {\tiny Data};
+\node[draw, circle, fill=navyblue!20] (train) at (2,2) {\tiny Train};
+\node[draw, circle, fill=crimson!20] (deploy) at (4,2) {\tiny Deploy};
+\node[draw, circle, fill=purple!20] (monitor) at (4,0) {\tiny Monitor};
+\node[draw, circle, fill=gold!20] (retrain) at (0,0) {\tiny Retrain};
+
+\draw[->, thick] (data) -- (train);
+\draw[->, thick] (train) -- (deploy);
+\draw[->, thick] (deploy) -- (monitor);
+\draw[->, thick] (monitor) -- (retrain);
+\draw[->, thick] (retrain) -- (data);
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.2cm}
+
+\textbf{Continuous Loop:}
+\begin{itemize}
+\item Models degrade over time
+\item New data becomes available
+\item Requirements change
+\item Must continuously improve
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 2: EXPERIMENT TRACKING AND VERSIONING
+% ================================================================
+
+\begin{frame}{Experiment Tracking}
+\textbf{Managing the chaos of ML experiments}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Problem:}
+
+\begin{itemize}
+\item Tried 50 experiments
+\item Which hyperparameters worked best?
+\item Can't reproduce last week's results
+\item Lost track of what changed
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{What to Track:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Code:}}
+   \begin{itemize}
+   \item Git commit hash
+   \item Branch name
+   \item Dependencies (requirements.txt)
+   \end{itemize}
+
+\item \textcolor{navyblue}{\textbf{Data:}}
+   \begin{itemize}
+   \item Dataset version
+   \item Data hash/signature
+   \item Train/val/test splits
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Model:}}
+   \begin{itemize}
+   \item Architecture
+   \item Hyperparameters
+   \item Random seeds
+   \end{itemize}
+
+\item \textcolor{purple}{\textbf{Metrics:}}
+   \begin{itemize}
+   \item Accuracy, F1, AUC
+   \item Training time
+   \item Model size
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{MLflow Example:}
+
+\begin{verbatim}
+import mlflow
+
+mlflow.set_experiment("churn_prediction")
+
+with mlflow.start_run():
+    # Log parameters
+    mlflow.log_param("n_estimators", 100)
+    mlflow.log_param("max_depth", 10)
+
+    # Train model
+    model = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10
+    )
+    model.fit(X_train, y_train)
+
+    # Log metrics
+    accuracy = model.score(X_test, y_test)
+    mlflow.log_metric("accuracy", accuracy)
+
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
+
+    # Log artifacts
+    mlflow.log_artifact("confusion_matrix.png")
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Popular Tools:}
+\begin{itemize}
+\item MLflow (open source)
+\item Weights \& Biases
+\item Neptune.ai
+\item Comet.ml
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Model and Data Versioning}
+\textbf{Git for machine learning assets}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Version Everything?}
+
+\begin{itemize}
+\item \textbf{Reproducibility}: Recreate any experiment
+\item \textbf{Debugging}: What changed between v1 and v2?
+\item \textbf{Rollback}: Revert to previous version
+\item \textbf{Compliance}: Audit trail for regulations
+\item \textbf{Collaboration}: Team knows what's happening
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Data Version Control (DVC):}
+
+Like Git, but for data and models:
+
+\begin{verbatim}
+# Initialize DVC
+dvc init
+
+# Track data file
+dvc add data/raw/dataset.csv
+
+# Commit to git (only hash stored)
+git add data/raw/dataset.csv.dvc
+git commit -m "Add raw dataset v1"
+
+# Push data to remote storage
+dvc push
+
+# Pull data (like git pull)
+dvc pull
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{DVC Benefits:}
+
+\begin{itemize}
+\item Data stored in cloud (S3, GCS, Azure)
+\item Git tracks only metadata
+\item Lightweight repositories
+\item Easy collaboration
+\item Pipeline versioning
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{ML Pipeline with DVC:}
+
+\begin{verbatim}
+# dvc.yaml
+stages:
+  preprocess:
+    cmd: python preprocess.py
+    deps:
+      - data/raw
+    outs:
+      - data/processed
+
+  train:
+    cmd: python train.py
+    deps:
+      - data/processed
+      - train.py
+    params:
+      - model.n_estimators
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics.json
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Run pipeline:}
+\begin{verbatim}
+dvc repro
+\end{verbatim}
+
+DVC automatically tracks dependencies and reruns only what changed!
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% PART 3: MODEL DEPLOYMENT
+% ================================================================
+
+\begin{frame}{Deployment Patterns}
+\textbf{How to serve model predictions}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{1. Batch Prediction:}
+
+\begin{itemize}
+\item Process data in batches (hourly, daily)
+\item Generate predictions offline
+\item Store in database
+\item Serve pre-computed predictions
+\end{itemize}
+
+\textbf{Use when:}
+\begin{itemize}
+\item[$\checkmark$] Don't need real-time
+\item[$\checkmark$] Can predict in advance
+\item[$\checkmark$] Large-scale scoring
+\end{itemize}
+
+\textbf{Examples:}
+\begin{itemize}
+\item Daily recommendation emails
+\item Credit score calculations
+\item Churn probability (monthly)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{2. Real-Time API:}
+
+\begin{itemize}
+\item Model as REST API
+\item Synchronous: request $\to$ prediction
+\item Sub-second latency required
+\end{itemize}
+
+\textbf{Use when:}
+\begin{itemize}
+\item[$\checkmark$] Immediate response needed
+\item[$\checkmark$] User-facing applications
+\item[$\checkmark$] Input varies per request
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Flask API Example:}
+
+\begin{verbatim}
+from flask import Flask, request, jsonify
+import joblib
+
+app = Flask(__name__)
+model = joblib.load('model.pkl')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
+    features = data['features']
+
+    prediction = model.predict([features])
+    probability = model.predict_proba([features])
+
+    return jsonify({
+        'prediction': int(prediction[0]),
+        'probability': float(probability[0][1])
+    })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{3. Streaming:}
+
+\begin{itemize}
+\item Process events as they arrive
+\item Kafka, Kinesis
+\item Low latency, high throughput
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{4. Edge Deployment:}
+
+\begin{itemize}
+\item Model on device (phone, IoT)
+\item No internet required
+\item Ultra-low latency
+\item Privacy-preserving
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Containerization with Docker}
+\textbf{Package model + dependencies + code together}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Docker?}
+
+\begin{itemize}
+\item \textbf{"Works on my machine"} $\to$ Works everywhere!
+\item Reproducible environments
+\item Easy deployment
+\item Isolated dependencies
+\item Scalable (Kubernetes)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Dockerfile Example:}
+
+\begin{verbatim}
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r
+    requirements.txt
+
+# Copy application
+COPY . .
+
+# Expose port
+EXPOSE 5000
+
+# Run app
+CMD ["python", "app.py"]
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Build and Run:}
+
+\begin{verbatim}
+# Build image
+docker build -t my-ml-model:v1 .
+
+# Run container
+docker run -p 5000:5000 my-ml-model:v1
+
+# Test
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": [1.0, 2.0, 3.0]}'
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Docker Compose (Multi-Container):}
+
+\begin{verbatim}
+# docker-compose.yml
+version: '3'
+services:
+  model:
+    build: .
+    ports:
+      - "5000:5000"
+
+  redis:
+    image: redis:alpine
+
+  monitoring:
+    image: prometheus
+    ports:
+      - "9090:9090"
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\begin{verbatim}
+docker-compose up
+\end{verbatim}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Best Practice}
+Always containerize ML models for consistent deployment across environments!
+\end{alertblock}
+\end{frame}
+
+% ================================================================
+% PART 4: MONITORING
+% ================================================================
+
+\begin{frame}{Model Monitoring in Production}
+\textbf{What to monitor and why}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Monitor?}
+
+\textcolor{crimson}{\textbf{Models degrade over time!}}
+
+\begin{itemize}
+\item Data distribution shifts
+\item Concept drift (relationships change)
+\item Bugs in production pipeline
+\item Adversarial attacks
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{What to Monitor:}
+
+\begin{enumerate}
+\item \textcolor{forest}{\textbf{Data Quality}}
+   \begin{itemize}
+   \item Missing values
+   \item Out-of-range values
+   \item Schema changes
+   \end{itemize}
+
+\item \textcolor{navyblue}{\textbf{Data Drift}}
+   \begin{itemize}
+   \item Input distribution changed?
+   \item Compare to training data
+   \item KL divergence, KS test
+   \end{itemize}
+
+\item \textcolor{crimson}{\textbf{Prediction Drift}}
+   \begin{itemize}
+   \item Output distribution changed?
+   \item More "positive" predictions lately?
+   \end{itemize}
+
+\item \textcolor{purple}{\textbf{Model Performance}}
+   \begin{itemize}
+   \item Accuracy declining?
+   \item Need ground truth labels
+   \item Monitor with delay
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item \textcolor{gold}{\textbf{System Metrics}}
+   \begin{itemize}
+   \item Latency (p50, p95, p99)
+   \item Throughput (requests/sec)
+   \item Error rate
+   \item Resource usage (CPU, memory)
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Example: Data Drift Detection}
+
+\begin{verbatim}
+from evidently.dashboard import Dashboard
+from evidently.tabs import DataDriftTab
+
+dashboard = Dashboard(
+    tabs=[DataDriftTab()]
+)
+
+dashboard.calculate(
+    reference_data=train_data,
+    current_data=production_data
+)
+
+dashboard.save("data_drift_report.html")
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Alerting Thresholds:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Metric} & \textbf{Alert if} \\
+\hline
+Data drift & KL div $> 0.1$ \\
+\hline
+Accuracy & Drop $> 5\%$ \\
+\hline
+Latency (p95) & $> 500$ms \\
+\hline
+Error rate & $> 1\%$ \\
+\hline
+\end{tabular}
+\end{table}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{CI/CD for Machine Learning}
+\textbf{Continuous Integration and Deployment}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Traditional CI/CD:}
+
+\begin{enumerate}
+\item Code commit $\to$ Git
+\item Run tests
+\item Build artifact
+\item Deploy to production
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{ML CI/CD Additions:}
+
+\begin{itemize}
+\item \textbf{CT:} Continuous Training
+\item \textbf{CD:} Continuous Deployment
+\item \textbf{CM:} Continuous Monitoring
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{GitHub Actions Example:}
+
+\begin{verbatim}
+# .github/workflows/ml-pipeline.yml
+name: ML Pipeline
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: pytest tests/
+
+  train:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Train model
+        run: python train.py
+
+      - name: Evaluate
+        run: python evaluate.py
+
+      - name: Check metrics
+        run: python check_metrics.py
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{verbatim}
+  deploy:
+    needs: train
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Docker image
+        run: docker build -t model:${{
+           github.sha }} .
+
+      - name: Push to registry
+        run: docker push model:${{
+           github.sha }}
+
+      - name: Deploy to staging
+        run: kubectl apply -f k8s/staging/
+
+      - name: Run integration tests
+        run: pytest tests/integration/
+
+      - name: Deploy to production
+        if: success()
+        run: kubectl apply -f k8s/prod/
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\textbf{Key Tests for ML:}
+
+\begin{itemize}
+\item \textbf{Data validation:} Schema, ranges
+\item \textbf{Model tests:} Accuracy threshold
+\item \textbf{Integration tests:} API endpoints
+\item \textbf{Performance tests:} Latency SLAs
+\item \textbf{Bias tests:} Fairness metrics
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Knowledge Check: MLOps}
+\textbf{Test your understanding}
+
+\vspace{0.2cm}
+
+\textbf{Question 1:} Your model was 92\% accurate in development but 78\% in production. What's likely the issue?
+
+\begin{enumerate}[A)]
+\item The model is overfitted
+\item Wrong metrics used
+\item \textcolor{forest}{\textbf{Data drift - production data differs from training data}}
+\item Need more training data
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Large accuracy drop in production usually indicates data drift. The model was trained on one distribution but is seeing different data in production. Could be covariate shift (features changed), concept drift (relationships changed), or data quality issues. Monitor input distributions and retrain with recent data.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} For real-time fraud detection (need <100ms latency), which deployment pattern?
+
+\begin{enumerate}[A)]
+\item Batch prediction (daily)
+\item \textcolor{forest}{\textbf{Real-time API with caching and model optimization}}
+\item Edge deployment
+\item Streaming with 1-hour windows
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: B}} - Fraud detection must happen in real-time (during transaction). Batch won't work. Need optimized REST API with: (1) Fast model (XGBoost/LightGBM, not deep learning), (2) Feature caching, (3) Load balancing, (4) Sub-100ms SLA. Edge deployment could work but adds complexity. Streaming with 1-hour window is too slow.
+\end{block}
+\end{frame}
+
+\begin{frame}{Summary \& Best Practices}
+\textbf{Building production ML systems}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The MLOps Checklist:}
+
+\begin{enumerate}
+\item \textbf{Version everything}
+   \begin{itemize}
+   \item Code (Git)
+   \item Data (DVC)
+   \item Models (MLflow)
+   \item Environment (Docker)
+   \end{itemize}
+
+\item \textbf{Automate pipelines}
+   \begin{itemize}
+   \item Data preprocessing
+   \item Model training
+   \item Evaluation
+   \item Deployment
+   \end{itemize}
+
+\item \textbf{Test rigorously}
+   \begin{itemize}
+   \item Unit tests
+   \item Integration tests
+   \item Data validation
+   \item Model performance
+   \end{itemize}
+
+\item \textbf{Monitor continuously}
+   \begin{itemize}
+   \item Data drift
+   \item Model performance
+   \item System health
+   \item Business metrics
+   \end{itemize}
+
+\item \textbf{Enable rollback}
+   \begin{itemize}
+   \item Keep previous versions
+   \item Can revert quickly
+   \item A/B test new models
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Common Pitfalls:}
+
+\begin{itemize}
+\item[$\times$] Not monitoring after deployment
+\item[$\times$] No rollback plan
+\item[$\times$] Training-serving skew
+\item[$\times$] No data validation
+\item[$\times$] Ignoring latency requirements
+\item[$\times$] Not documenting decisions
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Tools Ecosystem:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Category} & \textbf{Tools} \\
+\hline
+Experiment Tracking & MLflow, W\&B \\
+\hline
+Versioning & DVC, Git LFS \\
+\hline
+Model Serving & TensorFlow Serving, TorchServe \\
+\hline
+Containerization & Docker, Kubernetes \\
+\hline
+Orchestration & Airflow, Kubeflow, Prefect \\
+\hline
+Monitoring & Prometheus, Grafana, Evidently \\
+\hline
+Feature Stores & Feast, Tecton \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Learn More:}
+\begin{itemize}
+\item "Machine Learning Engineering" (Burkov)
+\item "Designing ML Systems" (Huyen)
+\item Google's "Rules of ML"
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% END OF MLOPS PRESENTATION
+% ================================================================

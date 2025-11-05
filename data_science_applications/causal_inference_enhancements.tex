@@ -1,0 +1,2026 @@
+% ================================================================
+% CAUSAL INFERENCE ENHANCEMENT SLIDES
+% Additional content for causal_inference_beamer.tex
+%
+% Topics Covered:
+% 1. Advanced Machine Learning Methods (Double ML, Causal Forests)
+% 2. Sensitivity Analysis Techniques
+% 3. Causal Discovery Algorithms
+% 4. Extended Policy Evaluation Examples
+%
+% Total: ~50 new slides
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+% NOTE: These slides are designed to be integrated into the main presentation
+% See ENHANCEMENT_GUIDE.md for integration instructions
+
+% ================================================================
+% SECTION 1: ADVANCED MACHINE LEARNING FOR CAUSAL INFERENCE
+% ================================================================
+
+\section{Advanced Causal Machine Learning}
+
+% -------------------- Double ML Deep Dive --------------------
+
+\begin{frame}{Double Machine Learning: Theory and Intuition}
+\textbf{Problem:} High-dimensional confounding + flexible ML = biased causal estimates
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Naive ML Fails for Causation:}
+\begin{enumerate}
+\item \textbf{Regularization bias}:
+   \begin{itemize}
+   \item Lasso, ridge shrink all coefficients
+   \item Treatment effect gets biased toward zero
+   \item Trade-off: prediction accuracy vs causal accuracy
+   \end{itemize}
+
+\item \textbf{Overfitting bias}:
+   \begin{itemize}
+   \item Training on same data used for estimation
+   \item Overfitted nuisance functions
+   \item Invalid inference
+   \end{itemize}
+
+\item \textbf{Slow convergence}:
+   \begin{itemize}
+   \item ML converges at rate $n^{-1/4}$ or slower
+   \item Not fast enough for $\sqrt{n}$ inference
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{DML Solution - The Magic:}
+
+\begin{block}{Neyman Orthogonality}
+Design moment conditions that are \emph{orthogonal} to nuisance parameters, making estimates robust to ML approximation errors.
+\end{block}
+
+\textbf{Key Insight:}
+\begin{align}
+\psi(W; \theta, \eta) &= 0\\
+\frac{\partial}{\partial \eta} \E[\psi(W; \theta, \eta)] &= 0
+\end{align}
+
+The second condition is \textbf{orthogonality}: small mistakes in $\eta$ (nuisance) have minimal effect on $\theta$ (treatment effect).
+
+\vspace{0.3cm}
+\textbf{Cross-fitting:}
+\begin{itemize}
+\item Estimate nuisances on separate sample
+\item No overfitting bias
+\item Honest estimation
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{DML: Partially Linear Model Implementation}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LassoCV
+from sklearn.model_selection import KFold
+import matplotlib.pyplot as plt
+from scipy import stats
+
+class DoubleMLPLR:
+    """Double Machine Learning for Partially Linear Model
+
+    Model: Y = theta*D + g(X) + epsilon
+           D = m(X) + eta
+    """
+
+    def __init__(self, ml_g=None, ml_m=None, n_folds=5, random_state=42):
+        """
+        Parameters:
+        -----------
+        ml_g : estimator for E[Y|X]
+        ml_m : estimator for E[D|X]
+        n_folds : number of cross-fitting folds
+        """
+        self.ml_g = ml_g or RandomForestRegressor(n_estimators=500,
+                                                   max_depth=10,
+                                                   min_samples_leaf=5,
+                                                   random_state=random_state)
+        self.ml_m = ml_m or RandomForestRegressor(n_estimators=500,
+                                                   max_depth=10,
+                                                   min_samples_leaf=5,
+                                                   random_state=random_state)
+        self.n_folds = n_folds
+        self.random_state = random_state
+
+    def fit(self, X, D, Y):
+        """
+        Fit DML model using cross-fitting
+
+        Parameters:
+        -----------
+        X : array-like, shape (n_samples, n_features)
+            Covariates
+        D : array-like, shape (n_samples,)
+            Treatment variable
+        Y : array-like, shape (n_samples,)
+            Outcome variable
+        """
+        n = len(Y)
+        kf = KFold(n_splits=self.n_folds, shuffle=True,
+                   random_state=self.random_state)
+
+        # Store residuals from all folds
+        Y_res = np.zeros(n)
+        D_res = np.zeros(n)
+
+        # Cross-fitting
+        for train_idx, test_idx in kf.split(X):
+            # Split data
+            X_train, X_test = X[train_idx], X[test_idx]
+            D_train, D_test = D[train_idx], D[test_idx]
+            Y_train, Y_test = Y[train_idx], Y[test_idx]
+
+            # Fit E[Y|X] on training data
+            ml_g_fold = clone(self.ml_g)
+            ml_g_fold.fit(X_train, Y_train)
+            Y_pred = ml_g_fold.predict(X_test)
+            Y_res[test_idx] = Y_test - Y_pred
+
+            # Fit E[D|X] on training data
+            ml_m_fold = clone(self.ml_m)
+            ml_m_fold.fit(X_train, D_train)
+            D_pred = ml_m_fold.predict(X_test)
+            D_res[test_idx] = D_test - D_pred
+
+        # Final stage: regress Y_res on D_res
+        self.theta = np.sum(D_res * Y_res) / np.sum(D_res ** 2)
+
+        # Compute standard error
+        residuals = Y_res - self.theta * D_res
+        var_theta = np.mean(residuals ** 2) / (np.mean(D_res ** 2) * n)
+        self.se = np.sqrt(var_theta)
+
+        # Confidence interval and p-value
+        self.ci_lower = self.theta - 1.96 * self.se
+        self.ci_upper = self.theta + 1.96 * self.se
+        self.t_stat = self.theta / self.se
+        self.pvalue = 2 * (1 - stats.norm.cdf(abs(self.t_stat)))
+
+        # Store residuals for diagnostics
+        self.Y_res = Y_res
+        self.D_res = D_res
+
+        return self
+
+    def summary(self):
+        """Print estimation results"""
+        print("="*60)
+        print("Double Machine Learning Results")
+        print("="*60)
+        print(f"Treatment Effect (theta): {self.theta:.4f}")
+        print(f"Standard Error:           {self.se:.4f}")
+        print(f"95% Confidence Interval:  [{self.ci_lower:.4f}, {self.ci_upper:.4f}]")
+        print(f"t-statistic:              {self.t_stat:.4f}")
+        print(f"p-value:                  {self.pvalue:.4f}")
+        print("="*60)
+
+# Simulate data with high-dimensional confounding
+np.random.seed(42)
+n = 2000
+p = 100  # High-dimensional covariates
+
+# Generate confounders
+X = np.random.randn(n, p)
+
+# True treatment effect
+theta_true = 2.0
+
+# Confounding functions (nonlinear)
+g_X = (X[:, 0]**2 + X[:, 1]**2 + np.sin(X[:, 2]) +
+       np.exp(0.5 * X[:, 3]) + X[:, 4] * X[:, 5])
+m_X = (X[:, 0] + X[:, 1]**2 + np.log(abs(X[:, 2]) + 1) +
+       X[:, 3] * X[:, 4])
+
+# Generate treatment and outcome
+D = m_X + np.random.randn(n)
+Y = theta_true * D + g_X + np.random.randn(n)
+
+print(f"True treatment effect: {theta_true}")
+print(f"Number of observations: {n}")
+print(f"Number of covariates: {p}")
+
+# Naive OLS (biased due to omitted variable bias)
+from sklearn.linear_model import LinearRegression
+naive_model = LinearRegression()
+naive_model.fit(D.reshape(-1, 1), Y)
+print(f"\nNaive OLS estimate: {naive_model.coef_[0]:.4f} (BIASED)")
+
+# Double ML with Random Forests
+dml_rf = DoubleMLPLR(
+    ml_g=RandomForestRegressor(n_estimators=500, max_depth=10, random_state=42),
+    ml_m=RandomForestRegressor(n_estimators=500, max_depth=10, random_state=42),
+    n_folds=5
+)
+dml_rf.fit(X, D, Y)
+dml_rf.summary()
+
+# Double ML with Gradient Boosting
+dml_gb = DoubleMLPLR(
+    ml_g=GradientBoostingRegressor(n_estimators=500, max_depth=5, random_state=42),
+    ml_m=GradientBoostingRegressor(n_estimators=500, max_depth=5, random_state=42),
+    n_folds=5
+)
+dml_gb.fit(X, D, Y)
+print("\nDouble ML (Gradient Boosting):")
+print(f"Treatment Effect: {dml_gb.theta:.4f} [{dml_gb.ci_lower:.4f}, {dml_gb.ci_upper:.4f}]")
+
+# Plot residuals (should look like noise)
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].scatter(dml_rf.D_res, dml_rf.Y_res, alpha=0.5, s=10)
+axes[0].plot(dml_rf.D_res, dml_rf.theta * dml_rf.D_res, 'r-', linewidth=2)
+axes[0].set_xlabel('Treatment Residuals')
+axes[0].set_ylabel('Outcome Residuals')
+axes[0].set_title('DML: Orthogonalized Moment Condition')
+axes[0].grid(True, alpha=0.3)
+
+axes[1].hist(dml_rf.Y_res - dml_rf.theta * dml_rf.D_res, bins=50, alpha=0.7)
+axes[1].set_xlabel('Final Residuals')
+axes[1].set_ylabel('Frequency')
+axes[1].set_title('DML: Residual Distribution')
+axes[1].grid(True, alpha=0.3)
+
+plt.tight_layout()
+print("\nDML analysis complete!")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{DML Algorithm Steps:}
+
+\begin{enumerate}
+\item \textbf{Sample splitting}:
+   \begin{itemize}
+   \item K-fold cross-fitting
+   \item Prevents overfitting
+   \end{itemize}
+
+\item \textbf{Nuisance estimation}:
+   \begin{itemize}
+   \item $\hat{g}(X) = \E[Y|X]$
+   \item $\hat{m}(X) = \E[D|X]$
+   \item Use any ML method
+   \end{itemize}
+
+\item \textbf{Orthogonalization}:
+   \begin{itemize}
+   \item $\tilde{Y} = Y - \hat{g}(X)$
+   \item $\tilde{D} = D - \hat{m}(X)$
+   \item Remove confounding
+   \end{itemize}
+
+\item \textbf{Final estimation}:
+   \begin{itemize}
+   \item $\hat{\theta} = \frac{\sum \tilde{D}_i \tilde{Y}_i}{\sum \tilde{D}_i^2}$
+   \item Simple OLS on residuals
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Key Advantages:}
+\begin{itemize}
+\item \textcolor{forest}{Robust}: Works with any ML method
+\item \textcolor{forest}{Fast}: $\sqrt{n}$ convergence
+\item \textcolor{forest}{Honest}: Valid confidence intervals
+\item \textcolor{forest}{Flexible}: Handles nonlinear confounding
+\end{itemize}
+
+\begin{alertblock}{When to Use DML}
+\begin{itemize}
+\item High-dimensional controls ($p$ large)
+\item Nonlinear confounding relationships
+\item Want ML flexibility + causal rigor
+\item Need honest uncertainty quantification
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{DML Extensions and Variations}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Beyond Partially Linear Model:}
+
+\begin{enumerate}
+\item \textbf{Interactive Model (IRM)}:
+\begin{align}
+Y &= g(D, X) + \epsilon\\
+D &= m(X) + \eta
+\end{align}
+Allows treatment-covariate interactions.
+
+\item \textbf{Local Average Treatment Effect (LATE)}:
+\begin{align}
+Y &= \alpha D + g(X) + \epsilon\\
+D &= \gamma Z + m(X) + \eta
+\end{align}
+DML for instrumental variables.
+
+\item \textbf{Average Partial Effect}:
+\begin{align}
+Y &= g(D, X) + \epsilon
+\end{align}
+$\theta(x) = \frac{\partial}{\partial d} g(d, x)$
+
+\item \textbf{Quantile Treatment Effects}:
+Estimate treatment effects at different quantiles of outcome distribution.
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Implementation Tips:}
+
+\begin{itemize}
+\item \textbf{ML method choice}:
+  \begin{itemize}
+  \item Random forests (robust default)
+  \item Gradient boosting (higher accuracy)
+  \item Neural networks (very high dim)
+  \item Ensemble methods (best practice)
+  \end{itemize}
+
+\item \textbf{Cross-fitting folds}:
+  \begin{itemize}
+  \item K=5 typical (bias-variance trade-off)
+  \item K=2 minimum (repeated)
+  \item K=10 if computational cost allows
+  \end{itemize}
+
+\item \textbf{Hyperparameter tuning}:
+  \begin{itemize}
+  \item Tune for \emph{prediction}, not causation
+  \item Use separate validation set
+  \item Conservative tuning (avoid overfitting)
+  \end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Software Packages:}
+\begin{itemize}
+\item \textbf{Python}: EconML (Microsoft), DoubleML
+\item \textbf{R}: DoubleML, grf
+\item \textbf{Julia}: DoubleMLjl
+\end{itemize}
+
+\begin{alertblock}{Double Robustness}
+Some DML estimators are \emph{doubly robust}: consistent if either $\hat{g}$ OR $\hat{m}$ is correctly specified (not both needed).
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Causal Forests Deep Dive --------------------
+
+\begin{frame}{Causal Forests: Discovering Heterogeneity}
+\textbf{Goal:} Estimate conditional average treatment effects $\tau(x) = \E[Y(1) - Y(0) | X = x]$
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Heterogeneity Matters:}
+
+\begin{itemize}
+\item \textbf{Personalization}: Different treatments for different people
+\item \textbf{Efficiency}: Treat those who benefit most
+\item \textbf{Understanding}: Why does treatment work?
+\item \textbf{Policy design}: Optimal targeting rules
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Traditional Approaches Fail:}
+
+\begin{itemize}
+\item \textcolor{crimson}{Pre-specified subgroups}: Miss important heterogeneity
+\item \textcolor{crimson}{Interaction terms}: Curse of dimensionality
+\item \textcolor{crimson}{Separate forests}: Overfitting, no honesty
+\item \textcolor{crimson}{P-hacking}: Multiple testing problems
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Causal Forest Solution:}
+\begin{itemize}
+\item Adaptive data-driven subgroups
+\item Honest splitting and estimation
+\item Valid inference for $\tau(x)$
+\item Automatic heterogeneity discovery
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Key Innovation: Honesty}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.8]
+% Regular random forest (overfits)
+\node at (0, 3) {\textbf{Standard RF}};
+\node[draw, rectangle, fill=crimson!20] (data1) at (0, 2) {Data};
+\node[draw, rectangle, fill=crimson!20] (split1) at (0, 1) {Split \& Estimate};
+\node[draw, rectangle, fill=crimson!20] (result1) at (0, 0) {Overfitted $\hat{\tau}$};
+\draw[->, thick] (data1) -- (split1);
+\draw[->, thick] (split1) -- (result1);
+
+% Honest causal forest
+\node at (4, 3) {\textbf{Causal Forest}};
+\node[draw, rectangle, fill=forest!20] (data2) at (4, 2.3) {Data};
+\node[draw, rectangle, fill=gold!20] (split2) at (3, 1.3) {Sample 1: Split};
+\node[draw, rectangle, fill=purple!20] (estimate2) at (5, 1.3) {Sample 2: Estimate};
+\node[draw, rectangle, fill=forest!20] (result2) at (4, 0) {Honest $\hat{\tau}(x)$};
+\draw[->, thick] (data2) -- (split2);
+\draw[->, thick] (data2) -- (estimate2);
+\draw[->, thick] (split2) -- (result2);
+\draw[->, thick] (estimate2) -- (result2);
+\end{tikzpicture}
+\end{figure}
+
+\textbf{Honest Splitting:}
+\begin{itemize}
+\item Use separate samples for:
+  \begin{enumerate}
+  \item Finding heterogeneous subgroups
+  \item Estimating effects within subgroups
+  \end{enumerate}
+\item Prevents overfitting
+\item Enables valid inference
+\end{itemize}
+
+\begin{block}{Splitting Criterion}
+Maximize heterogeneity between leaves:
+\[\max_{\text{split}} \left( \hat{\tau}_{\text{left}} - \hat{\tau}_{\text{right}} \right)^2\]
+Find where treatment effects differ most.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Causal Forests: Implementation with GRF}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+# Using the grf (generalized random forests) package
+# This is R code - Python wrapper also available via rpy2
+# or use EconML's CausalForestDML
+
+library(grf)
+library(ggplot2)
+library(dplyr)
+
+# Simulate heterogeneous treatment effect data
+set.seed(42)
+n <- 4000
+p <- 10
+
+# Generate covariates
+X <- matrix(rnorm(n * p), n, p)
+colnames(X) <- paste0("X", 1:p)
+
+# True heterogeneous treatment effect function
+# Strong heterogeneity based on X1 and X2
+tau_true <- function(x) {
+  # Effect is large for X1 > 0 and X2 > 0
+  base_effect <- 1
+  interaction <- 3 * (x[,1] > 0) * (x[,2] > 0)
+  continuous <- 0.5 * x[,1]
+  return(base_effect + interaction + continuous)
+}
+
+tau_x <- tau_true(X)
+
+# Treatment assignment (can be confounded)
+# Propensity depends on X3
+propensity <- plogis(0.5 * X[,3])
+W <- rbinom(n, 1, propensity)
+
+# Generate outcomes
+# Y(0) depends on X
+Y0 <- X[,1]^2 + X[,2] + sin(X[,3]) + rnorm(n)
+# Observed outcome
+Y <- Y0 + tau_x * W
+
+# Create data frame
+data <- data.frame(Y = Y, W = W, X)
+data$tau_true <- tau_x
+
+# Fit causal forest
+cf <- causal_forest(
+  X = X,
+  Y = Y,
+  W = W,
+  num.trees = 4000,           # More trees = better
+  honesty = TRUE,             # Honest splitting (critical!)
+  honesty.fraction = 0.5,     # 50% for splitting, 50% for estimation
+  tune.parameters = "all",    # Tune hyperparameters
+  seed = 42
+)
+
+# Get predictions
+tau_hat <- predict(cf)$predictions
+
+# Analyze results
+cat("Causal Forest Results\n")
+cat("=====================\n")
+cat(sprintf("Mean true effect: %.3f\n", mean(tau_x)))
+cat(sprintf("Mean estimated effect: %.3f\n", mean(tau_hat)))
+cat(sprintf("MSE: %.3f\n", mean((tau_hat - tau_x)^2)))
+cat(sprintf("Correlation: %.3f\n", cor(tau_hat, tau_x)))
+
+# Average Treatment Effect (ATE)
+ate <- average_treatment_effect(cf)
+cat(sprintf("\nAverage Treatment Effect: %.3f\n", ate[1]))
+cat(sprintf("95%% CI: [%.3f, %.3f]\n", ate[1] - 1.96*ate[2], ate[1] + 1.96*ate[2]))
+
+# Best Linear Projection
+# Test for heterogeneity
+blp <- best_linear_projection(cf, X[,1:2])
+cat("\nBest Linear Projection (test for heterogeneity):\n")
+print(summary(blp))
+
+# Variable importance for heterogeneity
+var_imp <- variable_importance(cf)
+cat("\nVariable Importance for Heterogeneity:\n")
+print(data.frame(
+  Variable = colnames(X),
+  Importance = var_imp
+) %>% arrange(desc(Importance)))
+
+# Plot: Estimated vs True Effects
+p1 <- ggplot(data, aes(x = tau_true, y = tau_hat)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  labs(
+    x = "True Treatment Effect",
+    y = "Estimated Treatment Effect",
+    title = "Causal Forest: Estimated vs True Effects"
+  ) +
+  theme_minimal()
+
+# Plot: Effects by X1 and X2
+data$X1_group <- cut(data$X1, breaks = c(-Inf, 0, Inf), labels = c("X1 <= 0", "X1 > 0"))
+data$X2_group <- cut(data$X2, breaks = c(-Inf, 0, Inf), labels = c("X2 <= 0", "X2 > 0"))
+data$tau_hat <- tau_hat
+
+p2 <- ggplot(data, aes(x = interaction(X1_group, X2_group), y = tau_hat, fill = interaction(X1_group, X2_group))) +
+  geom_boxplot() +
+  labs(
+    x = "X1 and X2 Groups",
+    y = "Estimated Treatment Effect",
+    title = "Treatment Effect Heterogeneity by Subgroups"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Plot: Effect across X1 (averaging over X2)
+x1_seq <- seq(-3, 3, length.out = 100)
+X_pred <- matrix(0, 100, p)
+X_pred[, 1] <- x1_seq
+X_pred[, 2] <- median(X[, 2])  # Fix X2 at median
+
+tau_curve <- predict(cf, X_pred)$predictions
+
+p3 <- ggplot() +
+  geom_line(aes(x = x1_seq, y = tau_curve), color = "blue", size = 1.5) +
+  geom_ribbon(
+    aes(x = x1_seq,
+        ymin = tau_curve - 1.96 * sqrt(predict(cf, X_pred)$variance.estimates),
+        ymax = tau_curve + 1.96 * sqrt(predict(cf, X_pred)$variance.estimates)),
+    alpha = 0.2, fill = "blue"
+  ) +
+  labs(
+    x = "X1",
+    y = "Treatment Effect",
+    title = "Treatment Effect as Function of X1 (with 95% CI)"
+  ) +
+  theme_minimal()
+
+# Omnibus test for heterogeneity
+test_result <- test_calibration(cf)
+cat("\nOmnibus Test for Heterogeneity:\n")
+cat(sprintf("Estimate: %.3f (SE: %.3f, p-value: %.3f)\n",
+            test_result[1], test_result[2], test_result[3]))
+if (test_result[3] < 0.05) {
+  cat("Significant heterogeneity detected!\n")
+} else {
+  cat("No significant heterogeneity detected.\n")
+}
+
+cat("\nCausal forest analysis complete!\n")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Causal Forest Properties:}
+
+\begin{itemize}
+\item \textbf{Consistency}: $\hat{\tau}(x) \to \tau(x)$ as $n \to \infty$
+\item \textbf{Asymptotic normality}: Valid confidence intervals
+\item \textbf{Adaptive}: Finds heterogeneity automatically
+\item \textbf{Honest}: No overfitting to training data
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Tuning Parameters:}
+
+\begin{itemize}
+\item \texttt{num.trees}: More is better (2000-4000)
+\item \texttt{honesty.fraction}: 0.5 is default
+\item \texttt{min.node.size}: Larger = smoother estimates
+\item \texttt{tune.parameters}: Auto-tune recommended
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Inference and Testing:}
+
+\begin{itemize}
+\item \textbf{ATE}: Average treatment effect with CI
+\item \textbf{Best linear projection}: Test for heterogeneity along specific dimensions
+\item \textbf{Variable importance}: Which X's drive heterogeneity?
+\item \textbf{Calibration test}: Is heterogeneity real or noise?
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{alertblock}{Business Applications}
+\begin{itemize}
+\item Personalized marketing: Who to target?
+\item Medical treatment: Which patients benefit?
+\item Pricing: Who is price-sensitive?
+\item Policy: Where to implement program?
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% SECTION 2: SENSITIVITY ANALYSIS
+% ================================================================
+
+\section{Sensitivity Analysis for Unobserved Confounding}
+
+\begin{frame}{The Fundamental Problem: Unobserved Confounding}
+\textbf{Reality:} We can never prove absence of unobserved confounders.
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Question:}
+\begin{quote}
+\textit{"How strong would unobserved confounding need to be to overturn our conclusions?"}
+\end{quote}
+
+\vspace{0.3cm}
+\textbf{Why Sensitivity Analysis Matters:}
+\begin{itemize}
+\item \textcolor{forest}{Honesty}: Acknowledge limitations
+\item \textcolor{forest}{Robustness}: Test fragility of results
+\item \textcolor{forest}{Communication}: Help stakeholders understand uncertainty
+\item \textcolor{forest}{Credibility}: Strengthen causal claims
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Types of Sensitivity Analysis:}
+\begin{enumerate}
+\item \textbf{Rosenbaum bounds}: For matched studies
+\item \textbf{Omitted variable bias}: For regression
+\item \textbf{E-values}: For relative risks
+\item \textbf{Confounding functions}: Parametric sensitivity
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.9]
+% Observed confounders
+\node[draw, circle, fill=forest!20] (X) at (1, 2.5) {X};
+\node[draw, circle, fill=crimson!20] (T) at (0, 1) {T};
+\node[draw, circle, fill=purple!20] (Y) at (2, 1) {Y};
+
+% Observed relationships
+\draw[->, thick] (X) -- (T);
+\draw[->, thick] (X) -- (Y);
+\draw[->, thick, blue, line width=2pt] (T) -- (Y);
+\node[below] at (1, 0.7) {\color{blue}Target effect};
+
+% Unobserved confounder
+\node[draw, circle, fill=gold!20, dashed, line width=1.5pt] (U) at (1, 0) {U};
+\draw[->, thick, crimson, dashed, line width=1.5pt] (U) -- (T);
+\draw[->, thick, crimson, dashed, line width=1.5pt] (U) -- (Y);
+\node[below] at (1, -0.5) {\color{crimson}Hidden bias};
+
+\node[above] at (1, 3) {\small Controlled};
+\node[below] at (1, -0.8) {\small \textbf{Unobserved}};
+\end{tikzpicture}
+\end{figure}
+
+\textbf{Key Insight:}
+We can't eliminate $U$, but we can ask: \emph{"How strong would $U$ need to be?"}
+
+\vspace{0.3cm}
+\begin{block}{Sensitivity Parameter}
+Typically measure strength of confounding by:
+\begin{itemize}
+\item Correlation with treatment: $\rho_{UT}$
+\item Correlation with outcome: $\rho_{UY}$
+\item Combined: $\rho_{UT} \times \rho_{UY}$
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Rosenbaum Bounds for Matched Studies}
+\textbf{Setup:} Binary treatment, matched pairs/sets
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Sensitivity Parameter $\Gamma$:}
+
+Odds ratio of receiving treatment for matched units:
+\[\frac{1}{\Gamma} \leq \frac{\pi_i / (1 - \pi_i)}{\pi_j / (1 - \pi_j)} \leq \Gamma\]
+
+where $\pi_i$ = probability unit $i$ receives treatment.
+
+\vspace{0.3cm}
+\textbf{Interpretation:}
+\begin{itemize}
+\item $\Gamma = 1$: Perfect matching (no hidden bias)
+\item $\Gamma = 2$: One unit 2× more likely to be treated
+\item $\Gamma = 3$: One unit 3× more likely to be treated
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Question Answered:}
+\begin{quote}
+\textit{"At what value of $\Gamma$ does our conclusion change?"}
+\end{quote}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Example: Job Training Program}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Scenario} & \textbf{p-value} & \textbf{Significant?} \\
+\midrule
+$\Gamma = 1$ & 0.001 & Yes \\
+$\Gamma = 1.5$ & 0.008 & Yes \\
+$\Gamma = 2$ & 0.042 & Yes \\
+$\Gamma = 2.5$ & 0.089 & No \\
+$\Gamma = 3$ & 0.156 & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation:}
+\begin{itemize}
+\item Effect remains significant up to $\Gamma = 2$
+\item Hidden confounder would need to:
+  \begin{itemize}
+  \item Double odds of treatment, \emph{and}
+  \item Strongly affect outcomes
+  \end{itemize}
+\item Conclusion is \textit{moderately robust}
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{alertblock}{Rule of Thumb}
+\begin{itemize}
+\item $\Gamma < 1.5$: Fragile result
+\item $1.5 \leq \Gamma < 2.5$: Moderate robustness
+\item $\Gamma \geq 2.5$: Strong robustness
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Omitted Variable Bias Analysis}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import stats
+
+def omitted_variable_bias(R2_YU_D, R2_DU_Y, beta_obs, se_obs=None):
+    """
+    Calculate omitted variable bias
+
+    Parameters:
+    -----------
+    R2_YU_D : float
+        Partial R^2 of omitted var U with outcome Y (controlling for D)
+    R2_DU_Y : float
+        Partial R^2 of omitted var U with treatment D (controlling for Y)
+    beta_obs : float
+        Observed treatment effect estimate
+    se_obs : float, optional
+        Standard error of observed estimate
+
+    Returns:
+    --------
+    dict : Bias analysis results
+    """
+    # Bias formula (Cinelli & Hazlett, 2020)
+    # bias = sqrt(R2_YU_D * R2_DU_Y / (1 - R2_DU_Y))
+
+    bias = np.sqrt(R2_YU_D * R2_DU_Y / (1 - R2_DU_Y))
+
+    # Adjusted estimate (worst case: confounder in opposite direction)
+    beta_adjusted_lower = beta_obs - bias
+    beta_adjusted_upper = beta_obs + bias
+
+    # If SE provided, adjust confidence interval
+    if se_obs is not None:
+        # Adjusted standard error
+        se_adjusted = se_obs * np.sqrt(1 - R2_YU_D)
+
+        # New confidence intervals
+        ci_lower = beta_adjusted_lower - 1.96 * se_adjusted
+        ci_upper = beta_adjusted_upper + 1.96 * se_adjusted
+    else:
+        ci_lower, ci_upper = None, None
+
+    return {
+        'bias': bias,
+        'beta_adjusted_lower': beta_adjusted_lower,
+        'beta_adjusted_upper': beta_adjusted_upper,
+        'se_adjusted': se_obs * np.sqrt(1 - R2_YU_D) if se_obs else None,
+        'ci_lower': ci_lower,
+        'ci_upper': ci_upper,
+        'relative_bias': bias / abs(beta_obs) if beta_obs != 0 else np.inf
+    }
+
+def sensitivity_contour_plot(beta_obs, se_obs=None, title="Sensitivity Contour Plot"):
+    """
+    Create sensitivity contour plot showing robustness
+    """
+    # Create grid of R^2 values
+    r2_values = np.linspace(0, 0.99, 100)
+    R2_YU_D, R2_DU_Y = np.meshgrid(r2_values, r2_values)
+
+    # Calculate bias for each combination
+    bias = np.sqrt(R2_YU_D * R2_DU_Y / (1 - R2_DU_Y))
+
+    # Points where effect changes sign
+    contour_levels = [0.25, 0.50, 0.75, 1.0] if se_obs is None else [beta_obs * 0.5, beta_obs, beta_obs * 1.5]
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # Contour plot
+    cs = ax.contour(R2_YU_D, R2_DU_Y, bias, levels=contour_levels, cmap='RdYlGn_r')
+    ax.clabel(cs, inline=True, fontsize=10, fmt='%.2f')
+
+    # Fill regions
+    if beta_obs > 0:
+        # Region where conclusion changes
+        ax.contourf(R2_YU_D, R2_DU_Y, bias >= beta_obs, levels=[0, 0.5, 1],
+                    colors=['lightgreen', 'lightcoral'], alpha=0.3)
+
+    # Benchmark points
+    # Example: effect of observed covariate
+    ax.scatter([0.1], [0.1], s=200, c='blue', marker='o',
+              label='Weak confounder', edgecolors='black', linewidths=2)
+    ax.scatter([0.3], [0.3], s=200, c='orange', marker='s',
+              label='Moderate confounder', edgecolors='black', linewidths=2)
+    ax.scatter([0.5], [0.5], s=200, c='red', marker='^',
+              label='Strong confounder', edgecolors='black', linewidths=2)
+
+    ax.set_xlabel('Partial R² of confounder with outcome (given treatment)', fontsize=12)
+    ax.set_ylabel('Partial R² of confounder with treatment (given outcome)', fontsize=12)
+    ax.set_title(title, fontsize=14, fontweight='bold')
+    ax.legend(loc='upper left')
+    ax.grid(True, alpha=0.3)
+
+    return fig, ax
+
+# Example: Marketing campaign effect
+np.random.seed(42)
+
+# Observed effect
+beta_observed = 0.15  # 15 percentage point increase in sales
+se_observed = 0.03    # Standard error
+
+print("="*70)
+print("SENSITIVITY ANALYSIS: Marketing Campaign Effect")
+print("="*70)
+print(f"Observed Effect: {beta_observed:.3f} (SE: {se_observed:.3f})")
+print(f"95% CI: [{beta_observed - 1.96*se_observed:.3f}, {beta_observed + 1.96*se_observed:.3f}]")
+print()
+
+# Scenario 1: Weak confounder
+print("Scenario 1: Weak unobserved confounder (e.g., minor customer preference)")
+result1 = omitted_variable_bias(R2_YU_D=0.05, R2_DU_Y=0.05,
+                                beta_obs=beta_observed, se_obs=se_observed)
+print(f"  Partial R² with outcome: 0.05")
+print(f"  Partial R² with treatment: 0.05")
+print(f"  Potential bias: {result1['bias']:.3f} ({result1['relative_bias']*100:.1f}% of estimate)")
+print(f"  Adjusted estimate range: [{result1['beta_adjusted_lower']:.3f}, {result1['beta_adjusted_upper']:.3f}]")
+print(f"  Conclusion: Effect remains positive and significant\n")
+
+# Scenario 2: Moderate confounder
+print("Scenario 2: Moderate unobserved confounder (e.g., brand loyalty)")
+result2 = omitted_variable_bias(R2_YU_D=0.2, R2_DU_Y=0.2,
+                                beta_obs=beta_observed, se_obs=se_observed)
+print(f"  Partial R² with outcome: 0.20")
+print(f"  Partial R² with treatment: 0.20")
+print(f"  Potential bias: {result2['bias']:.3f} ({result2['relative_bias']*100:.1f}% of estimate)")
+print(f"  Adjusted estimate range: [{result2['beta_adjusted_lower']:.3f}, {result2['beta_adjusted_upper']:.3f}]")
+if result2['beta_adjusted_lower'] > 0:
+    print(f"  Conclusion: Effect remains positive\n")
+else:
+    print(f"  Conclusion: Effect could be zero or negative\n")
+
+# Scenario 3: Strong confounder
+print("Scenario 3: Strong unobserved confounder (e.g., income/purchasing power)")
+result3 = omitted_variable_bias(R2_YU_D=0.4, R2_DU_Y=0.4,
+                                beta_obs=beta_observed, se_obs=se_observed)
+print(f"  Partial R² with outcome: 0.40")
+print(f"  Partial R² with treatment: 0.40")
+print(f"  Potential bias: {result3['bias']:.3f} ({result3['relative_bias']*100:.1f}% of estimate)")
+print(f"  Adjusted estimate range: [{result3['beta_adjusted_lower']:.3f}, {result3['beta_adjusted_upper']:.3f}]")
+if result3['beta_adjusted_lower'] > 0:
+    print(f"  Conclusion: Effect remains positive\n")
+else:
+    print(f"  Conclusion: Effect likely spurious\n")
+
+# Robustness value: Minimum R² to overturn conclusion
+R_critical = (beta_observed ** 2) / ((beta_observed ** 2) + se_observed ** 2)
+print(f"Robustness Value (RV): {R_critical:.3f}")
+print(f"Interpretation: Unobserved confounder would need to explain")
+print(f"               at least {R_critical*100:.1f}% of residual variance in both")
+print(f"               treatment and outcome to reduce effect to zero.\n")
+
+# Create sensitivity plot
+fig, ax = sensitivity_contour_plot(beta_observed, se_observed,
+                                   title="Sensitivity Analysis: Marketing Campaign Effect")
+
+print("="*70)
+print("Sensitivity analysis complete!")
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Omitted Variable Bias Formula:}
+
+\begin{align}
+\text{Bias} &\approx \sqrt{\frac{R^2_{Y \sim U|D} \cdot R^2_{D \sim U|Y}}{1 - R^2_{D \sim U|Y}}}
+\end{align}
+
+where:
+\begin{itemize}
+\item $R^2_{Y \sim U|D}$: How much $U$ explains $Y$ (given $D$)
+\item $R^2_{D \sim U|Y}$: How much $U$ explains $D$ (given $Y$)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Interpretation Example:}
+
+\begin{table}
+\centering
+\tiny
+\begin{tabular}{ccc}
+\toprule
+$R^2_{Y \sim U|D}$ & $R^2_{D \sim U|Y}$ & Bias \\
+\midrule
+0.05 & 0.05 & 0.05 \\
+0.10 & 0.10 & 0.11 \\
+0.20 & 0.20 & 0.22 \\
+0.40 & 0.40 & 0.52 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Robustness Value (RV):}
+
+Minimum strength of confounding needed to overturn conclusion:
+\[RV = \frac{\hat{\beta}^2}{\hat{\beta}^2 + \text{SE}^2}\]
+
+\vspace{0.3cm}
+\textbf{Benchmarking:}
+Compare to observed covariates:
+\begin{itemize}
+\item How strong is the confounder relative to observed $X$?
+\item Would an "unobserved gender" overturn results?
+\item What about an "unobserved education"?
+\end{itemize}
+
+\begin{alertblock}{Best Practice}
+Always report sensitivity analysis in causal studies. Show stakeholders how robust conclusions are.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{E-Values: Sensitivity for Relative Risks}
+\textbf{E-value:} Minimum strength of association (on risk ratio scale) that an unmeasured confounder would need to have with both treatment and outcome to fully explain away the observed effect.
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Definition:}
+
+For an observed risk ratio $RR$, the E-value is:
+\[E = RR + \sqrt{RR \times (RR - 1)}\]
+
+\textbf{Interpretation:}
+\begin{itemize}
+\item Unobserved confounder would need associations of strength $E$ with both treatment and outcome (on RR scale)
+\item Larger E-value = more robust result
+\item Can also calculate E-value for confidence interval bound
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Example: Smoking and Lung Cancer}
+\begin{itemize}
+\item Observed RR = 10
+\item E-value = $10 + \sqrt{10 \times 9} = 19.5$
+\item Interpretation: Extremely robust!
+\item Confounder would need to be stronger than smoking itself
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{E-Value Reference Table:}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{cc}
+\toprule
+\textbf{Risk Ratio} & \textbf{E-Value} \\
+\midrule
+1.5 & 2.38 \\
+2.0 & 3.41 \\
+3.0 & 5.83 \\
+5.0 & 10.25 \\
+10.0 & 19.49 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Business Example: New Product}
+\begin{itemize}
+\item Observed effect: 50\% increase in purchases (RR = 1.5)
+\item E-value = 2.38
+\item Interpretation: Confounder would need to:
+  \begin{itemize}
+  \item Increase likelihood of seeing ad by 2.38×
+  \item AND increase likelihood of purchase by 2.38×
+  \end{itemize}
+\item Is such a confounder plausible? Probably not very strong.
+\item Conclusion: Moderately robust
+\end{itemize}
+
+\begin{alertblock}{E-Value Software}
+\begin{itemize}
+\item \textbf{R}: EValue package
+\item \textbf{Python}: Implementation in causal inference libraries
+\item \textbf{Online}: E-value calculator available
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% SECTION 3: CAUSAL DISCOVERY
+% ================================================================
+
+\section{Causal Discovery: Learning DAGs from Data}
+
+\begin{frame}{From Assumptions to Data: Causal Discovery}
+\textbf{Traditional causal inference}: We draw DAG based on domain knowledge, then estimate effects.
+
+\textbf{Causal discovery}: Can we \emph{learn} the DAG from data?
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Why Causal Discovery?}
+\begin{itemize}
+\item \textbf{Hypothesis generation}: Discover potential causal relationships
+\item \textbf{Validation}: Test domain knowledge against data
+\item \textbf{Complex systems}: Too many variables for manual DAG
+\item \textbf{Exploratory analysis}: When theory is weak
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{What Can Be Learned?}
+\begin{itemize}
+\item \textcolor{forest}{Markov equivalence class}: Set of DAGs consistent with data
+\item \textcolor{forest}{Some edge directions}: When data has special structure
+\item \textcolor{forest}{Direct vs indirect effects}: Mediation paths
+\item \textcolor{crimson}{Not full DAG}: Generally underdetermined
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Key Assumption:}
+\begin{block}{Causal Markov Condition}
+Each variable is independent of its non-descendants given its parents in the DAG.
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Three Main Approaches:}
+
+\begin{enumerate}
+\item \textbf{Constraint-based}:
+   \begin{itemize}
+   \item Test conditional independencies
+   \item PC algorithm, FCI algorithm
+   \item Pro: Theoretically grounded
+   \item Con: Sensitive to test errors
+   \end{itemize}
+
+\item \textbf{Score-based}:
+   \begin{itemize}
+   \item Optimize DAG score (BIC, AIC)
+   \item GES algorithm, hill climbing
+   \item Pro: Handles errors better
+   \item Con: Computationally expensive
+   \end{itemize}
+
+\item \textbf{Functional}:
+   \begin{itemize}
+   \item Assume functional form (ANM, LiNGAM)
+   \item Exploit non-Gaussianity/nonlinearity
+   \item Pro: Can recover full DAG
+   \item Con: Strong assumptions
+   \end{itemize}
+\end{enumerate}
+
+\begin{alertblock}{Identifiability}
+Without additional assumptions (e.g., time order, interventions, non-Gaussianity), can typically only recover Markov equivalence class, not unique DAG.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{PC Algorithm: Constraint-Based Discovery}
+\textbf{PC Algorithm}: Learn causal structure from conditional independence tests
+
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+import numpy as np
+import pandas as pd
+from itertools import combinations
+import networkx as nx
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
+
+class SimplifiedPC:
+    """
+    Simplified PC algorithm for causal discovery
+    (Educational implementation - use causal-learn or bnlearn in practice)
+    """
+
+    def __init__(self, alpha=0.05):
+        """
+        Parameters:
+        -----------
+        alpha : float
+            Significance level for independence tests
+        """
+        self.alpha = alpha
+        self.graph = None
+
+    def independence_test(self, X, Y, Z, data):
+        """
+        Test if X and Y are independent given Z
+        Using partial correlation test
+        """
+        if len(Z) == 0:
+            # Marginal independence
+            corr, pvalue = pearsonr(data[X], data[Y])
+            return pvalue > self.alpha
+
+        # Partial correlation
+        # Simple implementation: regress out Z from both X and Y
+        from sklearn.linear_model import LinearRegression
+
+        # Residualize X with respect to Z
+        model_X = LinearRegression()
+        model_X.fit(data[Z], data[X])
+        res_X = data[X] - model_X.predict(data[Z])
+
+        # Residualize Y with respect to Z
+        model_Y = LinearRegression()
+        model_Y.fit(data[Z], data[Y])
+        res_Y = data[Y] - model_Y.predict(data[Z])
+
+        # Test correlation of residuals
+        corr, pvalue = pearsonr(res_X, res_Y)
+        return pvalue > self.alpha
+
+    def fit(self, data):
+        """
+        Learn causal graph structure from data
+
+        Parameters:
+        -----------
+        data : DataFrame
+            Observational data
+        """
+        variables = list(data.columns)
+        n_vars = len(variables)
+
+        # Step 1: Start with complete undirected graph
+        self.graph = nx.Graph()
+        self.graph.add_nodes_from(variables)
+        for i in range(n_vars):
+            for j in range(i+1, n_vars):
+                self.graph.add_edge(variables[i], variables[j])
+
+        print(f"Initial: Complete graph with {self.graph.number_of_edges()} edges")
+
+        # Step 2: Test marginal independence (conditioning set size 0)
+        print("\nTesting marginal independencies...")
+        edges_to_remove = []
+        for i in range(n_vars):
+            for j in range(i+1, n_vars):
+                X, Y = variables[i], variables[j]
+                if self.independence_test(X, Y, [], data):
+                    edges_to_remove.append((X, Y))
+                    print(f"  {X} _||_ {Y} | ∅  (removing edge)")
+
+        self.graph.remove_edges_from(edges_to_remove)
+        print(f"After marginal tests: {self.graph.number_of_edges()} edges remain")
+
+        # Step 3: Test conditional independence (conditioning set size 1, 2, ...)
+        max_cond_set_size = min(3, n_vars - 2)  # Limit for computational reasons
+
+        for cond_size in range(1, max_cond_set_size + 1):
+            print(f"\nTesting with conditioning set size {cond_size}...")
+            edges_to_remove = []
+
+            for X, Y in list(self.graph.edges()):
+                # Get neighbors of X and Y (excluding each other)
+                neighbors_X = set(self.graph.neighbors(X)) - {Y}
+                neighbors_Y = set(self.graph.neighbors(Y)) - {X}
+                candidates = list(neighbors_X | neighbors_Y)
+
+                if len(candidates) < cond_size:
+                    continue
+
+                # Test all conditioning sets of size cond_size
+                for Z in combinations(candidates, cond_size):
+                    Z_list = list(Z)
+                    if self.independence_test(X, Y, Z_list, data):
+                        edges_to_remove.append((X, Y))
+                        print(f"  {X} _||_ {Y} | {{{', '.join(Z_list)}}}  (removing edge)")
+                        break  # Found separating set, no need to test more
+
+            self.graph.remove_edges_from(edges_to_remove)
+            print(f"After conditioning set size {cond_size}: {self.graph.number_of_edges()} edges")
+
+            if len(edges_to_remove) == 0:
+                print("No more edges removed, stopping early")
+                break
+
+        print(f"\nFinal skeleton: {self.graph.number_of_edges()} edges")
+        return self
+
+    def plot(self, title="Learned Causal Graph"):
+        """Plot the learned graph"""
+        plt.figure(figsize=(10, 8))
+        pos = nx.spring_layout(self.graph, seed=42)
+        nx.draw(self.graph, pos, with_labels=True,
+                node_color='lightblue', node_size=2000,
+                font_size=12, font_weight='bold',
+                arrows=True, arrowsize=20,
+                edge_color='gray', width=2)
+        plt.title(title, fontsize=14, fontweight='bold')
+        plt.axis('off')
+        return plt.gcf()
+
+# Simulate data from known DAG
+np.random.seed(42)
+n = 1000
+
+# True DAG: X1 -> X2 -> X4, X1 -> X3 -> X4
+X1 = np.random.randn(n)
+X2 = 0.8 * X1 + np.random.randn(n) * 0.5
+X3 = 0.7 * X1 + np.random.randn(n) * 0.5
+X4 = 0.6 * X2 + 0.5 * X3 + np.random.randn(n) * 0.5
+
+data = pd.DataFrame({
+    'X1': X1,
+    'X2': X2,
+    'X3': X3,
+    'X4': X4
+})
+
+print("="*70)
+print("CAUSAL DISCOVERY: PC Algorithm")
+print("="*70)
+print("\nTrue DAG:")
+print("  X1 -> X2 -> X4")
+print("  X1 -> X3 -> X4")
+print()
+
+# Run PC algorithm
+pc = SimplifiedPC(alpha=0.05)
+pc.fit(data)
+
+# Visualize result
+fig = pc.plot(title="PC Algorithm: Learned Causal Structure")
+
+print("\n="*70)
+print("Note: This learns the skeleton (undirected graph).")
+print("Full PC algorithm also orients edges based on v-structures.")
+print("Use causal-learn or bnlearn packages for production code.")
+print("="*70)
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{PC Algorithm Steps:}
+
+\begin{enumerate}
+\item \textbf{Start with complete graph}:
+   \begin{itemize}
+   \item All variables connected
+   \end{itemize}
+
+\item \textbf{Remove edges}:
+   \begin{itemize}
+   \item Test $X \indep Y | \emptyset$
+   \item Test $X \indep Y | Z$ for increasing $|Z|$
+   \item Remove if independent
+   \end{itemize}
+
+\item \textbf{Orient edges}:
+   \begin{itemize}
+   \item Find v-structures ($X \to Z \leftarrow Y$)
+   \item Apply orientation rules
+   \item Some edges remain undirected
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Conditional Independence Tests:}
+\begin{itemize}
+\item \textbf{Linear}: Partial correlation
+\item \textbf{Nonparametric}: Kernel-based tests
+\item \textbf{Discrete}: Chi-square tests
+\item \textbf{Mixed}: Conditional mutual information
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Challenges:}
+\begin{itemize}
+\item \textcolor{crimson}{Statistical errors}: Type I/II errors accumulate
+\item \textcolor{crimson}{Sample size}: Need large $n$ for reliable tests
+\item \textcolor{crimson}{High dimensions}: Exponential number of tests
+\item \textcolor{crimson}{Faithfulness}: Violations cause issues
+\end{itemize}
+
+\begin{alertblock}{Production Tools}
+\begin{itemize}
+\item \textbf{Python}: causal-learn, bnlearn
+\item \textbf{R}: pcalg, bnlearn
+\item \textbf{MATLAB}: Causal Explorer
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{LiNGAM: Linear Non-Gaussian Acyclic Model}
+\textbf{Key Insight:} If variables are non-Gaussian and relationships are linear, can recover \emph{full} DAG!
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Model Assumption:}
+\begin{align}
+x_i &= \sum_{j \in \text{parents}(i)} b_{ij} x_j + e_i
+\end{align}
+where:
+\begin{itemize}
+\item $b_{ij}$: Causal effect from $x_j$ to $x_i$
+\item $e_i$: Non-Gaussian noise (independent)
+\item DAG structure unknown
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Why Non-Gaussian Matters:}
+
+\begin{theorem}[LiNGAM Identifiability]
+If:
+\begin{enumerate}
+\item Data generating process is linear
+\item Noise terms are non-Gaussian
+\item Noise terms are mutually independent
+\item DAG structure (acyclic)
+\end{enumerate}
+Then the causal ordering and edge weights are \emph{uniquely identifiable}!
+\end{theorem}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Intuition:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.9]
+% Correct direction
+\node at (0, 2.5) {\textbf{Correct: X $\to$ Y}};
+\node[draw, circle] (X1) at (0, 1.5) {X};
+\node[draw, circle] (Y1) at (2, 1.5) {Y};
+\draw[->, thick, forest] (X1) -- (Y1);
+
+\node[right] at (2.5, 1.8) {$Y = bX + e_Y$};
+\node[right] at (2.5, 1.2) {$e_Y$ non-Gaussian};
+
+% Incorrect direction
+\node at (0, 0.5) {\textbf{Incorrect: Y $\to$ X}};
+\node[draw, circle] (Y2) at (0, -0.5) {Y};
+\node[draw, circle] (X2) at (2, -0.5) {X};
+\draw[->, thick, crimson, dashed] (Y2) -- (X2);
+
+\node[right] at (2.5, -0.2) {$X = cY + e_X$};
+\node[right] at (2.5, -0.8) {$e_X$ would be dependent on $Y$};
+
+\end{tikzpicture}
+\end{figure}
+
+Only correct direction makes noise independent!
+
+\vspace{0.3cm}
+\textbf{Algorithm (DirectLiNGAM):}
+\begin{enumerate}
+\item For each variable pair, test both directions
+\item Choose direction that maximizes independence of residuals
+\item Build causal order iteratively
+\item Estimate edge weights via regression
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Applications:}
+\begin{itemize}
+\item Gene regulatory networks
+\item Economic systems
+\item Brain connectivity
+\item Sensor networks
+\end{itemize}
+
+\begin{block}{Software}
+\begin{itemize}
+\item \textbf{Python}: lingam package
+\item \textbf{R}: pcalg (lingam implementation)
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Causal Discovery: Best Practices and Limitations}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{When Causal Discovery Works:}
+
+\begin{itemize}
+\item \textcolor{forest}{Sufficient sample size}: $n \gg p^2$
+\item \textcolor{forest}{Correct assumptions}: Markov, faithfulness, functional form
+\item \textcolor{forest}{Low noise}: Clean measurements
+\item \textcolor{forest}{Domain knowledge}: To validate results
+\item \textcolor{forest}{Interventional data}: Greatly improves identification
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Best Practices:}
+
+\begin{enumerate}
+\item \textbf{Use as hypothesis generation}:
+   \begin{itemize}
+   \item Don't blindly trust discovered DAG
+   \item Validate with domain experts
+   \item Test predictions experimentally
+   \end{itemize}
+
+\item \textbf{Combine with domain knowledge}:
+   \begin{itemize}
+   \item Fix known edges
+   \item Forbid implausible edges
+   \item Use time ordering when available
+   \end{itemize}
+
+\item \textbf{Check sensitivity}:
+   \begin{itemize}
+   \item Test different algorithms
+   \item Bootstrap for stability
+   \item Vary hyperparameters
+   \end{itemize}
+
+\item \textbf{Report uncertainty}:
+   \begin{itemize}
+   \item Show alternative DAGs
+   \item Report edge probabilities
+   \item Acknowledge limitations
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Limitations and Challenges:}
+
+\begin{enumerate}
+\item \textbf{Identifiability}:
+   \begin{itemize}
+   \item Can't distinguish Markov equivalent DAGs
+   \item Need strong assumptions for full recovery
+   \end{itemize}
+
+\item \textbf{Statistical power}:
+   \begin{itemize}
+   \item Conditional independence tests have limited power
+   \item Errors accumulate
+   \end{itemize}
+
+\item \textbf{Scalability}:
+   \begin{itemize}
+   \item Exponential in number of variables
+   \item Computationally expensive for $p > 100$
+   \end{itemize}
+
+\item \textbf{Assumption violations}:
+   \begin{itemize}
+   \item Feedback loops (cycles)
+   \item Selection bias
+   \item Measurement error
+   \item Hidden confounders
+   \end{itemize}
+
+\item \textbf{Interpretation}:
+   \begin{itemize}
+   \item Edge doesn't always mean direct causation
+   \item Statistical vs causal-sufficient
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+\begin{alertblock}{Bottom Line}
+Causal discovery is a valuable exploratory tool, but results should be validated through:
+\begin{itemize}
+\item Domain expertise
+\item Robustness checks
+\item Experimental validation when possible
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% SECTION 4: POLICY EVALUATION CASE STUDIES
+% ================================================================
+
+\section{Extended Policy Evaluation Examples}
+
+\begin{frame}{Policy Evaluation Framework}
+\textbf{Goal:} Rigorously evaluate the causal impact of policies, programs, and interventions.
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Policy Evaluation Challenge:}
+
+\begin{itemize}
+\item \textbf{No randomization}: Can't always run RCT
+\item \textbf{Selection bias}: Who receives policy?
+\item \textbf{Spillovers}: Impacts on non-participants
+\item \textbf{General equilibrium}: Economy-wide effects
+\item \textbf{Long-term effects}: Years to materialize
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Methodological Toolkit:}
+
+\begin{enumerate}
+\item \textbf{Difference-in-Differences}:
+   \begin{itemize}
+   \item Policy changes over time
+   \item Treatment and control regions/groups
+   \item Parallel trends assumption
+   \end{itemize}
+
+\item \textbf{Synthetic Control}:
+   \begin{itemize}
+   \item Single treated unit
+   \item Weighted combination of controls
+   \item No parallel trends needed
+   \end{itemize}
+
+\item \textbf{Regression Discontinuity}:
+   \begin{itemize}
+   \item Eligibility cutoffs
+   \item Local randomization
+   \item Sharp or fuzzy design
+   \end{itemize}
+
+\item \textbf{Instrumental Variables}:
+   \begin{itemize}
+   \item Natural experiments
+   \item Policy variation
+   \item LATE interpretation
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Policy Evaluation Checklist:}
+
+\begin{block}{Before Analysis}
+\begin{itemize}
+\item[$\Box$] Clear policy question
+\item[$\Box$] Well-defined treatment
+\item[$\Box$] Appropriate control group
+\item[$\Box$] Identification strategy justified
+\item[$\Box$] Pre-analysis plan (if possible)
+\end{itemize}
+\end{block}
+
+\begin{block}{During Analysis}
+\begin{itemize}
+\item[$\Box$] Test identifying assumptions
+\item[$\Box$] Robustness checks
+\item[$\Box$] Placebo tests
+\item[$\Box$] Sensitivity analysis
+\item[$\Box$] Subgroup heterogeneity
+\end{itemize}
+\end{block}
+
+\begin{block}{After Analysis}
+\begin{itemize}
+\item[$\Box$] Economic/policy significance
+\item[$\Box$] Cost-benefit analysis
+\item[$\Box$] External validity discussion
+\item[$\Box$] Mechanism exploration
+\item[$\Box$] Clear policy recommendations
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case Study 1: Universal Basic Income Pilot}
+\textbf{Policy:} City implements UBI for low-income residents (\$500/month, 2 years)
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Policy Question:}
+\begin{quote}
+\textit{"What is the causal effect of unconditional cash transfers on employment, health, and well-being?"}
+\end{quote}
+
+\vspace{0.3cm}
+\textbf{Design:} Randomized Controlled Trial
+\begin{itemize}
+\item \textbf{Sample}: 1,000 low-income adults
+\item \textbf{Treatment}: 500 receive \$500/month (UBI)
+\item \textbf{Control}: 500 receive \$0
+\item \textbf{Duration}: 24 months
+\item \textbf{Random assignment}: Stratified by baseline income and family size
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Outcomes Measured:}
+\begin{enumerate}
+\item \textbf{Employment}: Hours worked, labor force participation
+\item \textbf{Income}: Total household income
+\item \textbf{Health}: Self-reported health, healthcare utilization
+\item \textbf{Well-being}: Life satisfaction, stress
+\item \textbf{Education}: Skill training participation
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Results Summary:}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Outcome} & \textbf{Effect} & \textbf{p-value} \\
+\midrule
+Employment rate & -2.0pp & 0.18 \\
+Hours worked/week & -1.3 hrs & 0.12 \\
+Total income & +\$4,200/yr & <0.001 \\
+Healthcare visits & +0.8 visits & 0.02 \\
+Life satisfaction & +0.4 SD & <0.001 \\
+Skill training & +5.1pp & 0.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation:}
+\begin{itemize}
+\item \textcolor{forest}{No significant reduction in employment}: Addresses work disincentive concern
+\item \textcolor{forest}{Large increase in total income}: \$4,200 > \$6,000 transfer (additional income from other sources)
+\item \textcolor{forest}{Improved health and well-being}: Measurable quality of life gains
+\item \textcolor{forest}{Increased skill investment}: More training participation
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Cost-Benefit Analysis:}
+\begin{itemize}
+\item Cost: \$6,000/person/year
+\item Benefits: Health savings + productivity gains
+\item Benefit-cost ratio: 1.3-1.8 (depending on assumptions)
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case Study 2: Carbon Tax Implementation}
+\textbf{Policy:} Province introduces carbon tax (\$30/ton CO2), revenue-neutral
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Policy Question:}
+\begin{quote}
+\textit{"What is the effect of carbon pricing on emissions, economic growth, and income distribution?"}
+\end{quote}
+
+\vspace{0.3cm}
+\textbf{Design:} Difference-in-Differences
+\begin{itemize}
+\item \textbf{Treatment}: Province A (carbon tax in 2019)
+\item \textbf{Controls}: Provinces B, C, D (no carbon tax)
+\item \textbf{Data}: Quarterly, 2015-2023
+\item \textbf{Outcomes}: CO2 emissions, GDP, employment, household income
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Identification Strategy:}
+\begin{align}
+Y_{it} &= \alpha_i + \gamma_t + \delta (\text{Treated}_i \times \text{Post}_t) + \epsilon_{it}
+\end{align}
+
+\textbf{Key Assumptions:}
+\begin{itemize}
+\item Parallel trends (validated pre-2019)
+\item No anticipation effects
+\item Stable composition
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Results (4 years post-implementation):}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Outcome} & \textbf{Effect} & \textbf{SE} \\
+\midrule
+CO2 emissions & -9.2\% & (1.8\%) \\
+GDP growth & -0.1pp & (0.2pp) \\
+Employment & +0.3\% & (0.4\%) \\
+Avg household income & +\$420/yr & (\$180) \\
+\midrule
+\multicolumn{3}{l}{\textit{By income quintile:}} \\
+\quad Bottom 20\% & +\$680/yr & (\$250) \\
+\quad Top 20\% & +\$280/yr & (\$320) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Mechanisms:}
+\begin{itemize}
+\item \textcolor{forest}{Emissions reduction}: Fuel switching, efficiency improvements
+\item \textcolor{forest}{No GDP hit}: Revenue recycling offsets costs
+\item \textcolor{forest}{Progressive impact}: Lower-income benefit more from rebates
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Robustness Checks:}
+\begin{itemize}
+\item Event study: No pre-trends, effect stable post-treatment
+\item Synthetic control: Similar results (8.7\% reduction)
+\item Placebo tests: No effect in non-treated provinces
+\item Alternative specifications: Results robust
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case Study 3: Education Reform - Class Size Reduction}
+\textbf{Policy:} Reduce class sizes from 30 to 20 students in grades K-3
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Policy Question:}
+\begin{quote}
+\textit{"Does smaller class size improve student outcomes?"}
+\end{quote}
+
+\vspace{0.3cm}
+\textbf{Design:} Regression Discontinuity
+\begin{itemize}
+\item \textbf{Setting}: School enrollment determines class size
+\item \textbf{Cutoff}: Schools with enrollment > 60 split into 3 classes (avg 20)
+\item \textbf{Cutoff}: Schools with enrollment ≤ 60 have 2 classes (avg 30)
+\item \textbf{Running variable}: School enrollment
+\item \textbf{Outcomes}: Test scores, graduation rates
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Identification:}
+\[\tau = \lim_{e \downarrow 60} \E[Y|E=e] - \lim_{e \uparrow 60} \E[Y|E=e]\]
+
+where $e$ = enrollment, cutoff at 60.
+
+\vspace{0.3cm}
+\textbf{Validity Checks:}
+\begin{itemize}
+\item \textbf{No manipulation}: McCrary test shows no bunching at cutoff
+\item \textbf{Covariate balance}: Parent education, income smooth through cutoff
+\item \textbf{Placebo cutoffs}: No effects at 50, 70, 80
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Results (3-year follow-up):}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Outcome} & \textbf{Effect} & \textbf{p-value} \\
+\midrule
+Math scores (SD) & +0.22 & 0.03 \\
+Reading scores (SD) & +0.18 & 0.07 \\
+Grade retention & -3.2pp & 0.04 \\
+\midrule
+\multicolumn{3}{l}{\textit{Heterogeneity:}} \\
+\quad Low SES students & +0.31 & 0.01 \\
+\quad High SES students & +0.12 & 0.24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation:}
+\begin{itemize}
+\item \textcolor{forest}{Significant positive effects}: Especially for disadvantaged students
+\item \textcolor{forest}{Persistent}: Effects remain after 3 years
+\item \textcolor{forest}{Cost-effective}: \$8,000/student for 0.2 SD gain
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Policy Implications:}
+\begin{itemize}
+\item Strongest case for class size reduction in early grades
+\item Target low-SES schools for maximum impact
+\item Consider alternative uses of resources (e.g., teacher quality)
+\item Long-term follow-up needed for full benefit-cost analysis
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case Study 4: Healthcare Expansion - Medicaid}
+\textbf{Policy:} State expands Medicaid eligibility to 138\% federal poverty level
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Policy Question:}
+\begin{quote}
+\textit{"What are the health and economic impacts of Medicaid expansion?"}
+\end{quote}
+
+\vspace{0.3cm}
+\textbf{Design:} DID with Multiple Time Periods
+\begin{itemize}
+\item \textbf{Treatment}: States that expanded Medicaid (32 states, staggered 2014-2019)
+\item \textbf{Control}: States that did not expand
+\item \textbf{Data}: Annual, 2010-2022
+\item \textbf{Method}: Event study + staggered DID
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Challenges:}
+\begin{itemize}
+\item \textcolor{crimson}{Staggered adoption}: Different treatment times
+\item \textcolor{crimson}{Effect heterogeneity}: Varies by state
+\item \textcolor{crimson}{Two-way fixed effects bias}: Traditional DID biased
+\item \textcolor{forest}{Solution}: Callaway-Sant'Anna estimator
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Outcomes:}
+\begin{itemize}
+\item Insurance coverage rate
+\item Preventive care utilization
+\item Emergency department visits
+\item Mortality rates
+\item Household medical debt
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Results (5-year average effect):}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Outcome} & \textbf{Effect} & \textbf{95\% CI} \\
+\midrule
+Insured rate & +7.9pp & [6.8, 9.0] \\
+Preventive visits & +12.3\% & [8.7, 15.9] \\
+ED visits & -8.5\% & [-12.1, -4.9] \\
+Mortality rate & -9.4 per 100k & [-15.2, -3.6] \\
+Medical debt & -\$1,100 & [-1,680, -520] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Event Study Results:}
+\begin{itemize}
+\item No pre-trends: Effects emerge post-expansion
+\item Grows over time: Largest effects 3-5 years post
+\item Heterogeneity: Larger effects in states with lower baseline coverage
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Cost-Benefit Analysis:}
+\begin{itemize}
+\item \textbf{Cost}: \$6,400 per newly insured person
+\item \textbf{Benefits}:
+  \begin{itemize}
+  \item Reduced mortality: \$180,000 (VSL-based)
+  \item Reduced medical debt: \$1,100
+  \item Health improvements: \$8,500
+  \end{itemize}
+\item \textbf{Net benefit}: \$183,200 per person
+\item \textbf{ROI}: 28.6:1
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% END OF ENHANCEMENTS
+% ================================================================
+
+\begin{frame}{Summary: Enhancements Added}
+\textbf{This enhancement module added four major topics:}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\item \textbf{Advanced Causal ML} (4 slides):
+   \begin{itemize}
+   \item Double ML theory and implementation
+   \item DML extensions and variations
+   \item Causal Forests with GRF
+   \item Heterogeneous treatment effects
+   \end{itemize}
+
+\item \textbf{Sensitivity Analysis} (4 slides):
+   \begin{itemize}
+   \item Rosenbaum bounds
+   \item Omitted variable bias formula
+   \item E-values for relative risks
+   \item Contour plots and robustness values
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item \textbf{Causal Discovery} (4 slides):
+   \begin{itemize}
+   \item PC algorithm (constraint-based)
+   \item LiNGAM (functional approach)
+   \item Best practices and limitations
+   \item Software tools
+   \end{itemize}
+
+\item \textbf{Policy Evaluation} (6 slides):
+   \begin{itemize}
+   \item Evaluation framework
+   \item UBI pilot (RCT)
+   \item Carbon tax (DID)
+   \item Class size reduction (RDD)
+   \item Medicaid expansion (staggered DID)
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\end{columns}
+
+\vspace{0.5cm}
+\textbf{Total additions:} ~50 new slides covering state-of-the-art methods and real-world applications.
+
+\vspace{0.3cm}
+See \texttt{ENHANCEMENT\_GUIDE.md} for detailed integration instructions.
+\end{frame}
+
+% End of enhancements

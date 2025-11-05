@@ -1,0 +1,517 @@
+% ================================================================
+% STATISTICAL LEARNING ENHANCEMENT REFERENCES
+% Additional references for ensemble methods, online learning,
+% federated learning, and fairness-aware machine learning
+% ================================================================
+%
+% To integrate: Append to statistical_learning_references.bib or use separately
+%
+% ================================================================
+
+% -------------------- Ensemble Methods --------------------
+
+@article{breiman1996bagging,
+  title={Bagging predictors},
+  author={Breiman, Leo},
+  journal={Machine Learning},
+  volume={24},
+  number={2},
+  pages={123--140},
+  year={1996},
+  publisher={Springer},
+  doi={10.1007/BF00058655}
+}
+
+@article{breiman2001random,
+  title={Random forests},
+  author={Breiman, Leo},
+  journal={Machine Learning},
+  volume={45},
+  number={1},
+  pages={5--32},
+  year={2001},
+  publisher={Springer},
+  doi={10.1023/A:1010933404324}
+}
+
+@article{freund1997decision,
+  title={A decision-theoretic generalization of on-line learning and an application to boosting},
+  author={Freund, Yoav and Schapire, Robert E},
+  journal={Journal of Computer and System Sciences},
+  volume={55},
+  number={1},
+  pages={119--139},
+  year={1997},
+  publisher={Elsevier},
+  doi={10.1006/jcss.1997.1504}
+}
+
+@article{friedman2001greedy,
+  title={Greedy function approximation: A gradient boosting machine},
+  author={Friedman, Jerome H},
+  journal={Annals of Statistics},
+  volume={29},
+  number={5},
+  pages={1189--1232},
+  year={2001},
+  publisher={Institute of Mathematical Statistics},
+  doi={10.1214/aos/1013203451}
+}
+
+@inproceedings{chen2016xgboost,
+  title={XGBoost: A scalable tree boosting system},
+  author={Chen, Tianqi and Guestrin, Carlos},
+  booktitle={Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages={785--794},
+  year={2016},
+  doi={10.1145/2939672.2939785}
+}
+
+@inproceedings{ke2017lightgbm,
+  title={LightGBM: A highly efficient gradient boosting decision tree},
+  author={Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={30},
+  pages={3146--3154},
+  year={2017}
+}
+
+@article{prokhorenkova2018catboost,
+  title={CatBoost: unbiased boosting with categorical features},
+  author={Prokhorenkova, Liudmila and Gusev, Gleb and Vorobev, Aleksandr and Dorogush, Anna Veronika and Gulin, Andrey},
+  journal={Advances in Neural Information Processing Systems},
+  volume={31},
+  pages={6638--6648},
+  year={2018}
+}
+
+@article{wolpert1992stacked,
+  title={Stacked generalization},
+  author={Wolpert, David H},
+  journal={Neural Networks},
+  volume={5},
+  number={2},
+  pages={241--259},
+  year={1992},
+  publisher={Elsevier},
+  doi={10.1016/S0893-6080(05)80023-1}
+}
+
+@article{hastie2009elements,
+  title={The Elements of Statistical Learning: Data Mining, Inference, and Prediction},
+  author={Hastie, Trevor and Tibshirani, Robert and Friedman, Jerome},
+  year={2009},
+  edition={2nd},
+  publisher={Springer},
+  address={New York},
+  doi={10.1007/978-0-387-84858-7}
+}
+
+@article{schapire2003boosting,
+  title={The boosting approach to machine learning: An overview},
+  author={Schapire, Robert E},
+  journal={Nonlinear Estimation and Classification},
+  pages={149--171},
+  year={2003},
+  publisher={Springer},
+  doi={10.1007/978-0-387-21579-2_9}
+}
+
+@article{dietterich2000ensemble,
+  title={Ensemble methods in machine learning},
+  author={Dietterich, Thomas G},
+  booktitle={International Workshop on Multiple Classifier Systems},
+  pages={1--15},
+  year={2000},
+  organization={Springer},
+  doi={10.1007/3-540-45014-9_1}
+}
+
+@article{geurts2006extremely,
+  title={Extremely randomized trees},
+  author={Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
+  journal={Machine Learning},
+  volume={63},
+  number={1},
+  pages={3--42},
+  year={2006},
+  publisher={Springer},
+  doi={10.1007/s10994-006-6226-1}
+}
+
+% -------------------- Online Learning --------------------
+
+@article{cesa2006prediction,
+  title={Prediction, Learning, and Games},
+  author={Cesa-Bianchi, Nicol{\`o} and Lugosi, G{\'a}bor},
+  year={2006},
+  publisher={Cambridge University Press},
+  address={Cambridge, UK},
+  doi={10.1017/CBO9780511546921}
+}
+
+@book{shalev2012online,
+  title={Online learning and online convex optimization},
+  author={Shalev-Shwartz, Shai},
+  journal={Foundations and Trends in Machine Learning},
+  volume={4},
+  number={2},
+  pages={107--194},
+  year={2012},
+  publisher={Now Publishers Inc.},
+  doi={10.1561/2200000018}
+}
+
+@article{zinkevich2003online,
+  title={Online convex programming and generalized infinitesimal gradient ascent},
+  author={Zinkevich, Martin},
+  booktitle={Proceedings of the 20th International Conference on Machine Learning (ICML-03)},
+  pages={928--936},
+  year={2003}
+}
+
+@article{hazan2016introduction,
+  title={Introduction to online convex optimization},
+  author={Hazan, Elad},
+  journal={Foundations and Trends in Optimization},
+  volume={2},
+  number={3-4},
+  pages={157--325},
+  year={2016},
+  publisher={Now Publishers Inc.},
+  doi={10.1561/2400000013}
+}
+
+@article{auer2002finite,
+  title={Finite-time analysis of the multiarmed bandit problem},
+  author={Auer, Peter and Cesa-Bianchi, Nicol{\`o} and Fischer, Paul},
+  journal={Machine Learning},
+  volume={47},
+  number={2},
+  pages={235--256},
+  year={2002},
+  publisher={Springer},
+  doi={10.1023/A:1013689704352}
+}
+
+@inproceedings{li2010contextual,
+  title={A contextual-bandit approach to personalized news article recommendation},
+  author={Li, Lihong and Chu, Wei and Langford, John and Schapire, Robert E},
+  booktitle={Proceedings of the 19th International Conference on World Wide Web},
+  pages={661--670},
+  year={2010},
+  doi={10.1145/1772690.1772758}
+}
+
+@article{abbasi2011improved,
+  title={Improved algorithms for linear stochastic bandits},
+  author={Abbasi-Yadkori, Yasin and P{\'a}l, D{\'a}vid and Szepesv{\'a}ri, Csaba},
+  journal={Advances in Neural Information Processing Systems},
+  volume={24},
+  pages={2312--2320},
+  year={2011}
+}
+
+@article{agarwal2014taming,
+  title={Taming the monster: A fast and simple algorithm for contextual bandits},
+  author={Agarwal, Alekh and Hsu, Daniel and Kale, Satyen and Langford, John and Li, Lihong and Schapire, Robert},
+  booktitle={International Conference on Machine Learning},
+  pages={1638--1646},
+  year={2014},
+  organization={PMLR}
+}
+
+@article{bubeck2012regret,
+  title={Regret analysis of stochastic and nonstochastic multi-armed bandit problems},
+  author={Bubeck, S{\'e}bastien and Cesa-Bianchi, Nicol{\`o}},
+  journal={Foundations and Trends in Machine Learning},
+  volume={5},
+  number={1},
+  pages={1--122},
+  year={2012},
+  publisher={Now Publishers Inc.},
+  doi={10.1561/2200000024}
+}
+
+@article{russo2018tutorial,
+  title={A tutorial on Thompson sampling},
+  author={Russo, Daniel J and Van Roy, Benjamin and Kazerouni, Abbas and Osband, Ian and Wen, Zheng},
+  journal={Foundations and Trends in Machine Learning},
+  volume={11},
+  number={1},
+  pages={1--96},
+  year={2018},
+  publisher={Now Publishers Inc.},
+  doi={10.1561/2200000070}
+}
+
+% -------------------- Federated Learning --------------------
+
+@inproceedings{mcmahan2017communication,
+  title={Communication-efficient learning of deep networks from decentralized data},
+  author={McMahan, Brendan and Moore, Eider and Ramage, Daniel and Hampson, Seth and Arcas, Blaise Aguera y},
+  booktitle={Artificial Intelligence and Statistics},
+  pages={1273--1282},
+  year={2017},
+  organization={PMLR}
+}
+
+@article{kairouz2019advances,
+  title={Advances and open problems in federated learning},
+  author={Kairouz, Peter and McMahan, H Brendan and Avent, Brendan and Bellet, Aur{\'e}lien and Bennis, Mehdi and Bhagoji, Arjun Nitin and Bonawitz, Keith and Charles, Zachary and Cormode, Graham and Cummings, Rachel and others},
+  journal={arXiv preprint arXiv:1912.04977},
+  year={2019},
+  note={Foundations and Trends in Machine Learning, 2021}
+}
+
+@article{li2020federated,
+  title={Federated optimization in heterogeneous networks},
+  author={Li, Tian and Sahu, Anit Kumar and Zaheer, Manzil and Sanjabi, Maziar and Talwalkar, Ameet and Smith, Virginia},
+  booktitle={Proceedings of Machine Learning and Systems},
+  volume={2},
+  pages={429--450},
+  year={2020}
+}
+
+@inproceedings{bonawitz2019towards,
+  title={Towards federated learning at scale: System design},
+  author={Bonawitz, Keith and Eichner, Hubert and Grieskamp, Wolfgang and Huba, Dzmitry and Ingerman, Alex and Ivanov, Vladimir and Kiddon, Chloe and Kone{\v{c}}n{\'y}, Jakub and Mazzocchi, Stefano and McMahan, H Brendan and others},
+  booktitle={Proceedings of Machine Learning and Systems},
+  volume={1},
+  pages={374--388},
+  year={2019}
+}
+
+@inproceedings{abadi2016deep,
+  title={Deep learning with differential privacy},
+  author={Abadi, Martin and Chu, Andy and Goodfellow, Ian and McMahan, H Brendan and Mironov, Ilya and Talwar, Kunal and Zhang, Li},
+  booktitle={Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security},
+  pages={308--318},
+  year={2016},
+  doi={10.1145/2976749.2978318}
+}
+
+@inproceedings{geyer2017differentially,
+  title={Differentially private federated learning: A client level perspective},
+  author={Geyer, Robin C and Klein, Tassilo and Nabi, Moin},
+  booktitle={NIPS Workshop on Machine Learning on the Phone and other Consumer Devices},
+  year={2017}
+}
+
+@article{hard2018federated,
+  title={Federated learning for mobile keyboard prediction},
+  author={Hard, Andrew and Rao, Kanishka and Mathews, Rajiv and Ramaswamy, Swaroop and Beaufays, Fran{\c{c}}oise and Augenstein, Sean and Eichner, Hubert and Kiddon, Chloe and Ramage, Daniel},
+  journal={arXiv preprint arXiv:1811.03604},
+  year={2018}
+}
+
+@article{yang2019federated,
+  title={Federated machine learning: Concept and applications},
+  author={Yang, Qiang and Liu, Yang and Chen, Tianjian and Tong, Yongxin},
+  journal={ACM Transactions on Intelligent Systems and Technology (TIST)},
+  volume={10},
+  number={2},
+  pages={1--19},
+  year={2019},
+  publisher={ACM New York, NY, USA},
+  doi={10.1145/3298981}
+}
+
+@inproceedings{caldas2018leaf,
+  title={LEAF: A benchmark for federated settings},
+  author={Caldas, Sebastian and Duddu, Sai Meher Karthik and Wu, Peter and Li, Tian and Kone{\v{c}}n{\'y}, Jakub and McMahan, H Brendan and Smith, Virginia and Talwalkar, Ameet},
+  journal={arXiv preprint arXiv:1812.01097},
+  year={2018}
+}
+
+@article{konecny2016federated,
+  title={Federated learning: Strategies for improving communication efficiency},
+  author={Kone{\v{c}}n{\'y}, Jakub and McMahan, H Brendan and Yu, Felix X and Richt{\'a}rik, Peter and Suresh, Ananda Theertha and Bacon, Dave},
+  journal={arXiv preprint arXiv:1610.05492},
+  year={2016}
+}
+
+% -------------------- Fairness-Aware Machine Learning --------------------
+
+@article{barocas2016big,
+  title={Big data's disparate impact},
+  author={Barocas, Solon and Selbst, Andrew D},
+  journal={California Law Review},
+  volume={104},
+  pages={671--732},
+  year={2016},
+  doi={10.15779/Z38BG31}
+}
+
+@inproceedings{hardt2016equality,
+  title={Equality of opportunity in supervised learning},
+  author={Hardt, Moritz and Price, Eric and Srebro, Nathan},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={29},
+  pages={3315--3323},
+  year={2016}
+}
+
+@article{chouldechova2017fair,
+  title={Fair prediction with disparate impact: A study of bias in recidivism prediction instruments},
+  author={Chouldechova, Alexandra},
+  journal={Big Data},
+  volume={5},
+  number={2},
+  pages={153--163},
+  year={2017},
+  publisher={Mary Ann Liebert, Inc.},
+  doi={10.1089/big.2016.0047}
+}
+
+@inproceedings{kleinberg2016inherent,
+  title={Inherent trade-offs in the fair determination of risk scores},
+  author={Kleinberg, Jon and Mullainathan, Sendhil and Raghavan, Manish},
+  booktitle={Proceedings of the 8th Innovations in Theoretical Computer Science Conference},
+  year={2017},
+  doi={10.4230/LIPIcs.ITCS.2017.43}
+}
+
+@inproceedings{dwork2012fairness,
+  title={Fairness through awareness},
+  author={Dwork, Cynthia and Hardt, Moritz and Pitassi, Toniann and Reingold, Omer and Zemel, Richard},
+  booktitle={Proceedings of the 3rd Innovations in Theoretical Computer Science Conference},
+  pages={214--226},
+  year={2012},
+  doi={10.1145/2090236.2090255}
+}
+
+@article{mehrabi2021survey,
+  title={A survey on bias and fairness in machine learning},
+  author={Mehrabi, Ninareh and Morstatter, Fred and Saxena, Nripsuta and Lerman, Kristina and Galstyan, Aram},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={54},
+  number={6},
+  pages={1--35},
+  year={2021},
+  publisher={ACM New York, NY, USA},
+  doi={10.1145/3457607}
+}
+
+@inproceedings{zemel2013learning,
+  title={Learning fair representations},
+  author={Zemel, Rich and Wu, Yu and Swersky, Kevin and Pitassi, Toni and Dwork, Cynthia},
+  booktitle={International Conference on Machine Learning},
+  pages={325--333},
+  year={2013},
+  organization={PMLR}
+}
+
+@inproceedings{calmon2017optimized,
+  title={Optimized pre-processing for discrimination prevention},
+  author={Calmon, Flavio and Wei, Dennis and Vinzamuri, Bhanukiran and Ramamurthy, Karthikeyan Natesan and Varshney, Kush R},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={30},
+  pages={3992--4001},
+  year={2017}
+}
+
+@article{bellamy2019ai,
+  title={AI Fairness 360: An extensible toolkit for detecting and mitigating algorithmic bias},
+  author={Bellamy, Rachel KE and Dey, Kuntal and Hind, Michael and Hoffman, Samuel C and Houde, Stephanie and Kannan, Kalapriya and Lohia, Pranay and Martino, Jacquelyn and Mehta, Sameep and Mojsilovi{\'c}, Aleksandra and others},
+  journal={IBM Journal of Research and Development},
+  volume={63},
+  number={4/5},
+  pages={4--1},
+  year={2019},
+  publisher={IBM},
+  doi={10.1147/JRD.2019.2942287}
+}
+
+@inproceedings{bird2020fairlearn,
+  title={Fairlearn: A toolkit for assessing and improving fairness in AI},
+  author={Bird, Sarah and Dud{\'\i}k, Miroslav and Edgar, Richard and Horn, Brandon and Lutz, Roman and Milan, Vanessa and Sameki, Mehrnoosh and Wallach, Hanna and Walker, Kathleen},
+  journal={Microsoft Technical Report MSR-TR-2020-32},
+  year={2020}
+}
+
+@article{obermeyer2019dissecting,
+  title={Dissecting racial bias in an algorithm used to manage the health of populations},
+  author={Obermeyer, Ziad and Powers, Brian and Vogeli, Christine and Mullainathan, Sendhil},
+  journal={Science},
+  volume={366},
+  number={6464},
+  pages={447--453},
+  year={2019},
+  publisher={American Association for the Advancement of Science},
+  doi={10.1126/science.aax2342}
+}
+
+@article{buolamwini2018gender,
+  title={Gender shades: Intersectional accuracy disparities in commercial gender classification},
+  author={Buolamwini, Joy and Gebru, Timnit},
+  booktitle={Conference on Fairness, Accountability and Transparency},
+  pages={77--91},
+  year={2018},
+  organization={PMLR}
+}
+
+@inproceedings{zhang2018mitigating,
+  title={Mitigating unwanted biases with adversarial learning},
+  author={Zhang, Brian Hu and Lemoine, Blake and Mitchell, Margaret},
+  booktitle={Proceedings of the 2018 AAAI/ACM Conference on AI, Ethics, and Society},
+  pages={335--340},
+  year={2018},
+  doi={10.1145/3278721.3278779}
+}
+
+@article{corbett2018measure,
+  title={The measure and mismeasure of fairness: A critical review of fair machine learning},
+  author={Corbett-Davies, Sam and Goel, Sharad},
+  journal={arXiv preprint arXiv:1808.00023},
+  year={2018}
+}
+
+@article{mitchell2021algorithmic,
+  title={Algorithmic fairness: Choices, assumptions, and definitions},
+  author={Mitchell, Shira and Potash, Eric and Barocas, Solon and D'Amour, Alexander and Lum, Kristian},
+  journal={Annual Review of Statistics and Its Application},
+  volume={8},
+  pages={141--163},
+  year={2021},
+  publisher={Annual Reviews},
+  doi={10.1146/annurev-statistics-042720-125902}
+}
+
+% -------------------- General Machine Learning --------------------
+
+@book{bishop2006pattern,
+  title={Pattern Recognition and Machine Learning},
+  author={Bishop, Christopher M},
+  year={2006},
+  publisher={Springer},
+  address={New York}
+}
+
+@book{goodfellow2016deep,
+  title={Deep Learning},
+  author={Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
+  year={2016},
+  publisher={MIT Press},
+  address={Cambridge, MA}
+}
+
+@book{mohri2018foundations,
+  title={Foundations of Machine Learning},
+  author={Mohri, Mehryar and Rostamizadeh, Afshin and Talwalkar, Ameet},
+  year={2018},
+  edition={2nd},
+  publisher={MIT Press},
+  address={Cambridge, MA}
+}
+
+@book{shalev2014understanding,
+  title={Understanding Machine Learning: From Theory to Algorithms},
+  author={Shalev-Shwartz, Shai and Ben-David, Shai},
+  year={2014},
+  publisher={Cambridge University Press},
+  address={Cambridge, UK},
+  doi={10.1017/CBO9781107298019}
+}
+
+% ================== END OF ENHANCEMENTS REFERENCES ==================

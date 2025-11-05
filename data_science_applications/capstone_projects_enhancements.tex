@@ -1,0 +1,2423 @@
+% ================================================================
+% CAPSTONE PROJECTS ENHANCEMENT SLIDES
+% Additional content for data science application presentations
+%
+% Topics Covered:
+% 1. Project Framework Overview
+% 2. Real-World Datasets by Domain
+% 3. Progressive Milestones with Rubrics
+% 4. Peer Review Components
+% 5. Industry Mentor Connections
+% 6. Project Templates and Examples
+%
+% Each section includes knowledge checks:
+% - Multiple choice questions with explanations
+% - Conceptual problems
+% - Coding challenges
+%
+% Total: ~30 slides (18 content + 12 knowledge checks)
+% Author: Diogo Ribeiro
+% Date: January 2025
+% ================================================================
+
+% NOTE: These slides are designed to be integrated into any presentation
+% See CAPSTONE_PROJECTS_ENHANCEMENT_GUIDE.md for integration instructions
+
+% ================================================================
+% SECTION 1: PROJECT FRAMEWORK OVERVIEW
+% ================================================================
+
+\section{Semester-Long Capstone Projects}
+
+% -------------------- Introduction --------------------
+
+\begin{frame}{Why Capstone Projects?}
+\textbf{Bridge the gap between theory and practice}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Learning Objectives:}
+\begin{enumerate}
+\item \textcolor{forest}{End-to-end experience}: From problem formulation to deployment
+\item \textcolor{navyblue}{Real-world data}: Messy, incomplete, biased datasets
+\item \textcolor{crimson}{Technical depth}: Apply advanced methods learned in class
+\item \textcolor{purple}{Communication}: Present to technical and non-technical audiences
+\item \textcolor{gold}{Collaboration}: Work with peers and industry mentors
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Industry Alignment:}
+\begin{itemize}
+\item Mirrors real data science workflows
+\item Builds portfolio for job applications
+\item Develops production-ready skills
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Project Components:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.8]
+\node[draw, rectangle, fill=navyblue!20, text width=3cm, align=center] (problem) at (3,5) {\textbf{Problem\\Formulation}};
+\node[draw, rectangle, fill=forest!20, text width=3cm, align=center] (data) at (3,4) {\textbf{Data\\Exploration}};
+\node[draw, rectangle, fill=crimson!20, text width=3cm, align=center] (methods) at (3,3) {\textbf{Methods\\Development}};
+\node[draw, rectangle, fill=purple!20, text width=3cm, align=center] (validation) at (3,2) {\textbf{Validation\\Testing}};
+\node[draw, rectangle, fill=gold!20, text width=3cm, align=center] (deployment) at (3,1) {\textbf{Communication\\Documentation}};
+
+\draw[->, thick] (problem) -- (data);
+\draw[->, thick] (data) -- (methods);
+\draw[->, thick] (methods) -- (validation);
+\draw[->, thick] (validation) -- (deployment);
+\draw[->, thick, dashed] (deployment) to[bend right=60] (data);
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.2cm}
+\textbf{Iterative Process:} Not linear!
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Timeline and Structure --------------------
+
+\begin{frame}{Semester Timeline: 14 Weeks}
+\textbf{Structured milestones with incremental deliverables}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{|l|l|p{5cm}|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Weeks} & \textbf{Milestone} & \textbf{Deliverables} & \textbf{Weight} \\
+\hline
+1-3 & \textcolor{forest}{\textbf{M1: Discovery}} & Problem statement, dataset exploration, baseline metrics & 15\% \\
+\hline
+4-6 & \textcolor{navyblue}{\textbf{M2: Foundation}} & Feature engineering, baseline models, EDA report & 20\% \\
+\hline
+7-10 & \textcolor{crimson}{\textbf{M3: Advanced}} & Advanced methods, validation strategy, A/B comparison & 25\% \\
+\hline
+11-13 & \textcolor{purple}{\textbf{M4: Deployment}} & Production code, documentation, technical report & 30\% \\
+\hline
+14 & \textcolor{gold}{\textbf{Final}} & Industry presentation, Q\&A, peer evaluations & 10\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.4cm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Continuous Assessment:}
+\begin{itemize}
+\item Weekly progress check-ins
+\item GitHub commit history
+\item Code reviews from peers
+\item Mentor feedback sessions
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Grading Dimensions:}
+\begin{enumerate}
+\item Technical rigor (30\%)
+\item Code quality \& reproducibility (25\%)
+\item Communication \& documentation (20\%)
+\item Innovation \& creativity (15\%)
+\item Collaboration \& peer review (10\%)
+\end{enumerate}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{Key Principle}
+Emphasis on \textbf{process} over results. A well-documented failure is better than an undocumented success!
+\end{alertblock}
+\end{frame}
+
+% -------------------- Knowledge Check 1 --------------------
+
+\begin{frame}{Knowledge Check 1: Project Framework}
+\textbf{Multiple Choice Questions}
+
+\vspace{0.3cm}
+
+\textbf{Question 1:} In a capstone project timeline, which milestone typically receives the highest weight in grading?
+
+\begin{enumerate}[A)]
+\item M1: Problem Discovery (15\%)
+\item M2: Foundation Models (20\%)
+\item M3: Advanced Methods (25\%)
+\item \textcolor{forest}{\textbf{M4: Deployment \& Documentation (30\%)}}
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: D}} - Milestone 4 (30\%) receives the highest weight because it demonstrates the ability to deliver production-ready code with comprehensive documentation, which is the most valuable skill in industry. It encompasses all previous work plus deployment considerations, testing, and professional documentation.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} According to the key principle, what should be emphasized over final results?
+
+\begin{enumerate}[A)]
+\item The novelty of the methods used
+\item The statistical significance of findings
+\item \textcolor{forest}{\textbf{The process and documentation}}
+\item The size of the dataset
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Process over results! A well-documented failure teaches more than an undocumented success. Industry values reproducible workflows, clear decision-making, and honest reporting of challenges.
+\end{block}
+\end{frame}
+
+\begin{frame}{Knowledge Check 1: Conceptual Problem}
+\textbf{Short Answer Question}
+
+\vspace{0.3cm}
+
+\begin{block}{Question}
+You're starting a capstone project to predict employee attrition at a tech company. You have access to HR data (demographics, performance reviews, surveys) for 5,000 employees over 3 years.
+
+\textbf{Task:} Design your Milestone 1 deliverables. Specifically:
+\begin{enumerate}
+\item Define 2 success metrics (1 predictive, 1 business-oriented)
+\item Identify 3 potential data quality issues you'd investigate during EDA
+\item Propose 2 naive baseline approaches and their expected performance
+\end{enumerate}
+
+\textbf{Word limit:} 200-300 words
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\begin{block}{Sample Answer (Partial)}
+\small
+\textbf{Success Metrics:}
+\begin{enumerate}
+\item \textit{Predictive:} AUROC $> 0.75$ for 90-day attrition prediction
+\item \textit{Business:} Identify top 20\% at-risk employees who represent 60\%+ of actual attrition (lift curve)
+\end{enumerate}
+
+\textbf{Data Quality Issues:}
+\begin{enumerate}
+\item \textit{Selection bias:} Only employees who stayed $>6$ months in dataset
+\item \textit{Missing data:} Survey responses may have 40\%+ missingness
+\item \textit{Temporal leakage:} Performance reviews close to attrition date may contain information unavailable at prediction time
+\end{enumerate}
+
+\textbf{Baselines:} (1) Predict majority class (stay) $\to$ 85\% accuracy; (2) Use last survey satisfaction score alone $\to$ AUROC $\approx 0.65$
+\end{block}
+\end{frame}
+
+% ================================================================
+% SECTION 2: REAL-WORLD DATASETS BY DOMAIN
+% ================================================================
+
+\section{Real-World Datasets and Domains}
+
+% -------------------- Healthcare --------------------
+
+\begin{frame}{Domain 1: Healthcare and Life Sciences}
+\textbf{High-stakes decisions with real-world impact}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Available Datasets:}
+\begin{enumerate}
+\item \textbf{MIMIC-III/IV} \cite{johnson2016mimic}
+   \begin{itemize}
+   \item ICU patient records (40K+ patients)
+   \item Mortality, readmission, complications
+   \item Access: PhysioNet credentialing
+   \end{itemize}
+
+\item \textbf{CMS Medicare Claims}
+   \begin{itemize}
+   \item Hospital readmissions, costs
+   \item Treatment effectiveness
+   \item Public use files available
+   \end{itemize}
+
+\item \textbf{Cancer Genomics (TCGA)}
+   \begin{itemize}
+   \item Survival prediction
+   \item Treatment response
+   \item Open access via NIH
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Sample Project Ideas:}
+
+\begin{block}{Project 1: Readmission Prediction}
+\textbf{Goal:} Predict 30-day hospital readmission risk\\
+\textbf{Causal question:} Which interventions reduce readmissions?\\
+\textbf{Methods:} Logistic regression, XGBoost, causal forests\\
+\textbf{Challenges:} Class imbalance, missing data, selection bias
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 2: Treatment Effect Heterogeneity}
+\textbf{Goal:} Personalized treatment recommendations\\
+\textbf{Causal question:} Who benefits most from treatment X?\\
+\textbf{Methods:} Doubly robust estimation, meta-learners\\
+\textbf{Challenges:} Unmeasured confounding, regulatory compliance
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Industry Partners:}
+\begin{itemize}
+\item Health tech startups
+\item Hospital analytics teams
+\item Pharmaceutical companies
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{Ethics Alert}
+HIPAA compliance, patient privacy, fairness considerations are \textbf{critical}!
+\end{alertblock}
+\end{frame}
+
+% -------------------- Finance and E-commerce --------------------
+
+\begin{frame}{Domain 2: Finance and E-commerce}
+\textbf{High-volume, high-velocity business applications}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Available Datasets:}
+
+\begin{enumerate}
+\item \textbf{Lending Club} \cite{lendingclub}
+   \begin{itemize}
+   \item Loan default prediction
+   \item Credit risk modeling
+   \item 2M+ loans, 145 features
+   \end{itemize}
+
+\item \textbf{Kaggle Competitions}
+   \begin{itemize}
+   \item Credit card fraud (284K transactions)
+   \item Customer churn prediction
+   \item Recommendation systems
+   \end{itemize}
+
+\item \textbf{Retail Transaction Logs}
+   \begin{itemize}
+   \item Instacart (3M+ orders)
+   \item Amazon reviews (233M reviews)
+   \item Dynamic pricing datasets
+   \end{itemize}
+
+\item \textbf{Stock Market Data}
+   \begin{itemize}
+   \item Yahoo Finance, Alpha Vantage
+   \item High-frequency trading data
+   \item Sentiment analysis from news
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Sample Project Ideas:}
+
+\begin{block}{Project 1: Fraud Detection}
+\textbf{Goal:} Real-time fraud classification\\
+\textbf{Key challenge:} Extreme class imbalance (0.17\% fraud)\\
+\textbf{Methods:} SMOTE, anomaly detection, online learning\\
+\textbf{Metrics:} Precision-recall, cost-sensitive loss
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 2: Churn Prediction}
+\textbf{Goal:} Identify at-risk customers\\
+\textbf{Causal question:} What retention strategies work?\\
+\textbf{Methods:} Survival analysis, uplift modeling\\
+\textbf{Business impact:} ROI calculation, CLV optimization
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 3: Recommendation System}
+\textbf{Goal:} Personalized product recommendations\\
+\textbf{Methods:} Collaborative filtering, matrix factorization\\
+\textbf{Challenges:} Cold start, scalability, diversity
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Industry Partners:} Fintech, banks, e-commerce platforms
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Social Impact and Policy --------------------
+
+\begin{frame}{Domain 3: Social Impact and Policy Evaluation}
+\textbf{Data science for social good}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Available Datasets:}
+
+\begin{enumerate}
+\item \textbf{Education}
+   \begin{itemize}
+   \item PISA, TIMSS international assessments
+   \item College Scorecard (6K+ institutions)
+   \item EdGap student outcomes
+   \end{itemize}
+
+\item \textbf{Government \& Policy}
+   \begin{itemize}
+   \item World Bank Open Data
+   \item US Census Bureau (ACS, CPS)
+   \item City-level administrative data
+   \end{itemize}
+
+\item \textbf{Social Programs}
+   \begin{itemize}
+   \item J-PAL experimental data
+   \item Opportunity Insights mobility data
+   \item UN Sustainable Development Goals
+   \end{itemize}
+
+\item \textbf{Criminal Justice}
+   \begin{itemize}
+   \item COMPAS recidivism data
+   \item Police activity datasets
+   \item Fairness case studies
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Sample Project Ideas:}
+
+\begin{block}{Project 1: Education Intervention}
+\textbf{Goal:} Evaluate tutoring program effectiveness\\
+\textbf{Causal question:} Does tutoring close achievement gaps?\\
+\textbf{Methods:} RCT analysis, difference-in-differences, RDD\\
+\textbf{Impact:} Policy recommendations for school districts
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 2: Poverty Prediction}
+\textbf{Goal:} Target welfare programs efficiently\\
+\textbf{Methods:} Transfer learning, satellite imagery, surveys\\
+\textbf{Challenges:} Algorithmic fairness, equity considerations\\
+\textbf{Partners:} NGOs, government agencies
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 3: Recidivism Fairness}
+\textbf{Goal:} Audit risk assessment algorithms\\
+\textbf{Focus:} Disparate impact, calibration across groups\\
+\textbf{Methods:} Fairness metrics, counterfactual analysis\\
+\textbf{Outcome:} Policy brief for justice reform
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Industry Partners:} NGOs, think tanks, government agencies
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Technology and Manufacturing --------------------
+
+\begin{frame}{Domain 4: Technology and Manufacturing}
+\textbf{IoT, predictive maintenance, and quality control}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Available Datasets:}
+
+\begin{enumerate}
+\item \textbf{Predictive Maintenance}
+   \begin{itemize}
+   \item NASA Turbofan Engine Degradation
+   \item Microsoft Azure IoT (sensor data)
+   \item Bosch production line (1M+ products)
+   \end{itemize}
+
+\item \textbf{Quality Control}
+   \begin{itemize}
+   \item Steel defect detection (images)
+   \item Semiconductor manufacturing
+   \item Supply chain optimization
+   \end{itemize}
+
+\item \textbf{Anomaly Detection}
+   \begin{itemize}
+   \item Network intrusion (KDD Cup)
+   \item Server logs (Backblaze HDD)
+   \item Time series anomalies
+   \end{itemize}
+
+\item \textbf{Computer Vision}
+   \begin{itemize}
+   \item ImageNet, COCO
+   \item Defect detection datasets
+   \item Autonomous driving (nuScenes)
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Sample Project Ideas:}
+
+\begin{block}{Project 1: Predictive Maintenance}
+\textbf{Goal:} Predict equipment failure before it occurs\\
+\textbf{Data:} Sensor time series (temperature, vibration, etc.)\\
+\textbf{Methods:} LSTM, survival analysis, change point detection\\
+\textbf{Business impact:} Reduce downtime by 30\%, save \$M
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 2: Defect Detection}
+\textbf{Goal:} Automated quality inspection with CV\\
+\textbf{Methods:} CNNs, transfer learning, ensemble methods\\
+\textbf{Challenges:} Limited labeled data, class imbalance\\
+\textbf{Deployment:} Real-time inference at edge devices
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Project 3: Anomaly Detection}
+\textbf{Goal:} Identify unusual patterns in production\\
+\textbf{Methods:} Autoencoders, isolation forests, LSTM-VAE\\
+\textbf{Challenges:} Concept drift, false positive rate\\
+\textbf{MLOps:} Model monitoring, retraining pipelines
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Industry Partners:} Manufacturing, tech companies, startups
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Dataset Access --------------------
+
+\begin{frame}{Dataset Access and Ethics Considerations}
+\textbf{Where to find data and how to use it responsibly}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Data Sources:}
+
+\begin{enumerate}
+\item \textbf{Open Data Repositories}
+   \begin{itemize}
+   \item Kaggle Datasets (50K+ datasets)
+   \item UCI Machine Learning Repository
+   \item Google Dataset Search
+   \item AWS Open Data Registry
+   \item HuggingFace Datasets
+   \end{itemize}
+
+\item \textbf{Government \& Research}
+   \begin{itemize}
+   \item data.gov (300K+ datasets)
+   \item World Bank Open Data
+   \item NIH, NSF, NASA archives
+   \item ICPSR social science data
+   \end{itemize}
+
+\item \textbf{Academic Partnerships}
+   \begin{itemize}
+   \item Institutional data use agreements
+   \item Research collaborations
+   \item IRB-approved studies
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Ethics Checklist:}
+
+\begin{block}{Data Privacy}
+\begin{itemize}
+\item[$\square$] Anonymization/de-identification
+\item[$\square$] GDPR/HIPAA compliance if applicable
+\item[$\square$] Informed consent requirements
+\item[$\square$] Data use agreements signed
+\end{itemize}
+\end{block}
+
+\begin{block}{Fairness \& Bias}
+\begin{itemize}
+\item[$\square$] Protected attributes identified
+\item[$\square$] Disparate impact assessment
+\item[$\square$] Fairness metrics reported
+\item[$\square$] Bias mitigation strategies
+\end{itemize}
+\end{block}
+
+\begin{block}{Reproducibility}
+\begin{itemize}
+\item[$\square$] Data versioning (DVC, Git LFS)
+\item[$\square$] Seeds set for randomness
+\item[$\square$] Environment specifications (Docker)
+\item[$\square$] Code + data publicly archived
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\textbf{IRB Requirements:} Consult with institutional review board if working with human subjects data!
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Knowledge Check 2 --------------------
+
+\begin{frame}{Knowledge Check 2: Datasets and Ethics}
+\textbf{Multiple Choice Questions}
+
+\vspace{0.3cm}
+
+\textbf{Question 1:} You're building a credit risk model using Lending Club data. The dataset shows that loan default rates differ significantly by zip code, which correlates with race. What should you do?
+
+\begin{enumerate}[A)]
+\item Remove zip code from the dataset entirely
+\item Use zip code but add fairness constraints to ensure equal approval rates
+\item \textcolor{forest}{\textbf{Conduct disparate impact analysis and document findings; consider fairness metrics}}
+\item Ignore the issue since the data reflects reality
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - You should conduct a rigorous fairness analysis (disparate impact, calibration across groups) and document your findings. Simply removing features can still lead to bias through correlated features. Equal approval rates (answer B) may not be appropriate if there are legitimate differences. Ignoring the issue (D) is unethical. The key is transparency and consideration of multiple fairness metrics.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} For a healthcare capstone project using MIMIC-III ICU data, which is NOT typically required?
+
+\begin{enumerate}[A)]
+\item PhysioNet credentialing and CITI training
+\item Signed data use agreement
+\item \textcolor{forest}{\textbf{IRB approval for retrospective analysis of de-identified data}}
+\item HIPAA compliance considerations
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - MIMIC-III data is already de-identified and available for research. For retrospective analysis of de-identified data, IRB approval is typically \textit{not} required (though you should confirm with your institution). PhysioNet credentialing (A) and data use agreements (B) are required. HIPAA considerations (D) apply to proper data handling.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Knowledge Check 2: Coding Challenge}
+\textbf{Fairness Audit Implementation}
+
+\vspace{0.3cm}
+
+\begin{block}{Challenge}
+Implement a function to calculate disparate impact ratio for a binary classifier across demographic groups.
+
+\textbf{Specification:}
+\begin{itemize}
+\item Input: predictions (0/1), protected attribute (e.g., race), positive outcome = 1
+\item Output: Dictionary with selection rates per group and disparate impact ratio
+\item Disparate impact = (selection rate of protected group) / (selection rate of reference group)
+\item 80\% rule: DI ratio should be $\geq 0.8$ to avoid adverse impact
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\small
+\begin{verbatim}
+def disparate_impact(
+    predictions: np.ndarray,
+    protected_attr: np.ndarray,
+    protected_value: Any,
+    reference_value: Any
+) -> Dict[str, float]:
+    """
+    Calculate disparate impact ratio.
+
+    Returns:
+        {
+          'protected_rate': float,
+          'reference_rate': float,
+          'di_ratio': float,
+          'passes_80_rule': bool
+        }
+    """
+    # YOUR CODE HERE
+    pass
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Test Cases:}
+\small
+\begin{verbatim}
+# Test 1: No disparate impact
+pred = [1,1,0,0,1,1,0,0]
+attr = [0,0,0,0,1,1,1,1]
+result = disparate_impact(
+    pred, attr,
+    protected_value=1,
+    reference_value=0
+)
+assert result['di_ratio'] == 1.0
+assert result['passes_80_rule'] == True
+
+# Test 2: Adverse impact
+pred = [1,1,1,1,0,0,1,0]
+attr = [0,0,0,0,1,1,1,1]
+# protected: 1/4 = 0.25
+# reference: 4/4 = 1.0
+# DI = 0.25 / 1.0 = 0.25
+assert result['di_ratio'] == 0.25
+assert result['passes_80_rule'] == False
+\end{verbatim}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Auto-grader:} Submit to course platform for immediate feedback
+\end{frame}
+
+% ================================================================
+% SECTION 3: PROGRESSIVE MILESTONES WITH RUBRICS
+% ================================================================
+
+\section{Milestone Structure and Assessment}
+
+% -------------------- Milestone Overview --------------------
+
+\begin{frame}{Milestone 1: Problem Discovery (Weeks 1-3)}
+\textbf{Goal: Formulate a well-defined problem with success metrics}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Deliverables:}
+
+\begin{enumerate}
+\item \textbf{Project Proposal} (2-3 pages)
+   \begin{itemize}
+   \item Business context and motivation
+   \item Problem statement (predictive vs. causal)
+   \item Success metrics and evaluation criteria
+   \item Dataset description and access plan
+   \end{itemize}
+
+\item \textbf{Exploratory Data Analysis}
+   \begin{itemize}
+   \item Data dimensions, types, missingness
+   \item Descriptive statistics and visualizations
+   \item Initial insights and hypotheses
+   \end{itemize}
+
+\item \textbf{Baseline Metrics}
+   \begin{itemize}
+   \item Naive baselines (mean, mode, random)
+   \item Simple heuristics
+   \item Target performance improvement
+   \end{itemize}
+
+\item \textbf{GitHub Repository}
+   \begin{itemize}
+   \item README with project overview
+   \item Data loading scripts
+   \item Initial notebooks
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Evaluation Rubric (15\%):}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Criterion} & \textbf{Points} \\
+\hline
+\textcolor{forest}{\textbf{Problem Clarity}} & \\
+\hline
+Business context well-motivated & 15 \\
+Success metrics clearly defined & 10 \\
+Scope appropriate for semester & 10 \\
+\hline
+\textcolor{navyblue}{\textbf{Data Understanding}} & \\
+\hline
+Thorough EDA with visualizations & 20 \\
+Data quality issues identified & 10 \\
+Initial hypotheses stated & 10 \\
+\hline
+\textcolor{crimson}{\textbf{Technical Foundation}} & \\
+\hline
+Baseline metrics computed & 10 \\
+Reasonable target improvement & 5 \\
+\hline
+\textcolor{purple}{\textbf{Communication}} & \\
+\hline
+Clear writing, good structure & 10 \\
+Professional presentation & 5 \\
+\hline
+\textcolor{gold}{\textbf{Reproducibility}} & \\
+\hline
+GitHub repo well-organized & 10 \\
+Code runs without errors & 5 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Common Pitfalls:}
+\begin{itemize}
+\item[$\times$] Problem too vague or too broad
+\item[$\times$] Metrics not aligned with business goal
+\item[$\times$] Insufficient data exploration
+\item[$\times$] Dataset inaccessible or too small
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Milestone 2 --------------------
+
+\begin{frame}{Milestone 2: Foundation Models (Weeks 4-6)}
+\textbf{Goal: Feature engineering and baseline model development}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Deliverables:}
+
+\begin{enumerate}
+\item \textbf{Feature Engineering Pipeline}
+   \begin{itemize}
+   \item Handling missing data (imputation strategies)
+   \item Feature transformations (scaling, encoding)
+   \item Feature creation (domain-specific)
+   \item Feature selection analysis
+   \end{itemize}
+
+\item \textbf{Baseline Models}
+   \begin{itemize}
+   \item 2-3 simple models (e.g., logistic, decision tree, kNN)
+   \item Train-validation-test split
+   \item Cross-validation results
+   \item Performance comparison table
+   \end{itemize}
+
+\item \textbf{Technical Report}
+   \begin{itemize}
+   \item Methods section (3-4 pages)
+   \item Results with tables and figures
+   \item Error analysis
+   \end{itemize}
+
+\item \textbf{Code Quality}
+   \begin{itemize}
+   \item Modular functions, not just notebooks
+   \item Unit tests for key functions
+   \item Requirements.txt / environment.yml
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Evaluation Rubric (20\%):}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Criterion} & \textbf{Points} \\
+\hline
+\textcolor{forest}{\textbf{Feature Engineering}} & \\
+\hline
+Appropriate preprocessing & 15 \\
+Thoughtful feature creation & 15 \\
+Feature importance analysis & 10 \\
+\hline
+\textcolor{navyblue}{\textbf{Modeling}} & \\
+\hline
+Multiple baselines compared & 15 \\
+Proper train/validation/test split & 10 \\
+Cross-validation implemented & 10 \\
+\hline
+\textcolor{crimson}{\textbf{Evaluation}} & \\
+\hline
+Appropriate metrics used & 10 \\
+Error analysis conducted & 10 \\
+\hline
+\textcolor{purple}{\textbf{Code Quality}} & \\
+\hline
+Modular, reusable code & 10 \\
+Documentation and tests & 5 \\
+\hline
+\textcolor{gold}{\textbf{Communication}} & \\
+\hline
+Clear technical writing & 10 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Success Indicators:}
+\begin{itemize}
+\item[$\checkmark$] Beat naive baseline by meaningful margin
+\item[$\checkmark$] Feature engineering improves performance
+\item[$\checkmark$] Error analysis reveals insights
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Milestone 3 --------------------
+
+\begin{frame}{Milestone 3: Advanced Methods (Weeks 7-10)}
+\textbf{Goal: Apply advanced techniques and rigorous validation}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Deliverables:}
+
+\begin{enumerate}
+\item \textbf{Advanced Model(s)}
+   \begin{itemize}
+   \item Apply 1-2 methods from class:\\
+   \quad - Ensemble methods (RF, GBM, XGBoost)\\
+   \quad - Neural networks (if appropriate)\\
+   \quad - Causal inference methods\\
+   \quad - Bayesian models
+   \item Hyperparameter tuning (grid/random search)
+   \item Model interpretation (SHAP, LIME, etc.)
+   \end{itemize}
+
+\item \textbf{Rigorous Validation}
+   \begin{itemize}
+   \item Hold-out test set evaluation
+   \item Statistical significance testing
+   \item Confidence intervals / credible intervals
+   \item Sensitivity analysis
+   \end{itemize}
+
+\item \textbf{A/B Comparison}
+   \begin{itemize}
+   \item Compare advanced vs. baseline methods
+   \item Cost-benefit analysis (if applicable)
+   \item Model selection justification
+   \end{itemize}
+
+\item \textbf{Peer Review Round 1}
+   \begin{itemize}
+   \item Review 2 peer projects
+   \item Receive feedback on your project
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Evaluation Rubric (25\%):}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Criterion} & \textbf{Points} \\
+\hline
+\textcolor{forest}{\textbf{Advanced Methods}} & \\
+\hline
+Appropriate method selection & 15 \\
+Correct implementation & 15 \\
+Hyperparameter tuning & 10 \\
+Model interpretation & 10 \\
+\hline
+\textcolor{navyblue}{\textbf{Validation}} & \\
+\hline
+Rigorous evaluation strategy & 15 \\
+Statistical testing & 10 \\
+Honest reporting of limitations & 5 \\
+\hline
+\textcolor{crimson}{\textbf{Innovation}} & \\
+\hline
+Novel approach or insight & 10 \\
+Goes beyond boilerplate & 5 \\
+\hline
+\textcolor{purple}{\textbf{Peer Review}} & \\
+\hline
+Quality of reviews given & 10 \\
+Response to feedback received & 5 \\
+\hline
+\textcolor{gold}{\textbf{Communication}} & \\
+\hline
+Technical depth in report & 10 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Red Flags:}
+\begin{itemize}
+\item[$\times$] Cherry-picking results
+\item[$\times$] Data leakage issues
+\item[$\times$] Overfitting without acknowledgment
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Milestone 4 --------------------
+
+\begin{frame}{Milestone 4: Production \& Documentation (Weeks 11-13)}
+\textbf{Goal: Production-ready code and comprehensive documentation}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Deliverables:}
+
+\begin{enumerate}
+\item \textbf{Production Code}
+   \begin{itemize}
+   \item Refactored, modular codebase
+   \item CLI or API for model inference
+   \item Docker container for deployment
+   \item Logging and error handling
+   \item Model versioning (MLflow, DVC)
+   \end{itemize}
+
+\item \textbf{Testing Suite}
+   \begin{itemize}
+   \item Unit tests (80\%+ coverage)
+   \item Integration tests
+   \item Data validation tests
+   \item Model performance tests
+   \end{itemize}
+
+\item \textbf{Documentation}
+   \begin{itemize}
+   \item README with quickstart guide
+   \item API documentation (Sphinx/pdoc)
+   \item Model card \cite{mitchell2019model}
+   \item Reproducibility instructions
+   \end{itemize}
+
+\item \textbf{Final Technical Report}
+   \begin{itemize}
+   \item Full report (8-12 pages)
+   \item Abstract, intro, methods, results, discussion
+   \item Conference-style formatting
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Evaluation Rubric (30\%):}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Criterion} & \textbf{Points} \\
+\hline
+\textcolor{forest}{\textbf{Code Quality}} & \\
+\hline
+Clean, modular architecture & 15 \\
+Follows best practices (PEP8, etc.) & 10 \\
+Production-ready features & 10 \\
+\hline
+\textcolor{navyblue}{\textbf{Testing}} & \\
+\hline
+Comprehensive test suite & 15 \\
+CI/CD pipeline (GitHub Actions) & 5 \\
+\hline
+\textcolor{crimson}{\textbf{Documentation}} & \\
+\hline
+Excellent README & 10 \\
+API/code documentation & 5 \\
+Model card completed & 5 \\
+\hline
+\textcolor{purple}{\textbf{Technical Report}} & \\
+\hline
+Clear, professional writing & 10 \\
+Complete narrative arc & 10 \\
+Proper citations & 5 \\
+\hline
+\textcolor{gold}{\textbf{Reproducibility}} & \\
+\hline
+Anyone can reproduce results & 15 \\
+Docker/environment setup works & 5 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Gold Standard:} Could be deployed to production with minimal changes!
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Knowledge Check 3 --------------------
+
+\begin{frame}{Knowledge Check 3: Milestone Assessment}
+\textbf{Multiple Choice Questions}
+
+\vspace{0.3cm}
+
+\textbf{Question 1:} You're in Milestone 3 and discover that you've been inadvertently using the test set during hyperparameter tuning, leading to overly optimistic results. What should you do?
+
+\begin{enumerate}[A)]
+\item Continue as planned and mention it in limitations
+\item Just use a new test set and don't mention the mistake
+\item \textcolor{forest}{\textbf{Re-split data properly, retrain all models, report honestly about the issue}}
+\item Average the old and new results
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Integrity is paramount! You must fix the data leakage issue by properly re-splitting your data and retraining all models. Document this in your report as a lesson learned. This demonstrates scientific rigor and honesty, which is valued more than perfect results. Remember: \textit{process over results}!
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} In Milestone 4, you're creating a model card. Which section is MOST critical for ethical deployment?
+
+\begin{enumerate}[A)]
+\item Model architecture details
+\item Training hyperparameters
+\item \textcolor{forest}{\textbf{Intended use, out-of-scope uses, and ethical considerations}}
+\item Performance metrics table
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - While all sections matter, the "Intended Use" and "Ethical Considerations" sections are most critical for preventing misuse. These sections specify what the model should and shouldn't be used for, identify potential harms, and document fairness analyses. This prevents deployment in inappropriate contexts.
+\end{block}
+\end{frame}
+
+\begin{frame}{Knowledge Check 3: Conceptual Problem}
+\textbf{Milestone Planning}
+
+\vspace{0.3cm}
+
+\begin{block}{Scenario}
+You're at the end of Milestone 2 (week 6). Your baseline logistic regression achieves AUROC = 0.68 on your churn prediction task. Your initial proposal ambitiously targeted AUROC $> 0.85$.
+
+During EDA, you discovered:
+\begin{itemize}
+\item 35\% missing data in key behavioral features
+\item Strong temporal trends (customers from 2020 behave differently than 2023)
+\item Only 8\% churn rate (class imbalance)
+\end{itemize}
+
+\textbf{Questions:}
+\begin{enumerate}
+\item Should you revise your success metric target? Justify your answer. (50 words)
+\item Propose 3 specific technical approaches for Milestone 3 to improve performance. (100 words)
+\item How would you structure your peer review request to get useful feedback? (50 words)
+\end{enumerate}
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\begin{block}{Sample Answer (Partial)}
+\small
+\textbf{1. Metric revision:} Yes, revise to AUROC $> 0.75$. The 0.85 target may be unrealistic given data quality issues. Honest goal-setting shows maturity. Document original target and rationale for change.
+
+\textbf{2. Technical approaches:} (a) Advanced imputation (MICE, KNN) for missing data; (b) Temporal validation with time-based splits to address concept drift; (c) Class balancing with SMOTE + XGBoost/Random Forest with class weights.
+
+\textbf{3. Peer review:} Request specific feedback on: imputation strategy appropriateness, temporal validation setup, and suggestions for handling class imbalance. Share visualizations of missingness patterns and temporal trends.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Knowledge Check 3: Coding Challenge}
+\textbf{Temporal Cross-Validation Implementation}
+
+\vspace{0.3cm}
+
+\begin{block}{Challenge}
+Implement a temporal cross-validation splitter for time series data that respects temporal ordering and prevents data leakage from future to past.
+
+\textbf{Specification:}
+\begin{itemize}
+\item Input: dates array, number of splits, gap between train/test (days)
+\item Output: Iterator yielding (train\_idx, test\_idx) tuples
+\item Each fold uses progressively more data for training
+\item Gap prevents contamination (e.g., 7-day gap for churn at 30 days)
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\small
+\begin{verbatim}
+def temporal_cv_split(
+    dates: np.ndarray,
+    n_splits: int = 5,
+    gap_days: int = 7
+) -> Iterator[Tuple[np.ndarray,
+                    np.ndarray]]:
+    """
+    Temporal cross-validation splitter.
+
+    Example with n_splits=3:
+    Fold 1: Train [---] Gap | Test [--]
+    Fold 2: Train [------] Gap | Test [--]
+    Fold 3: Train [---------] Gap | Test [--]
+
+    Yields:
+        (train_idx, test_idx)
+    """
+    # YOUR CODE HERE
+    pass
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Test Case:}
+\small
+\begin{verbatim}
+dates = pd.date_range(
+    '2023-01-01',
+    periods=100,
+    freq='D'
+)
+
+splitter = temporal_cv_split(
+    dates,
+    n_splits=3,
+    gap_days=7
+)
+
+for i, (train, test) in
+        enumerate(splitter):
+    print(f"Fold {i+1}:")
+    print(f"  Train: {len(train)} samples")
+    print(f"  Test: {len(test)} samples")
+    # Verify no overlap
+    assert len(
+        set(train) & set(test)
+    ) == 0
+    # Verify gap
+    assert (dates[test].min() -
+            dates[train].max()).days
+            >= gap_days
+\end{verbatim}
+
+\vspace{0.2cm}
+\textbf{Bonus:} Extend to handle minimum training size requirement
+\end{column}
+\end{columns}
+\end{frame}
+
+% ================================================================
+% SECTION 4: PEER REVIEW FRAMEWORK
+% ================================================================
+
+\section{Peer Review and Collaboration}
+
+% -------------------- Why Peer Review --------------------
+
+\begin{frame}{Why Peer Review Matters}
+\textbf{Building critical industry skills through structured feedback}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Industry Reality:}
+\begin{itemize}
+\item Code reviews are standard practice
+\item Peer feedback improves quality
+\item Collaboration is essential
+\item Multiple perspectives catch errors
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Learning Benefits:}
+\begin{enumerate}
+\item \textcolor{forest}{Exposure}: See diverse approaches
+\item \textcolor{navyblue}{Critical thinking}: Evaluate others' work
+\item \textcolor{crimson}{Communication}: Give constructive feedback
+\item \textcolor{purple}{Humility}: Receive criticism gracefully
+\item \textcolor{gold}{Quality}: Improve your own work
+\end{enumerate}
+
+\vspace{0.3cm}
+
+\textbf{Academic Parallel:}
+\begin{itemize}
+\item Mirrors conference/journal review process
+\item Develops scientific writing skills
+\item Prepares for collaborative research
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Peer Review Process:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.8]
+\node[draw, rectangle, fill=navyblue!20, text width=3.5cm, align=center] (submit) at (3,5) {\textbf{Student Submits\\Milestone}};
+
+\node[draw, rectangle, fill=forest!20, text width=3.5cm, align=center] (assign) at (3,4) {\textbf{Instructor Assigns\\2 Reviewers}};
+
+\node[draw, rectangle, fill=crimson!20, text width=3.5cm, align=center] (review) at (3,3) {\textbf{Peers Conduct\\Reviews}\\(1 week)};
+
+\node[draw, rectangle, fill=purple!20, text width=3.5cm, align=center] (receive) at (3,2) {\textbf{Student Receives\\Feedback}};
+
+\node[draw, rectangle, fill=gold!20, text width=3.5cm, align=center] (respond) at (3,1) {\textbf{Student Responds\\Incorporates Feedback}};
+
+\draw[->, thick] (submit) -- (assign);
+\draw[->, thick] (assign) -- (review);
+\draw[->, thick] (review) -- (receive);
+\draw[->, thick] (receive) -- (respond);
+\end{tikzpicture}
+\end{figure}
+
+\vspace{0.2cm}
+
+\textbf{Review Timeline:}
+\begin{itemize}
+\item M2: Code review focus
+\item M3: Methods and validation review
+\item M4: Full project review
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{Important}
+Peer review counts for 10\% of grade. Quality of reviews given \textbf{and} responsiveness to feedback received.
+\end{alertblock}
+\end{frame}
+
+% -------------------- Review Template --------------------
+
+\begin{frame}[fragile]{Peer Review Template}
+\textbf{Structured feedback for constructive criticism}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Review Sections:}
+
+\begin{enumerate}
+\item \textbf{Summary} (2-3 sentences)
+   \begin{itemize}
+   \item What is the project about?
+   \item What are the main contributions?
+   \end{itemize}
+
+\item \textbf{Strengths} (3-5 bullet points)
+   \begin{itemize}
+   \item What did they do well?
+   \item Specific examples
+   \end{itemize}
+
+\item \textbf{Weaknesses} (3-5 bullet points)
+   \begin{itemize}
+   \item What needs improvement?
+   \item Be specific and constructive
+   \end{itemize}
+
+\item \textbf{Technical Comments}
+   \begin{itemize}
+   \item Code quality observations
+   \item Methodological concerns
+   \item Statistical issues
+   \end{itemize}
+
+\item \textbf{Suggestions} (3-5 bullet points)
+   \begin{itemize}
+   \item Concrete recommendations
+   \item Additional analyses to consider
+   \item Resources or references
+   \end{itemize}
+
+\item \textbf{Overall Assessment}
+   \begin{itemize}
+   \item Strong Accept / Accept / Revise / Reject
+   \item (For practice only - not binding)
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Code Review Checklist:}
+
+\begin{block}{Functionality}
+\begin{itemize}
+\item[$\square$] Code runs without errors
+\item[$\square$] Dependencies are documented
+\item[$\square$] Results are reproducible
+\end{itemize}
+\end{block}
+
+\begin{block}{Code Quality}
+\begin{itemize}
+\item[$\square$] Clear variable/function names
+\item[$\square$] Appropriate comments/docstrings
+\item[$\square$] No code duplication
+\item[$\square$] Modular structure
+\item[$\square$] Error handling present
+\end{itemize}
+\end{block}
+
+\begin{block}{Methods}
+\begin{itemize}
+\item[$\square$] Methods appropriate for problem
+\item[$\square$] Evaluation strategy is sound
+\item[$\square$] No obvious data leakage
+\item[$\square$] Limitations acknowledged
+\end{itemize}
+\end{block}
+
+\begin{block}{Communication}
+\begin{itemize}
+\item[$\square$] Clear explanations
+\item[$\square$] Figures are informative
+\item[$\square$] Results are interpretable
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Tone Guidelines:}
+\begin{itemize}
+\item Be respectful and professional
+\item Focus on the work, not the person
+\item Provide actionable feedback
+\item Acknowledge good work
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Collaboration Skills --------------------
+
+\begin{frame}{Building Collaboration Skills}
+\textbf{Teamwork and communication for data science}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Team Formation (Optional):}
+
+\begin{itemize}
+\item \textbf{Individual projects} (default)
+   \begin{itemize}
+   \item Own your learning journey
+   \item Portfolio piece for job search
+   \end{itemize}
+
+\item \textbf{Pair projects} (with approval)
+   \begin{itemize}
+   \item Complementary skills
+   \item Clear division of labor
+   \item Joint and individual contributions
+   \end{itemize}
+
+\item \textbf{Collaboration expectations}
+   \begin{itemize}
+   \item Both names on commits
+   \item Regular pair programming sessions
+   \item Individual reflections required
+   \end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Conflict Resolution:}
+\begin{enumerate}
+\item Communicate early and often
+\item Document agreements
+\item Escalate to instructor if needed
+\item Learn from the experience
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Collaborative Tools:}
+
+\begin{table}
+\small
+\begin{tabular}{|l|p{4cm}|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Tool} & \textbf{Purpose} \\
+\hline
+\textbf{GitHub} & Version control, code review, issue tracking \\
+\hline
+\textbf{Slack/Discord} & Team communication, quick questions \\
+\hline
+\textbf{Notion/Confluence} & Project documentation, meeting notes \\
+\hline
+\textbf{Zoom/Teams} & Virtual meetings, pair programming \\
+\hline
+\textbf{Overleaf} & Collaborative LaTeX editing for reports \\
+\hline
+\textbf{Weights \& Biases} & Experiment tracking, model comparison \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Communication Best Practices:}
+
+\begin{block}{Asynchronous Communication}
+\begin{itemize}
+\item Document decisions in writing
+\item Use clear commit messages
+\item Provide context in messages
+\item Respond within 24 hours
+\end{itemize}
+\end{block}
+
+\begin{block}{Synchronous Communication}
+\begin{itemize}
+\item Weekly team check-ins (15-30 min)
+\item Shared agenda and notes
+\item Action items with owners
+\item Celebrate small wins!
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Knowledge Check 4 --------------------
+
+\begin{frame}{Knowledge Check 4: Peer Review}
+\textbf{Scenario-Based Questions}
+
+\vspace{0.3cm}
+
+\textbf{Question 1:} You're reviewing a peer's code and find a critical bug: they're scaling features after splitting into train/test, which causes data leakage. How should you communicate this?
+
+\begin{enumerate}[A)]
+\item "This code is completely wrong, you need to redo everything"
+\item Ignore it since you're not responsible for their grade
+\item \textcolor{forest}{\textbf{Point out the specific issue with code example showing correct approach}}
+\item Report to instructor without telling the student
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Constructive peer review means being specific and helpful. Example feedback: "I noticed the scaling is done after train/test split (line 45). This can cause data leakage since the test set statistics influence the training data. Consider using `fit` on train only, then `transform` on both. Here's an example: [code snippet]." This is specific, educational, and actionable.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\textbf{Question 2:} You receive peer feedback suggesting you use a different validation strategy. You disagree with their suggestion. What should you do?
+
+\begin{enumerate}[A)]
+\item Ignore the feedback entirely
+\item Change your approach even though you think it's wrong
+\item \textcolor{forest}{\textbf{Respond explaining your rationale and thank them for the suggestion}}
+\item Give them a negative review in return
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: C}} - Thoughtful disagreement is fine! Respond: "Thank you for the suggestion on validation strategy. I chose temporal CV instead of random k-fold because [rationale]. However, your point about X made me reconsider Y, which I've now adjusted." This shows you engaged seriously with feedback while maintaining your technical judgment.
+\end{block}
+\end{frame}
+
+\begin{frame}{Knowledge Check 4: Conceptual Problem}
+\textbf{Code Review Practice}
+
+\vspace{0.3cm}
+
+\begin{block}{Task}
+Review the following code snippet from a peer's feature engineering pipeline. Identify at least 3 issues and provide constructive feedback.
+
+\small
+\begin{verbatim}
+def preprocess(data):
+    data['age_missing'] = data['age'].isnull()
+    data = data.fillna(data.mean())
+    data['income_log'] = np.log(data['income'])
+    categorical = ['gender', 'education', 'occupation']
+    data = pd.get_dummies(data, columns=categorical)
+    scaler = StandardScaler()
+    data[data.columns] = scaler.fit_transform(data)
+    return data
+
+# Usage
+X_train = preprocess(train_df)
+X_test = preprocess(test_df)
+\end{verbatim}
+\end{block}
+
+\pause
+
+\begin{block}{Sample Review (Partial)}
+\small
+\textbf{Issues identified:}
+\begin{enumerate}
+\item \textbf{Data leakage:} `fillna(data.mean())` calculates statistics on entire dataset. Should fit imputer on train only.
+\item \textbf{Zero/negative income:} `np.log(income)` will fail for income $\leq 0$. Add check or use `log1p`.
+\item \textbf{Dummy variable trap:} `get_dummies` without `drop_first=True` creates multicollinearity.
+\item \textbf{Column mismatch:} Test set may have different dummy columns than train (missing categories). Use fitted encoder.
+\item \textbf{Scaling boolean:} `age_missing` indicator shouldn't be scaled.
+\end{enumerate}
+
+\textbf{Suggestion:} Use sklearn pipelines with `ColumnTransformer` to handle different feature types properly and prevent leakage.
+\end{block}
+\end{frame}
+
+% ================================================================
+% SECTION 5: INDUSTRY MENTOR PROGRAM
+% ================================================================
+
+\section{Industry Mentor Program}
+
+% -------------------- Mentor Framework --------------------
+
+\begin{frame}{Industry Mentor Matching}
+\textbf{Connecting students with practicing data scientists}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Mentor Pool:}
+
+\begin{itemize}
+\item \textbf{Company Partners:}
+   \begin{itemize}
+   \item Tech: Google, Meta, Amazon, Microsoft
+   \item Startups: Series A-C stage
+   \item Finance: Banks, hedge funds, fintech
+   \item Healthcare: Hospitals, pharma, health tech
+   \item Consulting: McKinsey, BCG, Deloitte
+   \end{itemize}
+
+\item \textbf{Mentor Backgrounds:}
+   \begin{itemize}
+   \item Data Scientists (IC levels)
+   \item ML Engineers
+   \item Data Science Managers
+   \item Research Scientists
+   \end{itemize}
+
+\item \textbf{Mentor Commitment:}
+   \begin{itemize}
+   \item 2-3 hours total over semester
+   \item 3 scheduled touchpoints
+   \item Asynchronous communication as needed
+   \item Optional: Job/internship connections
+   \end{itemize}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Matching Criteria:}
+
+\begin{enumerate}
+\item \textbf{Domain alignment}
+   \begin{itemize}
+   \item Project domain matches mentor expertise
+   \item Healthcare projects → healthcare mentors
+   \end{itemize}
+
+\item \textbf{Technical skills}
+   \begin{itemize}
+   \item Methods used in project
+   \item ML/causal/Bayesian specialization
+   \end{itemize}
+
+\item \textbf{Career interests}
+   \begin{itemize}
+   \item Industry sector preferences
+   \item Role aspirations (IC vs. management)
+   \end{itemize}
+
+\item \textbf{Logistics}
+   \begin{itemize}
+   \item Time zones
+   \item Communication preferences
+   \end{itemize}
+\end{enumerate}
+
+\vspace{0.3cm}
+
+\textbf{Student Responsibilities:}
+\begin{itemize}
+\item Prepare agenda for each meeting
+\item Share project materials in advance
+\item Follow up with action items
+\item Respect mentor's time
+\item Send thank-you note at end
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{Networking Opportunity}
+Mentors often become long-term professional connections. Many lead to internships and jobs!
+\end{alertblock}
+\end{frame}
+
+% -------------------- Mentor Touchpoints --------------------
+
+\begin{frame}{Mentor Touchpoint Schedule}
+\textbf{Three structured interactions throughout the semester}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{|l|l|p{5.5cm}|l|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Week} & \textbf{Touchpoint} & \textbf{Purpose} & \textbf{Duration} \\
+\hline
+3 & \textcolor{forest}{\textbf{TP1: Kickoff}} & Project proposal review, problem scoping, dataset advice & 30-45 min \\
+\hline
+7 & \textcolor{navyblue}{\textbf{TP2: Technical}} & Methods discussion, implementation challenges, code review & 45-60 min \\
+\hline
+13 & \textcolor{crimson}{\textbf{TP3: Practice}} & Final presentation dry run, Q\&A practice, career advice & 30-45 min \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.4cm}
+
+\begin{columns}
+\begin{column}{0.33\textwidth}
+\textbf{Touchpoint 1: Kickoff}
+
+\textcolor{forest}{\textbf{Student Preparation:}}
+\begin{itemize}
+\item Send proposal 2 days ahead
+\item Prepare 5-min project pitch
+\item List specific questions
+\end{itemize}
+
+\textcolor{forest}{\textbf{Discussion Topics:}}
+\begin{itemize}
+\item Is problem well-scoped?
+\item Are success metrics realistic?
+\item What industry approach would be?
+\item Dataset recommendations
+\item Potential pitfalls to avoid
+\end{itemize}
+
+\textcolor{forest}{\textbf{Outcome:}}
+\begin{itemize}
+\item Refined problem statement
+\item Go/no-go on dataset
+\item Industry perspective
+\end{itemize}
+\end{column}
+
+\begin{column}{0.33\textwidth}
+\textbf{Touchpoint 2: Technical}
+
+\textcolor{navyblue}{\textbf{Student Preparation:}}
+\begin{itemize}
+\item Share GitHub repo
+\item Preliminary results
+\item Technical blockers list
+\end{itemize}
+
+\textcolor{navyblue}{\textbf{Discussion Topics:}}
+\begin{itemize}
+\item Are methods appropriate?
+\item How to debug failing model?
+\item Code architecture feedback
+\item Hyperparameter tuning tips
+\item Validation strategy review
+\item Similar industry problems
+\end{itemize}
+
+\textcolor{navyblue}{\textbf{Outcome:}}
+\begin{itemize}
+\item Technical advice
+\item Debugging help
+\item Industry best practices
+\end{itemize}
+\end{column}
+
+\begin{column}{0.33\textwidth}
+\textbf{Touchpoint 3: Practice}
+
+\textcolor{crimson}{\textbf{Student Preparation:}}
+\begin{itemize}
+\item Final presentation slides
+\item 10-min presentation
+\item Q\&A prep
+\end{itemize}
+
+\textcolor{crimson}{\textbf{Discussion Topics:}}
+\begin{itemize}
+\item Presentation feedback
+\item Business impact framing
+\item Handling technical questions
+\item Resume/portfolio advice
+\item Career path discussion
+\item Networking tips
+\end{itemize}
+
+\textcolor{crimson}{\textbf{Outcome:}}
+\begin{itemize}
+\item Polished presentation
+\item Career insights
+\item Professional connection
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+
+\textbf{Asynchronous Communication:} Mentors may also provide ad-hoc feedback via email/Slack between touchpoints.
+\end{frame}
+
+% -------------------- Industry Presentations --------------------
+
+\begin{frame}{Final Industry Presentations}
+\textbf{Presenting to an industry panel: Week 14}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Presentation Format:}
+
+\begin{itemize}
+\item \textbf{Duration:} 12 minutes + 3 min Q\&A
+\item \textbf{Audience:} Industry mentors + instructors
+\item \textbf{Setting:} Professional, recorded
+\item \textbf{Style:} Balance technical depth with business value
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Recommended Structure:}
+
+\begin{enumerate}
+\item \textbf{Problem \& Impact} (2 min)
+   \begin{itemize}
+   \item Business context and motivation
+   \item Why this problem matters
+   \item Success metrics
+   \end{itemize}
+
+\item \textbf{Data \& Methods} (4 min)
+   \begin{itemize}
+   \item Dataset description
+   \item Approach and methodology
+   \item Key technical decisions
+   \end{itemize}
+
+\item \textbf{Results} (3 min)
+   \begin{itemize}
+   \item Key findings with visualizations
+   \item Model performance
+   \item Statistical significance
+   \end{itemize}
+
+\item \textbf{Impact \& Next Steps} (2 min)
+   \begin{itemize}
+   \item Business impact (quantified if possible)
+   \item Limitations and future work
+   \item Deployment considerations
+   \end{itemize}
+
+\item \textbf{Q\&A} (3 min)
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Evaluation Rubric:}
+
+\begin{table}
+\tiny
+\begin{tabular}{|l|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Criterion} & \textbf{Points} \\
+\hline
+\textcolor{forest}{\textbf{Content}} & \\
+\hline
+Clear problem motivation & 10 \\
+Technical rigor & 15 \\
+Results clearly presented & 15 \\
+Impact and insights & 10 \\
+\hline
+\textcolor{navyblue}{\textbf{Delivery}} & \\
+\hline
+Professional presentation & 10 \\
+Time management & 5 \\
+Visual aids quality & 10 \\
+\hline
+\textcolor{crimson}{\textbf{Q\&A}} & \\
+\hline
+Thoughtful responses & 15 \\
+Acknowledges limitations & 5 \\
+Demonstrates deep understanding & 10 \\
+\hline
+\textbf{Total} & \textbf{100} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Pro Tips:}
+\begin{itemize}
+\item[$\checkmark$] Lead with business value
+\item[$\checkmark$] Use visuals, not tables
+\item[$\checkmark$] Anticipate questions
+\item[$\checkmark$] Practice out loud 3+ times
+\item[$\checkmark$] Have backup slides
+\item[$\times$] Don't dive too deep into technical weeds
+\item[$\times$] Don't go over time
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Recorded presentations} may be shared (with permission) as portfolio pieces!
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------- Knowledge Check 5 --------------------
+
+\begin{frame}{Knowledge Check 5: Industry Mentorship}
+\textbf{Professional Communication}
+
+\vspace{0.3cm}
+
+\textbf{Question:} You need to prepare for Touchpoint 1 (week 3) with your industry mentor. Which of the following should you prioritize?
+
+\begin{enumerate}[A)]
+\item Complete implementation of all models to show progress
+\item \textcolor{forest}{\textbf{Clear problem statement, success metrics, and specific questions}}
+\item Detailed technical discussion of algorithms
+\item Request for job referral
+\end{enumerate}
+
+\pause
+
+\begin{block}{Explanation}
+\textcolor{forest}{\textbf{Answer: B}} - For TP1, mentors expect to help you scope the problem, not review completed work. Prepare: (1) clear problem statement, (2) realistic success metrics, (3) specific questions about dataset selection or industry practices. Don't ask for jobs in first meeting - build relationship first. Technical depth comes in TP2.
+\end{block}
+
+\pause
+
+\vspace{0.2cm}
+
+\begin{block}{Conceptual Problem: Email to Mentor}
+\textbf{Task:} Draft a professional email to send your mentor before Touchpoint 2. Your XGBoost model is underperforming and you're stuck. Include: (1) current status summary, (2) specific technical blocker, (3) what you've tried, (4) specific question for mentor.
+
+\textbf{Word limit:} 150 words
+
+\pause
+
+\small
+\textbf{Sample:} "Hi [Name], Looking forward to our TP2 call next week. \textbf{Status:} I've implemented baseline models (logistic: AUROC=0.71) and XGBoost (AUROC=0.68 - worse!). \textbf{Blocker:} XGBoost underperforms despite hyperparameter tuning. \textbf{Tried:} Grid search over depth/learning rate, SMOTE for class imbalance, feature selection. Still worse than logistic. \textbf{Question:} Could you review my validation strategy? [link to notebook] I'm concerned about data leakage or improper CV setup. Also curious if you've seen similar patterns in production. Thanks! [Your name]"
+\end{block}
+\end{frame}
+
+% ================================================================
+% SECTION 6: PROJECT TEMPLATES AND EXAMPLES
+% ================================================================
+
+\section{Templates and Resources}
+
+% -------------------- Project Proposal Template --------------------
+
+\begin{frame}[fragile]{Project Proposal Template}
+\textbf{Milestone 1 deliverable structure}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Proposal Outline:}
+
+\begin{enumerate}
+\item \textbf{Executive Summary} (1 paragraph)
+   \begin{itemize}
+   \item Problem, approach, expected impact
+   \end{itemize}
+
+\item \textbf{Introduction \& Motivation}
+   \begin{itemize}
+   \item Business/scientific context
+   \item Why this problem matters
+   \item Current state and gaps
+   \end{itemize}
+
+\item \textbf{Problem Statement}
+   \begin{itemize}
+   \item Precise question to answer
+   \item Predictive vs. causal framing
+   \item Scope and boundaries
+   \end{itemize}
+
+\item \textbf{Data Description}
+   \begin{itemize}
+   \item Data source and access
+   \item Sample size, features, target
+   \item Known limitations
+   \end{itemize}
+
+\item \textbf{Proposed Approach}
+   \begin{itemize}
+   \item Methods to explore
+   \item Evaluation strategy
+   \item Success criteria
+   \end{itemize}
+
+\item \textbf{Timeline}
+   \begin{itemize}
+   \item Weekly milestones
+   \item Risk mitigation
+   \end{itemize}
+
+\item \textbf{References}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Example: Churn Prediction}
+
+\begin{block}{Executive Summary}
+\small
+This project aims to predict customer churn for a telecom company using machine learning. We will analyze a dataset of 7,043 customers with 21 features to identify at-risk customers and recommend targeted retention strategies, potentially saving \$500K+ annually.
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Problem Statement}
+\small
+\textbf{Predictive question:} Which customers are likely to churn in the next 30 days?
+
+\textbf{Causal question:} What interventions (discounts, customer service calls) are most effective at preventing churn for different customer segments?
+
+\textbf{Success metric:} Achieve precision $> 0.7$ at recall $= 0.5$ to enable cost-effective retention campaigns.
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Proposed Methods}
+\small
+\begin{itemize}
+\item \textbf{Baseline:} Logistic regression, decision tree
+\item \textbf{Advanced:} Random forest, XGBoost, causal forest
+\item \textbf{Evaluation:} Stratified k-fold CV, precision-recall curves, uplift curves
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Template file:} \texttt{project\_proposal\_template.md} available on course website
+\end{frame}
+
+% -------------------- Documentation Standards --------------------
+
+\begin{frame}[fragile]{Documentation Standards}
+\textbf{README, code docs, and model cards}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{README Structure:}
+
+\begin{verbatim}
+# Project Title
+
+## Overview
+Brief description (2-3 sentences)
+
+## Installation
+```bash
+pip install -r requirements.txt
+```
+
+## Quickstart
+```python
+from src.model import train_model
+model = train_model(data)
+```
+
+## Project Structure
+```
+├── data/
+├── notebooks/
+├── src/
+│   ├── data/
+│   ├── features/
+│   ├── models/
+│   └── visualization/
+├── tests/
+└── reports/
+```
+
+## Reproduction
+Step-by-step instructions
+
+## Results
+Key findings with visualizations
+
+## License & Citation
+\end{verbatim}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Model Card Components \cite{mitchell2019model}:}
+
+\begin{enumerate}
+\item \textbf{Model Details}
+   \begin{itemize}
+   \item Model type, architecture
+   \item Training algorithm, hyperparameters
+   \item Version, date trained
+   \end{itemize}
+
+\item \textbf{Intended Use}
+   \begin{itemize}
+   \item Primary use cases
+   \item Out-of-scope uses
+   \item Limitations
+   \end{itemize}
+
+\item \textbf{Factors}
+   \begin{itemize}
+   \item Relevant factors (demographics, etc.)
+   \item Evaluation factors
+   \end{itemize}
+
+\item \textbf{Metrics}
+   \begin{itemize}
+   \item Performance metrics
+   \item Decision thresholds
+   \end{itemize}
+
+\item \textbf{Training \& Evaluation Data}
+   \begin{itemize}
+   \item Datasets used
+   \item Preprocessing steps
+   \end{itemize}
+
+\item \textbf{Ethical Considerations}
+   \begin{itemize}
+   \item Sensitive data
+   \item Fairness analysis
+   \item Potential harms
+   \end{itemize}
+
+\item \textbf{Caveats \& Recommendations}
+   \begin{itemize}
+   \item Known issues
+   \item Future improvements
+   \end{itemize}
+\end{enumerate}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Code Documentation:} Use docstrings (Google/NumPy style) for all functions/classes
+\end{frame}
+
+% -------------------- Example Projects --------------------
+
+\begin{frame}{Example Project: Healthcare Readmission}
+\textbf{Exemplar project walkthrough}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Project Overview:}
+
+\begin{itemize}
+\item \textbf{Domain:} Healthcare
+\item \textbf{Dataset:} MIMIC-III ICU data (n=38K admissions)
+\item \textbf{Problem:} Predict 30-day readmission risk
+\item \textbf{Causal question:} Do follow-up calls reduce readmissions?
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Milestones Delivered:}
+
+\begin{enumerate}
+\item \textbf{M1:} Proposal + EDA
+   \begin{itemize}
+   \item Identified 15\% readmission rate
+   \item Key risk factors: age, comorbidities
+   \item Baseline: predict all "no readmit" $\to$ 85\% accuracy
+   \end{itemize}
+
+\item \textbf{M2:} Feature engineering + baseline
+   \begin{itemize}
+   \item Created 47 features from EHR
+   \item Logistic regression: AUROC = 0.72
+   \item Decision tree: AUROC = 0.69
+   \end{itemize}
+
+\item \textbf{M3:} Advanced methods
+   \begin{itemize}
+   \item XGBoost: AUROC = 0.79
+   \item Causal forest for heterogeneous effects
+   \item SHAP values for interpretability
+   \end{itemize}
+
+\item \textbf{M4:} Production + docs
+   \begin{itemize}
+   \item Flask API for real-time scoring
+   \item Docker deployment
+   \item Full model card
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Key Results:}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.75]
+% ROC curve
+\draw[->] (0,0) -- (5,0) node[right] {FPR};
+\draw[->] (0,0) -- (0,5) node[above] {TPR};
+\draw[dashed, gray] (0,0) -- (5,5);
+\draw[thick, crimson] (0,0) .. controls (0.5,2) and (1.5,4) .. (5,5);
+\node at (3.5,2) {\textcolor{crimson}{AUROC = 0.79}};
+\end{tikzpicture}
+\caption{ROC Curve for XGBoost}
+\end{figure}
+
+\begin{table}
+\tiny
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\rowcolor{navyblue!20}
+\textbf{Model} & \textbf{AUROC} & \textbf{Precision} & \textbf{Recall} \\
+\hline
+Baseline & 0.50 & 0.15 & 1.00 \\
+\hline
+Logistic Reg & 0.72 & 0.42 & 0.65 \\
+\hline
+XGBoost & \textbf{0.79} & \textbf{0.58} & \textbf{0.71} \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+
+\textbf{Business Impact:}
+\begin{itemize}
+\item Top 10\% risk scores capture 35\% of readmissions
+\item Estimated \$1.2M savings if intervention costs \$100/patient
+\item Deployed to 2 partner hospitals
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Causal Finding:}
+\begin{itemize}
+\item Follow-up calls reduce readmissions by 8 percentage points for patients with CATE $> 0.1$
+\item No effect for low-risk patients
+\item Personalized targeting improves ROI by 3x
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{GitHub:} \url{https://github.com/example/readmission-prediction} (anonymized example)
+\end{frame}
+
+% -------------------- Resources --------------------
+
+\begin{frame}{Additional Resources}
+\textbf{Tools, templates, and further reading}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Project Templates:}
+\begin{itemize}
+\item \href{https://github.com/drivendata/cookiecutter-data-science}{Cookiecutter Data Science}
+\item \href{https://github.com/khuyentran1401/data-science-template}{Kedro Project Template}
+\item Course GitHub: Templates folder
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Tools \& Platforms:}
+\begin{itemize}
+\item \textbf{Experiment Tracking:} Weights \& Biases, MLflow
+\item \textbf{Version Control:} DVC, Git LFS
+\item \textbf{Model Serving:} Flask, FastAPI, BentoML
+\item \textbf{Containerization:} Docker, Docker Compose
+\item \textbf{CI/CD:} GitHub Actions, GitLab CI
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Documentation:}
+\begin{itemize}
+\item \href{https://www.sphinx-doc.org/}{Sphinx} (Python docs)
+\item \href{https://github.com/google/styleguide/blob/gh-pages/pyguide.md}{Google Python Style Guide}
+\item \href{https://github.com/huggingface/model_card}{HuggingFace Model Cards}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Learning Resources:}
+
+\begin{itemize}
+\item \textbf{Books:}
+   \begin{itemize}
+   \item \textit{Building Machine Learning Powered Applications} (Ameisen, 2020)
+   \item \textit{Designing Data-Intensive Applications} (Kleppmann, 2017)
+   \item \textit{Interpretable Machine Learning} (Molnar, 2022)
+   \end{itemize}
+
+\item \textbf{Courses:}
+   \begin{itemize}
+   \item Full Stack Deep Learning
+   \item Made With ML
+   \item MLOps Specialization (DeepLearning.AI)
+   \end{itemize}
+
+\item \textbf{Blogs \& Podcasts:}
+   \begin{itemize}
+   \item Towards Data Science
+   \item Machine Learning Street Talk
+   \item Data Skeptic Podcast
+   \end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Getting Help:}
+\begin{itemize}
+\item Office hours: TBD
+\item Course Slack: \#capstone-projects
+\item Peer study groups
+\item Stack Overflow, Cross Validated
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{alertblock}{Final Encouragement}
+Capstone projects are challenging but incredibly rewarding. Embrace the struggle, learn from mistakes, and build something you're proud of!
+\end{alertblock}
+\end{frame}
+
+% -------------------- Knowledge Check 6 --------------------
+
+\begin{frame}{Knowledge Check 6: Final Assessment}
+\textbf{Comprehensive Scenario}
+
+\vspace{0.2cm}
+
+\begin{block}{Scenario}
+\small
+You're completing your capstone project on fraud detection. You have:
+\begin{itemize}
+\item Strong technical results (AUROC = 0.92)
+\item Production-ready Flask API with Docker
+\item Comprehensive documentation and model card
+\item Industry presentation scheduled for next week
+\end{itemize}
+
+However, during final testing, you discover your model has \textbf{significant disparate impact}: it flags transactions from minority zip codes at 2.5x the rate of majority zip codes, even after controlling for legitimate risk factors.
+\end{block}
+
+\vspace{0.2cm}
+
+\textbf{Questions:}
+\begin{enumerate}
+\item What should you do immediately? (MCQ)
+\begin{enumerate}[A)]
+\item Deploy anyway since the model is accurate
+\item Hide the finding and present the technical results
+\item \textcolor{forest}{\textbf{Halt deployment, document the issue, propose mitigation strategies}}
+\item Remove zip code and hope the problem goes away
+\end{enumerate}
+
+\pause
+
+\item How should you address this in your final presentation? (Short answer, 100 words)
+
+\pause
+
+\item Propose 2 technical approaches to mitigate the bias while maintaining model performance. (Short answer, 150 words)
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Knowledge Check 6: Sample Responses}
+
+\begin{block}{Question 2: Presentation Approach}
+\small
+\textbf{Answer:} Address it head-on with transparency. Structure: (1) Present technical results honestly, (2) Reveal fairness analysis showing disparate impact, (3) Explain potential causes (correlated features, biased training data), (4) Propose mitigation strategies tested, (5) Recommend against deployment until bias is addressed, (6) Discuss lessons learned. This demonstrates integrity and mature data science practice. Industry mentors will respect honest handling of ethical issues far more than hiding problems.
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{block}{Question 3: Technical Mitigation}
+\small
+\textbf{Approach 1: Fairness Constraints:} Implement demographic parity or equalized odds constraints using fairness libraries (AIF360, Fairlearn). Add regularization term to loss function penalizing disparate impact. Trade-off: May reduce AUROC to ~0.88 but achieve DI ratio $> 0.8$.
+
+\textbf{Approach 2: Adversarial Debiasing:} Train adversarial network to predict protected attribute from model predictions. Minimize classification loss while maximizing adversary's error. This decorrelates predictions from protected attributes while maintaining predictive power. Validate on held-out test set with fairness metrics alongside performance metrics.
+
+Both require careful validation to ensure we're not simply hiding bias through proxy features.
+\end{block}
+\end{frame}
+
+% ================================================================
+% END OF CAPSTONE PROJECTS ENHANCEMENT
+% ================================================================
