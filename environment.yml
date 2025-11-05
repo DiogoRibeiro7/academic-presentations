@@ -1,0 +1,204 @@
+# Academic Presentations - Conda Environment
+# Last Updated: January 2025
+#
+# Usage:
+#   conda env create -f environment.yml
+#   conda activate academic-presentations
+
+name: academic-presentations
+
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+
+dependencies:
+  # Python version
+  - python=3.11
+
+  # ============================================================================
+  # Core Scientific Computing
+  # ============================================================================
+  - numpy>=1.24
+  - scipy>=1.11
+  - pandas>=2.0
+  - matplotlib>=3.7
+  - seaborn>=0.12
+  - plotly>=5.14
+
+  # ============================================================================
+  # Machine Learning
+  # ============================================================================
+  - scikit-learn>=1.3
+  - xgboost>=2.0
+  - lightgbm>=4.0
+
+  # ============================================================================
+  # Deep Learning (PyTorch - CPU version)
+  # ============================================================================
+  - pytorch>=2.0
+  - torchvision>=0.15
+  - torchaudio>=2.0
+  - cpuonly  # Remove for GPU support
+
+  # For GPU support (CUDA 11.8), replace above with:
+  # - pytorch>=2.0
+  # - torchvision>=0.15
+  # - torchaudio>=2.0
+  # - pytorch-cuda=11.8
+
+  # ============================================================================
+  # Time Series
+  # ============================================================================
+  - statsmodels>=0.14
+  - arch>=6.2
+
+  # ============================================================================
+  # Bayesian Methods
+  # ============================================================================
+  - pymc>=5.7
+  - arviz>=0.16
+
+  # ============================================================================
+  # Visualization
+  # ============================================================================
+  - graphviz>=0.20
+  - networkx>=3.1
+  - pillow>=10.0
+
+  # ============================================================================
+  # Jupyter
+  # ============================================================================
+  - jupyter>=1.0
+  - jupyterlab>=4.0
+  - ipykernel>=6.25
+  - ipywidgets>=8.1
+  - notebook>=7.0
+
+  # ============================================================================
+  # Development Tools
+  # ============================================================================
+  - black>=23.7
+  - isort>=5.12
+  - flake8>=6.1
+  - pylint>=2.17
+  - mypy>=1.5
+  - pytest>=7.4
+  - pytest-cov>=4.1
+
+  # ============================================================================
+  # Utilities
+  # ============================================================================
+  - tqdm>=4.66
+  - joblib>=1.3
+  - python-dotenv>=1.0
+  - click>=8.1
+  - pyyaml>=6.0
+
+  # ============================================================================
+  # R Integration (optional, comment out if not needed)
+  # ============================================================================
+  - r-base>=4.3
+  - r-essentials
+  - rpy2>=3.5
+
+  # ============================================================================
+  # Pip-only packages (not available in conda)
+  # ============================================================================
+  - pip
+  - pip:
+    # Time series
+    - pmdarima>=2.0.3
+    - prophet>=1.1.4
+    - pykalman>=0.9.5
+    - darts>=0.25.0
+    - pytorch-forecasting>=1.0.0
+
+    # Causal inference
+    - linearmodels>=5.3
+    - econml>=0.14.0
+    - dowhy>=0.9.0
+    - causalml>=0.14.0
+
+    # MCMC
+    - numpyro>=0.13.0
+    - emcee>=3.1.4
+
+    # Explainable AI
+    - shap>=0.42.0
+    - lime>=0.2.0.1
+    - interpret>=0.4.3
+    - alibi>=0.9.4
+    - fairlearn>=0.9.0
+    - aif360>=0.5.0
+
+    # Reinforcement Learning
+    - gymnasium>=0.29.0
+    - stable-baselines3>=2.1.0
+    - tianshou>=0.5.0
+
+    # Optimization
+    - cvxpy>=1.4.0
+    - pyomo>=6.6.0
+    - scikit-optimize>=0.9.0
+    - optuna>=3.3.0
+    - hyperopt>=0.2.7
+    - ax-platform>=0.3.5
+    - deap>=1.4.1
+    - pymoo>=0.6.0
+
+    # Testing
+    - pytest-xdist>=3.3.0
+    - hypothesis>=6.82.0
+
+    # Documentation
+    - sphinx>=7.1.0
+    - sphinx-rtd-theme>=1.3.0
+    - nbsphinx>=0.9.3
+
+    # Quality tools
+    - autopep8>=2.0.4
+    - bandit>=1.7.5
+    - pyspellchecker>=0.7.2
+    - pyenchant>=3.2.2
+
+# ============================================================================
+# Platform-Specific Notes
+# ============================================================================
+#
+# macOS (Apple Silicon M1/M2):
+#   - Conda recommended over pip for better compatibility
+#   - Some packages have native ARM builds
+#   - TensorFlow: Use tensorflow-macos and tensorflow-metal
+#
+# Windows:
+#   - CUDA support requires appropriate drivers
+#   - Some packages may need Visual C++ Build Tools
+#   - Consider WSL2 for better compatibility
+#
+# Linux:
+#   - Best compatibility overall
+#   - Easy GPU setup with CUDA
+#   - Most packages have optimized builds
+#
+# ============================================================================
+# Environment Management
+# ============================================================================
+#
+# Create environment:
+#   conda env create -f environment.yml
+#
+# Activate environment:
+#   conda activate academic-presentations
+#
+# Update environment:
+#   conda env update -f environment.yml --prune
+#
+# Export current environment:
+#   conda env export > environment-frozen.yml
+#
+# Remove environment:
+#   conda env remove -n academic-presentations
+#
+# List environments:
+#   conda env list

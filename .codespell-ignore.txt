@@ -1,0 +1,54 @@
+# Words to ignore for codespell
+# One word per line
+
+# Technical terms
+arima
+arma
+sarima
+garch
+lstm
+gru
+relu
+softmax
+backpropagation
+mcmc
+hmc
+nuts
+mdp
+mdps
+bellman
+dqn
+ppo
+trpo
+hyperparameter
+hyperparameters
+
+# Names
+diogo
+ribeiro
+esmad
+mysense
+
+# Abbreviations
+nd
+nd
+rd
+st
+th
+
+# LaTeX/Math
+iff
+leq
+geq
+infty
+mathbb
+tikz
+
+# Programming
+numpy
+scipy
+sklearn
+pytorch
+tensorflow
+df
+# Variable names often look like misspellings

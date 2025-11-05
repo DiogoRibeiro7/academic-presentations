@@ -1,0 +1,377 @@
+%% ============================================================================
+%% ESMAD High Contrast Beamer Theme
+%% Version 1.0.0 - January 2025
+%%
+%% High contrast theme for improved accessibility
+%% - Maximum contrast ratios (21:1 for black on white)
+%% - Color-blind friendly color choices
+%% - Large, clear fonts
+%% - Accessible structure
+%%
+%% Usage:
+%%   \usepackage{theme/esmad_beamer_theme_highcontrast}
+%%
+%% Author: Diogo Ribeiro
+%% License: MIT
+%% ============================================================================
+
+\ProvidesPackage{esmad_beamer_theme_highcontrast}[2025/01/01 v1.0 ESMAD High Contrast Beamer Theme]
+
+\mode<presentation>
+
+%% ============================================================================
+%% Theme Options
+%% ============================================================================
+
+\DeclareOption{dark}{
+  \def\@darkmode{true}
+}
+\DeclareOption{light}{
+  \def\@darkmode{false}
+}
+
+\ExecuteOptions{light}  % Default to light mode
+\ProcessOptions\relax
+
+%% ============================================================================
+%% Required Packages
+%% ============================================================================
+
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{hyperref}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+
+%% ============================================================================
+%% Color Definitions - High Contrast
+%% ============================================================================
+
+% Light mode colors (default)
+\definecolor{HCBackground}{RGB}{255,255,255}      % Pure white
+\definecolor{HCForeground}{RGB}{0,0,0}            % Pure black
+\definecolor{HCAccent}{RGB}{0,0,180}              % Dark blue
+\definecolor{HCAlert}{RGB}{180,0,0}               % Dark red
+\definecolor{HCExample}{RGB}{0,120,0}             % Dark green
+
+% Dark mode colors (if enabled)
+\ifdefined\@darkmode
+  \definecolor{HCBackground}{RGB}{0,0,0}          % Pure black
+  \definecolor{HCForeground}{RGB}{255,255,255}    % Pure white
+  \definecolor{HCAccent}{RGB}{100,180,255}        % Light blue
+  \definecolor{HCAlert}{RGB}{255,100,100}         % Light red
+  \definecolor{HCExample}{RGB}{100,255,100}       % Light green
+\fi
+
+% Additional accessible colors (Okabe-Ito palette)
+\definecolor{OkabeBlue}{RGB}{0,114,178}
+\definecolor{OkabeOrange}{RGB}{230,159,0}
+\definecolor{OkabeGreen}{RGB}{0,158,115}
+\definecolor{OkabeYellow}{RGB}{240,228,66}
+\definecolor{OkabePurple}{RGB}{204,121,167}
+\definecolor{OkabeRed}{RGB}{213,94,0}
+\definecolor{OkabeCyan}{RGB}{86,180,233}
+
+%% ============================================================================
+%% Beamer Color Theme
+%% ============================================================================
+
+% General colors
+\setbeamercolor{normal text}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{structure}{fg=HCForeground}
+\setbeamercolor{alerted text}{fg=HCAlert}
+\setbeamercolor{example text}{fg=HCExample}
+
+% Title page
+\setbeamercolor{title}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{subtitle}{fg=HCForeground}
+\setbeamercolor{author}{fg=HCForeground}
+\setbeamercolor{institute}{fg=HCForeground}
+\setbeamercolor{date}{fg=HCForeground}
+
+% Frame title
+\setbeamercolor{frametitle}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{framesubtitle}{fg=HCForeground}
+
+% TOC
+\setbeamercolor{section in toc}{fg=HCForeground}
+\setbeamercolor{subsection in toc}{fg=HCForeground}
+
+% Blocks
+\setbeamercolor{block title}{fg=HCBackground,bg=HCForeground}
+\setbeamercolor{block body}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{block title example}{fg=HCBackground,bg=HCExample}
+\setbeamercolor{block body example}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{block title alerted}{fg=HCBackground,bg=HCAlert}
+\setbeamercolor{block body alerted}{fg=HCForeground,bg=HCBackground}
+
+% Items
+\setbeamercolor{item}{fg=HCForeground}
+\setbeamercolor{itemize item}{fg=HCForeground}
+\setbeamercolor{itemize subitem}{fg=HCForeground}
+\setbeamercolor{enumerate item}{fg=HCForeground}
+\setbeamercolor{enumerate subitem}{fg=HCForeground}
+
+% Navigation
+\setbeamercolor{navigation symbols}{fg=HCForeground,bg=HCBackground}
+\setbeamercolor{navigation symbols dimmed}{fg=HCForeground!50}
+
+% Footnotes
+\setbeamercolor{footnote}{fg=HCForeground}
+\setbeamercolor{footnote mark}{fg=HCForeground}
+
+%% ============================================================================
+%% Beamer Font Theme
+%% ============================================================================
+
+% Use sans-serif fonts (easier to read on screen)
+\usefonttheme{professionalfonts}
+\usefonttheme{structurebold}
+
+% Title fonts - Extra large for visibility
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\Large,series=\bfseries}
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamerfont{date}{size=\normalsize}
+
+% Frame title - Large and bold
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\large}
+
+% Normal text - Larger than default
+\setbeamerfont{normal text}{size=\large}
+
+% Block titles - Bold
+\setbeamerfont{block title}{size=\large,series=\bfseries}
+\setbeamerfont{block title example}{size=\large,series=\bfseries}
+\setbeamerfont{block title alerted}{size=\large,series=\bfseries}
+
+% Items - Clear and visible
+\setbeamerfont{itemize/enumerate body}{size=\large}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+% Footnotes - Still readable
+\setbeamerfont{footnote}{size=\footnotesize}
+
+%% ============================================================================
+%% Beamer Inner Theme
+%% ============================================================================
+
+% Title page
+\defbeamertemplate*{title page}{highcontrast}[1][]
+{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%
+    \end{beamercolorbox}%
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}\vskip0.5em
+  \endgroup
+  \vfill
+}
+
+% Items - Simple and clear
+\setbeamertemplate{itemize item}{\Large\textbullet}
+\setbeamertemplate{itemize subitem}{\large\textendash}
+\setbeamertemplate{itemize subsubitem}{\normalsize\textasteriskcentered}
+
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertsubenumlabel.}
+
+% Blocks - High contrast boxes
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+%% ============================================================================
+%% Beamer Outer Theme
+%% ============================================================================
+
+% Frame title - Simple and clear
+\defbeamertemplate*{frametitle}{highcontrast}[1][]
+{
+  \vskip0.5em
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,leftskip=0.3cm,rightskip=0.3cm]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+    \ifx\insertframesubtitle\@empty
+    \else
+      \par{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}
+    \fi
+  \end{beamercolorbox}
+}
+
+% No navigation symbols (distracting)
+\setbeamertemplate{navigation symbols}{}
+
+% Footline - Minimal
+\setbeamertemplate{footline}[text line]{%
+  \parbox{\linewidth}{\vspace*{-8pt}
+    \hfill\insertframenumber{} / \inserttotalframenumber
+    \hspace{0.3cm}
+  }
+}
+
+%% ============================================================================
+%% Custom Environments - Accessible
+%% ============================================================================
+
+% Definition box
+\newenvironment{definitionbox}[1]{%
+  \begin{block}{#1}
+}{%
+  \end{block}
+}
+
+% Theorem box
+\newenvironment{theorembox}[1]{%
+  \begin{block}{#1}
+}{%
+  \end{block}
+}
+
+% Example box
+\newenvironment{examplebox}[1]{%
+  \begin{exampleblock}{#1}
+}{%
+  \end{exampleblock}
+}
+
+% Alert box
+\newenvironment{alertbox}[1]{%
+  \begin{alertblock}{#1}
+}{%
+  \end{alertblock}
+}
+
+%% ============================================================================
+%% Hyperlink Setup - High Contrast
+%% ============================================================================
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=HCAccent,
+    filecolor=HCAccent,
+    urlcolor=HCAccent,
+    citecolor=HCAccent,
+    pdfstartview=Fit,
+    pdfborder={0 0 0}  % No border boxes
+}
+
+%% ============================================================================
+%% Additional Accessibility Features
+%% ============================================================================
+
+% Increase line spacing for readability
+\linespread{1.3}
+
+% Increase paragraph spacing
+\setlength{\parskip}{0.5em}
+
+% No hyphenation (can be confusing)
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+% PDF Accessibility Metadata
+\pdfstringdefDisableCommands{%
+  \def\textbf#1{#1}%
+  \def\textit#1{#1}%
+}
+
+%% ============================================================================
+%% Helper Commands
+%% ============================================================================
+
+% Emphasis with high contrast
+\renewcommand{\emph}[1]{{\bfseries\color{HCForeground}#1}}
+
+% Strong emphasis
+\newcommand{\strong}[1]{{\Large\bfseries\color{HCAlert}#1}}
+
+% Accessible URL
+\newcommand{\accessibleurl}[1]{%
+  \href{#1}{\texttt{\small #1}}%
+}
+
+% Image with alt text (using PDF tooltip)
+\newcommand{\accessibleimage}[3][width=0.8\textwidth]{%
+  % #1 = options, #2 = filename, #3 = alt text
+  \includegraphics[#1]{#2}%
+  \pdftooltip{}{\detokenize{#3}}%
+}
+
+%% ============================================================================
+%% Usage Examples and Documentation
+%% ============================================================================
+
+\iffalse
+
+Example usage:
+
+\documentclass[aspectratio=169]{beamer}
+\usepackage{theme/esmad_beamer_theme_highcontrast}
+
+% Or for dark mode:
+% \usepackage[dark]{theme/esmad_beamer_theme_highcontrast}
+
+\title{High Contrast Presentation}
+\subtitle{Accessible Design}
+\author{Your Name}
+\institute{Your Institution}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Example Slide}
+  This is text with high contrast.
+
+  \begin{itemize}
+    \item First point
+    \item Second point
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example Blocks}
+  \begin{definitionbox}{Important Definition}
+    High contrast definition
+  \end{definitionbox}
+
+  \begin{examplebox}{Example}
+    Example with good visibility
+  \end{examplebox}
+
+  \begin{alertbox}{Alert}
+    Important alert message
+  \end{alertbox}
+\end{frame}
+
+\end{document}
+
+\fi
+
+%% ============================================================================
+%% End of High Contrast Theme
+%% ============================================================================
+
+\mode<all>
+
+\endinput
