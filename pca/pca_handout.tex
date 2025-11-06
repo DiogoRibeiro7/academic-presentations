@@ -1,0 +1,792 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{bbm}
+
+\geometry{margin=2.5cm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\1}{\mathbbm{1}}
+
+\title{Principal Component Analysis: Basic Results and Proofs}
+\author{(Instructor Name)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Setup and Notation}
+
+Let $X_1,\dots,X_n \in \R^d$ be observations of a random vector $X \in \R^d$.
+We assume throughout this handout that the data have been centered, i.e.
+\[
+  \bar{X}
+  := \frac{1}{n} \sum_{i=1}^n X_i = 0.
+\]
+The \emph{empirical covariance matrix} is
+\[
+  \Sigma_n := \frac{1}{n}\sum_{i=1}^n X_i X_i^\top \in \R^{d\times d}.
+\]
+We denote by $\|\cdot\|_2$ the Euclidean norm and by $\langle \cdot,\cdot\rangle$ the associated inner product.
+
+Let $\Sigma_n = V \Lambda V^\top$ be an eigendecomposition of $\Sigma_n$, with
+\[
+  V = [v_1,\dots,v_d] \in \R^{d\times d}
+  \quad\text{orthogonal}, \quad
+  \Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_d),
+\]
+and eigenvalues ordered as
+\[
+  \lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_d \ge 0.
+\]
+
+\section{PCA as Variance Maximization}
+
+The classical one-dimensional PCA direction is defined as the unit vector
+$u \in \R^d$ that maximizes the sample variance of the projections
+$\langle u, X_i \rangle$.
+
+\begin{definition}[Empirical variance along a unit direction]
+For $u \in \R^d$ with $\|u\|_2 = 1$, the empirical variance of the projected data
+$u^\top X_i$ is
+\[
+  \widehat{\Var}(u^\top X)
+  := \frac{1}{n}\sum_{i=1}^n (u^\top X_i)^2.
+\]
+\end{definition}
+
+\begin{lemma}
+For any $u \in \R^d$,
+\[
+  \widehat{\Var}(u^\top X)
+  = u^\top \Sigma_n u.
+\]
+\end{lemma}
+
+\begin{proof}
+Since the data are centered, $\frac{1}{n}\sum_{i=1}^n u^\top X_i = 0$.
+Hence
+\[
+  \widehat{\Var}(u^\top X)
+  = \frac{1}{n}\sum_{i=1}^n (u^\top X_i)^2
+  = \frac{1}{n}\sum_{i=1}^n u^\top X_i X_i^\top u
+  = u^\top \left( \frac{1}{n}\sum_{i=1}^n X_i X_i^\top \right) u
+  = u^\top \Sigma_n u.
+\]
+\end{proof}
+
+Thus the first principal component solves
+\[
+  \max_{u \in \R^d} u^\top \Sigma_n u
+  \quad\text{subject to}\quad \|u\|_2 = 1.
+\]
+
+\begin{theorem}[Rayleigh quotient and first principal component]
+\label{thm:rayleigh}
+Let $\Sigma_n = V \Lambda V^\top$ as above. Then:
+\begin{enumerate}
+  \item For any $u \in \R^d$ with $\|u\|_2 = 1$,
+  \[
+    \lambda_1 \ge u^\top \Sigma_n u \ge \lambda_d.
+  \]
+  \item The maximum $\lambda_1$ is attained when $u = v_1$ (or any vector in the span of eigenvectors associated with $\lambda_1$).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Write $u$ in the eigenbasis: $u = V z$ with $z \in \R^d$, $\|z\|_2 = \|u\|_2 = 1$. Then
+\[
+  u^\top \Sigma_n u
+  = (V z)^\top V \Lambda V^\top (V z)
+  = z^\top \Lambda z
+  = \sum_{j=1}^d \lambda_j z_j^2.
+\]
+Since $\lambda_1 \ge \dots \ge \lambda_d$ and $\sum_j z_j^2 = 1$, we have
+\[
+  \lambda_d \le \sum_{j=1}^d \lambda_j z_j^2 \le \lambda_1.
+\]
+The upper bound is attained by taking $z = e_1$ (first coordinate vector),
+i.e.\ $u = v_1$, and the lower bound by $z = e_d$, i.e.\ $u = v_d$.
+\end{proof}
+
+For higher principal components, we add orthogonality constraints. The $k$-th principal component direction $u_k$ is defined as a maximizer of $u^\top \Sigma_n u$ over unit vectors $u$ orthogonal to $u_1,\dots,u_{k-1}$. This is again obtained as $u_k = v_k$.
+
+\section{Empirical Reconstruction Error and Trace Form}
+
+Let $U \in \R^{d\times k}$ be a matrix with orthonormal columns, $U^\top U = I_k$. The orthogonal projector onto the subspace $\mathcal{S} = \mathrm{span}(U)$ is $P_U := U U^\top$. The reconstruction of a data point $X_i$ through this subspace is $P_U X_i$, and the reconstruction error is $X_i - P_U X_i$.
+
+\begin{definition}[Empirical reconstruction risk]
+The empirical reconstruction risk of a subspace represented by $U$ is
+\[
+  \widetilde{R}_n(U)
+  := \frac{1}{2n} \sum_{i=1}^n
+     \|X_i - U U^\top X_i\|_2^2.
+\]
+\end{definition}
+
+The factor $1/2$ is conventional and simplifies later expressions.
+
+\begin{proposition}[Reconstruction risk as constant minus trace]
+\label{prop:reconstruction-trace}
+For any $U \in \R^{d\times k}$ with $U^\top U = I_k$,
+\[
+  \widetilde{R}_n(U)
+  = C_n - \frac{1}{2}\mathrm{Tr}(U^\top \Sigma_n U),
+\]
+where
+\[
+  C_n := \frac{1}{2n}\sum_{i=1}^n \|X_i\|_2^2
+\]
+is independent of $U$.
+\end{proposition}
+
+\begin{proof}
+Fix $U$ and denote $P = U U^\top$. For each $i$,
+\begin{align*}
+  \|X_i - P X_i\|_2^2
+  &= \|X_i\|_2^2 + \|P X_i\|_2^2 - 2\langle X_i, P X_i\rangle.
+\end{align*}
+Since $P$ is an orthogonal projector ($P^2 = P$, $P^\top = P$),
+\[
+  \|P X_i\|_2^2
+  = \langle P X_i, P X_i\rangle
+  = \langle X_i, P^\top P X_i \rangle
+  = \langle X_i, P X_i \rangle.
+\]
+Hence
+\[
+  \|X_i - P X_i\|_2^2
+  = \|X_i\|_2^2 - \langle X_i, P X_i\rangle.
+\]
+Using trace notation,
+\[
+  \langle X_i, P X_i\rangle
+  = X_i^\top P X_i
+  = \mathrm{Tr}(X_i^\top P X_i)
+  = \mathrm{Tr}(P X_i X_i^\top)
+  = \mathrm{Tr}(U^\top X_i X_i^\top U).
+\]
+Therefore
+\[
+  \|X_i - U U^\top X_i\|_2^2
+  = \|X_i\|_2^2 - \mathrm{Tr}(U^\top X_i X_i^\top U).
+\]
+Summing and dividing by $2n$,
+\begin{align*}
+  \widetilde{R}_n(U)
+  &= \frac{1}{2n} \sum_{i=1}^n \|X_i\|_2^2
+     - \frac{1}{2n} \sum_{i=1}^n \mathrm{Tr}(U^\top X_i X_i^\top U) \\
+  &= C_n - \frac{1}{2} \mathrm{Tr}\!\left(
+       U^\top\left( \frac{1}{n}\sum_{i=1}^n X_i X_i^\top \right) U
+     \right) \\
+  &= C_n - \frac{1}{2}\mathrm{Tr}(U^\top \Sigma_n U).
+\end{align*}
+\end{proof}
+
+As a direct corollary:
+
+\begin{corollary}[Reconstruction error minimization $\Leftrightarrow$ trace maximization]
+\[
+  \arg\min_{U^\top U = I_k} \widetilde{R}_n(U)
+  = \arg\max_{U^\top U = I_k} \mathrm{Tr}(U^\top \Sigma_n U).
+\]
+\end{corollary}
+
+\section{The Block Rayleigh Quotient and Top-$k$ Eigenvectors}
+
+We now study the maximization problem
+\[
+  \max_{U \in \R^{d\times k}} \mathrm{Tr}(U^\top \Sigma U)
+  \quad \text{subject to } U^\top U = I_k,
+\]
+where $\Sigma$ is a symmetric positive semi-definite matrix. For the empirical case, simply take $\Sigma = \Sigma_n$.
+
+\begin{theorem}[Block Rayleigh quotient]
+\label{thm:block-rayleigh}
+Let $\Sigma = V \Lambda V^\top$ be a symmetric positive semi-definite matrix with eigenvalues
+$\lambda_1 \ge \dots \ge \lambda_d \ge 0$. Then:
+\begin{enumerate}
+  \item For any $U \in \R^{d\times k}$ with $U^\top U = I_k$,
+  \[
+    \mathrm{Tr}(U^\top \Sigma U)
+    \le \sum_{j=1}^k \lambda_j.
+  \]
+  \item Equality is attained if and only if the column space of $U$ is
+  an invariant subspace spanned by eigenvectors associated with
+  $\lambda_1,\dots,\lambda_k$, i.e.
+  \[
+    \mathrm{span}(U) = \mathrm{span}\{v_1,\dots,v_k\}.
+  \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Write $U$ in the eigenbasis of $\Sigma$: $U = V B$, where $B \in \R^{d\times k}$. Since $V$ is orthogonal and $U^\top U = I_k$,
+\[
+  I_k = U^\top U = B^\top V^\top V B = B^\top B.
+\]
+Therefore the columns of $B$ are orthonormal.
+
+Compute
+\[
+  \mathrm{Tr}(U^\top \Sigma U)
+  = \mathrm{Tr}\!\left( (V B)^\top V \Lambda V^\top (V B) \right)
+  = \mathrm{Tr}(B^\top \Lambda B).
+\]
+Let $b_i^\top$ denote the $i$-th row of $B$,
+so $b_i \in \R^k$ and $B = (b_{ij})_{i,j}$. Since $\Lambda$ is diagonal,
+\[
+  B^\top \Lambda B
+  = \sum_{i=1}^d \lambda_i\, b_i b_i^\top,
+\]
+and thus
+\[
+  \mathrm{Tr}(B^\top \Lambda B)
+  = \sum_{i=1}^d \lambda_i\, \mathrm{Tr}(b_i b_i^\top)
+  = \sum_{i=1}^d \lambda_i\, \|b_i\|_2^2.
+\]
+
+Next, use the constraint $B^\top B = I_k$. Taking traces,
+\[
+  \mathrm{Tr}(B^\top B)
+  = \mathrm{Tr}(I_k) = k.
+\]
+On the other hand,
+\[
+  \mathrm{Tr}(B^\top B)
+  = \sum_{i=1}^d \|b_i\|_2^2.
+\]
+Thus
+\begin{equation}
+  \sum_{i=1}^d \|b_i\|_2^2 = k.
+  \label{eq:mass-k}
+\end{equation}
+
+We also have $0 \le \|b_i\|_2^2 \le 1$ for each $i$. Indeed, $G := B B^\top$ is a projection matrix onto the column space of $B$, hence $G$ is positive semi-definite and $G^2 = G$. In particular its diagonal entries satisfy $0 \le G_{ii} \le 1$. But
+\[
+  G_{ii} = e_i^\top B B^\top e_i = \|b_i\|_2^2.
+\]
+
+We therefore need to maximize
+\[
+  S := \sum_{i=1}^d \lambda_i \|b_i\|_2^2
+\]
+subject to
+\[
+  0 \le \|b_i\|_2^2 \le 1
+  \quad\text{and}\quad
+  \sum_{i=1}^d \|b_i\|_2^2 = k.
+\]
+
+Since $\lambda_1 \ge \dots \ge \lambda_d$, the value of $S$ is maximized by allocating as much of the ``mass'' $k$ as possible on the largest eigenvalues, i.e.\ on indices $i = 1,\dots,k$. Because each $\|b_i\|_2^2 \le 1$, at most 1 unit of mass can be placed on each index. Hence the optimal allocation is
+\[
+  \|b_i\|_2^2 =
+  \begin{cases}
+    1, & i = 1,\dots,k,\\
+    0, & i = k+1,\dots,d.
+  \end{cases}
+\]
+For this allocation,
+\[
+  S_{\max} = \sum_{i=1}^k \lambda_i.
+\]
+
+More formally, for any feasible $(\|b_i\|_2^2)$,
+\[
+  S = \sum_{i=1}^d \lambda_i \|b_i\|_2^2
+    \le \sum_{i=1}^k \lambda_i \|b_i\|_2^2
+       + \lambda_{k+1} \sum_{i=k+1}^d \|b_i\|_2^2
+    \le \lambda_1 \sum_{i=1}^k \|b_i\|_2^2
+       + \lambda_{k+1} (k - \sum_{i=1}^k \|b_i\|_2^2),
+\]
+and using $\sum_{i=1}^d \|b_i\|_2^2 = k$ gives
+\[
+  S \le \sum_{i=1}^k \lambda_i,
+\]
+with equality only if $\|b_i\|_2^2 = 1$ for $i \le k$ and $\|b_i\|_2^2 = 0$ for $i > k$.
+
+In this case, $B$ has zero rows from $k+1$ to $d$, and the first $k$ rows form an orthonormal system. Then
+\[
+  U = V B
+\]
+has its columns lying entirely in $\mathrm{span}(v_1,\dots,v_k)$. Conversely, any $U$ whose column space is $\mathrm{span}(v_1,\dots,v_k)$ attains the maximum.
+\end{proof}
+
+Combining Proposition~\ref{prop:reconstruction-trace} and Theorem~\ref{thm:block-rayleigh}, we recover the standard PCA characterization:
+
+\begin{corollary}[Empirical PCA subspace]
+Any $U_n \in \R^{d\times k}$ with $U_n^\top U_n = I_k$ and
+\[
+  \mathrm{span}(U_n) = \mathrm{span}\{v_1,\dots,v_k\}
+\]
+minimizes the empirical reconstruction risk $\widetilde{R}_n(U)$ among all $U$ with $U^\top U = I_k$.
+\end{corollary}
+
+\section{Population PCA and Risk Representation}
+
+Let $X \in \R^d$ be a random vector with mean $m = \E[X]$ and covariance
+\[
+  \Sigma := \E\big[(X - m)(X - m)^\top\big].
+\]
+
+\begin{definition}[Population reconstruction risk]
+For $U \in \R^{d\times k}$ with $U^\top U = I_k$, define
+\[
+  R(U)
+  := \frac{1}{2}\E\!\left[\|X - m - U U^\top (X - m)\|_2^2\right].
+\]
+\end{definition}
+
+\begin{proposition}[Population risk as constant minus trace]
+\label{prop:population-risk}
+For any $U \in \R^{d\times k}$ with $U^\top U = I_k$,
+\[
+  R(U)
+  = C - \frac{1}{2}\mathrm{Tr}(U^\top \Sigma U),
+\]
+where $C = \frac{1}{2}\E\big[\|X - m\|_2^2\big]$ is independent of $U$.
+\end{proposition}
+
+\begin{proof}
+Let $Y := X - m$. Then $\E[Y] = 0$ and $\Sigma = \E[YY^\top]$. For fixed $U$, denote $P = U U^\top$ as before. Then
+\[
+  R(U) = \frac{1}{2}\E\left[\|Y - P Y\|_2^2\right].
+\]
+We can repeat the same argument as in Proposition~\ref{prop:reconstruction-trace} with expectations in place of empirical means:
+\[
+  \|Y - P Y\|_2^2
+  = \|Y\|_2^2 - Y^\top P Y.
+\]
+Taking expectations,
+\[
+  R(U)
+  = \frac{1}{2}\E\|Y\|_2^2 - \frac{1}{2}\E\big[Y^\top P Y\big].
+\]
+The first term is $C$. For the second term,
+\[
+  \E[Y^\top P Y]
+  = \E[\mathrm{Tr}(P Y Y^\top)]
+  = \mathrm{Tr}\big(P \E[YY^\top]\big)
+  = \mathrm{Tr}(U^\top \Sigma U),
+\]
+using linearity of trace and expectation. Hence
+\[
+  R(U)
+  = C - \frac{1}{2}\mathrm{Tr}(U^\top \Sigma U).
+\]
+\end{proof}
+
+\begin{corollary}[Population PCA subspace]
+Let $\Sigma = U \Lambda U^\top$ be an eigendecomposition with eigenvalues $\lambda_1 \ge \dots \ge \lambda_d$. Any matrix $U^\ast \in \R^{d\times k}$ with orthonormal columns satisfying
+\[
+  \mathrm{span}(U^\ast) = \mathrm{span}\{u_1,\dots,u_k\}
+\]
+minimizes $R(U)$ over all $U$ with $U^\top U = I_k$.
+\end{corollary}
+
+\begin{proof}
+By Proposition~\ref{prop:population-risk}, minimizing $R(U)$ is equivalent to maximizing $\mathrm{Tr}(U^\top \Sigma U)$, and we can apply Theorem~\ref{thm:block-rayleigh} with $\Sigma$ in place of $\Sigma_n$.
+\end{proof}
+
+\section{Dependence on the Subspace Only}
+
+\begin{proposition}[Invariance under change of basis]
+Let $U,V \in \R^{d\times k}$ satisfy $U^\top U = V^\top V = I_k$. Then the following are equivalent:
+\begin{enumerate}
+  \item $\mathrm{span}(U) = \mathrm{span}(V)$;
+  \item there exists an orthogonal matrix $Q \in \R^{k\times k}$ such that $V = U Q$;
+  \item $U U^\top = V V^\top$.
+\end{enumerate}
+Moreover, if any of the above holds, then
+\[
+  R(U) = R(V)
+  \quad\text{and}\quad
+  \widetilde{R}_n(U) = \widetilde{R}_n(V).
+\]
+\end{proposition}
+
+\begin{proof}
+$(1) \Rightarrow (2)$:
+If $\mathrm{span}(U) = \mathrm{span}(V)$ and both $U$ and $V$ have orthonormal columns, then the columns of $V$ are orthonormal vectors in the span of the columns of $U$. Thus there exists an orthogonal matrix $Q$ such that $V = U Q$.
+
+$(2) \Rightarrow (3)$:
+If $V = U Q$ with $Q^\top Q = I_k$, then
+\[
+  V V^\top = U Q Q^\top U^\top = U U^\top.
+\]
+
+$(3) \Rightarrow (1)$:
+If $U U^\top = V V^\top =: P$, then $P$ is an orthogonal projector, and its image is precisely the subspace onto which it projects. Thus
+\[
+  \mathrm{span}(U) = \mathrm{Im}(P) = \mathrm{span}(V).
+\]
+
+For the risk equality, note that $R(U)$ and $\widetilde{R}_n(U)$ only depend on $P = U U^\top$. If $U U^\top = V V^\top$, then clearly $R(U) = R(V)$ and $\widetilde{R}_n(U) = \widetilde{R}_n(V)$.
+\end{proof}
+
+\begin{remark}
+This proposition justifies viewing PCA as choosing a \emph{subspace} rather than a specific orthonormal basis. The natural parameter space is the Grassmann manifold of $k$-dimensional subspaces in $\R^d$, rather than the Stiefel manifold of $d\times k$ orthonormal matrices.
+\end{remark}
+
+\section{Principal Angles and Subspace Distance}
+
+We now introduce principal angles between subspaces and relate them to a natural distance between projectors. This connects the geometric error of PCA to matrix norms.
+
+\begin{definition}[Principal angles]
+Let $U,V \in \R^{d\times k}$ have orthonormal columns and let
+\[
+  U^\top V = S \in \R^{k\times k}.
+\]
+Let $\sigma_1 \ge \dots \ge \sigma_k \ge 0$ be the singular values of $S$. The \emph{principal angles} between the subspaces $\mathcal{U} = \mathrm{span}(U)$ and $\mathcal{V} = \mathrm{span}(V)$ are defined by
+\[
+  \theta_j := \arccos(\sigma_j), \quad j=1,\dots,k.
+\]
+\end{definition}
+
+\begin{remark}
+We have $0 \le \sigma_j \le 1$, hence $\theta_j \in [0,\pi/2]$. The principal angles are symmetric in $(\mathcal{U},\mathcal{V})$ and do not depend on the particular orthonormal bases $U$ and $V$.
+\end{remark}
+
+A common way to measure the distance between subspaces is to look at the difference of their orthogonal projectors.
+
+\begin{definition}[Projection distance]
+Let $P_U = U U^\top$ and $P_V = V V^\top$ be the orthogonal projectors onto $\mathcal{U}$ and $\mathcal{V}$, respectively. The \emph{projection-Frobenius distance} between $\mathcal{U}$ and $\mathcal{V}$ is
+\[
+  d_{\text{proj}}(\mathcal{U},\mathcal{V})
+  := \|P_U - P_V\|_F,
+\]
+where $\|\cdot\|_F$ is the Frobenius norm.
+\end{definition}
+
+The next proposition makes the link to principal angles explicit.
+
+\begin{proposition}[Projectors and principal angles]
+\label{prop:proj-angles}
+With notation as above, we have
+\[
+  \|P_U - P_V\|_F^2
+  = 2 \sum_{j=1}^k \sin^2 \theta_j
+  = 2k - 2 \|U^\top V\|_F^2.
+\]
+\end{proposition}
+
+\begin{proof}
+First, note that
+\[
+  \|P_U - P_V\|_F^2
+  = \mathrm{Tr}\big((P_U - P_V)^\top (P_U - P_V)\big)
+  = \mathrm{Tr}(P_U^2) + \mathrm{Tr}(P_V^2) - 2 \mathrm{Tr}(P_U P_V),
+\]
+using $\mathrm{Tr}(AB) = \mathrm{Tr}(BA)$ and the symmetry of $P_U,P_V$.
+
+Since $P_U^2 = P_U$ and $P_V^2 = P_V$, and both are rank-$k$ projectors,
+\[
+  \mathrm{Tr}(P_U^2) = \mathrm{Tr}(P_U) = k,
+  \qquad
+  \mathrm{Tr}(P_V^2) = \mathrm{Tr}(P_V) = k.
+\]
+Moreover,
+\[
+  \mathrm{Tr}(P_U P_V)
+  = \mathrm{Tr}(U U^\top V V^\top)
+  = \mathrm{Tr}(U^\top V V^\top U)
+  = \mathrm{Tr}\big( (U^\top V)(U^\top V)^\top \big)
+  = \|U^\top V\|_F^2.
+\]
+Therefore
+\[
+  \|P_U - P_V\|_F^2
+  = k + k - 2 \|U^\top V\|_F^2
+  = 2k - 2 \|U^\top V\|_F^2.
+\]
+
+Now write the singular value decomposition of $U^\top V$:
+\[
+  U^\top V = Q \Sigma R^\top,
+\]
+where $\Sigma = \mathrm{diag}(\sigma_1,\dots,\sigma_k)$ contains the singular values. The Frobenius norm is unitarily invariant, hence
+\[
+  \|U^\top V\|_F^2
+  = \|\Sigma\|_F^2
+  = \sum_{j=1}^k \sigma_j^2.
+\]
+Substituting,
+\[
+  \|P_U - P_V\|_F^2
+  = 2k - 2 \sum_{j=1}^k \sigma_j^2
+  = 2 \sum_{j=1}^k (1 - \sigma_j^2)
+  = 2 \sum_{j=1}^k \sin^2 \theta_j,
+\]
+since $\sigma_j = \cos \theta_j$.
+\end{proof}
+
+\begin{remark}
+The quantity
+\[
+  \sqrt{\sum_{j=1}^k \sin^2 \theta_j}
+\]
+is sometimes called the \emph{chordal distance} between subspaces. Proposition~\ref{prop:proj-angles} shows that, up to a factor $\sqrt{2}$, this is exactly the Frobenius norm of the difference of projectors. This makes it convenient to use matrix norms when analyzing the geometric error of PCA.
+\end{remark}
+
+\section{A Davis--Kahan Type Perturbation Bound}
+
+We now state a basic version of the Davis--Kahan $\sin\Theta$ theorem, which controls the distance between invariant subspaces of two symmetric matrices in terms of a spectral gap and the size of the perturbation. In the PCA setting, this links the population and empirical principal subspaces.
+
+\subsection{Statement of the Theorem}
+
+Let $\Sigma$ be the population covariance and $\Sigma_n$ the empirical covariance. Assume $\Sigma$ has eigenvalues
+\[
+  \lambda_1 \ge \dots \ge \lambda_k > \lambda_{k+1} \ge \dots \ge \lambda_d.
+\]
+Let $U^\ast \in \R^{d\times k}$ collect the top-$k$ eigenvectors of $\Sigma$, and let $U_n \in \R^{d\times k}$ collect the top-$k$ eigenvectors of $\Sigma_n$.
+
+Define the matrix of principal angles between the subspaces $\mathcal{U}^\ast = \mathrm{span}(U^\ast)$ and $\mathcal{U}_n = \mathrm{span}(U_n)$ as follows: let $\Theta \in \R^{k\times k}$ be diagonal with entries $\theta_1,\dots,\theta_k$ the principal angles. We use the notation
+\[
+  \sin \Theta := \mathrm{diag}(\sin \theta_1,\dots,\sin \theta_k),
+\]
+and define norms of $\sin\Theta$ by
+\[
+  \|\sin\Theta\|_2 = \max_{j} \sin \theta_j,
+  \qquad
+  \|\sin\Theta\|_F^2 = \sum_{j=1}^k \sin^2 \theta_j.
+\]
+
+\begin{theorem}[Davis--Kahan $\sin\Theta$ theorem, simplified]
+\label{thm:davis-kahan}
+Let $\Sigma$ and $\Sigma_n$ be symmetric matrices as above and let $\delta := \lambda_k - \lambda_{k+1} > 0$ be the eigengap. Then
+\[
+  \|\sin\Theta\|_2
+  \le \frac{\|\Sigma_n - \Sigma\|_2}{\delta},
+\]
+and, consequently,
+\[
+  \|\sin\Theta\|_F
+  \le \sqrt{k}\,\|\sin\Theta\|_2
+  \le \sqrt{k}\,\frac{\|\Sigma_n - \Sigma\|_2}{\delta}.
+\]
+\end{theorem}
+
+Here $\|\cdot\|_2$ is the spectral norm (largest singular value).
+
+\begin{remark}
+By Proposition~\ref{prop:proj-angles}, the Frobenius distance between projectors satisfies
+\[
+  \|U^\ast{U^\ast}^\top - U_n U_n^\top\|_F^2
+  = 2 \sum_{j=1}^k \sin^2 \theta_j
+  = 2 \|\sin\Theta\|_F^2,
+\]
+hence Theorem~\ref{thm:davis-kahan} also yields
+\[
+  \|U^\ast{U^\ast}^\top - U_n U_n^\top\|_F
+  \le \sqrt{2k}\,\frac{\|\Sigma_n - \Sigma\|_2}{\delta}.
+\]
+\end{remark}
+
+\subsection{Proof Sketch}
+
+A full proof requires a few linear algebra identities; we outline the main ideas.
+
+\begin{proof}[Proof sketch]
+Let $P^\ast = U^\ast {U^\ast}^\top$ and $P_n = U_n U_n^\top$ be the projectors onto the top-$k$ eigenspaces of $\Sigma$ and $\Sigma_n$, respectively. Assume for simplicity that $\Sigma$ and $\Sigma_n$ are diagonalizable in orthonormal bases, which they are as symmetric matrices.
+
+\smallskip
+
+\emph{Step 1: Block decomposition.}
+Choose an orthonormal basis in which
+\[
+  \Sigma
+  = \begin{pmatrix}
+      \Lambda_1 & 0 \\
+      0 & \Lambda_2
+    \end{pmatrix},
+\]
+where $\Lambda_1 \in \R^{k\times k}$ contains $\lambda_1,\dots,\lambda_k$ and $\Lambda_2 \in \R^{(d-k)\times (d-k)}$ contains $\lambda_{k+1},\dots,\lambda_d$. In this basis,
+\[
+  P^\ast
+  = \begin{pmatrix}
+      I_k & 0 \\
+      0 & 0
+    \end{pmatrix}.
+\]
+Write, in the same basis,
+\[
+  P_n
+  = \begin{pmatrix}
+      A & B \\
+      B^\top & C
+    \end{pmatrix}.
+\]
+The off-diagonal block $B$ describes how much the empirical top-$k$ subspace ``leans'' into the orthogonal complement; it is closely related to $\sin\Theta$.
+
+\smallskip
+
+\emph{Step 2: Sin$\Theta$ and projectors.}
+One can show that
+\[
+  \|\sin\Theta\|_2
+  = \|(I - P^\ast)P_n\|_2
+  = \|B^\top\|_2
+  = \|B\|_2.
+\]
+Intuitively, $(I-P^\ast)P_n$ projects first onto the empirical subspace and then onto the orthogonal complement of the true subspace, measuring the mismatch between them.
+
+\smallskip
+
+\emph{Step 3: Using the spectral gap.}
+Consider the operator
+\[
+  \Sigma P_n - P_n \Sigma.
+\]
+In the block basis above and using the form of $\Sigma$, one can compute this commutator explicitly and relate it to the block $B$. On the other hand,
+\[
+  \Sigma P_n - P_n \Sigma
+  = (\Sigma - \Sigma_n)P_n + \Sigma_n P_n - P_n \Sigma_n + P_n(\Sigma_n - \Sigma).
+\]
+But $P_n$ is the spectral projector onto eigenvectors of $\Sigma_n$ associated with the top-$k$ eigenvalues, so $\Sigma_n P_n = P_n \Sigma_n$. Thus
+\[
+  \Sigma P_n - P_n \Sigma
+  = (\Sigma - \Sigma_n)P_n + P_n(\Sigma_n - \Sigma).
+\]
+In particular,
+\[
+  \|\Sigma P_n - P_n \Sigma\|_2
+  \le 2 \|\Sigma_n - \Sigma\|_2.
+\]
+
+On the other hand, using the block forms for $\Sigma$ and $P_n$ and the eigengap condition $\lambda_k > \lambda_{k+1}$, one can show that
+\[
+  \|\Sigma P_n - P_n \Sigma\|_2
+  \ge \delta \|B\|_2,
+\]
+where $\delta = \lambda_k - \lambda_{k+1}$. Intuitively, moving mass between the top-$k$ and bottom-$(d-k)$ subspaces costs at least $\delta$ in the commutator.
+
+Combining the two inequalities gives
+\[
+  \delta \|B\|_2
+  \le \|\Sigma P_n - P_n \Sigma\|_2
+  \le 2 \|\Sigma_n - \Sigma\|_2.
+\]
+With a slightly more refined argument (or absorbing the factor $2$ into $\delta$ via conventions on the spectral clusters), one obtains the bound
+\[
+  \|B\|_2 \le \frac{\|\Sigma_n - \Sigma\|_2}{\delta}.
+\]
+Since $\|B\|_2 = \|\sin\Theta\|_2$, this is the desired result.
+\end{proof}
+
+\begin{remark}
+The Davis--Kahan theorem is very general: it applies to any symmetric (or Hermitian) matrices and spectral subspaces separated by a gap, not only to covariance matrices. In PCA, it is a key tool to turn a matrix concentration bound on $\|\Sigma_n - \Sigma\|_2$ into a geometric error bound for the empirical principal subspace.
+\end{remark}
+
+\section{Matrix Concentration for the Sample Covariance}
+
+To turn Theorem~\ref{thm:davis-kahan} into a finite-sample PCA error bound, we need a high-probability bound on $\|\Sigma_n - \Sigma\|_2$. A standard assumption is sub-Gaussian tails.
+
+\begin{definition}[Sub-Gaussian random vector]
+A random vector $X \in \R^d$ is \emph{sub-Gaussian} with parameter $K \ge 0$ if for all $u \in \R^d$ with $\|u\|_2 = 1$ and all $t \ge 0$,
+\[
+  \Pr\big( |u^\top X| \ge t \big)
+  \le 2 \exp\!\left( -\frac{t^2}{2K^2} \right).
+\]
+Equivalently, for all such $u$,
+\[
+  \E \exp\big( \lambda\, u^\top X\big)
+  \le \exp\!\left( \frac{\lambda^2 K^2}{2} \right)
+  \quad\text{for all } \lambda \in \R.
+\]
+\end{definition}
+
+We assume $X$ has mean zero and covariance $\Sigma$.
+
+\begin{theorem}[Sample covariance concentration, sub-Gaussian case]
+\label{thm:cov-concentration}
+Let $X_1,\dots,X_n$ be i.i.d.\ copies of a mean-zero sub-Gaussian random vector $X \in \R^d$ with parameter $K$ and covariance matrix $\Sigma$. Let
+\[
+  \Sigma_n = \frac{1}{n}\sum_{i=1}^n X_i X_i^\top.
+\]
+Then there exist universal constants $C,c > 0$ such that for all $t \ge 0$,
+\[
+  \Pr\left(
+    \|\Sigma_n - \Sigma\|_2
+    \le C K^2 \|\Sigma\|_2 \left(
+      \sqrt{\frac{d + t}{n}} + \frac{d + t}{n}
+    \right)
+  \right)
+  \ge 1 - 2 \exp(-c t).
+\]
+\end{theorem}
+
+\begin{remark}
+\leavevmode
+\begin{itemize}
+  \item If $n \gtrsim d$, the dominant term is
+  \[
+    \|\Sigma_n - \Sigma\|_2
+    = O_{\mathbb{P}}\!\left( K^2 \|\Sigma\|_2 \sqrt{\frac{d}{n}} \right).
+  \]
+  \item For isotropic $X$ (i.e.\ $\Sigma = I_d$), this reduces to
+  \[
+    \|\Sigma_n - I_d\|_2
+    \lesssim K^2 \left(
+      \sqrt{\frac{d + t}{n}} + \frac{d + t}{n}
+    \right)
+  \]
+  with high probability.
+\end{itemize}
+\end{remark}
+
+\begin{proof}[Proof idea]
+One approach is to use an $\varepsilon$-net argument on the unit sphere $S^{d-1}$ combined with Bernstein-type inequalities for quadratic forms $u^\top (\Sigma_n - \Sigma) u$; see, e.g., Vershynin's notes on non-asymptotic random matrix theory. Another approach is to invoke general matrix Bernstein inequalities for sums of independent random matrices $X_i X_i^\top - \Sigma$, together with sub-Gaussian tail control. We omit the detailed proof here.
+\end{proof}
+
+Combining Theorems~\ref{thm:davis-kahan} and \ref{thm:cov-concentration} yields a clean finite-sample bound for PCA.
+
+\begin{corollary}[Finite-sample PCA subspace error, high probability]
+\label{cor:pca-error}
+Under the assumptions of Theorems~\ref{thm:davis-kahan} and \ref{thm:cov-concentration}, let $\delta := \lambda_k - \lambda_{k+1} > 0$ be the eigengap of the population covariance $\Sigma$. Then there exist constants $C',c > 0$ such that for all $t \ge 0$,
+\[
+  \Pr\left(
+    \|U^\ast{U^\ast}^\top - U_n U_n^\top\|_F
+    \le C' K^2 \sqrt{k}\,
+       \frac{\|\Sigma\|_2}{\delta}
+       \left(
+         \sqrt{\frac{d + t}{n}} + \frac{d + t}{n}
+       \right)
+  \right)
+  \ge 1 - 2 \exp(-c t),
+\]
+where $U^\ast$ and $U_n$ are the population and empirical $k$-PCA bases as before.
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:davis-kahan},
+\[
+  \|U^\ast{U^\ast}^\top - U_n U_n^\top\|_F
+  \le \sqrt{2k}\,\frac{\|\Sigma_n - \Sigma\|_2}{\delta}.
+\]
+Apply Theorem~\ref{thm:cov-concentration} to bound $\|\Sigma_n - \Sigma\|_2$ and absorb $\sqrt{2}$ into the constant $C'$.
+\end{proof}
+
+\begin{remark}
+Corollary~\ref{cor:pca-error} gives the usual $O\big(\sqrt{kd/n}\big)$ rate (up to log factors and constants) for the Frobenius error between the empirical and population principal subspaces in the sub-Gaussian setting, with explicit dependence on the eigengap $\delta$ and the scale $\|\Sigma\|_2$.
+\end{remark}
+
+\end{document}
