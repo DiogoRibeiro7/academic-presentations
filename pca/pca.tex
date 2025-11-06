@@ -1,0 +1,695 @@
+\documentclass{beamer}
+
+% THEME & PACKAGES
+\usetheme{Madrid}
+\usecolortheme{default}
+\usefonttheme{professionalfonts}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{bbm}
+\usepackage{enumerate}
+
+% TITLE INFO (no article name here)
+\title[Principal Component Analysis]{Principal Component Analysis:\\
+From Classical Ideas to Geometric and Statistical Analysis}
+\author{Diogo Ribeiro} 
+\institute{TSIW / Department of Informatics}
+\date{\today}
+
+% SHORTCUTS
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Gr}{\mathrm{Gr}}
+\newcommand{\St}{\mathrm{St}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\1}{\mathbbm{1}}
+
+\begin{document}
+
+%========================================
+% TITLE & OUTLINE
+%========================================
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%========================================
+\section{Motivation and Intuition}
+%========================================
+
+\begin{frame}{Why PCA? (1/2)} % ~5 min
+  \begin{itemize}
+    \item Modern datasets: $X_1,\dots,X_n \in \R^d$ with
+    \begin{itemize}
+      \item $d$ large (tens, hundreds, thousands).
+      \item Strong correlations between coordinates.
+    \end{itemize}
+    \item Problems:
+    \begin{itemize}
+      \item Visualization is impossible in high dimensions.
+      \item Learning algorithms may overfit or become unstable.
+      \item Computation and storage become expensive.
+    \end{itemize}
+    \item Idea: replace the original variables by a smaller set of
+    \emph{linear combinations} that capture most of the structure.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Why PCA? (2/2)} % ~3 min
+  \begin{itemize}
+    \item PCA is an unsupervised method.
+    \item No labels $Y$; we use only the geometry of $X$ (through covariance).
+    \item Typical goals:
+    \begin{itemize}
+      \item Data compression / dimensionality reduction.
+      \item Visualization in 2D/3D.
+      \item Denoising.
+      \item As a preprocessing step before regression / classification.
+    \end{itemize}
+    \item For MSc/PhD level:
+    \begin{itemize}
+      \item PCA is also a key example of spectral methods.
+      \item It is a clean model to study statistical risk and geometry.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Toy Geometric Picture (2D/3D)} % ~5 min (talk through)
+  \begin{itemize}
+    \item Imagine points in $\R^2$ forming an elongated cloud.
+    \item First principal component (PC1):
+    \begin{itemize}
+      \item A unit vector $u_1$ along the longest direction of variability.
+      \item Projections $\langle u_1, X \rangle$ have maximal variance.
+    \end{itemize}
+    \item Second principal component (PC2):
+    \begin{itemize}
+      \item A unit vector $u_2$ orthogonal to $u_1$.
+      \item Captures the next largest variance, orthogonal to PC1.
+    \end{itemize}
+    \item In $\R^3$, PCA often finds a plane where the cloud lies approximately.
+  \end{itemize}
+  \vspace{0.3cm}
+  \textbf{Key intuition:} PCA finds a low-dimensional \emph{linear} subspace
+  that best fits the data in a mean squared error sense.
+\end{frame}
+
+\begin{frame}{Two Classical Viewpoints of PCA} % ~4 min
+  \begin{enumerate}[(1)]
+    \item \textbf{Max-variance view:}
+    \begin{itemize}
+      \item First PC: direction of maximal variance.
+      \item Next PCs: directions of maximal variance orthogonal to previous ones.
+    \end{itemize}
+    \item \textbf{Min-error view:}
+    \begin{itemize}
+      \item Find a $k$-dimensional subspace such that
+      orthogonal projection onto that subspace minimizes
+      the mean squared reconstruction error.
+    \end{itemize}
+  \end{enumerate}
+  \vspace{0.2cm}
+  These views are equivalent and both will be useful:
+  \begin{itemize}
+    \item For implementation and interpretation: max-variance/SVD view.
+    \item For theory and geometry: reconstruction-error view.
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Classical PCA: Algebra and Optimization}
+%========================================
+
+\begin{frame}{Centering and Covariance} % ~5 min
+  \begin{itemize}
+    \item Observations: $X_1,\dots,X_n \in \R^d$.
+    \item Empirical mean:
+    \[
+      \bar{X} = \frac{1}{n}\sum_{i=1}^n X_i.
+    \]
+    \item Centered observations:
+    \[
+      \tilde{X}_i = X_i - \bar{X}.
+    \]
+    \item Empirical covariance:
+    \[
+      \Sigma_n = \frac{1}{n}\sum_{i=1}^n \tilde{X}_i \tilde{X}_i^\top
+      \in \R^{d\times d}.
+    \]
+    \item PCA is typically applied to $\tilde{X}_i$ and $\Sigma_n$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Eigen-Decomposition of $\Sigma_n$} % ~5 min
+  \begin{itemize}
+    \item $\Sigma_n$ is symmetric positive semidefinite.
+    \item It has eigen-decomposition
+    \[
+      \Sigma_n = V \Lambda V^\top,
+    \]
+    where
+    \[
+      V = [v_1,\dots,v_d], \quad
+      \Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_d),
+    \]
+    and
+    \[
+      \lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_d \ge 0.
+    \]
+    \item $v_j$ are called \emph{principal directions} (or loadings).
+    \item $\lambda_j$ are variances along these directions.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{First Principal Component as a Rayleigh Quotient} % ~6 min
+  \begin{itemize}
+    \item Let $u \in \R^d$ with $\|u\|_2 = 1$.
+    \item Variance of projection:
+    \[
+      \Var(\langle u, X \rangle) \approx u^\top \Sigma_n u.
+    \]
+    \item First principal component solves:
+    \[
+      u_1 \in \arg\max_{\|u\|_2 = 1} u^\top \Sigma_n u.
+    \]
+    \item By Rayleigh quotient theory:
+    \[
+      u_1 = v_1, \quad \text{the eigenvector with largest eigenvalue } \lambda_1.
+    \]
+    \item Next components:
+    \[
+      u_k \in \arg\max_{\|u\|_2 = 1,\, u \perp u_1,\dots,u_{k-1}}
+      u^\top \Sigma_n u,
+    \]
+    giving $u_k = v_k$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Optimization View: Reconstruction Error} % ~6 min
+  \begin{itemize}
+    \item Let $U \in \R^{d\times k}$ with $U^\top U = I_k$.
+    \item Projection of $\tilde{X}_i$ onto the subspace spanned by columns of $U$:
+    \[
+      P_U(\tilde{X}_i) = U U^\top \tilde{X}_i.
+    \]
+    \item Reconstruction error for point $i$:
+    \[
+      \norm{\tilde{X}_i - U U^\top \tilde{X}_i}_2^2.
+    \]
+    \item Empirical risk:
+    \[
+      \widetilde{R}_n(U)
+      := \frac{1}{2n} \sum_{i=1}^n
+      \norm{\tilde{X}_i - U U^\top \tilde{X}_i}_2^2.
+    \]
+    \item PCA subspace of dimension $k$:
+    \[
+      U_n = [v_1,\dots,v_k]
+      \in \arg\min_{U^\top U = I_k} \widetilde{R}_n(U).
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Quick Derivation: Minimizing Reconstruction Error} % ~5 min
+  \small
+  \textbf{Sketch:}
+  \begin{align*}
+    \widetilde{R}_n(U)
+    &= \frac{1}{2n} \sum_{i=1}^n
+    \norm{\tilde{X}_i - U U^\top \tilde{X}_i}_2^2 \\
+    &= \frac{1}{2n} \sum_{i=1}^n
+    \left(\norm{\tilde{X}_i}_2^2 - \norm{U^\top \tilde{X}_i}_2^2\right) \\
+    &= \frac{1}{2n} \sum_{i=1}^n \norm{\tilde{X}_i}_2^2
+       - \frac{1}{2n} \sum_{i=1}^n \tilde{X}_i^\top U U^\top \tilde{X}_i \\
+    &= \text{constant} - \frac{1}{2} \mathrm{Tr}(U^\top \Sigma_n U).
+  \end{align*}
+  \vspace{0.2cm}
+  \begin{itemize}
+    \item So minimizing $\widetilde{R}_n(U)$ is the same as maximizing
+    $\mathrm{Tr}(U^\top \Sigma_n U)$.
+    \item The maximizer is $U_n = [v_1,\dots,v_k]$ by a “block Rayleigh quotient” argument.
+    \item This expression (risk = constant $-$ block Rayleigh quotient) is key for the geometric analysis later.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{SVD View and Scores} % ~4 min
+  \begin{itemize}
+    \item Data matrix $X \in \R^{n\times d}$ with rows $\tilde{X}_i^\top$.
+    \item SVD:
+    \[
+      X = W S V^\top,
+    \]
+    with $W \in \R^{n\times d}$, $S = \mathrm{diag}(s_1,\dots,s_d)$,
+    $V = [v_1,\dots,v_d]$.
+    \item Then
+    \[
+      \Sigma_n = \frac{1}{n} X^\top X
+      = V \frac{S^2}{n} V^\top.
+    \]
+    \item Principal component scores:
+    \[
+      Z = X V_k = W S_k, \quad V_k = [v_1,\dots,v_k].
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Explained Variance and Choosing $k$} % ~5 min
+  \begin{itemize}
+    \item Total variance:
+    \[
+      \mathrm{tr}(\Sigma_n) = \sum_{j=1}^d \lambda_j.
+    \]
+    \item Variance explained by first $k$ PCs:
+    \[
+      \sum_{j=1}^k \lambda_j.
+    \]
+    \item Proportion of variance explained (PVE):
+    \[
+      \mathrm{PVE}(k) =
+        \frac{\sum_{j=1}^k \lambda_j}{\sum_{j=1}^d \lambda_j}.
+    \]
+    \item Practical heuristics:
+    \begin{itemize}
+      \item Scree plot (look for “elbow”).
+      \item Choose smallest $k$ with $\mathrm{PVE}(k) \ge$ (e.g.) $0.9$.
+      \item Application-specific trade-off: model complexity vs information retained.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Board / Discussion Break (Optional)} % ~5 min
+  \textbf{Suggestion for 90-minute slot:}
+  \begin{itemize}
+    \item On the board, work through a tiny numerical example:
+    \begin{itemize}
+      \item $d = 2$, $n = 3$ or $4$.
+      \item Compute $\Sigma_n$, eigenvalues, eigenvectors.
+      \item Show projections and reconstruction.
+    \end{itemize}
+    \item Ask students:
+    \begin{itemize}
+      \item What happens if we do not center the data?
+      \item When might PCA be a bad idea (nonlinear structure, heavy tails, etc.)?
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Population vs Sample PCA}
+%========================================
+
+\begin{frame}{Population PCA} % ~4 min
+  \begin{itemize}
+    \item Random vector $X \in \R^d$ with mean $m = \E[X]$ and covariance
+    \[
+      \Sigma = \E[(X-m)(X-m)^\top].
+    \]
+    \item Eigen-decomposition:
+    \[
+      \Sigma = U \Lambda U^\top,
+      \quad
+      U = [u_1,\dots,u_d],\;
+      \Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_d).
+    \]
+    \item The population $k$-dimensional PCA subspace:
+    \[
+      U^\ast = [u_1,\dots,u_k].
+    \]
+    \item Sample PCA uses $U_n = [v_1,\dots,v_k]$ based on $\Sigma_n$ as an estimator of $U^\ast$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Population Reconstruction Risk} % ~4 min
+  \begin{itemize}
+    \item For any $U \in \R^{d\times k}$ with $U^\top U = I_k$, define
+    the population risk:
+    \[
+      R(U)
+      := \frac{1}{2}\E\!\left[\norm{X - \E[X] - U U^\top (X - \E[X])}_2^2\right].
+    \]
+    \item One can show:
+    \[
+      R(U) = \frac{1}{2}\mathrm{tr}(\Sigma)
+              - \frac{1}{2} \mathrm{tr}(U^\top \Sigma U).
+    \]
+    \item Therefore, $U^\ast = [u_1,\dots,u_k]$ minimizes $R(U)$.
+    \item Now we start to think of PCA as choosing a \emph{parameter} (a subspace)
+    to minimize a risk functional.
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Grassmann Manifold View}
+%========================================
+
+\begin{frame}{Redundancy and the Grassmannian} % ~5 min
+  \begin{itemize}
+    \item The risk $R(U)$ depends only on the subspace $\mathcal{S} = \text{span}(U)$:
+    if $V = UQ$ with $Q$ orthogonal, then
+    \[
+      V V^\top = U U^\top, \quad R(V) = R(U).
+    \]
+    \item We want a space where each point is a $k$-dimensional subspace:
+    \begin{itemize}
+      \item Stiefel manifold: orthonormal frames.
+      \item Grassmann manifold: subspaces (frames modulo rotations).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Stiefel and Grassmann Manifolds} % ~5 min
+  \begin{block}{Stiefel Manifold}
+    \[
+      \St(d,k) := \{ U \in \R^{d\times k} : U^\top U = I_k \}.
+    \]
+  \end{block}
+  \begin{block}{Grassmann Manifold}
+    \[
+      \Gr(d,k) := \St(d,k) / \sim,
+    \]
+    where $U \sim V$ if $V = UQ$ for some orthogonal $Q \in \R^{k\times k}$.
+  \end{block}
+  \begin{itemize}
+    \item Each $[U] \in \Gr(d,k)$ is a $k$-dimensional subspace of $\R^d$.
+    \item PCA:
+    \[
+      [U^\ast] \in \arg\min_{[U]\in\Gr(d,k)} R([U]),
+      \quad
+      [U_n] \in \arg\min_{[U]\in\Gr(d,k)} R_n([U]).
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Geometry of $\Gr(d,k)$ (Sketch)} % ~6 min
+  \begin{itemize}
+    \item Tangent space at $[U]$:
+    \[
+      T_{[U]}\Gr(d,k) \simeq \{ \Delta \in \R^{d\times k} : U^\top \Delta = 0 \}.
+    \]
+    \item Principal angles $\theta_1,\dots,\theta_k$ between $[U]$ and $[V]$:
+    \begin{itemize}
+      \item Compute SVD of $U^\top V$.
+      \item Cosines of the angles are the singular values.
+    \end{itemize}
+    \item Riemannian distance:
+    \[
+      \mathrm{dist}^2([U],[V]) = \sum_{j=1}^k \theta_j^2.
+    \]
+    \item For statistical analysis:
+    \begin{itemize}
+      \item Use exponential map $\exp_{[U]}$ to move along geodesics.
+      \item Use logarithm map $\mathrm{Log}_{[U]}$ to map nearby subspaces to the tangent space.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Asymptotic Performance of PCA}
+%========================================
+
+\begin{frame}{Two Notions of Error} % ~4 min
+  \begin{itemize}
+    \item \textbf{Geometric error:}
+    \[
+      \mathrm{dist}([U_n],[U^\ast])
+      \quad\text{(distance on } \Gr(d,k)\text{)}.
+    \]
+    \item \textbf{Excess risk:}
+    \[
+      E_n = R([U_n]) - R([U^\ast]).
+    \]
+    \item Both are random (depend on the sample).
+    \item We are interested in:
+    \begin{itemize}
+      \item Convergence: $[U_n] \to [U^\ast]$ as $n \to \infty$.
+      \item Rate and limiting distribution (CLT-type results).
+      \item How $E_n$ behaves and what determines it.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Theorem (Informal): Asymptotic Normality on $\Gr(d,k)$} % ~7 min
+  \small
+  Under assumptions such as:
+  \begin{itemize}
+    \item Eigengap: $\lambda_k > \lambda_{k+1}$.
+    \item Finite moments (up to order 4) of projections $\langle u_j, X \rangle$.
+  \end{itemize}
+  one can show:
+  \begin{itemize}
+    \item \textbf{Consistency:}
+    \[
+      \mathrm{dist}([U_n],[U^\ast]) \xrightarrow{P} 0.
+    \]
+    \item \textbf{Asymptotic normality:}
+    \[
+      \sqrt{n}\,\mathrm{Log}_{[U^\ast]}([U_n])
+      \xrightarrow{d} G,
+    \]
+    where $G$ is a Gaussian matrix in the tangent space $T_{[U^\ast]}\Gr(d,k)$
+    with explicitly described covariance.
+    \item \textbf{Excess risk:}
+    \[
+      n E_n \xrightarrow{d} \frac{1}{2}\norm{H}_F^2,
+    \]
+    where $H$ is another Gaussian matrix with covariance linked to $G$
+    and the curvature of the risk.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Interpretation of the Asymptotic Result} % ~5 min
+  \begin{itemize}
+    \item This is an analogue of the CLT for estimators:
+    \begin{itemize}
+      \item In Euclidean settings, $\sqrt{n}(\hat{\theta}_n - \theta^\ast)$ converges to a Gaussian.
+      \item Here $\hat{\theta}_n$ is a point on $\Gr(d,k)$.
+      \item We compare it to $\theta^\ast=[U^\ast]$ via the log map into the tangent space.
+    \end{itemize}
+    \item The distribution of $G$ and $H$ depends on:
+    \begin{itemize}
+      \item Eigengaps $\lambda_j - \lambda_{k+i}$.
+      \item Fourth-order moments
+      $\E[\langle u_{k+i}, X\rangle^2 \langle u_j, X\rangle^2]$.
+    \end{itemize}
+    \item So PCA risk is not determined solely by $\Sigma$; higher moments matter.
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Excess Risk Quantiles and Non-Asymptotics}
+%========================================
+
+\begin{frame}{Excess Risk Quantiles} % ~4 min
+  \begin{itemize}
+    \item For $\delta \in (0,1)$ define the $(1-\delta)$-quantile of $E_n$:
+    \[
+      Q_{E_n}(1-\delta)
+      := \inf\{ t \in \R : \mathbb{P}(E_n \le t) \ge 1-\delta \}.
+    \]
+    \item As $n \to \infty$, $n Q_{E_n}(1-\delta)$ converges to
+    a quantity depending on:
+    \begin{itemize}
+      \item Mixed moments
+      $\E[\langle u_{k+i}, X\rangle^2 \langle u_j, X\rangle^2]$.
+      \item Eigengaps $\lambda_j - \lambda_{k+i}$.
+    \end{itemize}
+    \item This gives distribution-aware asymptotic confidence bands for PCA excess risk.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Block Rayleigh Quotient} % ~5 min
+  \begin{itemize}
+    \item Recall:
+    \[
+      R([U]) = \frac{1}{2}\E[\|X\|_2^2] - \frac{1}{2}\mathrm{Tr}(U^\top \Sigma U).
+    \]
+    \item Define
+    \[
+      F([U]) = -\frac{1}{2}\mathrm{Tr}(U^\top A U),
+      \quad A = \Sigma.
+    \]
+    \item This is the \emph{block Rayleigh quotient}.
+    \item $[U^\ast]$ is a minimizer of $F$ (equivalently of $R$).
+    \item To control non-asymptotic behavior, we study the curvature of $F$
+    on $\Gr(d,k)$ near $[U^\ast]$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Self-Concordance Along Geodesics (Idea)} % ~6 min
+  \small
+  \begin{itemize}
+    \item Consider a geodesic $\gamma(t)$ between $[U^\ast]$ and another point $[U]$.
+    \item Study the 1D function $g(t) = F(\gamma(t))$.
+    \item Proposition (informal):
+    \begin{itemize}
+      \item If the maximum principal angle between $[U]$ and $[U^\ast]$ is $< \pi/4$,
+      then $g$ satisfies a generalized self-concordance condition of the form
+      \[
+        |g'''(t)| \le C(\theta)\, g''(t)
+      \]
+      along the geodesic.
+    \end{itemize}
+    \item Consequence:
+    \begin{itemize}
+      \item Second-order Taylor expansions of $F$ around $[U^\ast]$ are well controlled
+      within a neighborhood (no wild changes in the Hessian).
+      \item This is analogous to Bach’s self-concordant analysis of logistic regression,
+      but now on a manifold.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Non-Asymptotic Excess Risk (High-Level Statement)} % ~5 min
+  \small
+  Under eigengap and moment assumptions, and for $n$ above a certain threshold,
+  one can prove that, with high probability $1-\delta$,
+  \[
+    E_n = R([U_n]) - R([U^\ast])
+    \le \frac{C}{n}
+    \sum_{i=1}^{d-k}\sum_{j=1}^k
+    \frac{\E[\langle u_{k+i}, X\rangle^2 \langle u_j, X\rangle^2]}
+         {\lambda_j - \lambda_{k+i}},
+  \]
+  where
+  \begin{itemize}
+    \item $C$ depends on $\delta$ and constants in the self-concordance and
+    concentration arguments.
+    \item The right-hand side matches (up to constants) the asymptotic limit.
+  \end{itemize}
+  \vspace{0.2cm}
+  \textbf{Interpretation:}
+  \begin{itemize}
+    \item For large enough $n$, PCA’s excess risk decays as $1/n$.
+    \item The leading constant encodes both spectral structure and higher moments.
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Example: Spiked Covariance Model}
+%========================================
+
+\begin{frame}{Spiked Covariance Model} % ~4 min
+  \begin{itemize}
+    \item A simple but important model:
+    \[
+      X = Z + \varepsilon,
+    \]
+    where
+    \begin{itemize}
+      \item $Z$ lives in a $k$-dimensional subspace (low-rank signal),
+      \item $\varepsilon \sim \mathcal{N}(0, \sigma^2 I_d)$ (isotropic noise),
+      \item $Z$ and $\varepsilon$ are independent.
+    \end{itemize}
+    \item Then covariance
+    \[
+      \Sigma = S + \sigma^2 I_d,
+    \]
+    where $S$ has rank $k$ and encodes the signal.
+    \item The top-$k$ eigenvectors of $\Sigma$ recover the signal subspace.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Asymptotic Behavior in the Spiked Model} % ~5 min
+  \begin{itemize}
+    \item In this model, the Gaussian matrices appearing in the asymptotic
+    characterization of PCA simplify.
+    \item The variances of entries of the limiting Gaussian $G$ and $H$ can be written
+    in closed form in terms of:
+    \begin{itemize}
+      \item noise variance $\sigma^2$,
+      \item signal eigenvalues (non-zero eigenvalues of $S$).
+    \end{itemize}
+    \item This yields explicit formulas for the asymptotic
+    distribution of:
+    \begin{itemize}
+      \item geometric error $\mathrm{dist}([U_n],[U^\ast])$,
+      \item scaled excess risk $n E_n$.
+    \end{itemize}
+    \item Good sandbox model to connect theory and simulation.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Possible Exercise / Project Idea} % ~4 min
+  \begin{itemize}
+    \item Simulate the spiked covariance model:
+    \begin{itemize}
+      \item Fix $d, k, \sigma^2$, and signal eigenvalues.
+      \item Generate $X_1,\dots,X_n$ and compute sample PCA.
+    \end{itemize}
+    \item Empirically estimate:
+    \begin{itemize}
+      \item distribution of $\mathrm{dist}([U_n],[U^\ast])$,
+      \item distribution of $n E_n$.
+    \end{itemize}
+    \item Compare with asymptotic predictions from the theory.
+    \item Explore the impact of:
+    \begin{itemize}
+      \item decreasing eigengap,
+      \item increasing noise $\sigma^2$,
+      \item heavier tails for $Z$ (to see role of fourth moments).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%========================================
+\section{Summary and References}
+%========================================
+
+\begin{frame}{Summary of the Lecture} % ~5 min
+  \begin{itemize}
+    \item Classical PCA:
+    \begin{itemize}
+      \item Eigen-decomposition / SVD framework.
+      \item Equivalent max-variance and min-error formulations.
+    \end{itemize}
+    \item Geometric viewpoint:
+    \begin{itemize}
+      \item Parameter is a subspace $\Rightarrow$ point on $\Gr(d,k)$.
+      \item Use distances and tangent spaces to measure errors.
+    \end{itemize}
+    \item Statistical performance:
+    \begin{itemize}
+      \item PCA behaves as an $M$-estimator on a manifold.
+      \item Asymptotic normality of subspace error.
+      \item Excess risk $E_n$ decays like $1/n$ with a distribution-aware constant.
+    \end{itemize}
+    \item Tools:
+    \begin{itemize}
+      \item Principal angles, Grassmannian geometry.
+      \item Block Rayleigh quotient and generalized self-concordance.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{References (Core Reading)} % ~2 min
+  \small
+  \textbf{Classical PCA and spectral methods}
+  \begin{itemize}
+    \item I.T. Jolliffe. \emph{Principal Component Analysis}. Springer.
+    \item T. Hastie, R. Tibshirani, J. Friedman. \emph{The Elements of Statistical Learning}, Ch.\ 14.
+  \end{itemize}
+  \vspace{0.2cm}
+  \textbf{Geometric and statistical analysis of PCA}
+  \begin{itemize}
+    \item A. El Hanchi, M. A. Erdogdu, C. J. Maddison. \emph{A Geometric Analysis of PCA}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  Questions?
+\end{frame}
+
+\end{document}
