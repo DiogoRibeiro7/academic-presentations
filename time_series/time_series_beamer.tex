@@ -5,12 +5,18 @@
 % A comprehensive introduction to time series methods
 % ================================================================
 
+% Work around name clash: theme defines \Gamma, which already exists in LaTeX.
+% Save the original math \Gamma and relax \Gamma so the theme can \newcommand it.
+\let\GammaSymbol\Gamma
+\let\Gamma\relax
+
 % Use the ESMAD theme
 \usepackage{../theme/esmad_beamer_theme}
 
 % Additional packages
 \usepackage{subcaption}
 \usepackage{multirow}
+\usepackage{bookmark}
 
 % Author information
 \authorname{Diogo Ribeiro}
@@ -41,7 +47,7 @@
 % ================================================================
 
 \begin{frame}{What is a Time Series?}
-  \begin{definitionbox}{Time Series}
+  \begin{definitionbox}[title={Time Series}]
     A \textbf{time series} is a sequence of observations $\{y_t\}_{t=1}^T$ indexed by time, where $y_t$ represents the value at time $t$.
   \end{definitionbox}
 
@@ -90,7 +96,7 @@
 \end{frame}
 
 \begin{frame}{Stationarity}
-  \begin{definitionbox}{Weak (Covariance) Stationarity}
+  \begin{definitionbox}[title={Weak (Covariance) Stationarity}]
     A time series is weakly stationary if:
     \begin{enumerate}
       \item $\E[y_t] = \mu$ for all $t$ (constant mean)
@@ -101,7 +107,7 @@
 
   \vspace{0.5em}
 
-  \begin{alertbox}{Why Stationarity Matters}
+  \begin{alertbox}[title={Why Stationarity Matters}]
     Most time series models assume stationarity. Non-stationary series can lead to:
     \begin{itemize}
       \item Spurious regressions
@@ -140,7 +146,7 @@
 % ================================================================
 
 \begin{frame}{Autoregressive (AR) Models}
-  \begin{definitionbox}{AR(p) Model}
+  \begin{definitionbox}[title={AR(p) Model}]
     \begin{equation}
       y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \epsilon_t
     \end{equation}
@@ -158,7 +164,7 @@
 
   \vspace{0.5em}
 
-  \begin{examplebox}{AR(1) Example}
+  \begin{examplebox}[title={AR(1) Example}]
     $y_t = 0.8 y_{t-1} + \epsilon_t$
     \begin{itemize}
       \item Stationary if $|\phi_1| < 1$
@@ -169,7 +175,7 @@
 \end{frame}
 
 \begin{frame}{Moving Average (MA) Models}
-  \begin{definitionbox}{MA(q) Model}
+  \begin{definitionbox}[title={MA(q) Model}]
     \begin{equation}
       y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \cdots + \theta_q \epsilon_{t-q}
     \end{equation}
@@ -195,7 +201,7 @@
 \end{frame}
 
 \begin{frame}{ARMA and ARIMA Models}
-  \begin{definitionbox}{ARMA(p,q) Model}
+  \begin{definitionbox}[title={ARMA(p,q) Model}]
     Combines AR and MA components:
     \begin{equation}
       y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \epsilon_t + \sum_{j=1}^q \theta_j \epsilon_{t-j}
@@ -204,7 +210,7 @@
 
   \vspace{0.5em}
 
-  \begin{definitionbox}{ARIMA(p,d,q) Model}
+  \begin{definitionbox}[title={ARIMA(p,d,q) Model}]
     ARMA applied to $d$-differenced data:
     \begin{equation}
       \phi(B)(1-B)^d y_t = \theta(B)\epsilon_t
@@ -224,7 +230,7 @@
 \end{frame}
 
 \begin{frame}{Seasonal ARIMA}
-  \begin{definitionbox}{SARIMA$(p,d,q)(P,D,Q)_s$ Model}
+  \begin{definitionbox}[title={SARIMA$(p,d,q)(P,D,Q)_s$ Model}]
     \begin{equation}
       \phi(B)\Phi(B^s)(1-B)^d(1-B^s)^D y_t = \theta(B)\Theta(B^s)\epsilon_t
     \end{equation}
@@ -242,7 +248,7 @@
 
   \vspace{0.5em}
 
-  \begin{examplebox}{Example: Monthly Sales}
+  \begin{examplebox}[title={Example: Monthly Sales}]
     SARIMA$(1,1,1)(1,1,1)_{12}$
     \begin{itemize}
       \item AR(1) and MA(1) for short-term dynamics
@@ -258,7 +264,7 @@
 % ================================================================
 
 \begin{frame}{Multivariate Time Series}
-  \begin{definitionbox}{VAR(p) Model}
+  \begin{definitionbox}[title={VAR(p) Model}]
     For $k$-dimensional time series $\vect{y}_t = (y_{1t}, \ldots, y_{kt})'$:
     \begin{equation}
       \vect{y}_t = \vect{c} + \mat{A}_1 \vect{y}_{t-1} + \cdots + \mat{A}_p \vect{y}_{t-p} + \vect{\epsilon}_t
@@ -306,7 +312,7 @@
 % ================================================================
 
 \begin{frame}{State Space Representation}
-  \begin{definitionbox}{State Space Model}
+  \begin{definitionbox}[title={State Space Model}]
     \textbf{State equation:}
     \begin{equation}
       \vect{x}_t = \mat{F}_t \vect{x}_{t-1} + \mat{B}_t \vect{u}_t + \vect{w}_t
@@ -398,7 +404,7 @@
 
   \vspace{0.5em}
 
-  \begin{examplebox}{AR(1) Forecast}
+  \begin{examplebox}[title={AR(1) Forecast}]
     Model: $y_t = 0.8 y_{t-1} + \epsilon_t$
 
     Forecasts:
@@ -427,7 +433,7 @@
 
   \vspace{0.5em}
 
-  \begin{alertbox}{Bootstrap Prediction Intervals}
+  \begin{alertbox}[title={Bootstrap Prediction Intervals}]
     For complex models without analytical variance:
     \begin{enumerate}
       \item Fit model and obtain residuals
@@ -471,7 +477,7 @@
 % ================================================================
 
 \begin{frame}{Recurrent Neural Networks (RNN)}
-  \begin{definitionbox}{RNN Architecture}
+  \begin{definitionbox}[title={RNN Architecture}]
     Hidden state update:
     \begin{equation}
       \vect{h}_t = \tanh(\mat{W}_{hh} \vect{h}_{t-1} + \mat{W}_{xh} \vect{x}_t + \vect{b}_h)
@@ -718,7 +724,7 @@
   \textbf{Deep Learning:}
   \begin{itemize}
     \item Goodfellow, Bengio, Courville (2016). \textit{Deep Learning}
-    \item Lim, Zohren (2021). "Time-series forecasting with deep learning: a survey"
+    \item Lim, Zohren (2021). ``Time-series forecasting with deep learning: a survey''
   \end{itemize}
 
   \vspace{0.5em}
