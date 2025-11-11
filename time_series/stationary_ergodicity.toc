@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Motivation and Examples}{3}{0}{1}
+\beamer@sectionintoc {2}{Stochastic Processes and Perspectives}{5}{0}{2}
+\beamer@sectionintoc {3}{Stationarity}{8}{0}{3}
+\beamer@sectionintoc {4}{Ergodicity}{14}{0}{4}
+\beamer@sectionintoc {5}{Practical Diagnostics}{20}{0}{5}
+\beamer@sectionintoc {6}{Summary and Key Messages}{23}{0}{6}
+\beamer@sectionintoc {8}{Appendix: Technical Notes}{26}{1}{7}

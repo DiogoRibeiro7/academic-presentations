@@ -1,0 +1,672 @@
+\documentclass{beamer}
+
+% Theme and appearance
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% Title info
+\title[ARMA Models]{Linear Time Series Models: ARMA Processes}
+\subtitle{From Stationary Noise to Structured Dynamics}
+\author{Diogo Ribeiro}
+\institute{%
+  \textit{Data Science and Applied Mathematics}
+}
+\date{\today}
+
+% Optional: remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+\begin{document}
+
+%==================================================
+% Title + Outline
+%==================================================
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%==================================================
+\section{Motivation and Recap}
+%==================================================
+
+\begin{frame}{Where We Are Coming From}
+  \begin{itemize}
+    \item We have seen:
+      \begin{itemize}
+        \item Stochastic processes and time-ordered data.
+        \item Stationarity (strict and weak).
+        \item Ergodicity: time averages $\approx$ ensemble averages.
+      \end{itemize}
+    \item For modelling and forecasting, we often assume:
+      \begin{itemize}
+        \item Weak stationarity: mean, variance, and autocovariance are time-invariant.
+        \item Some form of ergodicity, so sample moments are informative.
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.3cm}
+  Next step: build concrete models for stationary series that explain temporal dependence.
+\end{frame}
+
+\begin{frame}{Goal of This Talk}
+  \begin{itemize}
+    \item Introduce \textbf{linear time series models}, especially ARMA:
+      \begin{itemize}
+        \item Autoregressive (AR) processes.
+        \item Moving average (MA) processes.
+        \item Combined ARMA processes.
+      \end{itemize}
+    \item Show:
+      \begin{itemize}
+        \item How these models are defined.
+        \item Conditions for stationarity and invertibility.
+        \item Behaviour of autocorrelation and partial autocorrelation.
+        \item Basic identification and estimation ideas.
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.3cm}
+  These models form the basis for ARIMA, SARIMA, VAR, and many other extensions.
+\end{frame}
+
+%==================================================
+\section{Linear Processes and Wold Representation}
+%==================================================
+
+\begin{frame}{Linear Time Series Models}
+  \begin{itemize}
+    \item Many useful time series can be written as \textbf{linear} functions of white noise:
+      \[
+        X_t = \sum_{j=-\infty}^{\infty} \psi_j \varepsilon_{t-j},
+      \]
+      with $\{\varepsilon_t\}$ white noise and $\{\psi_j\}$ real coefficients.
+    \item Intuition:
+      \begin{itemize}
+        \item The current value $X_t$ is a filtered version of past shocks.
+        \item The filter $\{\psi_j\}$ controls dependence over time.
+      \end{itemize}
+    \item AR, MA, and ARMA models are finite or rational forms of such filters.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Wold Decomposition (Informal)}
+  \textbf{Wold theorem (informal):}
+  \begin{itemize}
+    \item Any purely non-deterministic, weakly stationary process can be expressed as
+      \[
+        X_t = \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-j},
+      \]
+      where $\{\varepsilon_t\}$ is white noise and $\sum_{j=0}^{\infty} \psi_j^2 < \infty$.
+    \item There may be an additional deterministic part, e.g.\ a periodic component, but we focus on the random part.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  ARMA models are finite-order approximations of this infinite linear representation.
+\end{frame}
+
+%==================================================
+\section{Autoregressive (AR) Processes}
+%==================================================
+
+\begin{frame}{Definition of an AR(p) Process}
+  \textbf{Autoregressive process of order $p$ (AR(p)):}
+  \[
+    X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + \dots + \phi_p X_{t-p} + \varepsilon_t,
+  \]
+  where:
+  \begin{itemize}
+    \item $\{\varepsilon_t\}$ is white noise with mean $0$ and variance $\sigma_\varepsilon^2$.
+    \item $\phi_1, \dots, \phi_p$ are real coefficients.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  Current value depends linearly on previous $p$ values plus a random innovation.
+\end{frame}
+
+\begin{frame}{Backshift Operator and Characteristic Polynomial}
+  \begin{itemize}
+    \item Define the backshift operator $B$ by $B X_t = X_{t-1}$.
+    \item AR(p) model can be written as:
+      \[
+        \phi(B) X_t = \varepsilon_t,
+      \]
+      where
+      \[
+        \phi(B) = 1 - \phi_1 B - \phi_2 B^2 - \dots - \phi_p B^p.
+      \]
+    \item The polynomial
+      \[
+        \phi(z) = 1 - \phi_1 z - \dots - \phi_p z^p
+      \]
+      is the \textbf{characteristic polynomial} of the AR part.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Stationarity Condition for AR(p)}
+  \begin{itemize}
+    \item A fundamental result:
+      \begin{itemize}
+        \item An AR(p) process has a unique weakly stationary solution if and only if all roots of
+          \[
+            \phi(z) = 1 - \phi_1 z - \dots - \phi_p z^p = 0
+          \]
+          lie \textbf{outside} the unit circle, i.e.\ $|z| > 1$.
+      \end{itemize}
+    \item If this holds:
+      \[
+        X_t = \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-j},
+      \]
+      for some absolutely summable sequence $\{\psi_j\}$.
+    \item If the condition fails:
+      \begin{itemize}
+        \item The process is non-stationary.
+        \item Variance typically grows without bound or is undefined.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: AR(1) Model}
+  \textbf{AR(1):}
+  \[
+    X_t = \phi X_{t-1} + \varepsilon_t, \quad \varepsilon_t \sim \text{WN}(0, \sigma_\varepsilon^2).
+  \]
+
+  \vspace{0.3cm}
+  \begin{itemize}
+    \item Stationarity condition: $|\phi| < 1$.
+    \item Mean:
+      \[
+        E[X_t] = 0 \quad \text{(assuming zero mean innovations)}.
+      \]
+    \item Variance:
+      \[
+        \mathrm{Var}(X_t) = \frac{\sigma_\varepsilon^2}{1 - \phi^2}.
+      \]
+    \item Autocorrelation:
+      \[
+        \rho(h) = \phi^{|h|}, \quad h \in \mathbb{Z}.
+      \]
+  \end{itemize}
+
+  \vspace{0.2cm}
+  The ACF of a stationary AR(1) decays geometrically.
+\end{frame}
+
+\begin{frame}{ACF and PACF of AR(p)}
+  \begin{itemize}
+    \item For an AR(p) process:
+      \begin{itemize}
+        \item The \textbf{ACF} decays (typically exponentially or as a damped sine wave).
+        \item The \textbf{PACF} (partial autocorrelation function) has a \textbf{cut-off} at lag $p$:
+          \[
+            \alpha(h) =
+            \begin{cases}
+              \neq 0, & h \le p, \\
+              0,      & h > p,
+            \end{cases}
+          \]
+          in the ideal infinite-sample case.
+      \end{itemize}
+    \item In finite samples, the cut-off is approximate:
+      \begin{itemize}
+        \item PACF values after lag $p$ fluctuate around zero within significance bounds.
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.2cm}
+  This pattern is often used for \textbf{model identification}.
+\end{frame}
+
+%==================================================
+\section{Moving Average (MA) Processes}
+%==================================================
+
+\begin{frame}{Definition of an MA(q) Process}
+  \textbf{Moving average process of order $q$ (MA(q)):}
+  \[
+    X_t = \varepsilon_t + \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2}
+          + \dots + \theta_q \varepsilon_{t-q},
+  \]
+  where:
+  \begin{itemize}
+    \item $\{\varepsilon_t\}$ is white noise with mean $0$ and variance $\sigma_\varepsilon^2$.
+    \item $\theta_1, \dots, \theta_q$ are real coefficients.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  The current value is a finite linear combination of current and past innovations.
+\end{frame}
+
+\begin{frame}{Stationarity of MA(q)}
+  \begin{itemize}
+    \item Any MA(q) process with finite $q$ and finite variance innovations is \textbf{weakly stationary}:
+      \begin{itemize}
+        \item Mean:
+          \[
+            E[X_t] = 0.
+          \]
+        \item Variance:
+          \[
+            \mathrm{Var}(X_t) = \sigma_\varepsilon^2
+            \left( 1 + \theta_1^2 + \dots + \theta_q^2 \right).
+          \]
+        \item Autocovariance:
+          \[
+            \gamma(h) = \sigma_\varepsilon^2 \sum_{j=0}^{q-h} \theta_j \theta_{j+h},
+            \quad h = 0, 1, \dots, q,
+          \]
+          and $\gamma(h) = 0$ for $h > q$. (With $\theta_0 = 1$.)
+      \end{itemize}
+    \item No additional stationarity condition required.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ACF of MA(q) and Invertibility}
+  \begin{itemize}
+    \item For an MA(q) process:
+      \begin{itemize}
+        \item The \textbf{ACF} has a \textbf{cut-off} at lag $q$:
+          \[
+            \rho(h) = 0 \quad \text{for } h > q.
+          \]
+        \item The \textbf{PACF} decays gradually.
+      \end{itemize}
+    \item \textbf{Invertibility:}
+      \begin{itemize}
+        \item We can sometimes write
+          \[
+            X_t = \varepsilon_t + \theta_1 \varepsilon_{t-1} + \dots + \theta_q \varepsilon_{t-q}
+            \quad \Longleftrightarrow \quad
+            \varepsilon_t = \sum_{j=0}^{\infty} \pi_j X_{t-j},
+          \]
+          if the MA polynomial has roots outside the unit circle.
+        \item Invertibility ensures a unique representation in terms of $X_t$.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MA(1) Example}
+  \textbf{MA(1):}
+  \[
+    X_t = \varepsilon_t + \theta \varepsilon_{t-1}.
+  \]
+
+  \vspace{0.2cm}
+  \begin{itemize}
+    \item Mean: $E[X_t] = 0$.
+    \item Variance:
+      \[
+        \mathrm{Var}(X_t) = \sigma_\varepsilon^2 (1 + \theta^2).
+      \]
+    \item Autocorrelation:
+      \[
+        \rho(0) = 1, \quad
+        \rho(1) = \frac{\theta}{1 + \theta^2}, \quad
+        \rho(h) = 0 \text{ for } h \ge 2.
+      \]
+    \item Invertibility condition:
+      \[
+        |\theta| < 1.
+      \]
+  \end{itemize}
+
+  \vspace{0.2cm}
+  The ACF cuts off after lag 1, which is a clear signature of an MA(1) structure.
+\end{frame}
+
+%==================================================
+\section{ARMA Processes}
+%==================================================
+
+\begin{frame}{Definition of an ARMA(p,q) Process}
+  \textbf{ARMA(p,q) model:}
+  \[
+    X_t - \phi_1 X_{t-1} - \dots - \phi_p X_{t-p}
+    = \varepsilon_t + \theta_1 \varepsilon_{t-1} + \dots + \theta_q \varepsilon_{t-q},
+  \]
+  or in compact form:
+  \[
+    \phi(B) X_t = \theta(B) \varepsilon_t,
+  \]
+  where:
+  \begin{align*}
+    \phi(B) &= 1 - \phi_1 B - \dots - \phi_p B^p, \\
+    \theta(B) &= 1 + \theta_1 B + \dots + \theta_q B^q.
+  \end{align*}
+
+  \vspace{0.2cm}
+  This combines autoregressive and moving average parts.
+\end{frame}
+
+\begin{frame}{Stationarity and Invertibility in ARMA(p,q)}
+  \begin{itemize}
+    \item \textbf{Stationarity:}
+      \begin{itemize}
+        \item AR part must satisfy: all roots of
+          \[
+            \phi(z) = 1 - \phi_1 z - \dots - \phi_p z^p = 0
+          \]
+          lie outside the unit circle ($|z| > 1$).
+      \end{itemize}
+    \item \textbf{Invertibility:}
+      \begin{itemize}
+        \item MA part must satisfy: all roots of
+          \[
+            \theta(z) = 1 + \theta_1 z + \dots + \theta_q z^q = 0
+          \]
+          lie outside the unit circle.
+        \item This ensures a unique representation in terms of the innovations.
+      \end{itemize}
+    \item Under these conditions:
+      \[
+        X_t = \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-j},
+      \]
+      with $\{\psi_j\}$ absolutely summable.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ACF and PACF Patterns in ARMA}
+  \begin{itemize}
+    \item \textbf{AR(p):}
+      \begin{itemize}
+        \item ACF: decays slowly.
+        \item PACF: cut-off after lag $p$.
+      \end{itemize}
+    \item \textbf{MA(q):}
+      \begin{itemize}
+        \item ACF: cut-off after lag $q$.
+        \item PACF: decays slowly.
+      \end{itemize}
+    \item \textbf{ARMA(p,q):}
+      \begin{itemize}
+        \item Both ACF and PACF decay.
+        \item No sharp cut-off in either.
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.2cm}
+  These heuristics guide the order selection but are not foolproof.
+\end{frame}
+
+\begin{frame}{Interpretation of ARMA Components}
+  \begin{itemize}
+    \item \textbf{AR part:}
+      \begin{itemize}
+        \item Captures persistence in the levels of the series.
+        \item Similar to regressing $X_t$ on its own past.
+      \end{itemize}
+    \item \textbf{MA part:}
+      \begin{itemize}
+        \item Captures short-term shocks that persist for a few periods.
+        \item Models correlations in the residuals.
+      \end{itemize}
+    \item ARMA models:
+      \begin{itemize}
+        \item Flexible yet relatively parsimonious.
+        \item Good baseline for many stationary time series.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%==================================================
+\section{Identification, Estimation and Diagnostics}
+%==================================================
+
+\begin{frame}{Model Identification}
+  \begin{itemize}
+    \item \textbf{Step 1: Check stationarity.}
+      \begin{itemize}
+        \item Visual inspection, unit root tests.
+        \item Difference or transform the series if needed.
+      \end{itemize}
+    \item \textbf{Step 2: Inspect ACF and PACF.}
+      \begin{itemize}
+        \item Look for cut-offs or slow decays.
+        \item Suggest ranges for $(p, q)$.
+      \end{itemize}
+    \item \textbf{Step 3: Compare candidate models.}
+      \begin{itemize}
+        \item Fit several ARMA(p,q) models.
+        \item Use information criteria: AIC, BIC, HQ.
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.2cm}
+  Always balance goodness of fit and parsimony.
+\end{frame}
+
+\begin{frame}{Information Criteria}
+  For a fitted model with log-likelihood $\ell$ and $k$ parameters on $T$ observations:
+  \begin{itemize}
+    \item \textbf{Akaike Information Criterion (AIC):}
+      \[
+        \text{AIC} = -2\ell + 2k.
+      \]
+    \item \textbf{Bayesian Information Criterion (BIC):}
+      \[
+        \text{BIC} = -2\ell + k \log T.
+      \]
+    \item Lower values indicate a better trade-off between fit and complexity.
+  \end{itemize}
+
+  \vspace{0.2cm}
+  In practice, BIC tends to favour more parsimonious models than AIC.
+\end{frame}
+
+\begin{frame}{Estimation Methods}
+  \begin{itemize}
+    \item \textbf{Maximum Likelihood (ML):}
+      \begin{itemize}
+        \item Assume Gaussian innovations.
+        \item Numerically maximize the likelihood function.
+        \item Provides parameter estimates and approximate standard errors.
+      \end{itemize}
+    \item \textbf{Conditional least squares:}
+      \begin{itemize}
+        \item Minimize squared prediction errors, conditional on initial values.
+        \item Often used as starting values for ML.
+      \end{itemize}
+    \item \textbf{Software:}
+      \begin{itemize}
+        \item R: \texttt{arima}, \texttt{Arima}, \texttt{arima\_order}.
+        \item Python: \texttt{statsmodels.tsa.ARIMA}, \texttt{SARIMAX}.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Residual Diagnostics}
+  After fitting an ARMA model:
+  \begin{itemize}
+    \item Compute residuals:
+      \[
+        \hat{\varepsilon}_t = X_t - \hat{X}_t.
+      \]
+    \item Check:
+      \begin{itemize}
+        \item Residual series plot: look for structure or regime changes.
+        \item ACF/PACF of residuals: should resemble white noise.
+        \item Portmanteau tests (Ljung--Box, Box--Pierce).
+        \item Normal Q-Q plot (if Gaussian assumption is important).
+      \end{itemize}
+    \item If residuals show remaining dependence:
+      \begin{itemize}
+        \item Increase model order, or
+        \item Change model structure.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%==================================================
+\section{Example Workflow}
+%==================================================
+
+\begin{frame}{Example ARMA Modelling Workflow}
+  \begin{enumerate}
+    \item \textbf{Plot the series.}
+      \begin{itemize}
+        \item Identify trends, cycles, structural breaks.
+      \end{itemize}
+    \item \textbf{Stabilise the series.}
+      \begin{itemize}
+        \item Difference to remove trends or unit roots.
+        \item Transform (log, Box--Cox) to stabilise variance.
+      \end{itemize}
+    \item \textbf{Inspect ACF/PACF.}
+      \begin{itemize}
+        \item Suggest candidate $(p, q)$.
+      \end{itemize}
+    \item \textbf{Fit several ARMA(p,q) candidates.}
+      \begin{itemize}
+        \item Use ML or conditional least squares.
+      \end{itemize}
+    \item \textbf{Compare and refine.}
+      \begin{itemize}
+        \item Use AIC/BIC and residual diagnostics.
+      \end{itemize}
+    \item \textbf{Forecast and evaluate.}
+      \begin{itemize}
+        \item Create forecasts.
+        \item Compare against hold-out data if possible.
+      \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Simple Conceptual Example}
+  Consider a stationary series after differencing and log-transform:
+  \begin{itemize}
+    \item ACF shows geometric decay.
+    \item PACF cuts off after lag 2.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \textbf{Steps:}
+  \begin{enumerate}
+    \item Propose ARMA(2,0) or AR(2).
+    \item Fit AR(2), check residuals:
+      \begin{itemize}
+        \item If residual ACF is near zero, model may be adequate.
+        \item If residual ACF shows a spike at lag 1, consider ARMA(2,1).
+      \end{itemize}
+    \item Compare AIC/BIC for AR(2) vs ARMA(2,1).
+    \item Choose final model and compute forecasts.
+  \end{enumerate}
+\end{frame}
+
+%==================================================
+\section{Summary and Outlook}
+%==================================================
+
+\begin{frame}{Summary}
+  \begin{itemize}
+    \item Linear time series models represent $X_t$ as a filtered version of white noise.
+    \item AR(p) models use past values of $X_t$.
+    \item MA(q) models use past innovations.
+    \item ARMA(p,q) models combine both to capture richer dynamics.
+    \item Stationarity and invertibility are expressed through root conditions on $\phi(z)$ and $\theta(z)$.
+    \item ACF and PACF provide useful patterns for order identification.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What Comes Next?}
+  \begin{itemize}
+    \item Non-stationary series:
+      \begin{itemize}
+        \item ARIMA models (integrated ARMA).
+        \item Seasonal ARIMA (SARIMA).
+      \end{itemize}
+    \item Conditional heteroscedasticity:
+      \begin{itemize}
+        \item ARCH, GARCH and related models.
+      \end{itemize}
+    \item Multivariate extensions:
+      \begin{itemize}
+        \item Vector autoregressions (VAR).
+        \item VARMA models.
+      \end{itemize}
+    \item State-space formulations and Kalman filtering.
+  \end{itemize}
+
+  \vspace{0.2cm}
+  ARMA forms the core building block for many of these generalizations.
+\end{frame}
+
+%==================================================
+\section*{References}
+%==================================================
+
+\begin{frame}{Further Reading}
+  \small
+  \begin{itemize}
+    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2016).
+          \emph{Time Series Analysis: Forecasting and Control}. Wiley.
+    \item Hamilton, J. D. (1994).
+          \emph{Time Series Analysis}. Princeton University Press.
+    \item Brockwell, P. J., \& Davis, R. A. (2016).
+          \emph{Introduction to Time Series and Forecasting}. Springer.
+    \item Shumway, R. H., \& Stoffer, D. S. (2017).
+          \emph{Time Series Analysis and Its Applications}. Springer.
+    \item Tsay, R. S. (2010).
+          \emph{Analysis of Financial Time Series}. Wiley.
+  \end{itemize}
+\end{frame}
+
+%==================================================
+\appendix
+%==================================================
+
+\section{Appendix: Technical Notes}
+
+\begin{frame}{AR(p) Yule--Walker Equations}
+  For a zero-mean AR(p) process:
+  \[
+    X_t = \phi_1 X_{t-1} + \dots + \phi_p X_{t-p} + \varepsilon_t,
+  \]
+  with $\varepsilon_t$ white noise, the autocovariances satisfy:
+  \[
+    \gamma(h) = \phi_1 \gamma(h-1) + \dots + \phi_p \gamma(h-p), \quad h \ge 1,
+  \]
+  and
+  \[
+    \gamma(0) = \phi_1 \gamma(1) + \dots + \phi_p \gamma(p) + \sigma_\varepsilon^2.
+  \]
+
+  \vspace{0.3cm}
+  These are the \textbf{Yule--Walker equations}, used for parameter estimation.
+\end{frame}
+
+\begin{frame}{MA(q) Spectrum}
+  For an MA(q) process:
+  \[
+    X_t = \sum_{j=0}^{q} \theta_j \varepsilon_{t-j}, \quad \theta_0 = 1,
+  \]
+  the spectral density is:
+  \[
+    f(\lambda) = \frac{\sigma_\varepsilon^2}{2\pi}
+    \left| \sum_{j=0}^{q} \theta_j e^{-i \lambda j} \right|^2,
+    \quad \lambda \in [-\pi, \pi].
+  \]
+
+  \vspace{0.3cm}
+  ARMA spectra have a similar form with rational functions of $e^{-i\lambda}$.
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  Questions or discussion?
+\end{frame}
+
+\end{document}
