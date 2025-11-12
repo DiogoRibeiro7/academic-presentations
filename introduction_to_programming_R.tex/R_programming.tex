@@ -1,0 +1,344 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{mathtools}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  frame=single
+}
+
+%-------------------------------------------------------------------------------
+% Metadata
+%-------------------------------------------------------------------------------
+\title[R: A Practical Introduction]{R: A Practical Introduction}
+\author{}
+\institute{}
+\date{}
+
+% Show section outline at the start of each section
+\AtBeginSection{
+  \begin{frame}{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+%-------------------------------------------------------------------------------
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%===============================================================================
+\section{Orientation}
+%===============================================================================
+
+\begin{frame}{What is R?}
+  \begin{itemize}
+    \item A language and environment for data analysis, statistics, and graphics.
+    \item Combines interactive exploration with reproducible scripting.
+    \item Runs on Linux, macOS, and Windows.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Why use R?}
+  \begin{itemize}
+    \item Rich statistical toolbox and graphics.
+    \item First-class vectorisation and concise syntax.
+    \item Vast ecosystem of packages for specialised tasks.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Session Basics}
+  \begin{itemize}
+    \item Prompt \texttt{>} evaluates expressions; results print unless assigned.
+    \item Workspace holds objects; history records commands.
+    \item Use scripts (\texttt{.R} files) for reproducibility.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Vectors and Core Types}
+%===============================================================================
+
+\begin{frame}[fragile]{Numeric Vectors}
+\begin{lstlisting}
+x <- c(10.4, 5.6, 3.1, 6.4, 21.7)
+2 * x + 1
+log(x)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Sequences and Replication}
+\begin{lstlisting}
+1:10
+seq(-5, 5, by = 0.5)
+rep(1:3, each = 2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Logical Values and Missing Data}
+\begin{lstlisting}
+x > 10
+is.na(x)
+x[is.na(x)] <- 0
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Characters and Names}
+\begin{lstlisting}
+names <- c("Alice", "Bob", "Carol")
+labs <- paste("X", 1:5, sep = "")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Indexing and Subsetting}
+\begin{lstlisting}
+x[1]       # first element
+x[2:4]     # slice
+x[-1]      # drop
+x[x > 10]  # logical mask
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#1 (10 min)}
+  \begin{itemize}
+    \item Create a length-12 vector of random normals.
+    \item Compute mean, median, sd, and a z-scored version.
+    \item Replace any values $|z|>2$ by \texttt{NA}.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Structured Data}
+%===============================================================================
+
+\begin{frame}[fragile]{Matrices and Arrays}
+\begin{lstlisting}
+A <- matrix(1:6, nrow = 2, ncol = 3)
+A[1, 2]; A[, 2]; A[1, ]
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Factors}
+\begin{lstlisting}
+sex <- factor(c("M", "F", "F", "M"))
+levels(sex)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Lists}
+\begin{lstlisting}
+person <- list(name="Alice", age=30, scores=c(10,9,8))
+person$name
+person[["scores"]]
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Data Frames}
+\begin{lstlisting}
+df <- data.frame(
+  height=c(160,170,175),
+  weight=c(55,65,72),
+  sex=factor(c("F","M","M"))
+)
+str(df); summary(df)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#2 (10 min)}
+  \begin{itemize}
+    \item Build a small data frame with 4 numeric columns and 1 factor.
+    \item Add a derived column (e.g., BMI).
+    \item Summarise each column and inspect structure.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{I/O and Data Management}
+%===============================================================================
+
+\begin{frame}[fragile]{Reading and Writing}
+\begin{lstlisting}
+dat <- read.csv("mydata.csv")
+write.csv(dat, "out.csv", row.names = FALSE)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Workspaces and Scripts}
+\begin{lstlisting}
+save.image("session.RData")
+load("session.RData")
+source("analysis.R")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#3 (5--10 min)}
+  \begin{itemize}
+    \item Load a built-in dataset (e.g., \texttt{iris}).
+    \item Create a filtered subset and export to CSV.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Control and Functions}
+%===============================================================================
+
+\begin{frame}[fragile]{Control Structures}
+\begin{lstlisting}
+if (x > 0) msg <- "positive" else msg <- "non-positive"
+for (i in 1:3) print(i^2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Functions}
+\begin{lstlisting}
+summ <- function(x, na.rm = FALSE) {
+  if (!is.numeric(x)) stop("x must be numeric")
+  if (na.rm) x <- x[!is.na(x)]
+  list(mean=mean(x), median=median(x), sd=sd(x))
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{... and Argument Passing}
+\begin{lstlisting}
+my_plot <- function(x, y, ...) {
+  plot(x, y, ...)
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#4 (10 min)}
+  \begin{itemize}
+    \item Write a function that standardises a numeric vector and clips to $[-3,3]$.
+    \item Add input checks and an \texttt{na.rm} option.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Statistical Modelling}
+%===============================================================================
+
+\begin{frame}[fragile]{Formula Interface}
+\begin{lstlisting}
+response ~ x1 + x2
+y ~ x1 * x2       # main effects + interaction
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Linear Models}
+\begin{lstlisting}
+fit <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+summary(fit)
+coef(fit); resid(fit); fitted(fit)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Model Diagnostics and Comparison}
+\begin{lstlisting}
+par(mfrow=c(2,2)); plot(fit)
+fit1 <- lm(y ~ x1, data=df)
+fit2 <- lm(y ~ x1 + x2, data=df)
+anova(fit1, fit2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Generalised Linear Models}
+\begin{lstlisting}
+glm_fit <- glm(y ~ x1 + x2, family = binomial, data = df)
+summary(glm_fit)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#5 (10 min)}
+  \begin{itemize}
+    \item Fit a linear model on a tabular dataset.
+    \item Inspect coefficients, residuals, and diagnostic plots.
+    \item Compare nested models with \texttt{anova()}.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Graphics}
+%===============================================================================
+
+\begin{frame}[fragile]{High-Level Graphics}
+\begin{lstlisting}
+plot(iris$Sepal.Length, iris$Sepal.Width)
+hist(iris$Sepal.Length)
+boxplot(Sepal.Length ~ Species, data=iris)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Low-Level Additions and Devices}
+\begin{lstlisting}
+plot(iris$Sepal.Length, iris$Sepal.Width)
+abline(lm(Sepal.Width ~ Sepal.Length, data=iris))
+pdf("plot.pdf"); plot(1:10); dev.off()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Hands-on \#6 (5--10 min)}
+  \begin{itemize}
+    \item Produce a scatter plot with a fitted line and labels.
+    \item Export to PDF and PNG.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Packages and Workflow}
+%===============================================================================
+
+\begin{frame}[fragile]{Packages}
+\begin{lstlisting}
+install.packages("ggplot2")
+library(ggplot2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Project-Oriented Workflow}
+  \begin{itemize}
+    \item One project per analysis; keep data, code, and outputs organised.
+    \item Use version control to track changes.
+    \item Prefer scripts over manual steps for repeatability.
+  \end{itemize}
+\end{frame}
+
+%===============================================================================
+\section{Wrap-up}
+%===============================================================================
+
+\begin{frame}{Putting It Together}
+  \begin{itemize}
+    \item Core language: vectors, indexing, data structures.
+    \item Data I/O and management.
+    \item Functions, modelling, and graphics.
+    \item Packages and a reproducible workflow.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Questions}
+  \centering
+  \Large Questions and discussion
+\end{frame}
+
+\end{document}
