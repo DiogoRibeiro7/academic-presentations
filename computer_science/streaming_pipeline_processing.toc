@@ -1,0 +1,10 @@
+\beamer@sectionintoc {1}{Why Streaming?}{4}{0}{1}
+\beamer@sectionintoc {2}{Time, Watermarks}{5}{0}{2}
+\beamer@sectionintoc {3}{Windows, Triggers, Lateness}{8}{0}{3}
+\beamer@sectionintoc {4}{State, Guarantees}{12}{0}{4}
+\beamer@sectionintoc {5}{Joins, Backpressure, Faults}{16}{0}{5}
+\beamer@sectionintoc {6}{Testing, Observability, Cost}{20}{0}{6}
+\beamer@sectionintoc {7}{Exercises}{23}{0}{7}
+\beamer@sectionintoc {8}{Design Patterns}{26}{0}{8}
+\beamer@sectionintoc {9}{Visual Model}{27}{0}{9}
+\beamer@sectionintoc {10}{Wrap-up}{28}{0}{10}
