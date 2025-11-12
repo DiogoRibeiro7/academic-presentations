@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  12 NOV 2025 22:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  12 NOV 2025 23:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -571,105 +571,185 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
-Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen302
-\lightrulewidth=\dimen303
-\cmidrulewidth=\dimen304
-\belowrulesep=\dimen305
-\belowbottomsep=\dimen306
-\aboverulesep=\dimen307
-\abovetopsep=\dimen308
-\cmidrulesep=\dimen309
-\cmidrulekern=\dimen310
-\defaultaddspace=\dimen311
-\@cmidla=\count358
-\@cmidlb=\count359
-\@aboverulesep=\dimen312
-\@belowrulesep=\dimen313
-\@thisruleclass=\count360
-\@lastruleclass=\count361
-\@thisrulewidth=\dimen314
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count362
-\lst@gtempboxa=\box78
-\lst@token=\toks48
-\lst@length=\count363
-\lst@currlwidth=\dimen315
-\lst@column=\count364
-\lst@pos=\count365
-\lst@lostspace=\dimen316
-\lst@width=\dimen317
-\lst@newlines=\count366
-\lst@lineno=\count367
-\lst@maxwidth=\dimen318
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
-File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
-\c@lstnumber=\count368
-\lst@skipnumbers=\count369
-\lst@framebox=\box79
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
-File: listings.cfg 2024/09/23 1.10c listings configuration
-))
-Package: listings 2024/09/23 1.10c (Carsten Heinz)
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/mathtools\mathtools.sty
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/mathtools\mathtools.sty
 Package: mathtools 2024/10/04 v1.31 mathematical typesetting tools
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
 Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
-\calc@Acount=\count370
-\calc@Bcount=\count371
-\calc@Adimen=\dimen319
-\calc@Bdimen=\dimen320
+\calc@Acount=\count358
+\calc@Bcount=\count359
+\calc@Adimen=\dimen302
+\calc@Bdimen=\dimen303
 \calc@Askip=\skip67
 \calc@Bskip=\skip68
 LaTeX Info: Redefining \setlength on input line 86.
 LaTeX Info: Redefining \addtolength on input line 87.
-\calc@Ccount=\count372
+\calc@Ccount=\count360
 \calc@Cskip=\skip69
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/mathtools\mhsetup.sty
 Package: mhsetup 2021/03/18 v1.4 programming setup (MH)
 )
-\g_MT_multlinerow_int=\count373
-\l_MT_multwidth_dim=\dimen321
+\g_MT_multlinerow_int=\count361
+\l_MT_multwidth_dim=\dimen304
 \origjot=\skip70
-\l_MT_shortvdotswithinadjustabove_dim=\dimen322
-\l_MT_shortvdotswithinadjustbelow_dim=\dimen323
-\l_MT_above_intertext_sep=\dimen324
-\l_MT_below_intertext_sep=\dimen325
-\l_MT_above_shortintertext_sep=\dimen326
-\l_MT_below_shortintertext_sep=\dimen327
-\xmathstrut@box=\box80
-\xmathstrut@dim=\dimen328
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerthemeMadrid.sty (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamercolorthemewhale.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamercolorthemeorchid.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerinnerthemerounded.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerouterthemeinfolines.sty))
-LaTeX Font Info:    Trying to load font information for T1+lmss on input line 40.
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmss.fd
+\l_MT_shortvdotswithinadjustabove_dim=\dimen305
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen306
+\l_MT_above_intertext_sep=\dimen307
+\l_MT_below_intertext_sep=\dimen308
+\l_MT_above_shortintertext_sep=\dimen309
+\l_MT_below_shortintertext_sep=\dimen310
+\xmathstrut@box=\box78
+\xmathstrut@dim=\dimen311
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen312
+\lightrulewidth=\dimen313
+\cmidrulewidth=\dimen314
+\belowrulesep=\dimen315
+\belowbottomsep=\dimen316
+\aboverulesep=\dimen317
+\abovetopsep=\dimen318
+\cmidrulesep=\dimen319
+\cmidrulekern=\dimen320
+\defaultaddspace=\dimen321
+\@cmidla=\count362
+\@cmidlb=\count363
+\@aboverulesep=\dimen322
+\@belowrulesep=\dimen323
+\@thisruleclass=\count364
+\@lastruleclass=\count365
+\@thisrulewidth=\dimen324
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count366
+\lst@gtempboxa=\box79
+\lst@token=\toks48
+\lst@length=\count367
+\lst@currlwidth=\dimen325
+\lst@column=\count368
+\lst@pos=\count369
+\lst@lostspace=\dimen326
+\lst@width=\dimen327
+\lst@newlines=\count370
+\lst@lineno=\count371
+\lst@maxwidth=\dimen328
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+\c@lstnumber=\count372
+\lst@skipnumbers=\count373
+\lst@framebox=\box80
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+File: listings.cfg 2024/09/23 1.10c listings configuration
+))
+Package: listings 2024/09/23 1.10c (Carsten Heinz)
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.sty (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+Package: pgf 2025-08-29 v3.1.11a (3.1.11a)
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfnodeparttextbox=\box81
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@nodesepstart=\dimen329
+\pgf@nodesepend=\dimen330
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2025-08-29 v3.1.11a (3.1.11a)
+)) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.sty (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.code.tex
+Package: pgffor 2025-08-29 v3.1.11a (3.1.11a)
+\pgffor@iter=\dimen331
+\pgffor@skip=\dimen332
+\pgffor@stack=\toks49
+\pgffor@toks=\toks50
+)) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz\tikz.code.tex
+Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@plot@mark@count=\count374
+\pgfplotmarksize=\dimen333
+)
+\tikz@lastx=\dimen334
+\tikz@lasty=\dimen335
+\tikz@lastxsaved=\dimen336
+\tikz@lastysaved=\dimen337
+\tikz@lastmovetox=\dimen338
+\tikz@lastmovetoy=\dimen339
+\tikzleveldistance=\dimen340
+\tikzsiblingdistance=\dimen341
+\tikz@figbox=\box82
+\tikz@figbox@bg=\box83
+\tikz@tempbox=\box84
+\tikz@tempbox@bg=\box85
+\tikztreelevel=\count375
+\tikznumberofchildren=\count376
+\tikznumberofcurrentchild=\count377
+\tikz@fig@count=\count378
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfmatrixcurrentrow=\count379
+\pgfmatrixcurrentcolumn=\count380
+\pgf@matrix@numberofcolumns=\count381
+)
+\tikz@expandcount=\count382
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+))) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\pifont.sty
+Package: pifont 2020/03/25 PSNFSS-v9.3 Pi font support (SPQR) 
+LaTeX Font Info:    Trying to load font information for U+pzd on input line 63.
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upzd.fd
+File: upzd.fd 2001/06/04 font definitions for U/pzd.
+)
+LaTeX Font Info:    Trying to load font information for U+psy on input line 64.
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upsy.fd
+File: upsy.fd 2001/06/04 font definitions for U/psy.
+))
+   defining Unicode char U+2605 (decimal 9733)
+   defining Unicode char U+2606 (decimal 9734)
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerthemeMadrid.sty (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamercolorthemewhale.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamercolorthemeorchid.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerinnerthemerounded.sty) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/beamer\beamerouterthemeinfolines.sty)) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang2.sty
+File: lstlang2.sty 2024/09/23 1.10c listings language file
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang3.sty
+File: lstlang3.sty 2024/09/23 1.10c listings language file
+)
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:71: Undefined control sequence.
+\inserttitle ...A Comprehensive Introduction\From 
+                                                  Basics to Data Science
+l.71 \begin{document}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+LaTeX Font Info:    Trying to load font information for T1+lmss on input line 71.
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count374
+\l__color_backend_stack_int=\count383
 ) (R_programming.aux)
 \openout1 = `R_programming.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -707,74 +787,73 @@ LaTeX Font Info:    ... okay on input line 40.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count375
-\scratchdimen=\dimen329
-\scratchbox=\box81
-\nofMPsegments=\count376
-\nofMParguments=\count377
-\everyMPshowfont=\toks49
-\MPscratchCnt=\count378
-\MPscratchDim=\dimen330
-\MPnumerator=\count379
-\makeMPintoPDFobject=\count380
-\everyMPtoPDFconversion=\toks50
+\scratchcounter=\count384
+\scratchdimen=\dimen342
+\scratchbox=\box86
+\nofMPsegments=\count385
+\nofMParguments=\count386
+\everyMPshowfont=\toks51
+\MPscratchCnt=\count387
+\MPscratchDim=\dimen343
+\MPnumerator=\count388
+\makeMPintoPDFobject=\count389
+\everyMPtoPDFconversion=\toks52
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring OFF on input line 40.
- (R_programming.out) (R_programming.out)
+Package hyperref Info: Link coloring OFF on input line 71.
 \@outlinefile=\write5
 \openout5 = `R_programming.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 40.
+(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 71.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 40.
+(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 71.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 40.
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 71.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 40.
+(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 71.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 40.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 40.
+(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 71.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 40.
+(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 40.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 40.
+(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 71.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 40.
+(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 40.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 40.
+(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 71.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 40.
+(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 40.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 40.
+(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 71.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 40.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 40.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 71.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 40.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 71.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 40.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 40.
+(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 40.
+(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 40.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 40.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 71.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 40.
+(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 71.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-basic-dictionary-English.dict
 Dictionary: translator-basic-dictionary, Language: English 
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-bibliography-dictionary-English.dict
@@ -788,317 +867,545 @@ Dictionary: translator-numbers-dictionary, Language: English
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-theorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-\c@lstlisting=\count381
+\c@lstlisting=\count390
  (R_programming.nav)
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:71: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.71 \begin{document}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 71--71
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:75: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.75 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 75--75
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:75: Undefined control sequence.
+\inserttitle ...A Comprehensive Introduction\From 
+                                                  Basics to Data Science
+l.75 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:75: Undefined control sequence.
+\insertinstitute ...édia Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.75 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:75: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.75 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) has occurred while \output is active
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
 [1
 
-{C:/Users/diogo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] (R_programming.toc)
+{C:/Users/diogo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:87: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.87 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 87--87
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:87: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.87 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) has occurred while \output is active
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
 [2
 
-] (R_programming.toc)
+]
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:91: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.91 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 91--91
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+No file R_programming.toc.
+
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:91: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.91 \end{frame}
+                
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) has occurred while \output is active
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
 [3
 
 ]
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:94: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.94 \section{R Fundamentals}
+                             
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 94--94
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+No file R_programming.toc.
+
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:94: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.94 \section{R Fundamentals}
+                             
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) has occurred while \output is active
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
 [4
 
 ]
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:122: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.122 \end{frame}
+                 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
-[5
 
-]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 76.
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 122--122
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
-[6
-
-] (R_programming.toc)
-
-[7
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[8
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[9
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[10
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[11
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[12
-
-]
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 128.
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmss.fd
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 122.
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmss.fd
 File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 128.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 122.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 128.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 122.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 128.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 122.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 128.
+(Font)              <10.95> on input line 122.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 128.
+(Font)              <8> on input line 122.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 128.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 128.
+(Font)              <6> on input line 122.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 122.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 128.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 122.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 128.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 122.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 128.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 122.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 128.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 122.
 
 
-[13
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:122: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.122 \end{frame}
+                 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
-{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}] (R_programming.toc)
 
-[14
+Overfull \hbox (81.39677pt too wide) has occurred while \output is active
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
 
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[15
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[16
+[5
 
 ]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[17
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[18
-
-]
-
-[19
-
-] (R_programming.toc)
-
-[20
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[21
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[22
-
-]
-
-[23
-
-] (R_programming.toc)
-
-[24
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[25
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[26
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[27
-
-]
-
-[28
-
-{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}] (R_programming.toc)
-
-[29
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[30
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[31
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[32
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[33
-
-]
-
-[34
-
-] (R_programming.toc)
-
-[35
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[36
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[37
-
-]
-
-[38
-
-] (R_programming.toc)
-
-[39
-
-]
-\openout4 = `R_programming.vrb'.
-
- (R_programming.vrb)
-
-[40
-
-]
-
-[41
-
-] (R_programming.toc)
-
-[42
-
-]
-
-[43
-
-]
-
-[44
-
-]
-\tf@nav=\write6
-\openout6 = `R_programming.nav'.
-
-\tf@toc=\write7
-\openout7 = `R_programming.toc'.
-
-\tf@snm=\write8
-\openout8 = `R_programming.snm'.
-
- (R_programming.aux)
- ***********
-LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-10-09>
- ***********
-Package rerunfilecheck Info: File `R_programming.out' has not changed.
-(rerunfilecheck)             Checksum: 31D40E9C1DC0BD3CDC5ED06489A1D4D0;1168.
- ) 
-Here is how much of TeX's memory you used:
- 24755 strings out of 468080
- 473744 string characters out of 5425771
- 919066 words of memory out of 5000000
- 52756 multiletter control sequences out of 15000+600000
- 663613 words of font info for 69 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 128i,15n,123p,470b,1132s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
-Output written on R_programming.pdf (44 pages, 409167 bytes).
-PDF statistics:
- 1443 PDF objects out of 1728 (max. 8388607)
- 98 named destinations out of 1000 (max. 500000)
- 169 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Undefined control sequence.
+\beamer@shortinstitute ...Arte e Design\Instituto 
+                                                  Politécnico do Porto
+l.141 \end{frame}
+                 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (81.39677pt too wide) in paragraph at lines 141--141
+ [][]  \T1/lmss/m/n/6 ([])  
+ []
+
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 141.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 141.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 141.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 141.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 141.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 141.
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.141 \end{frame}
+                 
+I expect to see \noalign only after the \cr of
+an alignment. Proceed, and I'll ignore this case.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Missing } inserted.
+<inserted text> 
+                }
+l.141 \end{frame}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Missing } inserted.
+<inserted text> 
+                }
+l.141 \end{frame}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Missing } inserted.
+<inserted text> 
+                }
+l.141 \end{frame}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Missing \cr inserted.
+<inserted text> 
+                \cr 
+l.141 \end{frame}
+                 
+I'm guessing that you meant to end an alignment here.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Missing { inserted.
+<inserted text> 
+                {
+l.141 \end{frame}
+                 
+I've put in what seems to be necessary to fix
+the current column of the current alignment.
+Try to go on, since this might almost work.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Undefined control sequence.
+\@BTrule ...\doublerulesep \fi \fi \fi \@BTswitch 
+                                                  
+l.141 \end{frame}
+                 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...rule Statistical Analysis &
+                                                   ★★★ & ★★☆ & �...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...ical Analysis & ★★★ &
+                                                   ★★☆ & ★★★ \^^...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...s & ★★★ & ★★☆ &
+                                                   ★★★ \^^MMachine Lea...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...�★ \^^MMachine Learning &
+                                                   ★★☆ & ★★★ & �...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...hine Learning & ★★☆ &
+                                                   ★★★ & ★☆☆ \^^...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...g & ★★☆ & ★★★ &
+                                                   ★☆☆ \^^MData Visual...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...�� \^^MData Visualization &
+                                                   ★★★ & ★★☆ & �...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...Visualization & ★★★ &
+                                                   ★★☆ & ★★☆ \^^...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...n & ★★★ & ★★☆ &
+                                                   ★★☆ \^^MLearning Cu...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...★☆ \^^MLearning Curve &
+                                                   ★★☆ & ★★★ & �...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...earning Curve & ★★☆ &
+                                                   ★★★ & ★☆☆ \^^...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...e & ★★☆ & ★★★ &
+                                                   ★☆☆ \^^MCost & Free...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...�★ & ★☆☆ \^^MCost &
+                                                   Free & Free & Expensive \...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...★☆☆ \^^MCost & Free &
+                                                   Free & Expensive \^^MComm...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...�� \^^MCost & Free & Free &
+                                                   Expensive \^^MCommunity &...
+l.141 \end{frame}
+                 
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+c:/Users/diogo/work_code/academic-presentations/introduction_to_programming_R.tex/R_programming.tex:141: Misplaced alignment tab character &.
+\beamer@doifinframe ...& Expensive \^^MCommunity &
+                                                   Large & Huge

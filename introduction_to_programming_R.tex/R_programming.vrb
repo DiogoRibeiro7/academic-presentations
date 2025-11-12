@@ -1,5 +1,0 @@
-\frametitle{Packages}
-\begin{lstlisting}
-install.packages("ggplot2")
-library(ggplot2)
-\end{lstlisting}
