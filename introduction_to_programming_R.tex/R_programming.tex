@@ -1,3 +1,4 @@
+
 \documentclass[aspectratio=169]{beamer}
 
 % Encoding and fonts
@@ -33,21 +34,21 @@
 
 % Enhanced code highlighting
 \lstdefinestyle{Rstyle}{%
-language=R,
-basicstyle=\ttfamily\footnotesize,
-commentstyle=\color{green!40!black},
-keywordstyle=\color{blue},
-stringstyle=\color{red},
-numbers=left,
-numberstyle=\tiny\color{gray},
-stepnumber=1,
-numbersep=8pt,
-columns=fullflexible,
-keepspaces=true,
-breaklines=true,
-frame=single,
-backgroundcolor=\color{gray!5},
-rulecolor=\color{gray!30}
+  language=R,
+  basicstyle=\ttfamily\footnotesize,
+  commentstyle=\color{green!40!black},
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!5},
+  rulecolor=\color{gray!30}
 }
 
 \lstset{style=Rstyle}
@@ -56,39 +57,38 @@ rulecolor=\color{gray!30}
 % Metadata
 %-------------------------------------------------------------------------------
 \title[R: A Comprehensive Introduction]{R: A Comprehensive Introduction\\From Basics to Data Science}
-
 \author{Diogo Ribeiro}
 \institute{ESMAD - Escola Superior de Média Arte e Design\\Instituto Politécnico do Porto}
 \date{\today}
 
 % Show section outline at the start of each section
 \AtBeginSection{
-\begin{frame}{Outline}
-\tableofcontents[currentsection,hideothersubsections]
-\end{frame}
+  \begin{frame}{Outline}
+    \tableofcontents[currentsection,hideothersubsections]
+  \end{frame}
 }
 
 %-------------------------------------------------------------------------------
 \begin{document}
 
 \begin{frame}
-\titlepage
+  \titlepage
 \end{frame}
 
 \begin{frame}{Learning Objectives}
-By the end of this session, you will be able to:
-\begin{itemize}
-\item Understand R's core data structures and operations
-\item Perform data manipulation and analysis
-\item Create visualizations and statistical models
-\item Apply modern R practices and workflows
-\item Use the tidyverse ecosystem effectively
-\item Implement reproducible research practices
-\end{itemize}
+  By the end of this session, you will be able to:
+  \begin{itemize}
+    \item Understand R's core data structures and operations
+    \item Perform data manipulation and analysis
+    \item Create visualizations and statistical models
+    \item Apply modern R practices and workflows
+    \item Use the tidyverse ecosystem effectively
+    \item Implement reproducible research practices
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Course Outline}
-\tableofcontents[hideallsubsections]
+  \tableofcontents[hideallsubsections]
 \end{frame}
 
 %===============================================================================
@@ -98,95 +98,84 @@ By the end of this session, you will be able to:
 \subsection{What is R?}
 
 \begin{frame}{R: Language for Data Science}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-\item \textbf{Statistical computing language} developed by Ross Ihaka and Robert Gentleman
-\item \textbf{Open-source} and free
-\item \textbf{Functional programming} paradigm
-\item \textbf{Interpreted language} with REPL interface
-\item \textbf{Cross-platform}: Linux, macOS, Windows
-\item \textbf{Active community} with 18,000+ packages
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-\centering
-\begin{column}{0.4\textwidth}
-  \centering
-  % \includegraphics[width=0.8\textwidth]{r_logo.png}
-  \vspace{1em}
-  \small Current version: R 4.3.x
-\end{column}
-\end{columns}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item \textbf{Statistical computing language} developed by Ross Ihaka and Robert Gentleman
+        \item \textbf{Open-source} and free
+        \item \textbf{Functional programming} paradigm
+        \item \textbf{Interpreted language} with REPL interface
+        \item \textbf{Cross-platform}: Linux, macOS, Windows
+        \item \textbf{Active community} with 18,000+ packages
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \centering
+      % \includegraphics[width=0.8\textwidth]{r_logo.png}
+      \vspace{1em}
+      \small Current version: R 4.3.x
+    \end{column}
+  \end{columns}
+\end{frame}
 
 \begin{frame}{R vs Python vs Other Tools}
-\begin{table}
-\centering
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Feature} & \textbf{R} & \textbf{Python} & \textbf{SPSS/SAS} \\
-\midrule
-Statistical Analysis & ★★★ & ★★☆ & ★★★ \\
-Machine Learning     & ★★☆ & ★★★ & ★☆☆ \\
-Data Visualization   & ★★★ & ★★☆ & ★★☆ \\
-Learning Curve       & ★★☆ & ★★★ & ★☆☆ \\
-Cost                 & Free & Free & Expensive \\
-Community            & Large & Huge & Commercial \\
-\bottomrule
-\end{tabular}
-\end{table}
+  \begin{table}
+    \centering
+    \small
+    \begin{tabular}{lccc}
+      \toprule
+      \textbf{Feature} & \textbf{R} & \textbf{Python} & \textbf{SPSS/SAS} \\
+      \midrule
+      Statistical Analysis & ★★★ & ★★☆ & ★★★ \\
+      Machine Learning     & ★★☆ & ★★★ & ★☆☆ \\
+      Data Visualization   & ★★★ & ★★☆ & ★★☆ \\
+      Learning Curve       & ★★☆ & ★★★ & ★☆☆ \\
+      Cost                 & Free & Free & Expensive \\
+      Community            & Large & Huge & Commercial \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
 \end{frame}
 
 \subsection{R Environment Setup}
 
 \begin{frame}[fragile]{Getting Started: Installation}
-\begin{enumerate}
-\item \textbf{Install R}: Download from \url{[https://cran.r-project.org/}](https://cran.r-project.org/})
-\item \textbf{Install RStudio}: Download from \url{[https://posit.co/products/open-source/rstudio/}](https://posit.co/products/open-source/rstudio/})
-\item \textbf{Alternative IDEs}: VS Code with R extension, Jupyter notebooks
-\end{enumerate}
+  \begin{enumerate}
+    \item \textbf{Install R}: Download from \url{https://cran.r-project.org/}
+    \item \textbf{Install RStudio}: Download from \url{https://posit.co/products/open-source/rstudio/}
+    \item \textbf{Alternative IDEs}: VS Code with R extension, Jupyter notebooks
+  \end{enumerate}
 
-\vspace{1em}
-\textbf{First commands to try:}
+  \vspace{1em}
+  \textbf{First commands to try:}
 \begin{lstlisting}
-
 # Check R version
-
 version
 
 # Get help
-
 ?mean
 
 # Install essential packages
-
 install.packages(c("tidyverse", "here", "rmarkdown"))
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{RStudio Interface Overview}
-\begin{itemize}
-\item \textbf{Console}: Interactive R session
-\item \textbf{Source}: Script editor
-\item \textbf{Environment}: Variables and objects
-\item \textbf{Files/Plots/Packages}: File browser, plots, help
-\end{itemize}
+  \begin{itemize}
+    \item \textbf{Console}: Interactive R session
+    \item \textbf{Source}: Script editor
+    \item \textbf{Environment}: Variables and objects
+    \item \textbf{Files/Plots/Packages}: File browser, plots, help
+  \end{itemize}
 
-\vspace{1em}
-\textbf{Essential keyboard shortcuts:}
+  \vspace{1em}
+  \textbf{Essential keyboard shortcuts:}
 \begin{lstlisting}
-
 # Execute current line/selection: Ctrl+Enter
-
 # New R script: Ctrl+Shift+N
-
 # Save: Ctrl+S
-
 # Clear console: Ctrl+L
-
 # Assignment operator: Alt+-
-
 \end{lstlisting}
 \end{frame}
 
@@ -198,28 +187,22 @@ install.packages(c("tidyverse", "here", "rmarkdown"))
 
 \begin{frame}[fragile]{Atomic Data Types}
 \begin{lstlisting}
-
 # Numeric (double)
-
 x <- 42.5
 y <- 1e-3
 
 # Integer
-
 n <- 42L
 
 # Logical (boolean)
-
 is_valid <- TRUE
 is_missing <- FALSE
 
 # Character (string)
-
 name <- "Alice"
 greeting <- 'Hello, World!'
 
 # Check types
-
 typeof(x)     # "double"
 class(x)      # "numeric"
 is.numeric(x) # TRUE
@@ -228,20 +211,16 @@ is.numeric(x) # TRUE
 
 \begin{frame}[fragile]{Type Coercion and Testing}
 \begin{lstlisting}
-
 # Automatic coercion
-
 x <- c(1, 2, "3")      # becomes character vector
 y <- c(TRUE, FALSE, 1) # becomes numeric vector
 
 # Explicit coercion
-
 as.numeric("123")      # 123
 as.character(123)      # "123"
 as.logical(c(0, 1, 2)) # FALSE TRUE TRUE
 
 # Type testing
-
 is.numeric(x)   # FALSE
 is.character(x) # TRUE
 is.na(x)        # FALSE FALSE FALSE
@@ -252,9 +231,7 @@ is.na(x)        # FALSE FALSE FALSE
 
 \begin{frame}[fragile]{Creating and Manipulating Vectors}
 \begin{lstlisting}
-
 # Creating vectors
-
 numbers <- c(10.4, 5.6, 3.1, 6.4, 21.7)
 sequence <- 1:10
 custom_seq <- seq(0, 1, by = 0.1)
@@ -262,14 +239,12 @@ repeated <- rep(c(1, 2, 3), times = 3)
 repeated_each <- rep(c(1, 2, 3), each = 3)
 
 # Vector operations (vectorized!)
-
 numbers * 2
 numbers + c(1, 2)  # recycling
 sqrt(numbers)
 log10(numbers)
 
 # Length and summary
-
 length(numbers)
 summary(numbers)
 \end{lstlisting}
@@ -281,18 +256,15 @@ x <- c(10, 20, 30, 40, 50)
 names(x) <- c("a", "b", "c", "d", "e")
 
 # Positional indexing
-
 x[1]        # first element: 10
 x[c(1, 3)]  # elements 1 and 3: 10 30
 x[-1]       # all except first: 20 30 40 50
 
 # Logical indexing
-
 x[x > 25]   # elements > 25: 30 40 50
 x[x %% 20 == 0]  # divisible by 20: 20 40
 
 # Named indexing
-
 x["a"]      # element "a": 10
 x[c("a", "c")]  # elements "a" and "c"
 \end{lstlisting}
@@ -300,23 +272,19 @@ x[c("a", "c")]  # elements "a" and "c"
 
 \begin{frame}[fragile]{Missing Values and Special Values}
 \begin{lstlisting}
-
 # Missing values
-
 x <- c(1, 2, NA, 4, 5)
 is.na(x)           # FALSE FALSE TRUE FALSE FALSE
 sum(x)             # NA
 sum(x, na.rm = TRUE)  # 12
 
 # Special values
-
 x <- c(0, 1/0, -1/0, 0/0)
 is.finite(x)       # TRUE FALSE FALSE FALSE
 is.infinite(x)     # FALSE TRUE TRUE FALSE
 is.nan(x)          # FALSE FALSE FALSE TRUE
 
 # Handling missing data
-
 x[is.na(x)] <- 0   # replace NA with 0
 complete.cases(x)  # check for complete observations
 \end{lstlisting}
@@ -326,27 +294,22 @@ complete.cases(x)  # check for complete observations
 
 \begin{frame}[fragile]{Matrices: 2D Homogeneous Data}
 \begin{lstlisting}
-
 # Creating matrices
-
 A <- matrix(1:12, nrow = 3, ncol = 4)
 B <- matrix(1:12, nrow = 3, ncol = 4, byrow = TRUE)
 
 # Matrix operations
-
 t(A)          # transpose
 A + B         # element-wise addition
 A %*% t(B)    # matrix multiplication
 
 # Indexing
-
 A[2, 3]       # row 2, column 3
 A[2, ]        # entire row 2
 A[, 3]        # entire column 3
 A[1:2, 2:4]   # submatrix
 
 # Matrix properties
-
 dim(A)        # dimensions
 nrow(A); ncol(A)
 \end{lstlisting}
@@ -354,27 +317,22 @@ nrow(A); ncol(A)
 
 \begin{frame}[fragile]{Factors: Categorical Data}
 \begin{lstlisting}
-
 # Creating factors
-
 gender <- factor(c("M", "F", "F", "M", "F"))
 education <- factor(c("High", "Low", "Medium", "High"),
-levels = c("Low", "Medium", "High"),
-ordered = TRUE)
+                    levels = c("Low", "Medium", "High"),
+                    ordered = TRUE)
 
 # Factor properties
-
 levels(gender)    # "F" "M"
 nlevels(gender)   # 2
 table(gender)     # frequency table
 
 # Recoding factors
-
 levels(gender) <- c("Female", "Male")
 gender <- relevel(gender, ref = "Male")  # set reference level
 
 # Converting factors
-
 as.character(gender)
 as.numeric(education)  # 3 1 2 3 (ordered levels)
 \end{lstlisting}
@@ -382,31 +340,26 @@ as.numeric(education)  # 3 1 2 3 (ordered levels)
 
 \begin{frame}[fragile]{Lists: Heterogeneous Containers}
 \begin{lstlisting}
-
 # Creating lists
-
 person <- list(
-name = "Alice",
-age = 30,
-scores = c(85, 92, 78),
-married = TRUE,
-children = c("Bob", "Carol")
+  name = "Alice",
+  age = 30,
+  scores = c(85, 92, 78),
+  married = TRUE,
+  children = c("Bob", "Carol")
 )
 
 # Accessing list elements
-
 person$name           # "Alice"
 person[["age"]]       # 30
 person["scores"]      # returns list
 person[["scores"]]    # returns vector
 
 # Modifying lists
-
 person$city <- "Lisbon"
 person[["age"]] <- 31
 
 # List properties
-
 length(person)        # 6
 names(person)
 \end{lstlisting}
@@ -414,20 +367,17 @@ names(person)
 
 \begin{frame}[fragile]{Data Frames: The Workhorse}
 \begin{lstlisting}
-
 # Creating data frames
-
 students <- data.frame(
-id = 1:5,
-name = c("Alice", "Bob", "Carol", "David", "Eve"),
-age = c(22, 23, 21, 24, 22),
-grade = c("A", "B", "A", "C", "B"),
-passed = c(TRUE, TRUE, TRUE, FALSE, TRUE),
-stringsAsFactors = FALSE
+  id = 1:5,
+  name = c("Alice", "Bob", "Carol", "David", "Eve"),
+  age = c(22, 23, 21, 24, 22),
+  grade = c("A", "B", "A", "C", "B"),
+  passed = c(TRUE, TRUE, TRUE, FALSE, TRUE),
+  stringsAsFactors = FALSE
 )
 
 # Exploring structure
-
 str(students)         # structure
 head(students)        # first few rows
 tail(students, 2)     # last 2 rows
@@ -438,44 +388,39 @@ dim(students)         # dimensions
 
 \begin{frame}[fragile]{Data Frame Manipulation}
 \begin{lstlisting}
-
 # Accessing columns
-
 students$name         # vector
 students["name"]      # data frame
 students[["name"]]    # vector
 students[, "name"]    # vector
 
 # Subsetting rows and columns
-
 students[1:3, ]       # first 3 rows
 students[, c("name", "age")]  # specific columns
 students[students$age > 22, ] # conditional subsetting
 
 # Adding/removing columns
-
 students$gpa <- c(3.8, 3.2, 3.9, 2.1, 3.5)
 students$grade <- NULL  # remove column
 
 # Sorting
-
-students[order(students$age), ]           # by age
-students[order(-students$gpa, students$age), ] # by GPA (desc), then age
+students[order(students$age), ]                        # by age
+students[order(-students$gpa, students$age), ]         # by GPA (desc), then age
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #1 (15 min)}
-\textbf{Practice with data structures:}
-\begin{enumerate}
-\item Create a vector of 20 random normal values with mean=100, sd=15
-\item Convert values below 85 or above 115 to NA
-\item Create a factor for letter grades based on the values:
-\begin{itemize}
-\item A: 110+, B: 95--109, C: 85--94, F: below 85
-\end{itemize}
-\item Build a data frame combining the original scores, grades, and pass/fail status
-\item Calculate summary statistics for each grade level
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#1 (15 min)}
+  \textbf{Practice with data structures:}
+  \begin{enumerate}
+    \item Create a vector of 20 random normal values with mean=100, sd=15
+    \item Convert values below 85 or above 115 to NA
+    \item Create a factor for letter grades based on the values:
+      \begin{itemize}
+        \item A: 110+, B: 95--109, C: 85--94, F: below 85
+      \end{itemize}
+    \item Build a data frame combining the original scores, grades, and pass/fail status
+    \item Calculate summary statistics for each grade level
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -486,28 +431,22 @@ students[order(-students$gpa, students$age), ] # by GPA (desc), then age
 
 \begin{frame}[fragile]{Base R I/O Functions}
 \begin{lstlisting}
-
 # CSV files
-
 data <- read.csv("data.csv", header = TRUE, stringsAsFactors = FALSE)
 write.csv(data, "output.csv", row.names = FALSE)
 
 # Tab-delimited files
-
 data <- read.delim("data.txt", sep = "\t")
 
 # General text files
-
 data <- read.table("data.txt", header = TRUE, sep = ",")
 
 # R objects
-
 save(data, file = "data.RData")      # save specific objects
 save.image("workspace.RData")        # save entire workspace
 load("data.RData")                   # load objects
 
 # Other formats (requires packages)
-
 library(readxl)
 excel_data <- read_excel("data.xlsx", sheet = "Sheet1")
 \end{lstlisting}
@@ -518,23 +457,20 @@ excel_data <- read_excel("data.xlsx", sheet = "Sheet1")
 library(readr)
 
 # Fast and consistent parsing
-
 data <- read_csv("data.csv")         # tibbles by default
 data <- read_tsv("data.txt")
 data <- read_delim("data.txt", delim = "|")
 
 # Specify column types
-
 data <- read_csv("data.csv",
-col_types = cols(
-id = col_integer(),
-name = col_character(),
-score = col_double(),
-date = col_date()
-))
+                 col_types = cols(
+                   id = col_integer(),
+                   name = col_character(),
+                   score = col_double(),
+                   date = col_date()
+                 ))
 
 # Handle problematic data
-
 problems(data)   # show parsing problems
 data <- read_csv("data.csv", na = c("", "NA", "NULL"))
 \end{lstlisting}
@@ -544,74 +480,62 @@ data <- read_csv("data.csv", na = c("", "NA", "NULL"))
 
 \begin{frame}[fragile]{Data Inspection and Cleaning}
 \begin{lstlisting}
-
 # Load built-in dataset
-
 data(mtcars)
 
 # Basic inspection
-
 glimpse(mtcars)      # dplyr version of str()
 summary(mtcars)
 head(mtcars, 10)
 
 # Check for missing values
-
 sum(is.na(mtcars))
 colSums(is.na(mtcars))
 
 # Check for duplicates
-
 sum(duplicated(mtcars))
 
 # Data types
-
 sapply(mtcars, class)
 
 # Quick visualization
-
 pairs(mtcars[1:4])   # scatterplot matrix
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Working Directories and Projects}
 \begin{lstlisting}
-
 # Working directory management
-
 getwd()              # current directory
 setwd("~/Documents/R_projects")  # NOT recommended!
 
 # Better approach: Use RStudio Projects or here package
-
 library(here)
 data_path <- here("data", "raw", "dataset.csv")
 output_path <- here("output", "results.csv")
 
 # File operations
-
 list.files(".", pattern = "*.csv")
 file.exists("data.csv")
 file.info("data.csv")
 
 # Create directories
-
 dir.create("data")
 dir.create("output")
 dir.create(here("data", "processed"))
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #2 (10 min)}
-\textbf{Data import and exploration:}
-\begin{enumerate}
-\item Load the built-in \texttt{iris} dataset
-\item Explore its structure, dimensions, and summary statistics
-\item Check for missing values and duplicates
-\item Create a subset with only Setosa and Versicolor species
-\item Export the subset to a CSV file
-\item Reload the CSV and verify it matches your subset
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#2 (10 min)}
+  \textbf{Data import and exploration:}
+  \begin{enumerate}
+    \item Load the built-in \texttt{iris} dataset
+    \item Explore its structure, dimensions, and summary statistics
+    \item Check for missing values and duplicates
+    \item Create a subset with only Setosa and Versicolor species
+    \item Export the subset to a CSV file
+    \item Reload the CSV and verify it matches your subset
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -622,68 +546,57 @@ dir.create(here("data", "processed"))
 
 \begin{frame}[fragile]{Conditional Statements}
 \begin{lstlisting}
-
 # Simple if-else
-
 x <- 5
 if (x > 0) {
-print("Positive")
+  print("Positive")
 } else if (x < 0) {
-print("Negative")
+  print("Negative")
 } else {
-print("Zero")
+  print("Zero")
 }
 
 # Vectorized conditional: ifelse()
-
 scores <- c(85, 92, 67, 88, 95)
 grades <- ifelse(scores >= 90, "A",
-ifelse(scores >= 80, "B",
-ifelse(scores >= 70, "C", "F")))
+                 ifelse(scores >= 80, "B",
+                        ifelse(scores >= 70, "C", "F")))
 
 # Multiple conditions with case_when() (dplyr)
-
 library(dplyr)
 grades <- case_when(
-scores >= 90 ~ "A",
-scores >= 80 ~ "B",
-scores >= 70 ~ "C",
-TRUE ~ "F"  # default case
+  scores >= 90 ~ "A",
+  scores >= 80 ~ "B",
+  scores >= 70 ~ "C",
+  TRUE ~ "F"  # default case
 )
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Loops and Iteration}
 \begin{lstlisting}
-
 # For loops
-
 for (i in 1:5) {
-print(i^2)
+  print(i^2)
 }
 
 # Iterate over elements
-
 fruits <- c("apple", "banana", "orange")
 for (fruit in fruits) {
-print(paste("I like", fruit))
+  print(paste("I like", fruit))
 }
 
 # While loops
-
 x <- 1
 while (x <= 5) {
-print(x)
-x <- x + 1
+  print(x)
+  x <- x + 1
 }
 
 # Apply family (vectorized operations)
-
 numbers <- 1:10
 squares <- sapply(numbers, function(x) x^2)
-
 # Better: squares <- numbers^2 (vectorized!)
-
 \end{lstlisting}
 \end{frame}
 
@@ -691,116 +604,104 @@ squares <- sapply(numbers, function(x) x^2)
 
 \begin{frame}[fragile]{Creating Functions}
 \begin{lstlisting}
-
 # Basic function
-
 square <- function(x) {
-return(x^2)
+  return(x^2)
 }
 
 # Function with multiple arguments and defaults
-
 calculate_bmi <- function(weight, height, units = "metric") {
-if (units == "imperial") {
-# Convert pounds and inches to kg and meters
-weight <- weight * 0.453592
-height <- height * 0.0254
-}
+  if (units == "imperial") {
+    # Convert pounds and inches to kg and meters
+    weight <- weight * 0.453592
+    height <- height * 0.0254
+  }
 
-bmi <- weight / (height^2)
+  bmi <- weight / (height^2)
 
-category <- case_when(
-bmi < 18.5 ~ "Underweight",
-bmi < 25 ~ "Normal",
-bmi < 30 ~ "Overweight",
-TRUE ~ "Obese"
-)
+  category <- case_when(
+    bmi < 18.5 ~ "Underweight",
+    bmi < 25 ~ "Normal",
+    bmi < 30 ~ "Overweight",
+    TRUE ~ "Obese"
+  )
 
-return(list(bmi = bmi, category = category))
+  return(list(bmi = bmi, category = category))
 }
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Advanced Function Features}
 \begin{lstlisting}
-
 # Functions with ... (dot-dot-dot)
-
 my_summary <- function(x, ...) {
-list(
-mean = mean(x, ...),
-median = median(x, ...),
-sd = sd(x, ...)
-)
+  list(
+    mean = mean(x, ...),
+    median = median(x, ...),
+    sd = sd(x, ...)
+  )
 }
 
 # Usage with additional arguments
-
 data_with_na <- c(1, 2, NA, 4, 5)
 my_summary(data_with_na, na.rm = TRUE)
 
 # Input validation
-
 safe_divide <- function(x, y) {
-if (!is.numeric(x) || !is.numeric(y)) {
-stop("Both arguments must be numeric")
-}
-if (any(y == 0)) {
-warning("Division by zero detected")
-return(ifelse(y == 0, Inf, x / y))
-}
-return(x / y)
+  if (!is.numeric(x) || !is.numeric(y)) {
+    stop("Both arguments must be numeric")
+  }
+  if (any(y == 0)) {
+    warning("Division by zero detected")
+    return(ifelse(y == 0, Inf, x / y))
+  }
+  return(x / y)
 }
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Functional Programming Concepts}
 \begin{lstlisting}
-
 # Anonymous functions
-
 numbers <- 1:10
 squared <- sapply(numbers, function(x) x^2)
 
 # Map functions (purrr package - part of tidyverse)
-
 library(purrr)
 numbers <- 1:5
 squared <- map_dbl(numbers, ~ .x^2)
 cubed <- map_dbl(numbers, ~ .x^3)
 
 # Working with lists
-
 data_list <- list(a = 1:3, b = 4:6, c = 7:9)
 means <- map_dbl(data_list, mean)
 lengths <- map_int(data_list, length)
 
 # Function composition
-
 compose_functions <- function(f, g) {
-function(x) f(g(x))
+  function(x) f(g(x))
 }
 sqrt_of_square <- compose_functions(sqrt, function(x) x^2)
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #3 (15 min)}
-\textbf{Programming practice:}
-\begin{enumerate}
-\item Write a function \texttt{standardize()} that:
-\begin{itemize}
-\item Takes a numeric vector
-\item Returns z-scores (mean=0, sd=1)
-\item Has options for removing NAs and clipping outliers
-\end{itemize}
-\item Write a function \texttt{grade_analysis()} that:
-\begin{itemize}
-\item Takes a vector of numeric scores
-\item Returns a list with mean, median, grade distribution
-\item Assigns letter grades based on customizable cutoffs
-\end{itemize}
-\item Test your functions with simulated data
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#3 (15 min)}
+  \textbf{Programming practice:}
+  \begin{enumerate}
+    \item Write a function \texttt{standardize()} that:
+      \begin{itemize}
+        \item Takes a numeric vector
+        \item Returns z-scores (mean=0, sd=1)
+        \item Has options for removing NAs and clipping outliers
+      \end{itemize}
+    \item Write a function \texttt{grade\_analysis()} that:
+      \begin{itemize}
+        \item Takes a vector of numeric scores
+        \item Returns a list with mean, median, grade distribution
+        \item Assigns letter grades based on customizable cutoffs
+      \end{itemize}
+    \item Test your functions with simulated data
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -810,31 +711,30 @@ sqrt_of_square <- compose_functions(sqrt, function(x) x^2)
 \subsection{The tidyverse Philosophy}
 
 \begin{frame}{Tidyverse: Modern R Data Science}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\textbf{Core principles:}
-\begin{itemize}
-\item \textbf{Tidy data}: Each variable is a column, each observation is a row
-\item \textbf{Pipe operator}: Chain operations with \texttt{%>%}
-\item \textbf{Consistent API}: Similar function names and arguments
-\item \textbf{Human-readable}: Code that reads like English
-\end{itemize}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{Core principles:}
+      \begin{itemize}
+        \item \textbf{Tidy data}: Each variable is a column, each observation is a row
+        \item \textbf{Pipe operator}: Chain operations with \verb|%>%|
+        \item \textbf{Consistent API}: Similar function names and arguments
+        \item \textbf{Human-readable}: Code that reads like English
+      \end{itemize}
 
-\vspace{1em}
-\textbf{Core packages:}
-\begin{itemize}
-  \item \texttt{dplyr}: Data manipulation
-  \item \texttt{ggplot2}: Visualization
-  \item \texttt{tidyr}: Data reshaping
-  \item \texttt{readr}: Data import
-\end{itemize}
-\end{column}
-% \begin{column}{0.4\textwidth}
-%   \centering
-%   \includegraphics[width=0.8\textwidth]{tidyverse_logo.png}
-% \end{column}
-
-\end{columns}
+      \vspace{1em}
+      \textbf{Core packages:}
+      \begin{itemize}
+        \item \texttt{dplyr}: Data manipulation
+        \item \texttt{ggplot2}: Visualization
+        \item \texttt{tidyr}: Data reshaping
+        \item \texttt{readr}: Data import
+      \end{itemize}
+    \end{column}
+    % \begin{column}{0.4\textwidth}
+    %   \centering
+    %   \includegraphics[width=0.8\textwidth]{tidyverse_logo.png}
+    % \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{The Pipe Operator}
@@ -842,25 +742,23 @@ sqrt_of_square <- compose_functions(sqrt, function(x) x^2)
 library(dplyr)
 
 # Traditional nested approach (hard to read)
-
 result <- summarise(
-filter(
-select(mtcars, mpg, hp, wt),
-hp > 100
-),
-mean_mpg = mean(mpg),
-mean_wt = mean(wt)
+  filter(
+    select(mtcars, mpg, hp, wt),
+    hp > 100
+  ),
+  mean_mpg = mean(mpg),
+  mean_wt = mean(wt)
 )
 
 # Pipe approach (readable)
-
 result <- mtcars %>%
-select(mpg, hp, wt) %>%
-filter(hp > 100) %>%
-summarise(
-mean_mpg = mean(mpg),
-mean_wt = mean(wt)
-)
+  select(mpg, hp, wt) %>%
+  filter(hp > 100) %>%
+  summarise(
+    mean_mpg = mean(mpg),
+    mean_wt = mean(wt)
+  )
 \end{lstlisting}
 \end{frame}
 
@@ -871,144 +769,130 @@ mean_wt = mean(wt)
 library(dplyr)
 
 # Select columns
+mtcars %>%
+  select(mpg, hp, wt)           # by name
 
 mtcars %>%
-select(mpg, hp, wt)           # by name
+  select(1:3)                   # by position
 
 mtcars %>%
-select(1:3)                   # by position
+  select(starts_with("m"))      # helper functions
 
 mtcars %>%
-select(starts_with("m"))      # helper functions
-
-mtcars %>%
-select(-gear, -carb)          # exclude columns
+  select(-gear, -carb)          # exclude columns
 
 # Filter rows
+mtcars %>%
+  filter(mpg > 20)              # single condition
 
 mtcars %>%
-filter(mpg > 20)              # single condition
+  filter(mpg > 20, hp < 110)    # multiple conditions (AND)
 
 mtcars %>%
-filter(mpg > 20, hp < 110)    # multiple conditions (AND)
+  filter(mpg > 20 | hp > 200)   # OR condition
 
 mtcars %>%
-filter(mpg > 20 | hp > 200)   # OR condition
+  filter(between(mpg, 15, 25))  # range
 
 mtcars %>%
-filter(between(mpg, 15, 25))  # range
-
-mtcars %>%
-filter(cyl %in% c(4, 6))      # matching values
+  filter(cyl %in% c(4, 6))      # matching values
 
 # Combining operations
-
 efficient_cars <- mtcars %>%
-filter(mpg > 20, hp > 100) %>%
-select(mpg, hp, wt, qsec)
+  filter(mpg > 20, hp > 100) %>%
+  select(mpg, hp, wt, qsec)
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Creating and Modifying Variables}
 \begin{lstlisting}
-
 # Create new variables with mutate()
-
 mtcars %>%
-mutate(
-power_to_weight = hp / wt,
-efficiency_class = case_when(
-mpg >= 25 ~ "High",
-mpg >= 20 ~ "Medium",
-TRUE ~ "Low"
-),
-# Create multiple variables
-log_mpg = log(mpg),
-mpg_squared = mpg^2
-)
+  mutate(
+    power_to_weight = hp / wt,
+    efficiency_class = case_when(
+      mpg >= 25 ~ "High",
+      mpg >= 20 ~ "Medium",
+      TRUE ~ "Low"
+    ),
+    # Create multiple variables
+    log_mpg = log(mpg),
+    mpg_squared = mpg^2
+  )
 
 # Conditional mutations
-
 mtcars %>%
-mutate(
-fuel_efficiency = ifelse(mpg > median(mpg), "Efficient", "Inefficient"),
-performance = case_when(
-hp > quantile(hp, 0.75) ~ "High Performance",
-hp > quantile(hp, 0.25) ~ "Medium Performance",
-TRUE ~ "Low Performance"
-)
-)
+  mutate(
+    fuel_efficiency = ifelse(mpg > median(mpg), "Efficient", "Inefficient"),
+    performance = case_when(
+      hp > quantile(hp, 0.75) ~ "High Performance",
+      hp > quantile(hp, 0.25) ~ "Medium Performance",
+      TRUE ~ "Low Performance"
+    )
+  )
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Grouping and Summarizing}
 \begin{lstlisting}
-
 # Summary statistics
-
 mtcars %>%
-summarise(
-mean_mpg = mean(mpg),
-median_hp = median(hp),
-sd_wt = sd(wt),
-count = n()
-)
+  summarise(
+    mean_mpg = mean(mpg),
+    median_hp = median(hp),
+    sd_wt = sd(wt),
+    count = n()
+  )
 
 # Grouped operations
-
 mtcars %>%
-group_by(cyl) %>%
-summarise(
-count = n(),
-avg_mpg = mean(mpg),
-avg_hp = mean(hp),
-min_wt = min(wt),
-max_wt = max(wt),
-.groups = "drop"  # ungroup after summarizing
-)
+  group_by(cyl) %>%
+  summarise(
+    count = n(),
+    avg_mpg = mean(mpg),
+    avg_hp = mean(hp),
+    min_wt = min(wt),
+    max_wt = max(wt),
+    .groups = "drop"  # ungroup after summarizing
+  )
 
 # Multiple grouping variables
-
 mtcars %>%
-group_by(cyl, am) %>%
-summarise(avg_mpg = mean(mpg), .groups = "drop")
+  group_by(cyl, am) %>%
+  summarise(avg_mpg = mean(mpg), .groups = "drop")
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Arranging and Ranking}
 \begin{lstlisting}
-
 # Sorting data
+mtcars %>%
+  arrange(mpg)                  # ascending
 
 mtcars %>%
-arrange(mpg)                  # ascending
+  arrange(desc(hp))             # descending
 
 mtcars %>%
-arrange(desc(hp))             # descending
-
-mtcars %>%
-arrange(cyl, desc(mpg))       # multiple columns
+  arrange(cyl, desc(mpg))       # multiple columns
 
 # Window functions
-
 mtcars %>%
-mutate(
-mpg_rank = rank(mpg),
-mpg_dense_rank = dense_rank(mpg),
-mpg_percentile = percent_rank(mpg),
-row_number = row_number()
-) %>%
-arrange(desc(mpg))
+  mutate(
+    mpg_rank = rank(mpg),
+    mpg_dense_rank = dense_rank(mpg),
+    mpg_percentile = percent_rank(mpg),
+    row_number = row_number()
+  ) %>%
+  arrange(desc(mpg))
 
 # Grouped ranking
-
 mtcars %>%
-group_by(cyl) %>%
-mutate(
-mpg_rank_within_cyl = rank(desc(mpg)),
-top_performer = mpg_rank_within_cyl <= 2
-) %>%
-ungroup()
+  group_by(cyl) %>%
+  mutate(
+    mpg_rank_within_cyl = rank(desc(mpg)),
+    top_performer = mpg_rank_within_cyl <= 2
+  ) %>%
+  ungroup()
 \end{lstlisting}
 \end{frame}
 
@@ -1016,50 +900,46 @@ ungroup()
 
 \begin{frame}[fragile]{Joins and Combining Data}
 \begin{lstlisting}
-
 # Sample datasets
-
 cars_info <- data.frame(
-model = rownames(mtcars)[1:10],
-manufacturer = c("Mazda", "Mazda", "Datsun", "Hornet", "Hornet",
-"Valiant", "Duster", "Merc", "Merc", "Merc"),
-stringsAsFactors = FALSE
+  model = rownames(mtcars)[1:10],
+  manufacturer = c("Mazda", "Mazda", "Datsun", "Hornet", "Hornet",
+                   "Valiant", "Duster", "Merc", "Merc", "Merc"),
+  stringsAsFactors = FALSE
 )
 
 mtcars_with_names <- mtcars %>%
-mutate(model = rownames(mtcars))
+  mutate(model = rownames(mtcars))
 
 # Different types of joins
-
 inner_join(mtcars_with_names, cars_info, by = "model")
 left_join(mtcars_with_names, cars_info, by = "model")
 right_join(mtcars_with_names, cars_info, by = "model")
 full_join(mtcars_with_names, cars_info, by = "model")
 
 # Binding rows and columns
-
-bind_rows(mtcars[1:5,], mtcars[25:32,])
+bind_rows(mtcars[1:5, ], mtcars[25:32, ])
 bind_cols(mtcars[1:5, 1:3], mtcars[1:5, 8:11])
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #4 (20 min)}
-\textbf{Advanced dplyr practice:}
-\begin{enumerate}
-\item Load the \texttt{starwars} dataset from dplyr
-\item Clean the data:
-\begin{itemize}
-\item Remove rows with missing height or mass
-\item Create BMI variable (mass/height$^2$,$\times$,10000)
-\end{itemize}
-\item Analysis tasks:
-\begin{itemize}
-\item Find the average height and mass by species (top 5 species by count)
-\item Identify characters with extreme BMI values
-\item Create a summary by homeworld showing character count and avg BMI
-\end{itemize}
-\item Export your results to CSV
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#4 (20 min)}
+  \textbf{Advanced dplyr practice:}
+  \begin{enumerate}
+    \item Load the \texttt{starwars} dataset from dplyr
+    \item Clean the data:
+      \begin{itemize}
+        \item Remove rows with missing height or mass
+        \item Create BMI variable: mass / height$^2 \times 10000$
+      \end{itemize}
+    \item Analysis tasks:
+      \begin{itemize}
+        \item Find the average height and mass by species (top 5 species by count)
+        \item Identify characters with extreme BMI values
+        \item Create a summary by homeworld showing character count and avg BMI
+      \end{itemize}
+    \item Export your results to CSV
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -1070,26 +950,21 @@ bind_cols(mtcars[1:5, 1:3], mtcars[1:5, 8:11])
 
 \begin{frame}[fragile]{Exploratory Data Analysis}
 \begin{lstlisting}
-
 # Load and explore a dataset
-
 library(datasets)
 data("airquality")
 
 # Basic descriptive statistics
-
 summary(airquality)
 sapply(airquality, function(x) c(mean = mean(x, na.rm = TRUE),
-sd = sd(x, na.rm = TRUE),
-min = min(x, na.rm = TRUE),
-max = max(x, na.rm = TRUE)))
+                                 sd = sd(x, na.rm = TRUE),
+                                 min = min(x, na.rm = TRUE),
+                                 max = max(x, na.rm = TRUE)))
 
 # Correlation matrix
-
 cor(airquality, use = "complete.obs")
 
 # Advanced descriptive statistics
-
 library(psych)
 describe(airquality)
 pairs.panels(airquality[1:4])  # correlation plot with histograms
@@ -1098,25 +973,20 @@ pairs.panels(airquality[1:4])  # correlation plot with histograms
 
 \begin{frame}[fragile]{Handling Missing Data}
 \begin{lstlisting}
-
 # Identify missing patterns
-
 library(VIM)
 aggr(airquality, col = c('navyblue', 'red'),
-numbers = TRUE, sortVars = TRUE)
+     numbers = TRUE, sortVars = TRUE)
 
 # Simple imputation strategies
-
 # Mean imputation
-
 airquality_mean <- airquality %>%
-mutate(
-Ozone = ifelse(is.na(Ozone), mean(Ozone, na.rm = TRUE), Ozone),
-Solar.R = ifelse(is.na(Solar.R), mean(Solar.R, na.rm = TRUE), Solar.R)
-)
+  mutate(
+    Ozone = ifelse(is.na(Ozone), mean(Ozone, na.rm = TRUE), Ozone),
+    Solar.R = ifelse(is.na(Solar.R), mean(Solar.R, na.rm = TRUE), Solar.R)
+  )
 
 # Multiple imputation
-
 library(mice)
 imputed_data <- mice(airquality, m = 5, method = 'pmm', seed = 123)
 completed_data <- complete(imputed_data)
@@ -1127,33 +997,24 @@ completed_data <- complete(imputed_data)
 
 \begin{frame}[fragile]{Hypothesis Testing}
 \begin{lstlisting}
-
 # t-tests
 
 # One-sample t-test
-
 t.test(airquality$Temp, mu = 75)
 
 # Two-sample t-test
-
 # Split data by month
-
 summer_temp <- airquality$Temp[airquality$Month %in% c(6, 7, 8)]
 other_temp <- airquality$Temp[!airquality$Month %in% c(6, 7, 8)]
 t.test(summer_temp, other_temp)
 
 # Paired t-test (example with before/after data)
-
 # before <- c(85, 78, 82, 79, 88)
-
 # after <- c(87, 80, 85, 81, 92)
-
 # t.test(before, after, paired = TRUE)
 
 # Chi-square test
-
 # Create categorical variables for example
-
 temp_cat <- cut(airquality$Temp, breaks = 3, labels = c("Cool", "Moderate", "Hot"))
 month_cat <- factor(airquality$Month, labels = c("May", "Jun", "Jul", "Aug", "Sep"))
 chisq.test(table(temp_cat, month_cat))
@@ -1162,32 +1023,24 @@ chisq.test(table(temp_cat, month_cat))
 
 \begin{frame}[fragile]{ANOVA and Non-parametric Tests}
 \begin{lstlisting}
-
 # One-way ANOVA
-
 anova_result <- aov(Temp ~ factor(Month), data = airquality)
 summary(anova_result)
 
 # Post-hoc tests
-
 TukeyHSD(anova_result)
 
 # Two-way ANOVA (if we had more factors)
-
 # aov(Temp ~ Month * Wind_Category, data = airquality)
 
 # Non-parametric alternatives
-
 # Kruskal-Wallis test (non-parametric ANOVA)
-
 kruskal.test(Temp ~ Month, data = airquality)
 
 # Wilcoxon rank-sum test (non-parametric t-test)
-
 wilcox.test(summer_temp, other_temp)
 
 # Correlation tests
-
 cor.test(airquality$Temp, airquality$Ozone, use = "complete.obs")
 cor.test(airquality$Temp, airquality$Ozone, method = "spearman", use = "complete.obs")
 \end{lstlisting}
@@ -1197,27 +1050,21 @@ cor.test(airquality$Temp, airquality$Ozone, method = "spearman", use = "complete
 
 \begin{frame}[fragile]{Simple and Multiple Regression}
 \begin{lstlisting}
-
 # Simple linear regression
-
 model1 <- lm(Ozone ~ Temp, data = airquality)
 summary(model1)
 
 # Multiple regression
-
 model2 <- lm(Ozone ~ Temp + Wind + Solar.R, data = airquality)
 summary(model2)
 
 # Model with interactions
-
 model3 <- lm(Ozone ~ Temp * Wind + Solar.R, data = airquality)
 
 # Polynomial regression
-
 model4 <- lm(Ozone ~ poly(Temp, 2) + Wind + Solar.R, data = airquality)
 
 # Model comparison
-
 anova(model1, model2)  # F-test for nested models
 AIC(model1, model2, model3, model4)  # Information criteria
 \end{lstlisting}
@@ -1225,71 +1072,58 @@ AIC(model1, model2, model3, model4)  # Information criteria
 
 \begin{frame}[fragile]{Model Diagnostics and Validation}
 \begin{lstlisting}
-
 # Basic diagnostic plots
-
 par(mfrow = c(2, 2))
 plot(model2)
 par(mfrow = c(1, 1))
 
 # Residual analysis
-
 residuals <- resid(model2)
 fitted_vals <- fitted(model2)
 
 # Check assumptions
-
 # 1. Linearity
-
 plot(fitted_vals, residuals)
 abline(h = 0, col = "red")
 
 # 2. Normality of residuals
-
 qqnorm(residuals)
 qqline(residuals)
 shapiro.test(residuals)  # formal test
 
 # 3. Homoscedasticity
-
 library(lmtest)
 bptest(model2)  # Breusch-Pagan test
 
 # 4. Independence (autocorrelation)
-
 dwtest(model2)  # Durbin-Watson test
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Prediction and Model Selection}
 \begin{lstlisting}
-
 # Predictions with confidence intervals
-
 new_data <- data.frame(
-Temp = c(70, 80, 90),
-Wind = c(10, 15, 5),
-Solar.R = c(200, 250, 300)
+  Temp = c(70, 80, 90),
+  Wind = c(10, 15, 5),
+  Solar.R = c(200, 250, 300)
 )
 
 predictions <- predict(model2, newdata = new_data, interval = "confidence")
 
 # Cross-validation
-
 library(caret)
 set.seed(123)
 train_control <- trainControl(method = "cv", number = 10)
 cv_model <- train(Ozone ~ Temp + Wind + Solar.R,
-data = airquality,
-method = "lm",
-trControl = train_control,
-na.action = na.omit)
+                  data = airquality,
+                  method = "lm",
+                  trControl = train_control,
+                  na.action = na.omit)
 print(cv_model)
 
 # Variable selection
-
 # Stepwise selection
-
 step_model <- step(model2, direction = "both")
 summary(step_model)
 \end{lstlisting}
@@ -1299,25 +1133,20 @@ summary(step_model)
 
 \begin{frame}[fragile]{Generalized Linear Models}
 \begin{lstlisting}
-
 # Logistic regression
-
 # Create binary outcome
-
 airquality$high_ozone <- ifelse(airquality$Ozone > median(airquality$Ozone, na.rm = TRUE), 1, 0)
 
 logistic_model <- glm(high_ozone ~ Temp + Wind + Solar.R,
-data = airquality,
-family = binomial)
+                      data = airquality,
+                      family = binomial)
 summary(logistic_model)
 
 # Odds ratios
-
 exp(coef(logistic_model))
 exp(confint(logistic_model))
 
 # Model evaluation
-
 library(pROC)
 predicted_prob <- predict(logistic_model, type = "response")
 roc_curve <- roc(airquality$high_ozone, predicted_prob, na.rm = TRUE)
@@ -1325,34 +1154,32 @@ plot(roc_curve)
 auc(roc_curve)
 
 # Poisson regression (for count data)
-
 # poisson_model <- glm(count_variable ~ predictors, family = poisson)
-
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #5 (25 min)}
-\textbf{Statistical modeling project:}
-\begin{enumerate}
-\item Use the \texttt{mtcars} dataset for regression analysis
-\item Exploratory analysis:
-\begin{itemize}
-\item Descriptive statistics and correlations
-\item Identify outliers and missing values
-\end{itemize}
-\item Build models to predict \texttt{mpg}:
-\begin{itemize}
-\item Simple regression with \texttt{wt}
-\item Multiple regression with \texttt{wt}, \texttt{hp}, \texttt{disp}
-\item Model with interactions
-\end{itemize}
-\item Model evaluation:
-\begin{itemize}
-\item Check assumptions with diagnostic plots
-\item Compare models using AIC/BIC
-\item Calculate R$^2$ and RMSE
-\end{itemize}
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#5 (25 min)}
+  \textbf{Statistical modeling project:}
+  \begin{enumerate}
+    \item Use the \texttt{mtcars} dataset for regression analysis
+    \item Exploratory analysis:
+      \begin{itemize}
+        \item Descriptive statistics and correlations
+        \item Identify outliers and missing values
+      \end{itemize}
+    \item Build models to predict \texttt{mpg}:
+      \begin{itemize}
+        \item Simple regression with \texttt{wt}
+        \item Multiple regression with \texttt{wt}, \texttt{hp}, \texttt{disp}
+        \item Model with interactions
+      \end{itemize}
+    \item Model evaluation:
+      \begin{itemize}
+        \item Check assumptions with diagnostic plots
+        \item Compare models using AIC/BIC
+        \item Calculate R$^2$ and RMSE
+      \end{itemize}
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -1362,20 +1189,20 @@ auc(roc_curve)
 \subsection{Grammar of Graphics}
 
 \begin{frame}{The Philosophy of ggplot2}
-\textbf{Grammar of Graphics principles:}
-\begin{itemize}
-\item \textbf{Data}: The dataset being plotted
-\item \textbf{Aesthetics}: Visual properties (x, y, color, size, shape)
-\item \textbf{Geometries}: The type of plot (points, lines, bars)
-\item \textbf{Scales}: How aesthetic values are displayed
-\item \textbf{Coordinate systems}: How data is positioned
-\item \textbf{Facets}: Subplots based on categorical variables
-\item \textbf{Themes}: Overall visual appearance
-\end{itemize}
+  \textbf{Grammar of Graphics principles:}
+  \begin{itemize}
+    \item \textbf{Data}: The dataset being plotted
+    \item \textbf{Aesthetics}: Visual properties (x, y, color, size, shape)
+    \item \textbf{Geometries}: The type of plot (points, lines, bars)
+    \item \textbf{Scales}: How aesthetic values are displayed
+    \item \textbf{Coordinate systems}: How data is positioned
+    \item \textbf{Facets}: Subplots based on categorical variables
+    \item \textbf{Themes}: Overall visual appearance
+  \end{itemize}
 
-\vspace{1em}
-\textbf{Basic structure:}
-\texttt{ggplot(data, aes(x, y)) + geom_*() + theme() + ...}
+  \vspace{1em}
+  \textbf{Basic structure:}
+  \texttt{ggplot(data, aes(x, y)) + geom\_*() + theme() + ...}
 \end{frame}
 
 \begin{frame}[fragile]{Basic ggplot2 Syntax}
@@ -1383,24 +1210,21 @@ auc(roc_curve)
 library(ggplot2)
 
 # Basic scatter plot
-
 ggplot(mtcars, aes(x = wt, y = mpg)) +
-geom_point()
+  geom_point()
 
 # Add aesthetics
-
 ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
-geom_point(size = 3) +
-labs(title = "Fuel Efficiency vs Weight",
-x = "Weight (1000 lbs)",
-y = "Miles per Gallon",
-color = "Cylinders")
+  geom_point(size = 3) +
+  labs(title = "Fuel Efficiency vs Weight",
+       x = "Weight (1000 lbs)",
+       y = "Miles per Gallon",
+       color = "Cylinders")
 
 # Add trend line
-
 ggplot(mtcars, aes(x = wt, y = mpg)) +
-geom_point() +
-geom_smooth(method = "lm", se = TRUE)
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE)
 \end{lstlisting}
 \end{frame}
 
@@ -1408,90 +1232,77 @@ geom_smooth(method = "lm", se = TRUE)
 
 \begin{frame}[fragile]{Distribution Plots}
 \begin{lstlisting}
-
 # Histogram
-
 ggplot(mtcars, aes(x = mpg)) +
-geom_histogram(bins = 15, fill = "skyblue", alpha = 0.7) +
-labs(title = "Distribution of MPG")
+  geom_histogram(bins = 15, fill = "skyblue", alpha = 0.7) +
+  labs(title = "Distribution of MPG")
 
 # Density plot
-
 ggplot(mtcars, aes(x = mpg, fill = factor(cyl))) +
-geom_density(alpha = 0.5) +
-labs(title = "MPG Distribution by Cylinders")
+  geom_density(alpha = 0.5) +
+  labs(title = "MPG Distribution by Cylinders")
 
 # Box plot
-
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
-geom_boxplot(fill = "lightblue") +
-geom_jitter(width = 0.2, alpha = 0.6) +  # add data points
-labs(x = "Number of Cylinders", y = "Miles per Gallon")
+  geom_boxplot(fill = "lightblue") +
+  geom_jitter(width = 0.2, alpha = 0.6) +  # add data points
+  labs(x = "Number of Cylinders", y = "Miles per Gallon")
 
 # Violin plot
-
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
-geom_violin(fill = "lightgreen", alpha = 0.7) +
-geom_boxplot(width = 0.2, fill = "white", alpha = 0.8)
+  geom_violin(fill = "lightgreen", alpha = 0.7) +
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.8)
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Categorical Data Visualization}
 \begin{lstlisting}
-
 # Bar chart
-
 mtcars %>%
-count(cyl) %>%
-ggplot(aes(x = factor(cyl), y = n)) +
-geom_bar(stat = "identity", fill = "coral") +
-labs(x = "Cylinders", y = "Count")
+  count(cyl) %>%
+  ggplot(aes(x = factor(cyl), y = n)) +
+  geom_bar(stat = "identity", fill = "coral") +
+  labs(x = "Cylinders", y = "Count")
 
 # Grouped bar chart
-
 mtcars %>%
-count(cyl, am) %>%
-ggplot(aes(x = factor(cyl), y = n, fill = factor(am))) +
-geom_bar(stat = "identity", position = "dodge") +
-labs(x = "Cylinders", y = "Count", fill = "Transmission")
+  count(cyl, am) %>%
+  ggplot(aes(x = factor(cyl), y = n, fill = factor(am))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Cylinders", y = "Count", fill = "Transmission")
 
 # Stacked bar chart
-
 mtcars %>%
-count(cyl, am) %>%
-ggplot(aes(x = factor(cyl), y = n, fill = factor(am))) +
-geom_bar(stat = "identity", position = "stack") +
-labs(x = "Cylinders", y = "Count", fill = "Transmission")
+  count(cyl, am) %>%
+  ggplot(aes(x = factor(cyl), y = n, fill = factor(am))) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Cylinders", y = "Count", fill = "Transmission")
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Advanced Plot Types}
 \begin{lstlisting}
-
 # Correlation heatmap
-
 library(reshape2)
 cor_matrix <- cor(mtcars)
 melted_cor <- melt(cor_matrix)
 
 ggplot(melted_cor, aes(Var1, Var2, fill = value)) +
-geom_tile() +
-scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-midpoint = 0, limit = c(-1,1)) +
-theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1,1)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Scatter plot matrix
-
 library(GGally)
 ggpairs(mtcars[c("mpg", "disp", "hp", "wt")])
 
 # Time series plot (example with built-in data)
-
 economics %>%
-ggplot(aes(x = date, y = unemploy)) +
-geom_line(color = "steelblue") +
-labs(title = "US Unemployment Over Time",
-x = "Year", y = "Unemployment (thousands)")
+  ggplot(aes(x = date, y = unemploy)) +
+  geom_line(color = "steelblue") +
+  labs(title = "US Unemployment Over Time",
+       x = "Year", y = "Unemployment (thousands)")
 \end{lstlisting}
 \end{frame}
 
@@ -1499,56 +1310,47 @@ x = "Year", y = "Unemployment (thousands)")
 
 \begin{frame}[fragile]{Scales and Coordinate Systems}
 \begin{lstlisting}
-
 # Custom scales
-
 ggplot(mtcars, aes(x = wt, y = mpg, color = hp)) +
-geom_point(size = 3) +
-scale_color_gradient(low = "blue", high = "red") +
-scale_x_continuous(breaks = seq(1, 6, by = 0.5)) +
-scale_y_continuous(limits = c(10, 35))
+  geom_point(size = 3) +
+  scale_color_gradient(low = "blue", high = "red") +
+  scale_x_continuous(breaks = seq(1, 6, by = 0.5)) +
+  scale_y_continuous(limits = c(10, 35))
 
 # Log scales
-
 ggplot(mtcars, aes(x = disp, y = mpg)) +
-geom_point() +
-scale_x_log10() +
-annotation_logticks(sides = "b")
+  geom_point() +
+  scale_x_log10() +
+  annotation_logticks(sides = "b")
 
 # Coordinate transformations
-
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
-geom_boxplot() +
-coord_flip()  # horizontal box plot
+  geom_boxplot() +
+  coord_flip()  # horizontal box plot
 
 # Polar coordinates (for pie charts)
-
 mtcars %>%
-count(cyl) %>%
-ggplot(aes(x = "", y = n, fill = factor(cyl))) +
-geom_bar(stat = "identity") +
-coord_polar(theta = "y")
+  count(cyl) %>%
+  ggplot(aes(x = "", y = n, fill = factor(cyl))) +
+  geom_bar(stat = "identity") +
+  coord_polar(theta = "y")
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Faceting and Multiple Plots}
 \begin{lstlisting}
-
 # Facet wrap
-
 ggplot(mtcars, aes(x = wt, y = mpg)) +
-geom_point() +
-geom_smooth(method = "lm", se = FALSE) +
-facet_wrap(~ cyl, scales = "free")
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ cyl, scales = "free")
 
 # Facet grid
-
 ggplot(mtcars, aes(x = wt, y = mpg)) +
-geom_point() +
-facet_grid(am ~ cyl, labeller = label_both)
+  geom_point() +
+  facet_grid(am ~ cyl, labeller = label_both)
 
 # Multiple plots with patchwork
-
 library(patchwork)
 p1 <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()
 p2 <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
@@ -1560,55 +1362,51 @@ p3 <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + geom_boxplot()
 
 \begin{frame}[fragile]{Themes and Styling}
 \begin{lstlisting}
-
 # Built-in themes
-
 base_plot <- ggplot(mtcars, aes(x = wt, y = mpg)) +
-geom_point(aes(color = factor(cyl))) +
-labs(title = "Fuel Efficiency vs Weight")
+  geom_point(aes(color = factor(cyl))) +
+  labs(title = "Fuel Efficiency vs Weight")
 
 base_plot + theme_minimal()
 base_plot + theme_classic()
 base_plot + theme_dark()
 
 # Custom theme
-
 custom_theme <- theme(
-plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-axis.title = element_text(size = 12),
-axis.text = element_text(size = 10),
-legend.position = "bottom",
-panel.grid.minor = element_blank(),
-plot.background = element_rect(fill = "white", color = NA)
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+  axis.title = element_text(size = 12),
+  axis.text = element_text(size = 10),
+  legend.position = "bottom",
+  panel.grid.minor = element_blank(),
+  plot.background = element_rect(fill = "white", color = NA)
 )
 
 base_plot + custom_theme
 
 # Save plots
-
 ggsave("my_plot.png", width = 8, height = 6, dpi = 300)
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Hands-on Exercise #6 (20 min)}
-\textbf{Data visualization project:}
-\begin{enumerate}
-\item Use the \texttt{diamonds} dataset from ggplot2
-\item Create a comprehensive visualization dashboard:
-\begin{itemize}
-\item Price distribution histogram with faceting by cut
-\item Scatter plot of carat vs price, colored by clarity
-\item Box plot of price by cut quality
-\item Correlation heatmap of numeric variables
-\end{itemize}
-\item Customize your plots:
-\begin{itemize}
-\item Apply consistent color schemes
-\item Add informative titles and labels
-\item Use a professional theme
-\end{itemize}
-\item Combine plots into a single figure using patchwork
-\end{enumerate}
+\begin{frame}{Hands-on Exercise \#6 (20 min)}
+  \textbf{Data visualization project:}
+  \begin{enumerate}
+    \item Use the \texttt{diamonds} dataset from ggplot2
+    \item Create a comprehensive visualization dashboard:
+      \begin{itemize}
+        \item Price distribution histogram with faceting by cut
+        \item Scatter plot of carat vs price, colored by clarity
+        \item Box plot of price by cut quality
+        \item Correlation heatmap of numeric variables
+      \end{itemize}
+    \item Customize your plots:
+      \begin{itemize}
+        \item Apply consistent color schemes
+        \item Add informative titles and labels
+        \item Use a professional theme
+      \end{itemize}
+    \item Combine plots into a single figure using patchwork
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -1619,21 +1417,18 @@ ggsave("my_plot.png", width = 8, height = 6, dpi = 300)
 
 \begin{frame}[fragile]{R Markdown for Reproducible Reports}
 \begin{lstlisting}
-
 # YAML header example
-
 ---
-
 title: "Data Analysis Report"
 author: "Your Name"
 date: "`r Sys.Date()`"
 output:
-html_document:
-toc: true
-toc_float: true
-code_folding: hide
-theme: flatly
--------------
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    theme: flatly
+---
 
 # Analysis Overview
 
@@ -1644,58 +1439,39 @@ library(knitr)
 ```
 
 # Load and explore data
-
 ```{r data-exploration}
 data(mtcars)
 summary(mtcars)
 ```
-
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Project Organization and here Package}
 \begin{lstlisting}
-
 # Recommended project structure
-
 # project/
-
 # ├── data/
-
 # │   ├── raw/
-
 # │   └── processed/
-
 # ├── R/
-
 # │   ├── functions.R
-
 # │   └── analysis.R
-
 # ├── output/
-
 # │   ├── plots/
-
 # │   └── tables/
-
 # ├── docs/
-
 # └── project.Rproj
 
 # Using the here package for robust file paths
-
 library(here)
 
 # Reading data
-
 raw_data <- read_csv(here("data", "raw", "dataset.csv"))
 
 # Sourcing functions
-
 source(here("R", "functions.R"))
 
 # Saving outputs
-
 write_csv(results, here("output", "tables", "summary_stats.csv"))
 ggsave(here("output", "plots", "main_figure.png"))
 \end{lstlisting}
@@ -1705,22 +1481,17 @@ ggsave(here("output", "plots", "main_figure.png"))
 
 \begin{frame}[fragile]{Creating R Packages}
 \begin{lstlisting}
-
 # Create a package skeleton
-
 library(devtools)
 library(usethis)
 
 # Create new package
-
 create_package("~/mypackage")
 
 # Add functions
-
 use_r("my_function")
 
 # Example function with roxygen2 documentation
-
 #' Calculate summary statistics
 #'
 #' @param x A numeric vector
@@ -1730,10 +1501,10 @@ use_r("my_function")
 #' @examples
 #' my_summary(c(1, 2, 3, NA), na.rm = TRUE)
 my_summary <- function(x, na.rm = FALSE) {
-c(mean = mean(x, na.rm = na.rm),
-sd = sd(x, na.rm = na.rm),
-min = min(x, na.rm = na.rm),
-max = max(x, na.rm = na.rm))
+  c(mean = mean(x, na.rm = na.rm),
+    sd = sd(x, na.rm = na.rm),
+    min = min(x, na.rm = na.rm),
+    max = max(x, na.rm = na.rm))
 }
 \end{lstlisting}
 \end{frame}
@@ -1742,37 +1513,28 @@ max = max(x, na.rm = na.rm))
 
 \begin{frame}[fragile]{Git Integration in RStudio}
 \begin{lstlisting}
-
 # Initialize git in your project
-
 use_git()
 
 # Connect to GitHub
-
 use_github()
 
 # Basic git workflow in R console
-
 # (Better to use RStudio's Git pane or terminal)
 
 # Check status
-
 system("git status")
 
 # Add files
-
 system("git add .")
 
 # Commit changes
-
 system('git commit -m "Add data analysis script"')
 
 # Push to remote
-
 system("git push origin main")
 
 # Create .gitignore for R projects
-
 use_git_ignore(c("*.RData", "*.Rhistory", ".DS_Store"))
 \end{lstlisting}
 \end{frame}
@@ -1781,38 +1543,29 @@ use_git_ignore(c("*.RData", "*.Rhistory", ".DS_Store"))
 
 \begin{frame}[fragile]{Writing Efficient R Code}
 \begin{lstlisting}
-
 # Vectorization vs loops
-
 # Slow
-
 result <- numeric(1000)
 for (i in 1:1000) {
-result[i] <- i^2
+  result[i] <- i^2
 }
 
 # Fast
-
 result <- (1:1000)^2
 
 # Pre-allocate memory
-
 # Slow: growing objects
-
 x <- numeric(0)
 for (i in 1:1000) {
-x <- c(x, i^2)  # Bad!
+  x <- c(x, i^2)  # Bad!
 }
 
 # Fast: pre-allocation
-
 x <- numeric(1000)
 for (i in 1:1000) {
-x[i] <- i^2  # Good!
-}
+  x[i] <- i^2}
 
 # Use apply family instead of loops
-
 data <- matrix(rnorm(10000), nrow = 100)
 row_means <- apply(data, 1, mean)  # by rows
 col_means <- apply(data, 2, mean)  # by columns
@@ -1821,67 +1574,62 @@ col_means <- apply(data, 2, mean)  # by columns
 
 \begin{frame}[fragile]{Debugging and Profiling}
 \begin{lstlisting}
-
 # Debugging functions
-
 # (works only in an interactive R session)
-
-debug(my_function)    # Step through function
-undebug(my_function)  # Stop debugging
+debug(my_function)    
+undebug(my_function)
 
 # Browser for interactive debugging
-
 my_function <- function(x) {
-y <- x^2
-browser()  # Pause execution here
-z <- y + 1
-return(z)
+  y <- x^2
+  browser()  # Pause execution here
+  z <- y + 1
+  return(z)
 }
 
 # Profiling code performance
-
 library(dplyr)
 library(profvis)
 
 profvis({
-data <- data.frame(x = rnorm(1000), y = rnorm(1000))
-result <- data %>%
-mutate(z = x + y) %>%
-filter(z > 0) %>%
-summarise(mean_z = mean(z))
+  data <- data.frame(x = rnorm(1000), y = rnorm(1000))
+  result <- data %>%
+    mutate(z = x + y) %>%
+    filter(z > 0) %>%
+    summarise(mean_z = mean(z))
 })
 
 # Benchmarking alternatives
-
 library(microbenchmark)
 
 microbenchmark(
-base_r = sum(mtcars$mpg),
-dplyr  = mtcars %>% pull(mpg) %>% sum(),
-times  = 1000
+  base_r = sum(mtcars$mpg),
+  dplyr  = mtcars %>% pull(mpg) %>% sum(),
+  times  = 1000
 )
 \end{lstlisting}
 \end{frame}
 
+
 \begin{frame}{Final Exercise: Complete Project (30 min)}
-\textbf{Comprehensive data science project:}
-\begin{enumerate}
-\item \textbf{Setup}: Create an RStudio project with proper folder structure
-\item \textbf{Data}: Load and clean a real dataset (e.g., from \texttt{datasets} package)
-\item \textbf{Analysis}:
-\begin{itemize}
-\item Exploratory data analysis with summary statistics
-\item Statistical tests or regression modeling
-\item Data visualization with multiple plot types
-\end{itemize}
-\item \textbf{Report}: Create an R Markdown document with:
-\begin{itemize}
-\item Introduction and methodology
-\item Results with embedded plots and tables
-\item Conclusions and interpretation
-\end{itemize}
-\item \textbf{Reproducibility}: Ensure all code runs from scratch
-\end{enumerate}
+  \textbf{Comprehensive data science project:}
+  \begin{enumerate}
+    \item \textbf{Setup}: Create an RStudio project with proper folder structure
+    \item \textbf{Data}: Load and clean a real dataset (e.g., from \texttt{datasets} package)
+    \item \textbf{Analysis}:
+      \begin{itemize}
+        \item Exploratory data analysis with summary statistics
+        \item Statistical tests or regression modeling
+        \item Data visualization with multiple plot types
+      \end{itemize}
+    \item \textbf{Report}: Create an R Markdown document with:
+      \begin{itemize}
+        \item Introduction and methodology
+        \item Results with embedded plots and tables
+        \item Conclusions and interpretation
+      \end{itemize}
+    \item \textbf{Reproducibility}: Ensure all code runs from scratch
+  \end{enumerate}
 \end{frame}
 
 %===============================================================================
@@ -1889,70 +1637,67 @@ times  = 1000
 %===============================================================================
 
 \begin{frame}{Advanced R Topics to Explore}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Statistical Methods:}
-\begin{itemize}
-\item Machine learning with \texttt{caret}, \texttt{mlr3}
-\item Time series analysis with \texttt{forecast}
-\item Survival analysis with \texttt{survival}
-\item Bayesian analysis with \texttt{brms}, \texttt{rstanarm}
-\end{itemize}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Statistical Methods:}
+      \begin{itemize}
+        \item Machine learning with \texttt{caret}, \texttt{mlr3}
+        \item Time series analysis with \texttt{forecast}
+        \item Survival analysis with \texttt{survival}
+        \item Bayesian analysis with \texttt{brms}, \texttt{rstanarm}
+      \end{itemize}
 
-```
-  \textbf{Specialized Domains:}
-  \begin{itemize}
-    \item Bioinformatics with \texttt{Bioconductor}
-    \item Spatial analysis with \texttt{sf}, \texttt{terra}
-    \item Text mining with \texttt{tidytext}, \texttt{quanteda}
-    \item Web scraping with \texttt{rvest}
-  \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-  \textbf{Advanced Programming:}
-  \begin{itemize}
-    \item Object-oriented programming (S3, S4, R6)
-    \item Parallel computing with \texttt{parallel}, \texttt{future}
-    \item C++ integration with \texttt{Rcpp}
-    \item Shiny web applications
-  \end{itemize}
-  
-  \textbf{Data Engineering:}
-  \begin{itemize}
-    \item Big data with \texttt{sparklyr}
-    \item Databases with \texttt{DBI}, \texttt{dbplyr}
-    \item APIs with \texttt{httr}, \texttt{jsonlite}
-    \item Cloud computing integration
-  \end{itemize}
-\end{column}
-```
+      \textbf{Specialized Domains:}
+      \begin{itemize}
+        \item Bioinformatics with \texttt{Bioconductor}
+        \item Spatial analysis with \texttt{sf}, \texttt{terra}
+        \item Text mining with \texttt{tidytext}, \texttt{quanteda}
+        \item Web scraping with \texttt{rvest}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Advanced Programming:}
+      \begin{itemize}
+        \item Object-oriented programming (S3, S4, R6)
+        \item Parallel computing with \texttt{parallel}, \texttt{future}
+        \item C++ integration with \texttt{Rcpp}
+        \item Shiny web applications
+      \end{itemize}
 
-\end{columns}
+      \textbf{Data Engineering:}
+      \begin{itemize}
+        \item Big data with \texttt{sparklyr}
+        \item Databases with \texttt{DBI}, \texttt{dbplyr}
+        \item APIs with \texttt{httr}, \texttt{jsonlite}
+        \item Cloud computing integration
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Learning Resources}
-\textbf{Books:}
-\begin{itemize}
-\item "R for Data Science" by Wickham & Grolemund
-\item "Advanced R" by Hadley Wickham
-\item "R Packages" by Wickham & Bryan
-\item "Statistical Learning with R" by James et al.
-\end{itemize}
+  \textbf{Books:}
+  \begin{itemize}
+    \item \emph{R for Data Science} by Wickham \& Grolemund
+    \item \emph{Advanced R} by Hadley Wickham
+    \item \emph{R Packages} by Wickham \& Bryan
+    \item \emph{An Introduction to Statistical Learning with R} by James et al.
+  \end{itemize}
 
-\textbf{Online Resources:}
-\begin{itemize}
-\item RStudio Education: \url{[https://education.rstudio.com/}](https://education.rstudio.com/})
-\item R-bloggers: \url{[https://www.r-bloggers.com/}](https://www.r-bloggers.com/})
-\item CRAN Task Views: \url{[https://cran.r-project.org/web/views/}](https://cran.r-project.org/web/views/})
-\item R Weekly: \url{[https://rweekly.org/}](https://rweekly.org/})
-\end{itemize}
+  \textbf{Online Resources:}
+  \begin{itemize}
+    \item RStudio Education: \url{https://education.rstudio.com/}
+    \item R-bloggers: \url{https://www.r-bloggers.com/}
+    \item CRAN Task Views: \url{https://cran.r-project.org/web/views/}
+    \item R Weekly: \url{https://rweekly.org/}
+  \end{itemize}
 
-\textbf{Communities:}
-\begin{itemize}
-\item R Community on Twitter: \texttt{#rstats}
-\item Stack Overflow R tag
-\item Local R User Groups (R-Ladies, etc.)
-\end{itemize}
+  \textbf{Communities:}
+  \begin{itemize}
+    \item R Community on Twitter: \texttt{\#rstats}
+    \item Stack Overflow R tag
+    \item Local R User Groups (R-Ladies, etc.)
+  \end{itemize}
 \end{frame}
 
 %===============================================================================
@@ -1960,72 +1705,72 @@ times  = 1000
 %===============================================================================
 
 \begin{frame}{What We've Covered}
-\begin{itemize}
-\item \textbf{R Fundamentals}: Data types, structures, and basic operations
-\item \textbf{Data Management}: Import/export, cleaning, and manipulation
-\item \textbf{Programming}: Control flow, functions, and best practices
-\item \textbf{Modern R}: tidyverse ecosystem and pipe operator
-\item \textbf{Statistical Analysis}: Descriptive stats, hypothesis testing, regression
-\item \textbf{Visualization}: ggplot2 and the grammar of graphics
-\item \textbf{Workflows}: Reproducible research, project organization
-\item \textbf{Advanced Topics}: Package development, version control
-\end{itemize}
+  \begin{itemize}
+    \item \textbf{R Fundamentals}: Data types, structures, and basic operations
+    \item \textbf{Data Management}: Import/export, cleaning, and manipulation
+    \item \textbf{Programming}: Control flow, functions, and best practices
+    \item \textbf{Modern R}: tidyverse ecosystem and pipe operator
+    \item \textbf{Statistical Analysis}: Descriptive stats, hypothesis testing, regression
+    \item \textbf{Visualization}: ggplot2 and the grammar of graphics
+    \item \textbf{Workflows}: Reproducible research, project organization
+    \item \textbf{Advanced Topics}: Package development, version control
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Key Takeaways}
-\begin{enumerate}
-\item \textbf{Think in vectors}: R is designed for vectorized operations
-\item \textbf{Embrace the tidyverse}: Modern R is more readable and consistent
-\item \textbf{Reproducibility matters}: Use projects, scripts, and R Markdown
-\item \textbf{Visualization is key}: ggplot2 is powerful and flexible
-\item \textbf{Practice regularly}: The more you use R, the more natural it becomes
-\item \textbf{Join the community}: R has an incredibly supportive user base
-\end{enumerate}
+  \begin{enumerate}
+    \item \textbf{Think in vectors}: R is designed for vectorized operations
+    \item \textbf{Embrace the tidyverse}: Modern R is more readable and consistent
+    \item \textbf{Reproducibility matters}: Use projects, scripts, and R Markdown
+    \item \textbf{Visualization is key}: ggplot2 is powerful and flexible
+    \item \textbf{Practice regularly}: The more you use R, the more natural it becomes
+    \item \textbf{Join the community}: R has an incredibly supportive user base
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{Next Steps for Your R Journey}
-\textbf{Immediate actions:}
-\begin{itemize}
-\item Set up your R environment with RStudio
-\item Complete the exercises from today's session
-\item Start a small project with your own data
-\end{itemize}
+  \textbf{Immediate actions:}
+  \begin{itemize}
+    \item Set up your R environment with RStudio
+    \item Complete the exercises from today's session
+    \item Start a small project with your own data
+  \end{itemize}
 
-\textbf{Medium-term goals:}
-\begin{itemize}
-\item Master the tidyverse ecosystem
-\item Learn advanced statistical methods relevant to your field
-\item Contribute to open-source R packages
-\end{itemize}
+  \textbf{Medium-term goals:}
+  \begin{itemize}
+    \item Master the tidyverse ecosystem
+    \item Learn advanced statistical methods relevant to your field
+    \item Contribute to open-source R packages
+  \end{itemize}
 
-\textbf{Long-term development:}
-\begin{itemize}
-\item Attend R conferences (useR!, RStudio Conference)
-\item Mentor others in R
-\item Consider R package development
-\end{itemize}
+  \textbf{Long-term development:}
+  \begin{itemize}
+    \item Attend R conferences (useR!, RStudio Conference)
+    \item Mentor others in R
+    \item Consider R package development
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Questions and Discussion}
-\centering
-\Large
-\textbf{Questions?}
+  \centering
+  \Large
+  \textbf{Questions?}
 
-\vspace{2em}
+  \vspace{2em}
 
-\textbf{Contact Information:}
+  \textbf{Contact Information:}
 
-\texttt{[dfr@esmad.ipp.pt](mailto:dfr@esmad.ipp.pt)}
+  \href{mailto:dfr@esmad.ipp.pt}{\texttt{dfr@esmad.ipp.pt}}
 
-\vspace{1em}
+  \vspace{1em}
 
-\textbf{Resources from today:}
+  \textbf{Resources from today:}
 
-All code examples and exercises available on GitHub
+  All code examples and exercises available on GitHub
 
-\vspace{2em}
+  \vspace{2em}
 
-\textit{Thank you for your attention!}
+  \textit{Thank you for your attention!}
 \end{frame}
 
 \end{document}

@@ -1,0 +1,36 @@
+\frametitle{Debugging and Profiling}
+\begin{lstlisting}
+# Debugging functions
+# (works only in an interactive R session)
+debug(my_function)
+undebug(my_function)
+
+# Browser for interactive debugging
+my_function <- function(x) {
+  y <- x^2
+  browser()  # Pause execution here
+  z <- y + 1
+  return(z)
+}
+
+# Profiling code performance
+library(dplyr)
+library(profvis)
+
+profvis({
+  data <- data.frame(x = rnorm(1000), y = rnorm(1000))
+  result <- data %>%
+    mutate(z = x + y) %>%
+    filter(z > 0) %>%
+    summarise(mean_z = mean(z))
+})
+
+# Benchmarking alternatives
+library(microbenchmark)
+
+microbenchmark(
+  base_r = sum(mtcars$mpg),
+  dplyr  = mtcars %>% pull(mpg) %>% sum(),
+  times  = 1000
+)
+\end{lstlisting}
