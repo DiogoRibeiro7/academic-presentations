@@ -1,0 +1,33 @@
+\beamer@sectionintoc {1}{R Fundamentals}{4}{0}{1}
+\beamer@subsectionintoc {1}{1}{What is R?}{5}{0}{1}
+\beamer@subsectionintoc {1}{2}{R Environment Setup}{7}{0}{1}
+\beamer@sectionintoc {2}{R Data Types and Structures}{9}{0}{2}
+\beamer@subsectionintoc {2}{1}{Basic Data Types}{10}{0}{2}
+\beamer@subsectionintoc {2}{2}{Vectors: The Building Blocks}{12}{0}{2}
+\beamer@subsectionintoc {2}{3}{Advanced Data Structures}{15}{0}{2}
+\beamer@sectionintoc {3}{Data Import/Export and Management}{21}{0}{3}
+\beamer@subsectionintoc {3}{1}{Reading and Writing Data}{22}{0}{3}
+\beamer@subsectionintoc {3}{2}{Data Cleaning and Preparation}{24}{0}{3}
+\beamer@sectionintoc {4}{Programming in R}{27}{0}{4}
+\beamer@subsectionintoc {4}{1}{Control Flow}{28}{0}{4}
+\beamer@subsectionintoc {4}{2}{Functions}{30}{0}{4}
+\beamer@sectionintoc {5}{Data Manipulation with dplyr}{34}{0}{5}
+\beamer@subsectionintoc {5}{1}{The tidyverse Philosophy}{35}{0}{5}
+\beamer@subsectionintoc {5}{2}{Core dplyr Verbs}{37}{0}{5}
+\beamer@subsectionintoc {5}{3}{Advanced dplyr Operations}{41}{0}{5}
+\beamer@sectionintoc {6}{Statistical Analysis and Modeling}{43}{0}{6}
+\beamer@subsectionintoc {6}{1}{Descriptive Statistics}{44}{0}{6}
+\beamer@subsectionintoc {6}{2}{Statistical Tests}{46}{0}{6}
+\beamer@subsectionintoc {6}{3}{Linear Modeling}{48}{0}{6}
+\beamer@subsectionintoc {6}{4}{Advanced Statistical Methods}{51}{0}{6}
+\beamer@sectionintoc {7}{Data Visualization with ggplot2}{53}{0}{7}
+\beamer@subsectionintoc {7}{1}{Grammar of Graphics}{54}{0}{7}
+\beamer@subsectionintoc {7}{2}{Essential Plot Types}{56}{0}{7}
+\beamer@subsectionintoc {7}{3}{Customization and Themes}{59}{0}{7}
+\beamer@sectionintoc {8}{Modern R Workflows}{63}{0}{8}
+\beamer@subsectionintoc {8}{1}{Reproducible Research}{64}{0}{8}
+\beamer@subsectionintoc {8}{2}{Package Development Basics}{66}{0}{8}
+\beamer@subsectionintoc {8}{3}{Version Control with Git}{67}{0}{8}
+\beamer@subsectionintoc {8}{4}{Performance and Best Practices}{68}{0}{8}
+\beamer@sectionintoc {9}{Advanced Topics and Resources}{71}{0}{9}
+\beamer@sectionintoc {10}{Summary and Next Steps}{74}{0}{10}
