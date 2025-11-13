@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1762991354.32073 "c:/Users/diogo/work_code/academic-presentations/exercises/causal_inference/causal_inference_exercises.tex" "causal_inference_exercises.pdf" "causal_inference_exercises" 1762991355.8196 0
+["pdflatex"] 1762992906.19225 "c:/Users/diogo/work_code/academic-presentations/exercises/causal_inference/causal_inference_exercises.tex" "causal_inference_exercises.pdf" "causal_inference_exercises" 1762992907.60639 0
   "C:/Users/diogo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1762823128 153794 4855aa8ff84c0cecbe3f3dc793f64503 ""
   "C:/Users/diogo/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1756458104 12668 1ef7cb7907b372709a8ab2b5d38e9dc6 ""
   "C:/Users/diogo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1761761655 13321868 edc06860e4f5d770e285d4f6d14aa35c ""
@@ -179,10 +179,10 @@
   "C:/Users/diogo/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/diogo/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/diogo/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/diogo/work_code/academic-presentations/exercises/causal_inference/causal_inference_exercises.tex" 1762991335 16707 7b62f09b111a00d789227caff79487f0 ""
-  "causal_inference_exercises.aux" 1762991355 1486 0a18e0324c9387d9fec8fcc4c02628ac "pdflatex"
-  "causal_inference_exercises.out" 1762991355 1736 752fdd62a9410ad49f4aa446ba5192e2 "pdflatex"
-  "causal_inference_exercises.tex" 1762991335 16707 7b62f09b111a00d789227caff79487f0 ""
+  "c:/Users/diogo/work_code/academic-presentations/exercises/causal_inference/causal_inference_exercises.tex" 1762992903 16707 7b62f09b111a00d789227caff79487f0 ""
+  "causal_inference_exercises.aux" 1762992907 1486 0a18e0324c9387d9fec8fcc4c02628ac "pdflatex"
+  "causal_inference_exercises.out" 1762992907 1736 752fdd62a9410ad49f4aa446ba5192e2 "pdflatex"
+  "causal_inference_exercises.tex" 1762992903 16707 7b62f09b111a00d789227caff79487f0 ""
   (generated)
   "causal_inference_exercises.aux"
   "causal_inference_exercises.log"
