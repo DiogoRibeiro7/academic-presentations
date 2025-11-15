@@ -1,7 +1,0 @@
-\beamer@sectionintoc {1}{Introduction and Philosophy}{3}{0}{1}
-\beamer@sectionintoc {2}{Data Types and Transformations}{5}{0}{2}
-\beamer@sectionintoc {3}{Advanced Feature Creation}{9}{0}{3}
-\beamer@sectionintoc {4}{Dimensionality Reduction}{11}{0}{4}
-\beamer@sectionintoc {5}{Feature Selection Methods}{14}{0}{5}
-\beamer@sectionintoc {6}{Practical Considerations and Best Practices}{18}{0}{6}
-\beamer@sectionintoc {7}{Summary and Next Steps}{21}{0}{7}
