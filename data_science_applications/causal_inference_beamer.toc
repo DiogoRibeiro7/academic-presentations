@@ -1,7 +1,0 @@
-\beamer@sectionintoc {1}{The Causal Revolution in Data Science}{3}{0}{1}
-\beamer@sectionintoc {2}{Causal Graphs and DAGs}{6}{0}{2}
-\beamer@sectionintoc {3}{Identification Strategies}{9}{0}{3}
-\beamer@sectionintoc {4}{Modern Causal Machine Learning}{13}{0}{4}
-\beamer@sectionintoc {5}{Practical Applications and Case Studies}{15}{0}{5}
-\beamer@sectionintoc {6}{Limitations and Best Practices}{17}{0}{6}
-\beamer@sectionintoc {7}{Summary and Next Steps}{19}{0}{7}

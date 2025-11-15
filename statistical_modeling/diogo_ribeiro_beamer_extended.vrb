@@ -1,9 +1,0 @@
-\frametitle{R Example: Survival}
-\begin{lstlisting}[style=rcode]
-library(survival)
-time <- c(5, 8, 12, 18, 20)
-cens <- c(1, 0, 1, 1, 0)  # 1=event, 0=censored
-x <- c(0, 1, 0, 1, 1)
-cox <- coxph(Surv(time, cens) ~ x)
-summary(cox)
-\end{lstlisting}
