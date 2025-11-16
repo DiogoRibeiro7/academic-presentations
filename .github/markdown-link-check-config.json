@@ -26,6 +26,18 @@
     },
     {
       "pattern": "^https://www.latex-project.org/help/documentation/usrguide3.pdf"
+    },
+    {
+      "pattern": "^https://contrast-ratio.com"
+    },
+    {
+      "pattern": "^https://www.w3.org/WAI/WCAG21/quickref"
+    },
+    {
+      "pattern": "^https://www.cochranelibrary.com"
+    },
+    {
+      "pattern": "^https://diogoribeiro7.github.io/academic-presentations"
     }
   ],
   "replacementPatterns": [],
