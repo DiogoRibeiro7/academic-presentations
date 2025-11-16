@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v3
+        uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ matrix.presentation }}.tex
           args: -pdf -interaction=nonstopmode -halt-on-error
@@ -76,7 +76,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v3
+        uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ matrix.exercise }}.tex
           args: -pdf -interaction=nonstopmode -halt-on-error
