@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(pdflatex:*)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
