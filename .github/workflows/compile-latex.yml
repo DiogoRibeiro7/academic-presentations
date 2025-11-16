@@ -49,6 +49,8 @@ jobs:
           args: -pdf -interaction=nonstopmode -halt-on-error
           latexmk_use_lualatex: false
           latexmk_use_xelatex: false
+        env:
+          TEXINPUTS: ".:$GITHUB_WORKSPACE//:"
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
@@ -78,6 +80,8 @@ jobs:
         with:
           root_file: ${{ matrix.exercise }}.tex
           args: -pdf -interaction=nonstopmode -halt-on-error
+        env:
+          TEXINPUTS: ".:$GITHUB_WORKSPACE//:"
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
