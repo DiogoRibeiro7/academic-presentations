@@ -111,7 +111,7 @@ jobs:
         run: echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ steps.timestamp.outputs.timestamp }}
           name: Automated Build ${{ steps.timestamp.outputs.timestamp }}
