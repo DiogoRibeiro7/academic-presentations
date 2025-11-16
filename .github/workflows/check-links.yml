@@ -74,7 +74,7 @@ jobs:
                   return False
 
           # Find all .bib files
-          bib_files = list(Path('bibliographies').glob('*.bib'))
+          bib_files = list(Path('shared/bibliographies').glob('*.bib'))
 
           all_valid = True
           for bib_file in bib_files:

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  5 NOV 2025 18:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  16 NOV 2025 00:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -376,8 +376,7 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count322
-)
-No file mcmc_exercises.aux.
+) (mcmc_exercises.aux)
 \openout1 = `mcmc_exercises.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 58.
@@ -398,6 +397,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -459,13 +459,15 @@ fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package hyperref Info: Link coloring OFF on input line 58.
+ (mcmc_exercises.out) (mcmc_exercises.out)
 \@outlinefile=\write3
 \openout3 = `mcmc_exercises.out'.
 
 \c@lstlisting=\count329
 LaTeX Font Info:    Trying to load font information for U+msa on input line 61.
 
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 61.
@@ -527,21 +529,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-10-09>
  ***********
-
-
-Package rerunfilecheck Warning: File `mcmc_exercises.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `mcmc_exercises.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  EC0E48B86E3910037C084B24BBEC7E18;1475.
+Package rerunfilecheck Info: File `mcmc_exercises.out' has not changed.
+(rerunfilecheck)             Checksum: EC0E48B86E3910037C084B24BBEC7E18;1475.
  ) 
 Here is how much of TeX's memory you used:
- 12859 strings out of 468080
- 196356 string characters out of 5425771
- 624675 words of memory out of 5000000
- 41300 multiletter control sequences out of 15000+600000
+ 12878 strings out of 468080
+ 196962 string characters out of 5425771
+ 624757 words of memory out of 5000000
+ 41313 multiletter control sequences out of 15000+600000
  638310 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,79p,553b,720s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -565,9 +560,9 @@ MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/diogo/AppData/Local/P
 rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/diogo/AppDat
 a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/dio
 go/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on mcmc_exercises.pdf (6 pages, 253780 bytes).
+Output written on mcmc_exercises.pdf (6 pages, 257407 bytes).
 PDF statistics:
- 223 PDF objects out of 1000 (max. 8388607)
+ 254 PDF objects out of 1000 (max. 8388607)
  88 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 81 words of extra memory for PDF output out of 10000 (max. 10000000)
 

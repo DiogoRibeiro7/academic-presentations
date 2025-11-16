@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - '**.tex'
-      - 'theme/**'
+      - 'shared/theme/**'
   workflow_dispatch:
 
 jobs:
@@ -17,25 +17,29 @@ jobs:
       matrix:
         presentation:
           - name: "Time Series Analysis"
-            path: "time_series/time_series_beamer"
+            path: "05-time-series/time-series-forecasting/presentation/time_series_beamer"
           - name: "Explainable AI"
-            path: "explainable_ai/interpretability_beamer"
+            path: "06-advanced-topics/explainable-ai/presentation/interpretability_beamer"
           - name: "Deep Learning"
-            path: "deep_learning/deep_learning_beamer"
+            path: "02-deep-learning/deep-learning-fundamentals/presentation/deep_learning_beamer"
           - name: "Reinforcement Learning"
-            path: "reinforcement_learning/rl_beamer"
+            path: "02-deep-learning/reinforcement-learning/presentation/rl_beamer"
           - name: "Optimization"
-            path: "optimization/optimization_beamer"
+            path: "01-foundations/optimization/presentation/optimization_beamer"
           - name: "MCMC Methods"
-            path: "mcmc/mcmc_beamer"
+            path: "03-bayesian-methods/mcmc/presentation/mcmc_beamer"
           - name: "Causal Inference"
-            path: "causal_inference/causal_inference_beamer"
+            path: "04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer"
           - name: "Statistical Learning"
-            path: "statistical_learning/statistical_learning_beamer"
+            path: "01-foundations/statistical-modeling/presentation/statistical_learning_beamer"
           - name: "Bayesian ML"
-            path: "bayesian_ml/bayesian_ml_beamer"
+            path: "03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer"
           - name: "Feature Engineering"
-            path: "feature_engineering/feature_engineering_beamer"
+            path: "01-foundations/feature-engineering/presentation/feature_engineering_beamer"
+          - name: "PCA"
+            path: "01-foundations/pca/presentation/pca"
+          - name: "R Programming"
+            path: "00-programming-fundamentals/r-programming/presentation/R_programming"
       fail-fast: false
 
     steps:
