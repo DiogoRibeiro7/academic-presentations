@@ -5,14 +5,14 @@ on:
     branches: [ main, develop ]
     paths:
       - '**.tex'
-      - 'theme/**'
-      - 'bibliographies/**'
+      - 'shared/theme/**'
+      - 'shared/bibliographies/**'
   pull_request:
     branches: [ main ]
     paths:
       - '**.tex'
-      - 'theme/**'
-      - 'bibliographies/**'
+      - 'shared/theme/**'
+      - 'shared/bibliographies/**'
   workflow_dispatch:
 
 jobs:
@@ -23,18 +23,19 @@ jobs:
     strategy:
       matrix:
         presentation:
-          - time_series/time_series_beamer
-          - explainable_ai/interpretability_beamer
-          - deep_learning/deep_learning_beamer
-          - reinforcement_learning/rl_beamer
-          - optimization/optimization_beamer
-          - mcmc/mcmc_beamer
-          - causal_inference/causal_inference_beamer
-          - statistical_learning/statistical_learning_beamer
-          - bayesian_ml/bayesian_ml_beamer
-          - feature_engineering/feature_engineering_beamer
-          - ab_testing/ab_testing_beamer
-          - data_science/data_science_beamer
+          - 05-time-series/time-series-forecasting/presentation/time_series_beamer
+          - 06-advanced-topics/explainable-ai/presentation/interpretability_beamer
+          - 02-deep-learning/deep-learning-fundamentals/presentation/deep_learning_beamer
+          - 02-deep-learning/reinforcement-learning/presentation/rl_beamer
+          - 01-foundations/optimization/presentation/optimization_beamer
+          - 03-bayesian-methods/mcmc/presentation/mcmc_beamer
+          - 04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer
+          - 01-foundations/statistical-modeling/presentation/statistical_learning_beamer
+          - 03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer
+          - 01-foundations/feature-engineering/presentation/feature_engineering_beamer
+          - 04-causal-inference/ab-testing/presentation/a_b_testing_interview
+          - 01-foundations/pca/presentation/pca
+          - 00-programming-fundamentals/r-programming/presentation/R_programming
       fail-fast: false
 
     steps:
@@ -64,8 +65,8 @@ jobs:
     strategy:
       matrix:
         exercise:
-          - exercises/mcmc/mcmc_exercises
-          - exercises/causal_inference/causal_inference_exercises
+          - 03-bayesian-methods/mcmc/exercises/mcmc_exercises
+          - 04-causal-inference/causal-inference-fundamentals/exercises/causal_inference_exercises
       fail-fast: false
 
     steps:

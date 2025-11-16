@@ -35,7 +35,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Deep Learning & Neural Networks
 
 #### **Deep Learning Fundamentals**
-📂 [`deep_learning/`](./deep_learning/)
+📂 [`02-deep-learning/deep-learning-fundamentals/`](./02-deep-learning/deep-learning-fundamentals/)
 
 **Learning Objectives:**
 - Understand the mathematical foundations of neural networks
@@ -62,7 +62,7 @@ This repository contains a comprehensive collection of **professional academic p
 ---
 
 #### **Reinforcement Learning**
-📂 [`reinforcement_learning/`](./reinforcement_learning/)
+📂 [`02-deep-learning/reinforcement-learning/`](./02-deep-learning/reinforcement-learning/)
 
 **Learning Objectives:**
 - Formulate problems as Markov Decision Processes
@@ -92,7 +92,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Machine Learning Theory & Practice
 
 #### **Statistical Learning Theory**
-📂 [`statistical_learning/`](./statistical_learning/)
+📂 [`01-foundations/statistical-modeling/`](./01-foundations/statistical-modeling/)
 
 **Learning Objectives:**
 - Understand bias-variance tradeoff
@@ -119,7 +119,7 @@ This repository contains a comprehensive collection of **professional academic p
 ---
 
 #### **Feature Engineering**
-📂 [`feature_engineering/`](./feature_engineering/)
+📂 [`01-foundations/feature-engineering/`](./01-foundations/feature-engineering/)
 
 **Learning Objectives:**
 - Design effective feature engineering pipelines
@@ -146,7 +146,7 @@ This repository contains a comprehensive collection of **professional academic p
 ---
 
 #### **Explainable AI & Model Interpretability**
-📂 [`explainable_ai/`](./explainable_ai/)
+📂 [`06-advanced-topics/explainable-ai/`](./06-advanced-topics/explainable-ai/)
 
 **Learning Objectives:**
 - Understand the interpretability-accuracy tradeoff
@@ -176,7 +176,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Bayesian Methods & MCMC
 
 #### **Advanced MCMC Methods**
-📂 [`mcmc/`](./mcmc/) | 💻 [`code/mcmc/`](./code/mcmc/)
+📂 [`03-bayesian-methods/mcmc/`](./03-bayesian-methods/mcmc/)
 
 **Learning Objectives:**
 - Understand Bayesian inference and posterior distributions
@@ -203,7 +203,7 @@ This repository contains a comprehensive collection of **professional academic p
 ---
 
 #### **Bayesian Machine Learning**
-📂 [`bayesian_ml/`](./bayesian_ml/)
+📂 [`03-bayesian-methods/bayesian-machine-learning/`](./03-bayesian-methods/bayesian-machine-learning/)
 
 **Learning Objectives:**
 - Apply Bayesian inference to machine learning problems
@@ -231,7 +231,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Causal Inference & Econometrics
 
 #### **Causal Inference**
-📂 [`causal_inference/`](./causal_inference/) | 💻 [`code/causal_inference/`](./code/causal_inference/)
+📂 [`04-causal-inference/causal-inference-fundamentals/`](./04-causal-inference/causal-inference-fundamentals/)
 
 **Learning Objectives:**
 - Understand potential outcomes framework
@@ -262,7 +262,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Time Series & Forecasting
 
 #### **Time Series Analysis**
-📂 [`time_series/`](./time_series/)
+📂 [`05-time-series/time-series-forecasting/`](./05-time-series/time-series-forecasting/)
 
 **Learning Objectives:**
 - Analyze time series components (trend, seasonality)
@@ -293,7 +293,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Optimization & Computational Methods
 
 #### **Optimization for Data Science**
-📂 [`optimization/`](./optimization/)
+📂 [`01-foundations/optimization/`](./01-foundations/optimization/)
 
 **Learning Objectives:**
 - Formulate optimization problems
@@ -325,7 +325,7 @@ This repository contains a comprehensive collection of **professional academic p
 ### 🔷 Applied Data Science
 
 #### **A/B Testing & Experimentation**
-📂 [`ab_testing/`](./ab_testing/)
+📂 [`04-causal-inference/ab-testing/`](./04-causal-inference/ab-testing/)
 
 **Learning Objectives:**
 - Design statistically rigorous A/B tests
@@ -369,95 +369,70 @@ academic-presentations/
 │   ├── dependabot.yml                # Dependency updates
 │   └── markdown-link-check-config.json
 │
-├── theme/                             # 🎨 Professional LaTeX theme
-│   ├── esmad_beamer_theme.sty        # Custom Beamer theme
-│   ├── STYLE_GUIDE.md                # Theme documentation
-│   └── template_presentation.tex     # Example template
+├── shared/                            # 🔄 Shared resources
+│   ├── theme/                        # 🎨 Professional LaTeX theme
+│   │   ├── esmad_beamer_theme.sty   # Custom Beamer theme
+│   │   ├── esmad_beamer_theme_highcontrast.sty
+│   │   ├── STYLE_GUIDE.md           # Theme documentation
+│   │   └── template_presentation.tex # Example template
+│   └── bibliographies/               # 📚 Reference libraries (140+ papers)
+│       ├── mcmc_references.bib      # MCMC methods (30+ refs)
+│       ├── causal_inference_references.bib # Causal inference (50+ refs)
+│       └── statistical_learning_references.bib # ML/Stats (60+ refs)
 │
-├── bibliographies/                    # 📚 Reference libraries (140+ papers)
-│   ├── mcmc_references.bib           # MCMC methods (30+ refs)
-│   ├── causal_inference_references.bib # Causal inference (50+ refs)
-│   └── statistical_learning_references.bib # ML/Stats (60+ refs)
+├── 00-programming-fundamentals/      # 💻 Programming Basics
+│   └── r-programming/
+│       └── presentation/
+│           └── R_programming.tex
 │
-├── code/                             # 💻 Production-ready implementations
-│   ├── mcmc/                         # Python MCMC (8K lines)
-│   │   ├── metropolis_hastings.py   # M-H with diagnostics
-│   │   ├── hamiltonian_mc.py        # HMC with leapfrog
-│   │   ├── nuts_sampler.py          # NUTS implementation
-│   │   └── README.md
-│   ├── causal_inference/            # Python & R (11K lines)
-│   │   ├── instrumental_variables.py # IV/2SLS
-│   │   ├── instrumental_variables.R
-│   │   ├── regression_discontinuity.py # Sharp/Fuzzy RDD
-│   │   ├── regression_discontinuity.R
-│   │   ├── diff_in_diff.py          # DiD with TWFE
-│   │   ├── diff_in_diff.R
-│   │   └── README.md
-│   └── feature_engineering/         # Python & R pipelines
-│       ├── feature_engineering_pipeline.py
-│       ├── feature_engineering_pipeline.R
-│       └── README.md
+├── 01-foundations/                   # 📊 Core Foundations
+│   ├── statistical-modeling/
+│   │   └── presentation/            # Statistical Learning Theory
+│   ├── feature-engineering/
+│   │   └── presentation/            # Feature Engineering
+│   ├── pca/
+│   │   └── presentation/            # Principal Component Analysis
+│   └── optimization/
+│       └── presentation/            # Optimization for Data Science
 │
-├── exercises/                        # 📝 Comprehensive problem sets
+├── 02-deep-learning/                 # 🧠 Deep Learning
+│   ├── deep-learning-fundamentals/
+│   │   └── presentation/            # Deep Learning Fundamentals
+│   └── reinforcement-learning/
+│       └── presentation/            # Reinforcement Learning
+│
+├── 03-bayesian-methods/              # 🎲 Bayesian Statistics
 │   ├── mcmc/
-│   │   ├── mcmc_exercises.tex       # 8 problems (6 pages PDF)
-│   │   └── mcmc_exercises.pdf
-│   └── causal_inference/
-│       ├── causal_inference_exercises.tex # 11 problems (8 pages)
-│       └── causal_inference_exercises.pdf
+│   │   ├── presentation/            # MCMC Methods
+│   │   └── exercises/               # MCMC Exercises
+│   └── bayesian-machine-learning/
+│       └── presentation/            # Bayesian ML
 │
-├── assessments/                      # 📊 Evaluation materials
-│   ├── quizzes/                     # Topic quizzes
-│   ├── exams/                       # Midterm/final exams
-│   ├── rubrics/                     # Grading criteria
-│   └── self_assessment/             # Student checklists
+├── 04-causal-inference/              # ⚖️ Causal Methods
+│   ├── causal-inference-fundamentals/
+│   │   ├── presentation/            # Causal Inference Fundamentals
+│   │   └── exercises/               # Causal Inference Exercises
+│   └── ab-testing/
+│       └── presentation/            # A/B Testing & Experimentation
 │
-├── datasets/                         # 📈 Practice datasets
-│   └── README.md                    # Dataset descriptions
+├── 05-time-series/                   # ⏱️ Time Series
+│   └── time-series-forecasting/
+│       └── presentation/            # Time Series Analysis
 │
-├── time_series/                      # ⏱️ Time Series Analysis
-│   ├── time_series_beamer.tex
-│   └── README.md
+├── 06-advanced-topics/               # 🔬 Advanced Topics
+│   ├── explainable-ai/
+│   │   └── presentation/            # Explainable AI
+│   └── computer-science/
+│       └── presentation/            # OOP & Streaming Pipelines
 │
-├── explainable_ai/                   # 🔍 Explainable AI
-│   ├── interpretability_beamer.tex
-│   └── README.md
+├── 07-capstone-projects/             # 🎓 Projects
+│   ├── industry-focus/              # Industry applications
+│   ├── project-guides/              # Project guidelines
+│   └── prerequisites/               # Prerequisites
 │
-├── deep_learning/                    # 🧠 Deep Learning
-│   ├── deep_learning_beamer.tex
-│   └── README.md
-│
-├── reinforcement_learning/           # 🎮 Reinforcement Learning
-│   ├── rl_beamer.tex
-│   └── README.md
-│
-├── optimization/                     # 📐 Optimization
-│   ├── optimization_beamer.tex
-│   └── README.md
-│
-├── mcmc/                            # 🎲 MCMC Methods
-│   ├── mcmc_beamer.tex
-│   └── README.md
-│
-├── bayesian_ml/                     # 🔮 Bayesian ML
-│   ├── bayesian_ml_beamer.tex
-│   └── README.md
-│
-├── causal_inference/                # ⚖️ Causal Inference
-│   ├── causal_inference_beamer.tex
-│   └── README.md
-│
-├── statistical_learning/            # 📊 Statistical Learning
-│   ├── statistical_learning_beamer.tex
-│   └── README.md
-│
-├── feature_engineering/             # 🔧 Feature Engineering
-│   ├── feature_engineering_beamer.tex
-│   └── README.md
-│
-└── ab_testing/                      # 🧪 A/B Testing
-    ├── ab_testing_beamer.tex
-    └── README.md
+└── 08-data-science-applications-course/  # 🎯 Applied Course
+    ├── presentation/                # Full course materials
+    └── assessments/                 # Course assessments
 ```
 
 ## 🎨 Professional Theme & Styling
@@ -477,7 +452,7 @@ All presentations use the **ESMAD Beamer Theme** for consistent, professional ap
 
 ```latex
 \documentclass[aspectratio=169]{beamer}
-\usepackage{../theme/esmad_beamer_theme}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
 
 % Author info
 \authorname{Your Name}
@@ -498,7 +473,7 @@ All presentations use the **ESMAD Beamer Theme** for consistent, professional ap
 \end{document}
 ```
 
-See [`theme/STYLE_GUIDE.md`](./theme/STYLE_GUIDE.md) for complete documentation.
+See [`shared/theme/STYLE_GUIDE.md`](./shared/theme/STYLE_GUIDE.md) for complete documentation.
 
 ## 🔧 Getting Started
 
@@ -536,14 +511,14 @@ install.packages(c(
 
 **Manual compilation:**
 ```bash
-cd deep_learning/
+cd 02-deep-learning/deep-learning-fundamentals/presentation/
 pdflatex deep_learning_beamer.tex
 pdflatex deep_learning_beamer.tex  # Run twice for references
 ```
 
 **Using latexmk (recommended):**
 ```bash
-cd reinforcement_learning/
+cd 02-deep-learning/reinforcement-learning/presentation/
 latexmk -pdf rl_beamer.tex
 ```
 
@@ -555,20 +530,23 @@ latexmk -pdf rl_beamer.tex
 
 **Python:**
 ```bash
-# MCMC examples
-python code/mcmc/metropolis_hastings.py
-python code/mcmc/hamiltonian_mc.py
-python code/mcmc/nuts_sampler.py
+# MCMC examples (if code/ directory exists with implementations)
+# Example references are embedded in presentation materials
 
-# Causal inference
-python code/causal_inference/instrumental_variables.py
-python code/causal_inference/regression_discontinuity.py
+# Exercises and assessments
+cd 03-bayesian-methods/mcmc/exercises/
+pdflatex mcmc_exercises.tex
 ```
 
-**R:**
+**Exercises:**
 ```bash
-Rscript code/causal_inference/instrumental_variables.R
-Rscript code/feature_engineering/feature_engineering_pipeline.R
+# MCMC exercises
+cd 03-bayesian-methods/mcmc/exercises/
+pdflatex mcmc_exercises.tex
+
+# Causal inference exercises
+cd 04-causal-inference/causal-inference-fundamentals/exercises/
+pdflatex causal_inference_exercises.tex
 ```
 
 ## 📖 For Students
@@ -649,7 +627,7 @@ All presentations reference comprehensive BibTeX files:
 
 ```latex
 \usepackage[backend=bibtex]{biblatex}
-\addbibresource{../bibliographies/mcmc_references.bib}
+\addbibresource{../../../shared/bibliographies/mcmc_references.bib}
 
 % In document
 \cite{metropolis1953}
@@ -660,9 +638,9 @@ All presentations reference comprehensive BibTeX files:
 ```
 
 **Available:**
-- `mcmc_references.bib`: 30+ MCMC papers
-- `causal_inference_references.bib`: 50+ causal inference papers
-- `statistical_learning_references.bib`: 60+ ML/stats papers
+- `shared/bibliographies/mcmc_references.bib`: 30+ MCMC papers
+- `shared/bibliographies/causal_inference_references.bib`: 50+ causal inference papers
+- `shared/bibliographies/statistical_learning_references.bib`: 60+ ML/stats papers
 
 All include DOIs for easy access.
 
