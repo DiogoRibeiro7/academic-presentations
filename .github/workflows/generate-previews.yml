@@ -51,6 +51,8 @@ jobs:
         with:
           root_file: ${{ matrix.presentation.path }}.tex
           args: -pdf -interaction=nonstopmode
+        env:
+          TEXINPUTS: ".:$GITHUB_WORKSPACE//:"
 
       - name: Install ImageMagick and Poppler
         run: |

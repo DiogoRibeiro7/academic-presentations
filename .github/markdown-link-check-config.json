@@ -5,6 +5,27 @@
     },
     {
       "pattern": "^https://doi.org"
+    },
+    {
+      "pattern": "^https://aif360.mybluemix.net"
+    },
+    {
+      "pattern": "^https://eng.uber.com"
+    },
+    {
+      "pattern": "^https://mlops.community"
+    },
+    {
+      "pattern": "^https://www.tensorflow.org/federated"
+    },
+    {
+      "pattern": "^https://github.com/diogoribeiro7/academic-presentations/discussions"
+    },
+    {
+      "pattern": "^https://www.access-for-all.ch/en/pdf-lab"
+    },
+    {
+      "pattern": "^https://www.latex-project.org/help/documentation/usrguide3.pdf"
     }
   ],
   "replacementPatterns": [],
@@ -13,6 +34,12 @@
       "urls": ["https://github.com"],
       "headers": {
         "Accept-Encoding": "zstd, br, gzip, deflate"
+      }
+    },
+    {
+      "urls": ["https://www.w3.org", "https://contrast-ratio.com"],
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
       }
     }
   ],
