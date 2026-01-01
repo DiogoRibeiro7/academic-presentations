@@ -77,7 +77,7 @@ jobs:
           montage thumb_preview-*.png -geometry 400x300+10+10 -tile 3x1 ${{ matrix.presentation.path }}_preview.png
 
       - name: Upload preview images
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: preview-${{ matrix.presentation.name }}
           path: |
