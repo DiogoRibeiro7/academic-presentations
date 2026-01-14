@@ -51,8 +51,8 @@
 
 \lstset{style=code}
 
-\title{An Introduction to Unit Testing\\
-  \large With Examples in Python (pytest) and JavaScript (Jest)}
+\title{Testing Suites Guide \\
+  \large Unit, Integration, and Regression Practices}
 \author{}
 \date{}
 
@@ -60,530 +60,356 @@
 
 \maketitle
 
-\section{What Is a Unit Test?}
+\section{Testing Pyramid \& Purpose}
 
-A \emph{unit test} is a small piece of code that:
-
-\begin{itemize}[nosep]
-  \item exercises a small part of your code (a function, method, or class),
-  \item checks that the result matches the expected behaviour,
-  \item can be executed automatically, usually together with many other tests.
-\end{itemize}
-
-Typical properties of unit tests:
+A balanced automation suite treats unit, integration, and regression tests as collaborative layers instead of interchangeable files. Each layer answers a different question:
 
 \begin{itemize}[nosep]
-  \item \textbf{Small scope:} they focus on a single behaviour.
-  \item \textbf{Deterministic:} same inputs, same outputs.
-  \item \textbf{Fast:} hundreds or thousands should run in seconds.
-  \item \textbf{Isolated:} they avoid external dependencies (databases, APIs, global state).
+  \item \textbf{Unit tests} validate the smallest units (functions, methods, classes) in isolation so developers get fast feedback about business logic.
+  \item \textbf{Integration tests} exercise how several components (or modules) work together, ensuring collaborations, protocols, and shared state behave as expected.
+  \item \textbf{Regression tests} lock in fixes: every reported bug earns a guard so future work does not accidentally reintroduce the same failure.
 \end{itemize}
 
-\section{The Arrange--Act--Assert Pattern}
+Treating the pyramid as a whole keeps unit suites fast, integration suites lean, and regression suites focused on the rare but costly failures.
 
-Most unit tests follow the \emph{Arrange--Act--Assert} (AAA) structure:
+\section{Unit Testing Best Practices}
 
-\begin{enumerate}[nosep]
-  \item \textbf{Arrange:} set up the data and objects required for the test.
-  \item \textbf{Act:} call the function or method you want to test.
-  \item \textbf{Assert:} check that the actual result matches the expected result.
-\end{enumerate}
+A good unit test suite is fast, deterministic, readable, and aligned with behaviour rather than implementation. Aim for single-purpose tests, clear names, and minimal reliance on environment or external services.
 
-Conceptually, a test looks like:
+\begin{itemize}[nosep]
+  \item \textbf{Control the scope:} each test should target one behaviour and avoid verifying multiple code paths at once.
+  \item \textbf{Arrange--Act--Assert:} separate setup, execution, and assertions to keep tests easy to reason about.
+  \item \textbf{Name tests explicitly:} e.g. \texttt{test\_mean\_raises\_error\_on\_empty\_input} makes intent obvious when a suite fails.
+  \item \textbf{Share setup via fixtures or factories:} reuse helpers rather than copying boilerplate arrangement code.
+  \item \textbf{Parameterize instead of duplicating:} reuse the same assertion logic across varied inputs.
+  \item \textbf{Avoid hidden dependencies:} do not rely on global state, real databases, or the network; inject collaborators and stub external services.
+  \item \textbf{Assert behaviour, not implementation:} focus on the public contract that should stay stable after refactors.
+\end{itemize}
 
-\begin{lstlisting}[language=Python,caption={Generic Arrange--Act--Assert structure}]
-def test_something() -> None:
+\subsection*{Arrange--Act--Assert in Practice}
+
+\begin{lstlisting}[language=Python,caption={Clear AAA structure for a single behaviour}]
+def test_calculate_score_with_positive_values() -> None:
     # Arrange
-    input_data = ...
-    expected = ...
+    values = [10, 20, 30]
+    expected = 20
 
     # Act
-    result = my_function(input_data)
+    result = calculate_score(values)
 
     # Assert
     assert result == expected
 \end{lstlisting}
 
-If any assertion fails, the test fails.
+\subsection{Python Example: Mean and Bank Utilities}
 
-\section{Python Example: Testing a Mean Function with \texttt{pytest}}
+These examples keep logic simple, rely on type hints, and use parameterization to cover important variants without extra test functions.
 
-Consider a small module \texttt{math\_utils.py}:
+\begin{lstlisting}[language=Python,caption={\texttt{math\_utils.py} with explicit contracts}]
+from __future__ import annotations
 
-\begin{lstlisting}[language=Python,caption={Python function to compute a mean}]
-# math_utils.py
 from typing import Iterable
 
 
 def mean(values: Iterable[float]) -> float:
-    """
-    Compute the arithmetic mean of an iterable of floats.
+    """Return the arithmetic mean of the provided sequence."""
+    numbers = list(values)
 
-    Args:
-        values: Iterable of numeric values.
-
-    Returns:
-        The arithmetic mean as a float.
-
-    Raises:
-        ValueError: If 'values' is empty.
-    """
-    # Convert to list so we can iterate multiple times
-    values_list = list(values)
-
-    if not values_list:
+    if not numbers:
         raise ValueError("mean() requires at least one value.")
 
-    total: float = sum(values_list)     # Sum of all values
-    count: int = len(values_list)       # Number of values
-
-    return total / count
+    return sum(numbers) / len(numbers)
 \end{lstlisting}
 
-We can test this function using \texttt{pytest} in a file \texttt{test\_math\_utils.py}:
-
-\begin{lstlisting}[language=Python,caption={Unit tests for the \texttt{mean} function using pytest}]
-# test_math_utils.py
+\begin{lstlisting}[language=Python,caption={\texttt{tests/test\_math\_utils.py} demonstrating parameterized checks}]
 import pytest
 
 from math_utils import mean
 
 
-def test_mean_with_positive_numbers() -> None:
-    """
-    'mean' should return the correct value for a simple list
-    of positive numbers.
-    """
-    # Arrange
-    values = [1.0, 2.0, 3.0, 4.0]
-    expected: float = 2.5
-
-    # Act
-    result: float = mean(values)
-
-    # Assert
+@pytest.mark.parametrize(
+    "values,expected",
+    [([1.0, 2.0, 3.0], 2.0), ([-1.0, 1.0], 0.0), ([5.5], 5.5)],
+)
+def test_mean_returns_expected_result(values: list[float], expected: float) -> None:
+    result = mean(values)
     assert result == expected
 
 
-def test_mean_with_negative_numbers() -> None:
-    """
-    'mean' should handle negative numbers correctly.
-    """
-    # Arrange
-    values = [-1.0, -3.0]
-    expected: float = -2.0
-
-    # Act
-    result: float = mean(values)
-
-    # Assert
-    assert result == expected
-
-
-def test_mean_raises_error_on_empty_input() -> None:
-    """
-    'mean' should raise ValueError when given an empty iterable.
-    """
-    # Arrange
-    values: list[float] = []
-
-    # Act / Assert
+def test_mean_raises_when_empty() -> None:
     with pytest.raises(ValueError):
-        mean(values)
+        mean([])
 \end{lstlisting}
 
-Running \texttt{pytest} from the project root will discover and execute all functions whose names start with \texttt{test\_}.
-
-\section{JavaScript Example: Testing a Mean Function with Jest}
-
-Now consider a similar implementation in JavaScript, using Jest for testing.
-
-\subsection*{Production Code (\texttt{mathUtils.js})}
-
-\begin{lstlisting}[language=JavaScript,caption={JavaScript function to compute a mean}]
-/**
- * Compute the arithmetic mean of an array of numbers.
- *
- * @param {number[]} values - Array of numeric values.
- * @returns {number} The arithmetic mean.
- * @throws {Error} If 'values' is empty.
- */
-function mean(values) {
-  // Ensure we are working with an array
-  if (!Array.isArray(values)) {
-    throw new Error("mean() requires an array of numbers.");
-  }
-
-  if (values.length === 0) {
-    throw new Error("mean() requires at least one value.");
-  }
-
-  // Compute the sum of the values
-  const total = values.reduce((accumulator, value) => {
-    if (typeof value !== "number") {
-      throw new Error("All elements must be numbers.");
-    }
-    return accumulator + value;
-  }, 0);
-
-  const count = values.length; // Number of elements
-
-  return total / count;
-}
-
-// Export for testing
-module.exports = { mean };
-\end{lstlisting}
-
-\subsection*{Unit Tests with Jest (\texttt{mathUtils.test.js})}
-
-\begin{lstlisting}[language=JavaScript,caption={Unit tests for the JavaScript \texttt{mean} function using Jest}]
-const { mean } = require("./mathUtils");
-
-describe("mean", () => {
-  test("returns correct mean for positive numbers", () => {
-    // Arrange
-    const values = [1.0, 2.0, 3.0, 4.0];
-    const expected = 2.5;
-
-    // Act
-    const result = mean(values);
-
-    // Assert
-    expect(result).toBe(expected);
-  });
-
-  test("returns correct mean for negative numbers", () => {
-    // Arrange
-    const values = [-1.0, -3.0];
-    const expected = -2.0;
-
-    // Act
-    const result = mean(values);
-
-    // Assert
-    expect(result).toBe(expected);
-  });
-
-  test("throws error on empty array", () => {
-    // Arrange
-    const values = [];
-
-    // Act / Assert
-    expect(() => mean(values)).toThrow("mean() requires at least one value.");
-  });
-
-  test("throws error when elements are not numbers", () => {
-    // Arrange
-    const values = [1, "two", 3];
-
-    // Act / Assert
-    expect(() => mean(values)).toThrow("All elements must be numbers.");
-  });
-});
-\end{lstlisting}
-
-With Jest installed (for example via \texttt{npm install --save-dev jest}), you can run:
-\begin{lstlisting}[language=bash]
-npx jest
-\end{lstlisting}
-from the project root.
-
-\section{A Class Example: Bank Account}
-
-\subsection{Python Version}
-
-\subsubsection*{Production Code (\texttt{bank.py})}
-
-\begin{lstlisting}[language=Python,caption={Simple bank account class in Python}]
-# bank.py
-from __future__ import annotations
-
-from dataclasses import dataclass
-
-
-@dataclass
-class BankAccount:
-    """
-    Simple bank account model with deposit and withdraw operations.
-    """
-    owner: str
-    balance: float = 0.0
-
-    def deposit(self, amount: float) -> None:
-        """
-        Deposit a positive amount into the account.
-
-        Args:
-            amount: Positive amount to add to the balance.
-
-        Raises:
-            ValueError: If 'amount' is not positive.
-        """
-        if amount <= 0:
-            raise ValueError("Deposit amount must be positive.")
-
-        # Increase balance by the given amount
-        self.balance += amount
-
-    def withdraw(self, amount: float) -> None:
-        """
-        Withdraw a positive amount from the account if sufficient funds exist.
-
-        Args:
-            amount: Positive amount to withdraw.
-
-        Raises:
-            ValueError: If 'amount' is not positive or exceeds the balance.
-        """
-        if amount <= 0:
-            raise ValueError("Withdrawal amount must be positive.")
-
-        if amount > self.balance:
-            raise ValueError("Insufficient funds.")
-
-        # Decrease balance by the given amount
-        self.balance -= amount
-\end{lstlisting}
-
-\subsubsection*{Unit Tests (\texttt{test\_bank.py})}
-
-\begin{lstlisting}[language=Python,caption={Unit tests for the Python \texttt{BankAccount} class}]
-# test_bank.py
+\begin{lstlisting}[language=Python,caption={\texttt{tests/test\_bank.py} isolating account behaviours}]
 import pytest
 
 from bank import BankAccount
 
 
-def test_deposit_increases_balance() -> None:
-    """
-    Depositing a positive amount should increase the account balance.
-    """
-    # Arrange
-    account = BankAccount(owner="Alice", balance=100.0)
-
-    # Act
-    account.deposit(50.0)
-
-    # Assert
-    assert account.balance == 150.0
+@pytest.fixture
+def base_account() -> BankAccount:
+    return BankAccount(owner="Alex", balance=100.0)
 
 
-def test_deposit_negative_amount_raises_error() -> None:
-    """
-    Depositing a non-positive amount should raise ValueError.
-    """
-    # Arrange
-    account = BankAccount(owner="Bob", balance=100.0)
+def test_deposit_increases_balance(base_account: BankAccount) -> None:
+    base_account.deposit(50.0)
+    assert base_account.balance == 150.0
 
-    # Act / Assert
+
+def test_deposit_non_positive_amount_fails(base_account: BankAccount) -> None:
     with pytest.raises(ValueError):
-        account.deposit(-10.0)
-
-
-def test_withdraw_decreases_balance() -> None:
-    """
-    Withdrawing a valid amount should decrease the balance.
-    """
-    # Arrange
-    account = BankAccount(owner="Carol", balance=200.0)
-
-    # Act
-    account.withdraw(80.0)
-
-    # Assert
-    assert account.balance == 120.0
-
-
-def test_withdraw_more_than_balance_raises_error() -> None:
-    """
-    Withdrawing more than the balance should raise ValueError.
-    """
-    # Arrange
-    account = BankAccount(owner="Dave", balance=50.0)
-
-    # Act / Assert
-    with pytest.raises(ValueError):
-        account.withdraw(60.0)
+        base_account.deposit(0)
 \end{lstlisting}
 
-\subsection{JavaScript Version}
+\section{JavaScript Example: Jest Modules and Clear Assertions}
 
-\subsubsection*{Production Code (\texttt{bankAccount.js})}
+Jest supports the same best practices: favour descriptive \texttt{describe} blocks, \texttt{test.each} for repeated data, and \texttt{expect(...).toThrow} for error handling. Keep module exports tiny and explicit so tests import only what is needed.
 
-\begin{lstlisting}[language=JavaScript,caption={Simple bank account class in JavaScript}]
+\begin{lstlisting}[language=JavaScript,caption={\texttt{mathUtils.js} with explicit validation}]
 /**
- * Simple bank account model with deposit and withdraw operations.
+ * Compute the arithmetic mean of an array of numbers.
  */
-class BankAccount {
-  /**
-   * @param {string} owner - Name of the account owner.
-   * @param {number} [initialBalance=0] - Initial account balance.
-   */
-  constructor(owner, initialBalance = 0) {
-    if (typeof owner !== "string" || owner.length === 0) {
-      throw new Error("Owner name must be a non-empty string.");
-    }
-
-    if (typeof initialBalance !== "number" || Number.isNaN(initialBalance)) {
-      throw new Error("Initial balance must be a valid number.");
-    }
-
-    this.owner = owner;
-    this.balance = initialBalance;
+function mean(values) {
+  if (!Array.isArray(values) || values.length === 0) {
+    throw new Error("mean() requires a non-empty array of numbers.");
   }
 
-  /**
-   * Deposit a positive amount into the account.
-   *
-   * @param {number} amount - Positive amount to deposit.
-   */
-  deposit(amount) {
-    if (typeof amount !== "number" || amount <= 0) {
-      throw new Error("Deposit amount must be a positive number.");
+  const total = values.reduce((acc, value) => {
+    if (typeof value !== "number") {
+      throw new Error("All elements must be numbers.");
     }
+    return acc + value;
+  }, 0);
 
-    // Increase the balance
-    this.balance += amount;
-  }
-
-  /**
-   * Withdraw a positive amount from the account if sufficient funds exist.
-   *
-   * @param {number} amount - Positive amount to withdraw.
-   */
-  withdraw(amount) {
-    if (typeof amount !== "number" || amount <= 0) {
-      throw new Error("Withdrawal amount must be a positive number.");
-    }
-
-    if (amount > this.balance) {
-      throw new Error("Insufficient funds.");
-    }
-
-    // Decrease the balance
-    this.balance -= amount;
-  }
+  return total / values.length;
 }
 
-module.exports = { BankAccount };
+module.exports = { mean };
 \end{lstlisting}
 
-\subsubsection*{Unit Tests with Jest (\texttt{bankAccount.test.js})}
+\begin{lstlisting}[language=JavaScript,caption={\texttt{mathUtils.test.js} using parameterized cases}]
+const { mean } = require("./mathUtils");
 
-\begin{lstlisting}[language=JavaScript,caption={Unit tests for the JavaScript \texttt{BankAccount} class}]
-const { BankAccount } = require("./bankAccount");
-
-describe("BankAccount", () => {
-  test("deposit increases balance", () => {
-    // Arrange
-    const account = new BankAccount("Alice", 100);
-
-    // Act
-    account.deposit(50);
-
-    // Assert
-    expect(account.balance).toBe(150);
+describe("mean", () => {
+  test.each([
+    [[1, 2, 3], 2],
+    [[-1, 1], 0],
+    [[5.5], 5.5],
+  ])("returns %p for %p", (values, expected) => {
+    expect(mean(values)).toBe(expected);
   });
 
-  test("depositing non-positive amount throws", () => {
-    // Arrange
-    const account = new BankAccount("Bob", 100);
-
-    // Act / Assert
-    expect(() => account.deposit(0)).toThrow(
-      "Deposit amount must be a positive number."
-    );
-    expect(() => account.deposit(-10)).toThrow(
-      "Deposit amount must be a positive number."
-    );
-  });
-
-  test("withdraw decreases balance", () => {
-    // Arrange
-    const account = new BankAccount("Carol", 200);
-
-    // Act
-    account.withdraw(80);
-
-    // Assert
-    expect(account.balance).toBe(120);
-  });
-
-  test("withdrawing more than balance throws", () => {
-    // Arrange
-    const account = new BankAccount("Dave", 50);
-
-    // Act / Assert
-    expect(() => account.withdraw(60)).toThrow("Insufficient funds.");
+  test("throws for empty array", () => {
+    expect(() => mean([])).toThrow("mean() requires a non-empty array of numbers.");
   });
 });
 \end{lstlisting}
 
-\section{What Makes a Good Unit Test?}
+\begin{lstlisting}[language=JavaScript,caption={\texttt{bankAccount.test.js} isolating behaviours}]
+const { BankAccount } = require("./bankAccount");
 
-Some practical guidelines:
+describe("BankAccount", () => {
+  test("deposit adds to balance", () => {
+    const account = new BankAccount("Dana", 100);
+    account.deposit(50);
+    expect(account.balance).toBe(150);
+  });
+
+  test("deposit rejects non-positive amount", () => {
+    const account = new BankAccount("Dana", 100);
+    expect(() => account.deposit(0)).toThrow("Deposit amount must be a positive number.");
+  });
+});
+\end{lstlisting}
+
+\section{Integration Testing Best Practices}
+
+Integration tests should exercise realistic interactions without becoming as slow or brittle as end-to-end suites. Keep them focused on meaningful scenarios, start and clean up state deliberately, and simulate only the external services that are too slow or unreliable for unit tests.
 
 \begin{itemize}[nosep]
-  \item \textbf{One behaviour per test:} avoid mixing unrelated checks in a single test.
-  \item \textbf{Clear names:} e.g.\ \texttt{test\_mean\_raises\_error\_on\_empty\_input}.
-  \item \textbf{No hidden magic:} tests should be easy to read and understand.
-  \item \textbf{Fast and independent:} tests should not depend on execution order or external state.
-  \item \textbf{Test behaviour, not implementation details:} if internal code changes but behaviour stays the same, tests should still pass.
+  \item \textbf{Scope a scenario:} test a single workflow, such as a transfer between accounts or a request hitting multiple modules.
+  \item \textbf{Use real modules:} run the production code paths while faking only the truly external dependencies (APIs, queues).
+  \item \textbf{Prepare and tear down consistently:} fixtures or factories should reset databases, files, or shared state between runs.
+  \item \textbf{Label suites:} use \texttt{@pytest.mark.integration} or explicit Jest folders so you can run them separately when feedback speed matters.
 \end{itemize}
 
-\section{Minimal Project Structures}
+\subsection{Python Integration Example: Funds Transfer Flow}
 
-For a small Python project:
+\begin{lstlisting}[language=Python,caption={\texttt{transfer\_service.py} coordinating withdrawals, deposits, and notifications}]
+from bank import BankAccount
+from typing import Protocol
 
-\begin{lstlisting}[language=bash,caption={Example Python project structure}]
+
+class Notifier(Protocol):
+    def notify(self, from_owner: str, to_owner: str, amount: float) -> None:
+        ...
+
+
+def transfer_funds(
+    source: BankAccount,
+    destination: BankAccount,
+    amount: float,
+    notifier: Notifier,
+) -> None:
+    source.withdraw(amount)
+    destination.deposit(amount)
+    notifier.notify(source.owner, destination.owner, amount)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/integration/test\_transfer\_flow.py} checking state and notification}]
+from bank import BankAccount
+from transfer_service import transfer_funds
+
+
+class DummyNotifier:
+    def __init__(self) -> None:
+        self.messages: list[tuple[str, str, float]] = []
+
+    def notify(self, from_owner: str, to_owner: str, amount: float) -> None:
+        self.messages.append((from_owner, to_owner, amount))
+
+
+def test_transfer_updates_balances_and_notifies() -> None:
+    source = BankAccount(owner="Ali", balance=150.0)
+    destination = BankAccount(owner="Bij", balance=50.0)
+    notifier = DummyNotifier()
+
+    transfer_funds(source, destination, 25.0, notifier)
+
+    assert source.balance == 125.0
+    assert destination.balance == 75.0
+    assert notifier.messages == [("Ali", "Bij", 25.0)]
+\end{lstlisting}
+
+\subsection{JavaScript Integration Example: Transfer Service}
+
+\begin{lstlisting}[language=JavaScript,caption={\texttt{transferService.js} wiring deposits, withdrawals, and notifications}]
+const { BankAccount } = require("./bankAccount");
+
+function transferFunds(source, destination, amount, notifier) {
+  source.withdraw(amount);
+  destination.deposit(amount);
+  notifier.notify(source.owner, destination.owner, amount);
+}
+
+module.exports = { transferFunds };
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript,caption={Jest integration test verifying balances and notification}]
+const { BankAccount } = require("./bankAccount");
+const { transferFunds } = require("./transferService");
+
+class SpyNotifier {
+  constructor() {
+    this.calls = [];
+  }
+
+  notify(fromOwner, toOwner, amount) {
+    this.calls.push({ fromOwner, toOwner, amount });
+  }
+}
+
+test("transfer updates balances and notifies owners", () => {
+  const source = new BankAccount("Ali", 150);
+  const destination = new BankAccount("Bij", 50);
+  const notifier = new SpyNotifier();
+
+  transferFunds(source, destination, 25, notifier);
+
+  expect(source.balance).toBe(125);
+  expect(destination.balance).toBe(75);
+  expect(notifier.calls).toEqual([{ fromOwner: "Ali", toOwner: "Bij", amount: 25 }]);
+});
+\end{lstlisting}
+
+\section{Regression Testing Best Practices}
+
+Regression tests memorialize bugs by codifying the exact scenario that failed before. When a bug is fixed, add a regression test that reproduces the failure path, references the ticket, and stays narrow and deterministic.
+
+\begin{itemize}[nosep]
+  \item \textbf{Reference the bug:} include the ticket or issue number in the test name or a comment so reviewers understand the context.
+  \item \textbf{Keep it minimal:} capture only the data and steps necessary to trigger the bug without extra noise.
+  \item \textbf{Ensure repeatability:} remove randomness, seed fixtures, and avoid slow external calls.
+  \item \textbf{Tag regressions:} use dedicated directories or markers (e.g. \texttt{tests/regression/} or \texttt{@pytest.mark.regression}) so CI can run them selectively.
+\end{itemize}
+
+\subsection{Python Regression Example (Bug \#1012)}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/regression/test\_bug\_1012.py} guarding against zero deposits}]
+import pytest
+
+from bank import BankAccount
+
+
+@pytest.mark.regression
+def test_bug_1012_rejects_zero_deposit() -> None:
+    account = BankAccount(owner="Eve", balance=100.0)
+
+    with pytest.raises(ValueError):
+        account.deposit(0.0)
+\end{lstlisting}
+
+\subsection{JavaScript Regression Example (Issue JS-3281)}
+
+\begin{lstlisting}[language=JavaScript,caption={Regression test guarding overdrafts despite floating-point drift}]
+const { BankAccount } = require("./bankAccount");
+
+test("JS-3281: withdraw fails when rounding noise would otherwise allow overdraft", () => {
+  const account = new BankAccount("Frank", 100);
+  account.withdraw(99.9999999999);
+  expect(() => account.withdraw(0.0000000002)).toThrow("Insufficient funds.");
+});
+\end{lstlisting}
+
+\section{Organizing Tests and Execution}
+
+Keep your suites organised by purpose so you can run them independently.
+
+\begin{lstlisting}[language=bash,caption={Python project layout with dedicated suites}]
 my_project/
   my_package/
-    __init__.py
     math_utils.py
     bank.py
   tests/
-    test_math_utils.py
-    test_bank.py
+    unit/
+      test_math_utils.py
+      test_bank.py
+    integration/
+      test_transfer_flow.py
+    regression/
+      test_bug_1012.py
 \end{lstlisting}
-
-Run:
 
 \begin{lstlisting}[language=bash]
-pytest
+pytest tests/unit        # fast feedback while coding
+pytest tests/integration # verify component collaborations
+pytest tests/regression  # protect past bugs
 \end{lstlisting}
 
-For a small JavaScript project using Jest:
+For JavaScript projects, mirror the structure and leverage \texttt{package.json} scripts for each suite.
 
-\begin{lstlisting}[language=bash,caption={Example JavaScript project structure}]
+\begin{lstlisting}[language=bash,caption={JavaScript project structure aligned with Jest suites}]
 my-js-project/
   mathUtils.js
   bankAccount.js
-  mathUtils.test.js
-  bankAccount.test.js
+  tests/
+    unit/
+      mathUtils.test.js
+      bankAccount.test.js
+    integration/
+      transferService.test.js
+    regression/
+      bug_3281.test.js
   package.json
 \end{lstlisting}
 
-A minimal \texttt{package.json}:
-
-\begin{lstlisting}[language=JavaScript]
-{
-  "name": "my-js-project",
-  "version": "1.0.0",
-  "devDependencies": {
-    "jest": "^29.0.0"
-  },
-  "scripts": {
-    "test": "jest"
-  }
-}
-\end{lstlisting}
-
-Then run:
-
 \begin{lstlisting}[language=bash]
-npm install
-npm test
+npm run test:unit
+npm run test:integration
+npm run test:regression
 \end{lstlisting}
+
+Tagging suites with markers or directories keeps CI pipelines lean, e.g. run only unit tests on every commit and reserve integration/regression suites for nightly pipelines or special branches.
 
 \end{document}
