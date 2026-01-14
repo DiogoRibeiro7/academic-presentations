@@ -1,0 +1,89 @@
+\frametitle{Summary \& Best Practices}
+\textbf{Building interpretable ML systems}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{The Interpretability Workflow:}
+
+\begin{enumerate}
+\item \textbf{Model Selection:}
+   \begin{itemize}
+   \item Start with interpretable baselines
+   \item Document accuracy-interpretability tradeoff
+   \item Justify complexity if needed
+   \end{itemize}
+
+\item \textbf{Global Understanding:}
+   \begin{itemize}
+   \item Permutation importance
+   \item Partial dependence plots
+   \item SHAP summary plots
+   \end{itemize}
+
+\item \textbf{Local Explanations:}
+   \begin{itemize}
+   \item SHAP force plots for key predictions
+   \item LIME for individual cases
+   \item Counterfactuals for recourse
+   \end{itemize}
+
+\item \textbf{Validation:}
+   \begin{itemize}
+   \item Check explanations make sense
+   \item Verify with domain experts
+   \item Test on edge cases
+   \end{itemize}
+
+\item \textbf{Communication:}
+   \begin{itemize}
+   \item Tailor to audience
+   \item Visualize clearly
+   \item Provide actionable insights
+   \end{itemize}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Common Mistakes:}
+
+\begin{itemize}
+\item[$\times$] Trusting explanations blindly
+\item[$\times$] Using only one method
+\item[$\times$] Ignoring feature correlations
+\item[$\times$] Not validating with experts
+\item[$\times$] Over-interpreting complex models
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Tools \& Resources:}
+
+\begin{itemize}
+\item \textbf{Python Libraries:}
+  \begin{itemize}
+  \item SHAP, LIME, ELI5
+  \item InterpretML (Microsoft)
+  \item AIX360 (IBM)
+  \item Captum (PyTorch)
+  \end{itemize}
+
+\item \textbf{Books:}
+  \begin{itemize}
+  \item "Interpretable Machine Learning" (Molnar)
+  \item "Explanatory Model Analysis" (Biecek \& Burzykowski)
+  \end{itemize}
+
+\item \textbf{Papers:}
+  \begin{itemize}
+  \item "A Unified Approach to Interpreting Model Predictions" (SHAP)
+  \item "Why Should I Trust You?" (LIME)
+  \end{itemize}
+\end{itemize}
+
+\vspace{0.2cm}
+
+\begin{alertblock}{Remember}
+Interpretability is not optional - it's essential for trustworthy AI!
+\end{alertblock}
+\end{column}
+\end{columns}

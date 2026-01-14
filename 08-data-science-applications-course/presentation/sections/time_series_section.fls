@@ -1,0 +1,4 @@
+PWD C:\Users\diogo\work_code\academic-presentations\08-data-science-applications-course\presentation\sections
+INPUT C:\Users\diogo\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
+INPUT time_series_section.tex
+OUTPUT time_series_section.log

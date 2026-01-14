@@ -1,0 +1,69 @@
+\frametitle{Implementation Example: Adaptive Metropolis}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\begin{lstlisting}[language=Python, basicstyle=\tiny]
+class AdaptiveMetropolis:
+    def __init__(self, target_log_prob, dim):
+        self.target_log_prob = target_log_prob
+        self.dim = dim
+        self.cov = np.eye(dim) * 0.1
+        self.mean = np.zeros(dim)
+
+    def sample(self, n_samples, x0):
+        samples = np.zeros((n_samples, self.dim))
+        samples[0] = x0
+        current_x = x0
+        current_logp = self.target_log_prob(x0)
+
+        accepted = 0
+        for i in range(1, n_samples):
+            # Propose
+            proposal = np.random.multivariate_normal(
+                current_x, self.cov)
+            proposal_logp = self.target_log_prob(proposal)
+
+            # Accept/reject
+            if (np.log(np.random.random()) <
+                proposal_logp - current_logp):
+                current_x = proposal
+                current_logp = proposal_logp
+                accepted += 1
+
+            samples[i] = current_x
+
+            # Adapt covariance
+            if i % 100 == 0 and i > 200:
+                self.adapt_covariance(samples[:i])
+
+        return samples, accepted / n_samples
+\end{lstlisting}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Key Features:}
+\begin{itemize}
+\item Automatic covariance adaptation
+\item Robust numerical implementation
+\item Performance monitoring
+\item Configurable adaptation schedule
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Extensions:}
+\begin{itemize}
+\item Parallel chains
+\item Online adaptation
+\item Constraint handling
+\item Warm-up phase management
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Production Considerations}
+\begin{itemize}
+\item Memory-efficient updates
+\item Numerical stability checks
+\item Graceful failure modes
+\item Comprehensive logging
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}

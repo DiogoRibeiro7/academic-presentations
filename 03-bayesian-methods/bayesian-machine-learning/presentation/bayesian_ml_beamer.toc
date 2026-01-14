@@ -1,0 +1,6 @@
+\beamer@sectionintoc {1}{Introduction to Bayesian Machine Learning}{3}{0}{1}
+\beamer@sectionintoc {2}{Bayesian Neural Networks}{6}{0}{2}
+\beamer@sectionintoc {3}{Gaussian Processes}{11}{0}{3}
+\beamer@sectionintoc {4}{Advanced Topics and Modern Developments}{17}{0}{4}
+\beamer@sectionintoc {5}{Practical Implementation and Software}{20}{0}{5}
+\beamer@sectionintoc {6}{Future Directions and Conclusions}{23}{0}{6}
