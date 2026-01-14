@@ -319,7 +319,7 @@ Backprop is just calculus + chain rule + dynamic programming. Frameworks handle 
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Optimization Algorithms}
+\begin{frame}[fragile]{Optimization Algorithms}
 \textbf{Beyond vanilla gradient descent}
 
 \begin{columns}
@@ -400,15 +400,17 @@ Faster, more memory efficient, adds noise (helps escape local minima)
 \vspace{0.2cm}
 
 \textbf{PyTorch Example:}
-\begin{verbatim}
+\begin{lstlisting}[language=python,caption={PyTorch optimizer + scheduler}]
 optimizer = torch.optim.Adam(
     model.parameters(),
     lr=0.001
 )
 
-scheduler = torch.optim.lr_scheduler.
-    CosineAnnealingLR(optimizer, T_max=100)
-\end{verbatim}
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer,
+    T_max=100,
+)
+\end{lstlisting}
 \end{column}
 \end{columns}
 \end{frame}
@@ -512,7 +514,7 @@ Common pattern: Stack Conv+ReLU+Pool blocks, then fully connected layers
 \end{columns}
 \end{frame}
 
-\begin{frame}{Modern CNN Architectures}
+\begin{frame}[fragile]{Modern CNN Architectures}
 \textbf{Evolution from LeNet to EfficientNet}
 
 \begin{columns}
@@ -592,17 +594,6 @@ Instead of training from scratch:
 \item Add new layer for your task
 \item Fine-tune on your data
 \end{enumerate}
-
-\begin{verbatim}
-import torchvision.models as models
-
-# Pre-trained ResNet50
-model = models.resnet50(
-    pretrained=True
-)
-# Replace final layer
-model.fc = nn.Linear(2048, num_classes)
-\end{verbatim}
 \end{column}
 \end{columns}
 \end{frame}
@@ -852,22 +843,6 @@ Monitor validation loss, stop when it starts increasing.
 \vspace{0.3cm}
 
 \textbf{Combining Techniques:}
-
-\begin{verbatim}
-model = nn.Sequential(
-    nn.Linear(784, 512),
-    nn.BatchNorm1d(512),
-    nn.ReLU(),
-    nn.Dropout(0.5),
-    nn.Linear(512, 10)
-)
-
-optimizer = optim.AdamW(  # Weight decay
-    model.parameters(),
-    lr=0.001,
-    weight_decay=0.01
-)
-\end{verbatim}
 \end{column}
 \end{columns}
 \end{frame}

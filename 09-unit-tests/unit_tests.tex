@@ -1,0 +1,415 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+% Listings configuration
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{teal},
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  tabsize=2
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, class, const, continue, debugger, default, delete, do,
+    else, export, extends, finally, for, function, if, import, in, instanceof, let, new,
+    return, super, switch, this, throw, try, typeof, var, void, while, with, yield,
+    async, await},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={boolean, number, string, null, undefined, Array, Object, Promise},
+  ndkeywordstyle=\color{teal}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{teal}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{style=code}
+
+\title{Testing Suites Guide \\
+  \large Unit, Integration, and Regression Practices}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Testing Pyramid \& Purpose}
+
+A balanced automation suite treats unit, integration, and regression tests as collaborative layers instead of interchangeable files. Each layer answers a different question:
+
+\begin{itemize}[nosep]
+  \item \textbf{Unit tests} validate the smallest units (functions, methods, classes) in isolation so developers get fast feedback about business logic.
+  \item \textbf{Integration tests} exercise how several components (or modules) work together, ensuring collaborations, protocols, and shared state behave as expected.
+  \item \textbf{Regression tests} lock in fixes: every reported bug earns a guard so future work does not accidentally reintroduce the same failure.
+\end{itemize}
+
+Treating the pyramid as a whole keeps unit suites fast, integration suites lean, and regression suites focused on the rare but costly failures.
+
+\section{Unit Testing Best Practices}
+
+A good unit test suite is fast, deterministic, readable, and aligned with behaviour rather than implementation. Aim for single-purpose tests, clear names, and minimal reliance on environment or external services.
+
+\begin{itemize}[nosep]
+  \item \textbf{Control the scope:} each test should target one behaviour and avoid verifying multiple code paths at once.
+  \item \textbf{Arrange--Act--Assert:} separate setup, execution, and assertions to keep tests easy to reason about.
+  \item \textbf{Name tests explicitly:} e.g. \texttt{test\_mean\_raises\_error\_on\_empty\_input} makes intent obvious when a suite fails.
+  \item \textbf{Share setup via fixtures or factories:} reuse helpers rather than copying boilerplate arrangement code.
+  \item \textbf{Parameterize instead of duplicating:} reuse the same assertion logic across varied inputs.
+  \item \textbf{Avoid hidden dependencies:} do not rely on global state, real databases, or the network; inject collaborators and stub external services.
+  \item \textbf{Assert behaviour, not implementation:} focus on the public contract that should stay stable after refactors.
+\end{itemize}
+
+\subsection*{Arrange--Act--Assert in Practice}
+
+\begin{lstlisting}[language=Python,caption={Clear AAA structure for a single behaviour}]
+def test_calculate_score_with_positive_values() -> None:
+    # Arrange
+    values = [10, 20, 30]
+    expected = 20
+
+    # Act
+    result = calculate_score(values)
+
+    # Assert
+    assert result == expected
+\end{lstlisting}
+
+\subsection{Python Example: Mean and Bank Utilities}
+
+These examples keep logic simple, rely on type hints, and use parameterization to cover important variants without extra test functions.
+
+\begin{lstlisting}[language=Python,caption={\texttt{math\_utils.py} with explicit contracts}]
+from __future__ import annotations
+
+from typing import Iterable
+
+
+def mean(values: Iterable[float]) -> float:
+    """Return the arithmetic mean of the provided sequence."""
+    numbers = list(values)
+
+    if not numbers:
+        raise ValueError("mean() requires at least one value.")
+
+    return sum(numbers) / len(numbers)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/test\_math\_utils.py} demonstrating parameterized checks}]
+import pytest
+
+from math_utils import mean
+
+
+@pytest.mark.parametrize(
+    "values,expected",
+    [([1.0, 2.0, 3.0], 2.0), ([-1.0, 1.0], 0.0), ([5.5], 5.5)],
+)
+def test_mean_returns_expected_result(values: list[float], expected: float) -> None:
+    result = mean(values)
+    assert result == expected
+
+
+def test_mean_raises_when_empty() -> None:
+    with pytest.raises(ValueError):
+        mean([])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/test\_bank.py} isolating account behaviours}]
+import pytest
+
+from bank import BankAccount
+
+
+@pytest.fixture
+def base_account() -> BankAccount:
+    return BankAccount(owner="Alex", balance=100.0)
+
+
+def test_deposit_increases_balance(base_account: BankAccount) -> None:
+    base_account.deposit(50.0)
+    assert base_account.balance == 150.0
+
+
+def test_deposit_non_positive_amount_fails(base_account: BankAccount) -> None:
+    with pytest.raises(ValueError):
+        base_account.deposit(0)
+\end{lstlisting}
+
+\section{JavaScript Example: Jest Modules and Clear Assertions}
+
+Jest supports the same best practices: favour descriptive \texttt{describe} blocks, \texttt{test.each} for repeated data, and \texttt{expect(...).toThrow} for error handling. Keep module exports tiny and explicit so tests import only what is needed.
+
+\begin{lstlisting}[language=JavaScript,caption={\texttt{mathUtils.js} with explicit validation}]
+/**
+ * Compute the arithmetic mean of an array of numbers.
+ */
+function mean(values) {
+  if (!Array.isArray(values) || values.length === 0) {
+    throw new Error("mean() requires a non-empty array of numbers.");
+  }
+
+  const total = values.reduce((acc, value) => {
+    if (typeof value !== "number") {
+      throw new Error("All elements must be numbers.");
+    }
+    return acc + value;
+  }, 0);
+
+  return total / values.length;
+}
+
+module.exports = { mean };
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript,caption={\texttt{mathUtils.test.js} using parameterized cases}]
+const { mean } = require("./mathUtils");
+
+describe("mean", () => {
+  test.each([
+    [[1, 2, 3], 2],
+    [[-1, 1], 0],
+    [[5.5], 5.5],
+  ])("returns %p for %p", (values, expected) => {
+    expect(mean(values)).toBe(expected);
+  });
+
+  test("throws for empty array", () => {
+    expect(() => mean([])).toThrow("mean() requires a non-empty array of numbers.");
+  });
+});
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript,caption={\texttt{bankAccount.test.js} isolating behaviours}]
+const { BankAccount } = require("./bankAccount");
+
+describe("BankAccount", () => {
+  test("deposit adds to balance", () => {
+    const account = new BankAccount("Dana", 100);
+    account.deposit(50);
+    expect(account.balance).toBe(150);
+  });
+
+  test("deposit rejects non-positive amount", () => {
+    const account = new BankAccount("Dana", 100);
+    expect(() => account.deposit(0)).toThrow("Deposit amount must be a positive number.");
+  });
+});
+\end{lstlisting}
+
+\section{Integration Testing Best Practices}
+
+Integration tests should exercise realistic interactions without becoming as slow or brittle as end-to-end suites. Keep them focused on meaningful scenarios, start and clean up state deliberately, and simulate only the external services that are too slow or unreliable for unit tests.
+
+\begin{itemize}[nosep]
+  \item \textbf{Scope a scenario:} test a single workflow, such as a transfer between accounts or a request hitting multiple modules.
+  \item \textbf{Use real modules:} run the production code paths while faking only the truly external dependencies (APIs, queues).
+  \item \textbf{Prepare and tear down consistently:} fixtures or factories should reset databases, files, or shared state between runs.
+  \item \textbf{Label suites:} use \texttt{@pytest.mark.integration} or explicit Jest folders so you can run them separately when feedback speed matters.
+\end{itemize}
+
+\subsection{Python Integration Example: Funds Transfer Flow}
+
+\begin{lstlisting}[language=Python,caption={\texttt{transfer\_service.py} coordinating withdrawals, deposits, and notifications}]
+from bank import BankAccount
+from typing import Protocol
+
+
+class Notifier(Protocol):
+    def notify(self, from_owner: str, to_owner: str, amount: float) -> None:
+        ...
+
+
+def transfer_funds(
+    source: BankAccount,
+    destination: BankAccount,
+    amount: float,
+    notifier: Notifier,
+) -> None:
+    source.withdraw(amount)
+    destination.deposit(amount)
+    notifier.notify(source.owner, destination.owner, amount)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/integration/test\_transfer\_flow.py} checking state and notification}]
+from bank import BankAccount
+from transfer_service import transfer_funds
+
+
+class DummyNotifier:
+    def __init__(self) -> None:
+        self.messages: list[tuple[str, str, float]] = []
+
+    def notify(self, from_owner: str, to_owner: str, amount: float) -> None:
+        self.messages.append((from_owner, to_owner, amount))
+
+
+def test_transfer_updates_balances_and_notifies() -> None:
+    source = BankAccount(owner="Ali", balance=150.0)
+    destination = BankAccount(owner="Bij", balance=50.0)
+    notifier = DummyNotifier()
+
+    transfer_funds(source, destination, 25.0, notifier)
+
+    assert source.balance == 125.0
+    assert destination.balance == 75.0
+    assert notifier.messages == [("Ali", "Bij", 25.0)]
+\end{lstlisting}
+
+\subsection{JavaScript Integration Example: Transfer Service}
+
+\begin{lstlisting}[language=JavaScript,caption={\texttt{transferService.js} wiring deposits, withdrawals, and notifications}]
+const { BankAccount } = require("./bankAccount");
+
+function transferFunds(source, destination, amount, notifier) {
+  source.withdraw(amount);
+  destination.deposit(amount);
+  notifier.notify(source.owner, destination.owner, amount);
+}
+
+module.exports = { transferFunds };
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript,caption={Jest integration test verifying balances and notification}]
+const { BankAccount } = require("./bankAccount");
+const { transferFunds } = require("./transferService");
+
+class SpyNotifier {
+  constructor() {
+    this.calls = [];
+  }
+
+  notify(fromOwner, toOwner, amount) {
+    this.calls.push({ fromOwner, toOwner, amount });
+  }
+}
+
+test("transfer updates balances and notifies owners", () => {
+  const source = new BankAccount("Ali", 150);
+  const destination = new BankAccount("Bij", 50);
+  const notifier = new SpyNotifier();
+
+  transferFunds(source, destination, 25, notifier);
+
+  expect(source.balance).toBe(125);
+  expect(destination.balance).toBe(75);
+  expect(notifier.calls).toEqual([{ fromOwner: "Ali", toOwner: "Bij", amount: 25 }]);
+});
+\end{lstlisting}
+
+\section{Regression Testing Best Practices}
+
+Regression tests memorialize bugs by codifying the exact scenario that failed before. When a bug is fixed, add a regression test that reproduces the failure path, references the ticket, and stays narrow and deterministic.
+
+\begin{itemize}[nosep]
+  \item \textbf{Reference the bug:} include the ticket or issue number in the test name or a comment so reviewers understand the context.
+  \item \textbf{Keep it minimal:} capture only the data and steps necessary to trigger the bug without extra noise.
+  \item \textbf{Ensure repeatability:} remove randomness, seed fixtures, and avoid slow external calls.
+  \item \textbf{Tag regressions:} use dedicated directories or markers (e.g. \texttt{tests/regression/} or \texttt{@pytest.mark.regression}) so CI can run them selectively.
+\end{itemize}
+
+\subsection{Python Regression Example (Bug \#1012)}
+
+\begin{lstlisting}[language=Python,caption={\texttt{tests/regression/test\_bug\_1012.py} guarding against zero deposits}]
+import pytest
+
+from bank import BankAccount
+
+
+@pytest.mark.regression
+def test_bug_1012_rejects_zero_deposit() -> None:
+    account = BankAccount(owner="Eve", balance=100.0)
+
+    with pytest.raises(ValueError):
+        account.deposit(0.0)
+\end{lstlisting}
+
+\subsection{JavaScript Regression Example (Issue JS-3281)}
+
+\begin{lstlisting}[language=JavaScript,caption={Regression test guarding overdrafts despite floating-point drift}]
+const { BankAccount } = require("./bankAccount");
+
+test("JS-3281: withdraw fails when rounding noise would otherwise allow overdraft", () => {
+  const account = new BankAccount("Frank", 100);
+  account.withdraw(99.9999999999);
+  expect(() => account.withdraw(0.0000000002)).toThrow("Insufficient funds.");
+});
+\end{lstlisting}
+
+\section{Organizing Tests and Execution}
+
+Keep your suites organised by purpose so you can run them independently.
+
+\begin{lstlisting}[language=bash,caption={Python project layout with dedicated suites}]
+my_project/
+  my_package/
+    math_utils.py
+    bank.py
+  tests/
+    unit/
+      test_math_utils.py
+      test_bank.py
+    integration/
+      test_transfer_flow.py
+    regression/
+      test_bug_1012.py
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash]
+pytest tests/unit        # fast feedback while coding
+pytest tests/integration # verify component collaborations
+pytest tests/regression  # protect past bugs
+\end{lstlisting}
+
+For JavaScript projects, mirror the structure and leverage \texttt{package.json} scripts for each suite.
+
+\begin{lstlisting}[language=bash,caption={JavaScript project structure aligned with Jest suites}]
+my-js-project/
+  mathUtils.js
+  bankAccount.js
+  tests/
+    unit/
+      mathUtils.test.js
+      bankAccount.test.js
+    integration/
+      transferService.test.js
+    regression/
+      bug_3281.test.js
+  package.json
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash]
+npm run test:unit
+npm run test:integration
+npm run test:regression
+\end{lstlisting}
+
+Tagging suites with markers or directories keeps CI pipelines lean, e.g. run only unit tests on every commit and reserve integration/regression suites for nightly pipelines or special branches.
+
+\end{document}

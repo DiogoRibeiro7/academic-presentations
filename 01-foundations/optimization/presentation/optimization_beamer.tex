@@ -196,7 +196,7 @@
   \begin{theorembox}{Fundamental Property}
     For convex $f$ over convex set $\mathcal{X}$: any local minimum is a global minimum.
   \end{theorembox}
-</frame>
+\end{frame}
 
 \begin{frame}{Optimality Conditions}
   \begin{theorembox}{First-Order Optimality (Unconstrained)}
@@ -247,7 +247,7 @@
   \begin{examplebox}{Example: Ridge Regression}
     $$\min_{\vect{w}} \|\mat{X}\vect{w} - \vect{y}\|_2^2 + \lambda \|\vect{w}\|_2^2$$
     This is a convex QP problem with closed-form solution.
-  \end{examplebox>
+  \end{examplebox}
 \end{frame}
 
 % ================================================================
@@ -285,12 +285,12 @@
 
 \begin{frame}[fragile]{Batch vs Stochastic Gradient Descent}
   \textbf{Batch Gradient Descent:}
-  \begin{itemize}
-    \item Use full dataset to compute gradient
-    \item For $f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \ell(y_i, \vect{w}^T\vect{x}_i)$:
-    $$\nabla f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \nabla \ell(y_i, \vect{w}^T\vect{x}_i)$$
-    \item Exact gradient, but expensive for large $n$
-  \end{itemize>
+    \begin{itemize}
+      \item Use full dataset to compute gradient
+      \item For $f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \ell(y_i, \vect{w}^T\vect{x}_i)$:
+      $$\nabla f(\vect{w}) = \frac{1}{n}\sum_{i=1}^n \nabla \ell(y_i, \vect{w}^T\vect{x}_i)$$
+      \item Exact gradient, but expensive for large $n$
+    \end{itemize}
 
   \vspace{0.5em}
 
@@ -450,7 +450,7 @@
       \item Monitor training curves to detect issues
     \end{itemize}
   \end{alertbox}
-\end{frame>
+\end{frame}
 
 % ================================================================
 \section{Constrained Optimization}
@@ -572,7 +572,7 @@
 
   \begin{definitionbox}{Proximal Gradient Method}
     $$\vect{x}_{k+1} = \text{prox}_{\alpha_k g}(\vect{x}_k - \alpha_k \nabla f(\vect{x}_k))$$
-  \end{definitionbox>
+  \end{definitionbox}
 
   \vspace{0.5em}
 
@@ -664,7 +664,7 @@
       \item $\mu$ parents generate $\lambda$ offspring
       \item Select best $\mu$ from offspring (no elitism)
     \end{itemize}
-  \end{definitionbox>
+  \end{definitionbox}
 
   \begin{definitionbox}{$(\mu + \lambda)$-ES}
     \begin{itemize}
@@ -1151,7 +1151,7 @@ for epoch in range(num_epochs):
       \item Perform local SGD on local data for $E$ epochs
       \item Send updated model to server
     \end{itemize}
-  \end{examplebox>
+  \end{examplebox}
 
   \vspace{0.5em}
 
