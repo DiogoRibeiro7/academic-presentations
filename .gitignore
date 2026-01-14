@@ -1,0 +1,157 @@
+# LaTeX auxiliary files
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+# Beamer specific
+*.nav
+*.snm
+*.vrb
+
+# Bibliography files
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
+
+# Build tool auxiliary files
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+
+# Intermediate files
+*-converted-to.*
+
+# Latexmk
+*.fdb_latexmk
+
+# Glossaries
+*.acn
+*.acr
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.lzo
+*.lzs
+*.slg
+*.slo
+*.sls
+
+# Hyperref
+*.brf
+
+# Knitr
+*-concordance.tex
+*.tikz
+*-tikzDictionary
+
+# Listings
+*.lol
+
+# Makeidx
+*.idx
+*.ilg
+*.ind
+
+# Minitoc
+*.maf
+*.mlf
+*.mlt
+*.mtc[0-9]*
+*.slf[0-9]*
+*.slt[0-9]*
+*.stc[0-9]*
+
+# Minted
+_minted*
+*.pyg
+
+# Nomencl
+*.nlg
+*.nlo
+*.nls
+
+# Pax
+*.pax
+
+# Pdfpages
+*.pdf_tex
+
+# Sagetex
+*.sagetex.sage
+*.sagetex.py
+*.sagetex.scmd
+
+# Scrwfile
+*.wrt
+
+# Sympy
+*.sout
+*.sympy
+sympy-plots-for-*.tex/
+
+# Pdfcomment
+*.upa
+*.upb
+
+# Pythontex
+*.pytxcode
+pythontex-files-*/
+
+# Tcolorbox
+*.listing
+
+# TikZ & PGF
+*.dpth
+*.md5
+*.auxlock
+
+# Todonotes
+*.tdo
+
+# Vhistory
+*.hst
+*.ver
+
+# Easy-todo
+*.lod
+
+# Xcolor
+*.xcp
+
+# Xmpincl
+*.xmpi
+
+# Xindy
+*.xdy
+
+# Xypic precompiled matrices and outlines
+*.xyc
+*.xyd
+
+# Endfloat
+*.ttt
+*.fff
+
+# Latexian
+TSWLatexianTemp*
+
+# Makeindex
+*.nlo
+
+

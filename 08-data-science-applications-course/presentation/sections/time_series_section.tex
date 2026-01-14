@@ -354,14 +354,13 @@ Adds seasonal components with period $s$:
 \vspace{0.3cm}
 
 \textbf{Python Implementation:}
-\begin{verbatim}
-from statsmodels.tsa.arima.model
-  import ARIMA
 
-model = ARIMA(data, order=(1,1,1))
-results = model.fit()
+{\small\ttfamily
+from statsmodels.tsa.arima.model import ARIMA\\
+model = ARIMA(data, order=(1,1,1))\\
+results = model.fit()\\
 forecast = results.forecast(steps=12)
-\end{verbatim}
+}
 \end{column}
 \end{columns}
 \end{frame}

@@ -1,0 +1,5 @@
+# Keep only TeX and PDF artifacts in this folder
+*
+!*.tex
+!*.pdf
+!.gitignore

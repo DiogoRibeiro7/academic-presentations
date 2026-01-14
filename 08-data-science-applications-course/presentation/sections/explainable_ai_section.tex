@@ -20,7 +20,7 @@
 % PART 1: FOUNDATIONS
 % ================================================================
 
-\begin{frame}{Why Interpretability Matters}
+\begin{frame}[fragile]{Why Interpretability Matters}
 \textbf{The black box problem in machine learning}
 
 \begin{columns}
@@ -112,7 +112,7 @@ COMPAS recidivism algorithm: Used to predict re-offense. Found to be biased agai
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Types of Interpretability}
+\begin{frame}[fragile]{Types of Interpretability}
 \textbf{Taxonomy of explanation methods}
 
 \begin{columns}
@@ -231,7 +231,7 @@ Attention Weights & Local & Model-specific (NN) \\
 % PART 2: MODEL-SPECIFIC INTERPRETABILITY
 % ================================================================
 
-\begin{frame}{Intrinsically Interpretable Models}
+\begin{frame}[fragile]{Intrinsically Interpretable Models}
 \textbf{Models we can directly understand}
 
 \begin{columns}
@@ -330,7 +330,7 @@ IF age > 30 AND income > 50K
 % PART 3: SHAP (SHapley Additive exPlanations)
 % ================================================================
 
-\begin{frame}{SHAP: Unified Framework for Interpretability}
+\begin{frame}[fragile]{SHAP: Unified Framework for Interpretability}
 \textbf{Game theory meets machine learning}
 
 \begin{columns}
@@ -426,7 +426,7 @@ SHAP provides theoretically sound, consistent explanations for ANY model!
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{LIME: Local Interpretable Model-Agnostic Explanations}
+\begin{frame}[fragile]{LIME: Local Interpretable Model-Agnostic Explanations}
 \textbf{Explain any model locally with simple approximations}
 
 \begin{columns}
@@ -515,7 +515,7 @@ Images/Text & Both support well \\
 
 % Due to length, including key additional topics in summary form
 
-\begin{frame}{Feature Importance Methods}
+\begin{frame}[fragile]{Feature Importance Methods}
 \textbf{Understanding what the model learned globally}
 
 \begin{columns}
@@ -608,7 +608,7 @@ Use multiple methods! Permutation + SHAP + PDP gives complete picture.
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Counterfactual Explanations}
+\begin{frame}[fragile]{Counterfactual Explanations}
 \textbf{"What would need to change for a different outcome?"}
 
 \begin{columns}
@@ -694,7 +694,7 @@ cf.visualize_as_dataframe()
 \end{columns}
 \end{frame}
 
-\begin{frame}{Knowledge Check: Explainable AI}
+\begin{frame}[fragile]{Knowledge Check: Explainable AI}
 \textbf{Test your understanding}
 
 \vspace{0.2cm}
@@ -734,7 +734,7 @@ cf.visualize_as_dataframe()
 \end{block}
 \end{frame}
 
-\begin{frame}{Summary \& Best Practices}
+\begin{frame}[fragile]{Summary \& Best Practices}
 \textbf{Building interpretable ML systems}
 
 \begin{columns}

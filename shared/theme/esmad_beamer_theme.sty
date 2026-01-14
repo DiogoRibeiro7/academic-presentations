@@ -14,7 +14,7 @@
 % Required Packages
 % ================================================================
 
-\RequirePackage{xcolor}
+\RequirePackage[table,dvipsnames]{xcolor}
 \RequirePackage{graphicx}
 \RequirePackage{tikz}
 \RequirePackage{tcolorbox}
@@ -23,6 +23,7 @@
 \RequirePackage{amsmath,amsthm,amssymb}
 \RequirePackage{algorithm,algpseudocode}
 \RequirePackage{booktabs}  % For professional tables
+\RequirePackage{colortbl}
 
 % ================================================================
 % Color Scheme
@@ -44,6 +45,12 @@
 \definecolor{CodeComment}{RGB}{0, 128, 0}
 \definecolor{CodeKeyword}{RGB}{128, 0, 128}
 \definecolor{CodeString}{RGB}{186, 33, 33}
+
+% Named colors used across the repository
+\definecolor{forest}{RGB}{34, 139, 34}
+\definecolor{navyblue}{RGB}{0, 0, 128}
+\definecolor{crimson}{RGB}{220, 20, 60}
+\definecolor{gold}{RGB}{255, 215, 0}
 
 % ================================================================
 % Beamer Settings
@@ -175,7 +182,7 @@
     colback=ESMADLightGray,
     colframe=ESMADBlue,
     fonttitle=\bfseries,
-    title=#1
+    title={#1}
   ]
 }{%
   \end{tcolorbox}
@@ -187,7 +194,7 @@
     colback=ESMADLightGray,
     colframe=ESMADLightBlue,
     fonttitle=\bfseries,
-    title=#1
+    title={#1}
   ]
 }{%
   \end{tcolorbox}
@@ -199,7 +206,7 @@
     colback=white,
     colframe=ESMADLightBlue,
     fonttitle=\bfseries,
-    title=#1,
+    title={#1},
     boxrule=1.5pt
   ]
 }{%
@@ -212,7 +219,7 @@
     colback=white,
     colframe=ESMADAccent,
     fonttitle=\bfseries,
-    title=#1,
+    title={#1},
     boxrule=2pt
   ]
 }{%
@@ -260,7 +267,7 @@
 \newcommand{\Poisson}{\text{Poisson}}
 \newcommand{\Exponential}{\text{Exp}}
 \newcommand{\Beta}{\text{Beta}}
-\newcommand{\Gamma}{\text{Gamma}}
+\newcommand{\GammaDist}{\text{Gamma}}
 
 % Probability and expectation
 \DeclareMathOperator{\E}{\mathbb{E}}
@@ -268,6 +275,8 @@
 \DeclareMathOperator{\Cov}{Cov}
 \DeclareMathOperator{\Corr}{Corr}
 \newcommand{\Prob}{\mathbb{P}}
+
+\DeclareMathOperator{\softmax}{softmax}
 
 % Common operators
 \DeclareMathOperator*{\argmax}{arg\,max}
