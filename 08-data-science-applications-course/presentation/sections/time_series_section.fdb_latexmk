@@ -1,0 +1,9 @@
+# Fdb version 4
+["pdflatex"] 0 "time_series_section.tex" "time_series_section.pdf" "time_series_section" 0 -1
+  "time_series_section.aux" 0 -1 0 "pdflatex"
+  "time_series_section.tex" 0 -1 0 ""
+  (generated)
+  "time_series_section.aux"
+  "time_series_section.log"
+  "time_series_section.pdf"
+  (rewritten before read)

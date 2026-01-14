@@ -1,0 +1,34 @@
+\frametitle{More Tools}
+\textbf{3. InterpretML (Microsoft):}
+  \begin{lstlisting}[language=Python]
+from interpret.glassbox import ExplainableBoostingClassifier
+from interpret import show
+
+# Train interpretable model
+ebm = ExplainableBoostingClassifier()
+ebm.fit(X_train, y_train)
+
+# Global explanation
+ebm_global = ebm.explain_global()
+show(ebm_global)
+
+# Local explanation
+ebm_local = ebm.explain_local(X_test, y_test)
+show(ebm_local)
+  \end{lstlisting}
+
+  \vspace{0.5em}
+
+  \textbf{4. Fairlearn (Microsoft):}
+  \begin{lstlisting}[language=Python]
+from fairlearn.metrics import MetricFrame
+
+# Compute metrics by group
+metric_frame = MetricFrame(
+    metrics={'accuracy': accuracy_score, 'fpr': false_positive_rate},
+    y_true=y_test,
+    y_pred=y_pred,
+    sensitive_features=sensitive_features
+)
+print(metric_frame.by_group)
+  \end{lstlisting}
