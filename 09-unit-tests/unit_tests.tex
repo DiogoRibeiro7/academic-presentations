@@ -223,6 +223,46 @@ describe("BankAccount", () => {
 });
 \end{lstlisting}
 
+\section{Testing Playbook}
+
+A repeatable playbook turns the best practices above into reliable habits. Start with the unit layer for feedback and only climb the pyramid when you need to validate collaborations or guard a fixed bug.
+
+\subsection*{Unit Testing Playbook}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Define the behaviour:} write down the contract, exceptions, and edge cases before touching code.
+  \item \textbf{Choose scope and fixtures:} limit each test to a single assertion and reuse factories or fixtures for shared setup.
+  \item \textbf{Follow AAA:} split Arrange, Act, and Assert so readers instantly understand the flow.
+  \item \textbf{Parameterize responsibly:} combine similar inputs into a single parametrized test instead of duplicating logic.
+  \item \textbf{Keep the surface stable:} assert the public API and avoid reaching into private helpers that may change during refactors.
+\end{enumerate}
+
+\subsection*{Integration Testing Playbook}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Scope a scenario:} pick one workflow such as a transfer or API call that crosses module boundaries.
+  \item \textbf{Prepare real modules:} exercise the production code paths while stubbing only the truly external services.
+  \item \textbf{Control shared state:} reset databases, caches, or files between runs so tests stay deterministic.
+  \item \textbf{Assert contracts and side effects:} verify both the state changes and any notifications or outputs.
+\end{enumerate}
+
+\subsection*{Regression Testing Playbook}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Reference the incident:} mention the ticket or issue ID so reviewers know why the test exists.
+  \item \textbf{Reproduce minimally:} encode only the precise steps and inputs required to trigger the bug.
+  \item \textbf{Lock randomness:} seed any stochastic helpers and avoid flaky external calls.
+  \item \textbf{Tag and guard:} keep regressions in dedicated folders or use explicit markers so teams can run them on demand.
+\end{enumerate}
+
+\subsection*{Confidence Checklist}
+
+\begin{itemize}[nosep]
+  \item Run fast unit suites on every commit so you catch regressions early.
+  \item Reserve integration and regression suites for nightly jobs, feature branches, or explicit `pytest`/`npm` invocations.
+  \item Keep an eye on the pyramid: the higher the layer, the fewer tests, but the broader the coverage.
+\end{itemize}
+
 \section{Integration Testing Best Practices}
 
 Integration tests should exercise realistic interactions without becoming as slow or brittle as end-to-end suites. Keep them focused on meaningful scenarios, start and clean up state deliberately, and simulate only the external services that are too slow or unreliable for unit tests.

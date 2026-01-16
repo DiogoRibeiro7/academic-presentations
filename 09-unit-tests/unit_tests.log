@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  13 JAN 2026 14:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  16 JAN 2026 17:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -342,16 +342,14 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 68.
  (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 82.
+ (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 94.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 94.
- (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 109.
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 91.
 
 
 [1
@@ -359,59 +357,44 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
 {C:/Users/diogo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
 
 [2]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 201.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 211.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 173.
 
 
-[3] (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
-File: lstlang1.sty 2024/09/23 1.10c listings language file
-) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
-File: lstlang1.sty 2024/09/23 1.10c listings language file
-)
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 296.
-
+[3]
 
 [4]
 
 [5]
 
-[6]
+[6] (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
 
 [7]
 
-[8]
-
-[9]
-
-[10]
-
-[11]
-
-[12]
-
-[13] (unit_tests.aux)
+[8] (unit_tests.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-10-09>
  ***********
 Package rerunfilecheck Info: File `unit_tests.out' has not changed.
-(rerunfilecheck)             Checksum: 3E6DE7E668EBD7DAB5C89D83027126A9;2407.
+(rerunfilecheck)             Checksum: 72427CC806536FF0335967F6E8AFFE23;2909.
  ) 
 Here is how much of TeX's memory you used:
- 12331 strings out of 468080
- 187414 string characters out of 5425771
- 1088076 words of memory out of 5000000
- 40314 multiletter control sequences out of 15000+600000
- 673325 words of font info for 69 fonts, out of 8000000 for 9000
+ 12040 strings out of 468080
+ 183232 string characters out of 5425771
+ 1095795 words of memory out of 5000000
+ 40301 multiletter control sequences out of 15000+600000
+ 668108 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,436b,2066s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
-Output written on unit_tests.pdf (13 pages, 367553 bytes).
+ 75i,6n,79p,433b,2156s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on unit_tests.pdf (8 pages, 299057 bytes).
 PDF statistics:
- 805 PDF objects out of 1000 (max. 8388607)
- 560 named destinations out of 1000 (max. 500000)
- 89 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 455 PDF objects out of 1000 (max. 8388607)
+ 283 named destinations out of 1000 (max. 500000)
+ 97 words of extra memory for PDF output out of 10000 (max. 10000000)
 
