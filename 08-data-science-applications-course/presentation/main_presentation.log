@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  13 MAR 2026 22:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.29)  14 MAR 2026 10:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1010,27 +1010,89 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 File: listings.cfg 2024/09/23 1.10c listings configuration
 ))
 Package: listings 2024/09/23 1.10c (Carsten Heinz)
-) (main_presentation.aux)
+) (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/fvextra\fvextra.sty
+Package: fvextra 2025/05/29 v1.13.2 fvextra - extensions and patches for fancyv
+rb
+
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/fancyvrb\fancyvrb.sty
+Package: fancyvrb 2025/07/28 4.6 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count393
+\FV@InFile=\read4
+\FV@TabBox=\box98
+\c@FancyVerbLine=\count394
+\FV@StepNumber=\count395
+\FV@OutFile=\write5
+)
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+Package: lineno 2025/05/13 line numbers on paragraphs v5.5
+\linenopenalty=\count396
+\output=\toks56
+\linenoprevgraf=\count397
+\linenumbersep=\dimen335
+\linenumberwidth=\dimen336
+\c@linenumber=\count398
+\c@pagewiselinenumber=\count399
+\c@LN@truepage=\count400
+\c@internallinenumber=\count401
+\c@internallinenumbers=\count402
+\quotelinenumbersep=\dimen337
+\bframerule=\dimen338
+\bframesep=\dimen339
+\bframebox=\box99
+\@LN@amsmath@ams@eqpen=\count403
+)
+\c@FancyVerbWriteLine=\count404
+\c@FancyVerbBufferLine=\count405
+\c@FV@TrueTabGroupLevel=\count406
+\c@FV@TrueTabCounter=\count407
+\FV@TabBox@Group=\box100
+\FV@bgcolorstructbox=\box101
+\FV@TmpLength=\skip73
+\c@FV@HighlightLinesStart=\count408
+\c@FV@HighlightLinesStop=\count409
+\FV@LoopCount=\count410
+\FV@NCharsBox=\box102
+\FV@BreakIndent=\dimen340
+\FV@BreakIndentNChars=\count411
+\FV@BreakSymbolSepLeft=\dimen341
+\FV@BreakSymbolSepLeftNChars=\count412
+\FV@BreakSymbolSepRight=\dimen342
+\FV@BreakSymbolSepRightNChars=\count413
+\FV@BreakSymbolIndentLeft=\dimen343
+\FV@BreakSymbolIndentLeftNChars=\count414
+\FV@BreakSymbolIndentRight=\dimen344
+\FV@BreakSymbolIndentRightNChars=\count415
+\c@FancyVerbLineBreakLast=\count416
+\FV@LineBox=\box103
+\FV@LineIndentBox=\box104
+\c@FV@BreakBufferDepth=\count417
+\FV@LineWidth=\dimen345
+)
+(main_presentation.aux)
 \openout1 = `main_presentation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1070,17 +1132,17 @@ LaTeX Font Info:    ... okay on input line 14.
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count393
-\scratchdimen=\dimen335
-\scratchbox=\box98
-\nofMPsegments=\count394
-\nofMParguments=\count395
-\everyMPshowfont=\toks56
-\MPscratchCnt=\count396
-\MPscratchDim=\dimen336
-\MPnumerator=\count397
-\makeMPintoPDFobject=\count398
-\everyMPtoPDFconversion=\toks57
+\scratchcounter=\count418
+\scratchdimen=\dimen346
+\scratchbox=\box105
+\nofMPsegments=\count419
+\nofMParguments=\count420
+\everyMPshowfont=\toks57
+\MPscratchCnt=\count421
+\MPscratchDim=\dimen347
+\MPnumerator=\count422
+\makeMPintoPDFobject=\count423
+\everyMPtoPDFconversion=\toks58
 )
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -1092,63 +1154,63 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring OFF on input line 14.
+Package hyperref Info: Link coloring OFF on input line 22.
  (main_presentation.out) (main_presentation.out)
-\@outlinefile=\write5
-\openout5 = `main_presentation.out'.
+\@outlinefile=\write6
+\openout6 = `main_presentation.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 14.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 22.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 14.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 22.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 14.
+(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 14.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 14.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 14.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 22.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 14.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 14.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 14.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 22.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 14.
+(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 14.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 14.
+(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 22.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 14.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 14.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 22.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/b/n on input line 14.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/b/n on input line 22.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/b/it on input line 14.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/b/it on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/cmr/b/n on input line 14.
+(Font)                  OT1/cmss/b/n --> OT1/cmr/b/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/cmss/b/n on input line 14.
+(Font)                  OT1/cmss/b/n --> OT1/cmss/b/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/b/n on input line 14.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/b/n on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/b/it on input line 14.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/b/it on input line 22.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/b/n on input line 14.
-LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 14.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/b/n on input line 22.
+LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 22.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `normal'
-(Font)                  OT1/cmss/m/it --> OT1/mathkerncmss/m/sl on input line 1
-4.
+(Font)                  OT1/cmss/m/it --> OT1/mathkerncmss/m/sl on input line 2
+2.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/b/it --> OT1/mathkerncmss/m/sl on input line 1
-4.
+(Font)                  OT1/cmss/b/it --> OT1/mathkerncmss/m/sl on input line 2
+2.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/mathkerncmss/m/sl --> OT1/mathkerncmss/bx/sl on inp
-ut line 14.
+ut line 22.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-b
 asic-dictionary-English.dict
@@ -1174,22 +1236,26 @@ Dictionary: translator-numbers-dictionary, Language: English
 heorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-\c@lstlisting=\count399
- (main_presentation.nav)
+(C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+)
+\c@lstlisting=\count424
+
+(main_presentation.nav)
 LaTeX Font Info:    Trying to load font information for U+fontawesomefree1 on i
-nput line 18.
+nput line 26.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/fontawesome5\ufontaweso
 mefree1.fd)
 LaTeX Font Info:    Trying to load font information for U+fontawesomebrands1 on
- input line 18.
+ input line 26.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/fontawesome5\ufontaweso
 mebrands1.fd)
 LaTeX Font Info:    Font shape `U/fontawesomebrands1/solid/n' in size <8> not a
 vailable
 (Font)              Font shape `U/fontawesomebrands1/regular/n' tried instead o
-n input line 18.
+n input line 26.
 
 
 [1
@@ -1198,20 +1264,20 @@ n input line 18.
 o/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/fontawesome5/fa5free1.enc}{C:/U
 sers/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/fontawesome5/fa5brands
 1.enc}]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 27.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 35.
 
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 27.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 35.
 
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for OT1+mathkerncmss on inp
-ut line 27.
+ut line 35.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/sansmathaccent\ot1mathk
 erncmss.fd
@@ -1369,12 +1435,17 @@ Overfull \vbox (163.21497pt too high) detected at line 963
 \openout4 = `main_presentation.vrb'.
 
  (main_presentation.vrb)
-Overfull \vbox (182.12463pt too high) detected at line 117
+Overfull \vbox (133.39589pt too high) detected at line 117
  []
 
 
 
 [20
+
+]
+
+[21
+
 
 ]
 \openout4 = `main_presentation.vrb'.
@@ -1385,54 +1456,13 @@ Overfull \vbox (126.86098pt too high) detected at line 225
 
 
 
-[21
-
-]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 56--56
-[]\OT1/cmtt/m/n/10.95 mlflow.set_experiment("churn_prediction")[] 
- []
-
-
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 60--60
-[]    \OT1/cmtt/m/n/10.95 mlflow.log_param("n_estimators", 100)[] 
- []
-
-
-Overfull \hbox (24.77287pt too wide) in paragraph at lines 71--71
-[]    \OT1/cmtt/m/n/10.95 accuracy = model.score(X_test, y_test)[] 
- []
-
-
-Overfull \hbox (30.52156pt too wide) in paragraph at lines 72--72
-[]    \OT1/cmtt/m/n/10.95 mlflow.log_metric("accuracy", accuracy)[] 
- []
-
-
-Overfull \hbox (36.27025pt too wide) in paragraph at lines 75--75
-[]    \OT1/cmtt/m/n/10.95 mlflow.sklearn.log_model(model, "model")[] 
- []
-
-
-Overfull \hbox (53.51631pt too wide) in paragraph at lines 78--78
-[]    \OT1/cmtt/m/n/10.95 mlflow.log_artifact("confusion_matrix.png")[] 
- []
-
-)
-Overfull \vbox (255.0252pt too high) detected at line 322
- []
-
-
-
 [22
 
 ]
 \openout4 = `main_presentation.vrb'.
 
  (main_presentation.vrb)
-Overfull \vbox (286.84483pt too high) detected at line 412
+Overfull \vbox (134.27469pt too high) detected at line 322
  []
 
 
@@ -1442,171 +1472,94 @@ Overfull \vbox (286.84483pt too high) detected at line 412
 ]
 \openout4 = `main_presentation.vrb'.
 
- (main_presentation.vrb
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 51--51
-[]\OT1/cmtt/m/n/10.95 from flask import Flask, request, jsonify[] 
- []
-
-
-Overfull \hbox (13.2755pt too wide) in paragraph at lines 57--57
-[]\OT1/cmtt/m/n/10.95 @app.route('/predict', methods=['POST'])[] 
- []
-
-
-Overfull \hbox (24.77287pt too wide) in paragraph at lines 62--62
-[]    \OT1/cmtt/m/n/10.95 prediction = model.predict([features])[] 
- []
-
-
-Overfull \hbox (65.01369pt too wide) in paragraph at lines 63--63
-[]    \OT1/cmtt/m/n/10.95 probability = model.predict_proba([features])[] 
- []
-
-
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 66--66
-[]        \OT1/cmtt/m/n/10.95 'prediction': int(prediction[0]),[] 
- []
-
-
-Overfull \hbox (53.51631pt too wide) in paragraph at lines 67--67
-[]        \OT1/cmtt/m/n/10.95 'probability': float(probability[0][1])[] 
- []
-
-
-Overfull \hbox (1.77812pt too wide) in paragraph at lines 71--71
-[]    \OT1/cmtt/m/n/10.95 app.run(host='0.0.0.0', port=5000)[] 
- []
-
-)
-Overfull \vbox (274.84483pt too high) detected at line 513
- []
-
-
+ (main_presentation.vrb)
 
 [24
 
 ]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb
-Overfull \hbox (1.77812pt too wide) in paragraph at lines 52--52
-[]\OT1/cmtt/m/n/10.95 docker run -p 5000:5000 my-ml-model:v1[] 
- []
-
-
-Overfull \hbox (36.27025pt too wide) in paragraph at lines 55--55
-[]\OT1/cmtt/m/n/10.95 curl -X POST http://localhost:5000/predict \[] 
- []
-
-
-Overfull \hbox (7.52681pt too wide) in paragraph at lines 56--56
-[]  \OT1/cmtt/m/n/10.95 -H "Content-Type: application/json" \[] 
- []
-
-)
-Overfull \vbox (284.63608pt too high) detected at line 609
+Overfull \vbox (154.76524pt too high) detected at line 412
  []
 
 
 
 [25
 
+
 ]
 \openout4 = `main_presentation.vrb'.
 
- (main_presentation.vrb
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 68--68
-[]\OT1/cmtt/m/n/10.95 from evidently.dashboard import Dashboard[] 
- []
-
-
-Overfull \hbox (7.52681pt too wide) in paragraph at lines 69--69
-[]\OT1/cmtt/m/n/10.95 from evidently.tabs import DataDriftTab[] 
- []
-
-
-Overfull \hbox (13.2755pt too wide) in paragraph at lines 80--80
-[]\OT1/cmtt/m/n/10.95 dashboard.save("data_drift_report.html")[] 
- []
-
-)
-Overfull \vbox (163.64055pt too high) detected at line 720
- []
-
-
+ (main_presentation.vrb)
 
 [26
 
 ]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb
-Overfull \hbox (7.52681pt too wide) in paragraph at lines 62--62
-[]    \OT1/cmtt/m/n/10.95 if: github.ref == 'refs/heads/main'[] 
- []
-
-
-Overfull \hbox (1.77812pt too wide) in paragraph at lines 66--66
-[]        \OT1/cmtt/m/n/10.95 run: docker build -t model:${{[] 
- []
-
-
-Overfull \hbox (24.77287pt too wide) in paragraph at lines 74--74
-[]        \OT1/cmtt/m/n/10.95 run: kubectl apply -f k8s/staging/[] 
- []
-
-
-Overfull \hbox (1.77812pt too wide) in paragraph at lines 77--77
-[]        \OT1/cmtt/m/n/10.95 run: pytest tests/integration/[] 
- []
-
-
-Overfull \hbox (7.52681pt too wide) in paragraph at lines 81--81
-[]        \OT1/cmtt/m/n/10.95 run: kubectl apply -f k8s/prod/[] 
- []
-
-)
-Overfull \vbox (327.0028pt too high) detected at line 818
+Overfull \vbox (154.76523pt too high) detected at line 513
  []
 
 
 
 [27
 
+
 ]
 \openout4 = `main_presentation.vrb'.
 
  (main_presentation.vrb)
-Overfull \vbox (133.9963pt too high) detected at line 858
+Overfull \vbox (123.92024pt too high) detected at line 609
  []
 
 
 
 [28
 
-] (main_presentation.vrb)
-Overfull \vbox (133.9963pt too high) detected at line 858
- []
-
-
+]
 
 [29
 
-] (main_presentation.vrb)
-Overfull \vbox (133.9963pt too high) detected at line 858
+
+]
+\openout4 = `main_presentation.vrb'.
+
+ (main_presentation.vrb)
+Overfull \vbox (118.41495pt too high) detected at line 720
  []
 
 
 
 [30
 
-] (main_presentation.vrb)
-Overfull \vbox (133.9963pt too high) detected at line 858
+]
+\openout4 = `main_presentation.vrb'.
+
+ (main_presentation.vrb)
+
+[31
+
+]
+Overfull \vbox (195.9398pt too high) detected at line 818
  []
 
 
 
-[31
+[32
+
+
+]
+\openout4 = `main_presentation.vrb'.
+
+ (main_presentation.vrb)
+
+[33
+
+]
+
+[34
+
+
+]
+
+[35
+
 
 ]
 \openout4 = `main_presentation.vrb'.
@@ -1617,22 +1570,27 @@ Overfull \vbox (126.83456pt too high) detected at line 959
 
 
 
-[32
+[36
 
 ]) (sections/explainable_ai_section.tex
 
-[33
+[37
 
 ]
 \openout4 = `main_presentation.vrb'.
 
  (main_presentation.vrb)
-Overfull \vbox (138.05498pt too high) detected at line 113
+Overfull \vbox (76.33456pt too high) detected at line 113
  []
 
 
 
-[34
+[38
+
+]
+
+[39
+
 
 ]
 \openout4 = `main_presentation.vrb'.
@@ -1648,7 +1606,7 @@ Overfull \vbox (57.68823pt too high) detected at line 228
 
 
 
-[35
+[40
 
 ]
 \openout4 = `main_presentation.vrb'.
@@ -1659,7 +1617,7 @@ Overfull \vbox (92.42104pt too high) detected at line 327
 
 
 
-[36
+[41
 
 ]
 \openout4 = `main_presentation.vrb'.
@@ -1673,137 +1631,56 @@ cmsy/m/n/10.95 ^^@ \OT1/mathkerncmss/m/sl/10.95 f\OT1/cmss/m/n/10.95 (\OT1/math
 kerncmss/m/sl/10.95 S\OT1/cmss/m/n/10.95 )]
  []
 
-
-Overfull \hbox (30.52156pt too wide) in paragraph at lines 56--56
-[]\OT1/cmtt/m/n/10.95 shap_values = explainer.shap_values(X_test)[] 
- []
-
-
-Overfull \hbox (1.77812pt too wide) in paragraph at lines 59--59
-[]\OT1/cmtt/m/n/10.95 shap.summary_plot(shap_values, X_test)[] 
- []
-
-
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 60--60
-[]\OT1/cmtt/m/n/10.95 shap.force_plot(explainer.expected_value,[] 
- []
-
-
-Overfull \hbox (53.51631pt too wide) in paragraph at lines 61--61
-[]                \OT1/cmtt/m/n/10.95 shap_values[0], X_test.iloc[0])[] 
- []
-
 )
-Overfull \vbox (228.53215pt too high) detected at line 427
- []
-
-
-
-[37
-
-]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb
-Overfull \hbox (19.02419pt too wide) in paragraph at lines 54--54
-[]\OT1/cmtt/m/n/10.95 explanation = explainer.explain_instance([] 
- []
-
-)
-Overfull \vbox (163.42511pt too high) detected at line 514
- []
-
-
-
-[38
-
-]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb
-Overfull \hbox (13.2755pt too wide) in paragraph at lines 62--62
-[]\OT1/cmtt/m/n/10.95 PartialDependenceDisplay.from_estimator([] 
- []
-
-)
-Overfull \vbox (203.6027pt too high) detected at line 609
- []
-
-
-
-[39
-
-]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb)
-Overfull \vbox (208.64476pt too high) detected at line 695
- []
-
-
-
-[40
-
-]
-\openout4 = `main_presentation.vrb'.
-
- (main_presentation.vrb)
-Overfull \vbox (121.91713pt too high) detected at line 735
- []
-
-
-
-[41
-
-] (main_presentation.vrb)
-Overfull \vbox (121.91713pt too high) detected at line 735
- []
-
-
 
 [42
 
-] (main_presentation.vrb)
-Overfull \vbox (121.91713pt too high) detected at line 735
+]
+Overfull \vbox (163.68257pt too high) detected at line 427
  []
 
 
 
 [43
 
-] (main_presentation.vrb)
-Overfull \vbox (121.91713pt too high) detected at line 735
- []
 
-
+]
 
 [44
+
 
 ]
 \openout4 = `main_presentation.vrb'.
 
  (main_presentation.vrb)
-Overfull \vbox (168.8576pt too high) detected at line 826
+Overfull \vbox (103.07405pt too high) detected at line 514
  []
 
 
 
 [45
 
-]) (sections/time_series_section.tex
-
-[46
-
 ]
-Overfull \vbox (122.88101pt too high) detected at line 109
+\openout4 = `main_presentation.vrb'.
+
+ (main_presentation.vrb)
+Overfull \vbox (113.86548pt too high) detected at line 609
  []
 
 
 
-[47
+[46
 
 ]
-Overfull \vbox (86.98029pt too high) detected at line 200
+
+[47
+
+
+]
+\openout4 = `main_presentation.vrb'.
+
+ (main_presentation.vrb)
+Overfull \vbox (144.44452pt too high) detected at line 695
  []
 
 
@@ -1811,47 +1688,39 @@ Overfull \vbox (86.98029pt too high) detected at line 200
 [48
 
 ]
-Overfull \vbox (197.07549pt too high) detected at line 284
- []
+\openout4 = `main_presentation.vrb'.
 
-
+ (main_presentation.vrb)
 
 [49
 
 ]
-Overfull \vbox (61.55473pt too high) detected at line 366
- []
-
-
 
 [50
 
+
 ]
-Overfull \vbox (136.84175pt too high) detected at line 407
- []
+\openout4 = `main_presentation.vrb'.
 
-
+ (main_presentation.vrb)
 
 [51
 
 ]
-Overfull \vbox (136.84175pt too high) detected at line 407
+Overfull \vbox (152.12843pt too high) detected at line 826
  []
 
 
 
 [52
 
-]
-Overfull \vbox (136.84175pt too high) detected at line 407
- []
 
-
+]) (sections/time_series_section.tex
 
 [53
 
 ]
-Overfull \vbox (136.84175pt too high) detected at line 407
+Overfull \vbox (122.88101pt too high) detected at line 109
  []
 
 
@@ -1859,7 +1728,7 @@ Overfull \vbox (136.84175pt too high) detected at line 407
 [54
 
 ]
-Overfull \vbox (37.279pt too high) detected at line 507
+Overfull \vbox (86.98029pt too high) detected at line 200
  []
 
 
@@ -1867,49 +1736,105 @@ Overfull \vbox (37.279pt too high) detected at line 507
 [55
 
 ]
-Overfull \vbox (127.77052pt too high) detected at line 601
+Overfull \vbox (197.07549pt too high) detected at line 284
  []
 
 
 
 [56
 
-])
+]
+Overfull \vbox (61.55473pt too high) detected at line 366
+ []
+
+
 
 [57
 
 ]
+Overfull \vbox (136.84175pt too high) detected at line 407
+ []
+
+
 
 [58
+
+]
+Overfull \vbox (136.84175pt too high) detected at line 407
+ []
+
+
+
+[59
+
+]
+Overfull \vbox (136.84175pt too high) detected at line 407
+ []
+
+
+
+[60
+
+]
+Overfull \vbox (136.84175pt too high) detected at line 407
+ []
+
+
+
+[61
+
+]
+Overfull \vbox (37.279pt too high) detected at line 507
+ []
+
+
+
+[62
+
+]
+Overfull \vbox (127.77052pt too high) detected at line 601
+ []
+
+
+
+[63
+
+])
+
+[64
+
+]
+
+[65
 
 ]
 LaTeX Font Info:    Font shape `U/fontawesomebrands1/solid/n' in size <10.95> n
 ot available
 (Font)              Font shape `U/fontawesomebrands1/regular/n' tried instead o
-n input line 52.
+n input line 60.
 LaTeX Font Info:    Trying to load font information for U+fontawesomebrands0 on
- input line 52.
+ input line 60.
 
 (C:\Users\diogo\AppData\Local\Programs\MiKTeX\tex/latex/fontawesome5\ufontaweso
 mebrands0.fd)
 LaTeX Font Info:    Font shape `U/fontawesomebrands0/solid/n' in size <10.95> n
 ot available
 (Font)              Font shape `U/fontawesomebrands0/regular/n' tried instead o
-n input line 52.
+n input line 60.
 
 
-[59
+[66
 
 {C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/fontawesome5/fa5b
 rands0.enc}]
-\tf@nav=\write6
-\openout6 = `main_presentation.nav'.
+\tf@nav=\write7
+\openout7 = `main_presentation.nav'.
 
-\tf@toc=\write7
-\openout7 = `main_presentation.toc'.
+\tf@toc=\write8
+\openout8 = `main_presentation.toc'.
 
-\tf@snm=\write8
-\openout8 = `main_presentation.snm'.
+\tf@snm=\write9
+\openout9 = `main_presentation.snm'.
 
  (main_presentation.aux)
  ***********
@@ -1920,13 +1845,13 @@ Package rerunfilecheck Info: File `main_presentation.out' has not changed.
 (rerunfilecheck)             Checksum: FF18CD5F63FECCE400377526601BA59E;835.
  ) 
 Here is how much of TeX's memory you used:
- 33731 strings out of 468080
- 685647 string characters out of 5425771
- 1261648 words of memory out of 5000000
- 61613 multiletter control sequences out of 15000+600000
- 643279 words of font info for 95 fonts, out of 8000000 for 9000
+ 35381 strings out of 468080
+ 717850 string characters out of 5425771
+ 1293536 words of memory out of 5000000
+ 63241 multiletter control sequences out of 15000+600000
+ 643447 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,15n,123p,470b,1709s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 128i,15n,123p,470b,1724s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\diogo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcss
 1095.pk> <C:\Users\diogo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\tcss0600.pk> <C:\Users\diogo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
@@ -1952,12 +1877,13 @@ fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/diogo/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/diogo/AppData/Local/
 Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/diogo/AppDat
 a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/dio
-go/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb
-><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
-ols/msbm10.pfb>
-Output written on main_presentation.pdf (59 pages, 559262 bytes).
+go/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/U
+sers/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/ms
+am10.pfb><C:/Users/diogo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/symbols/msbm10.pfb>
+Output written on main_presentation.pdf (66 pages, 546069 bytes).
 PDF statistics:
- 1114 PDF objects out of 1200 (max. 8388607)
- 123 named destinations out of 1000 (max. 500000)
- 1611 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1056 PDF objects out of 1200 (max. 8388607)
+ 137 named destinations out of 1000 (max. 500000)
+ 1251 words of extra memory for PDF output out of 10000 (max. 10000000)
 

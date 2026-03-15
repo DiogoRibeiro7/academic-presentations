@@ -1,5 +1,13 @@
 \documentclass[aspectratio=169]{beamer}
 \usepackage{../../shared/theme/esmad_beamer_theme}
+\usepackage{fvextra}
+
+% Allow long code lines in verbatim blocks to wrap instead of overflowing slides.
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  fontsize=\scriptsize
+}
 
 \authorname{Diogo Ribeiro}
 \authoremail{dfr@esmad.ipp.pt}
