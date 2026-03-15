@@ -22,7 +22,7 @@ This enhancement module provides **comprehensive materials** for semester-long c
 - Growth Mindset and Getting Help
 - Time Management for Success
 
-**3. Competency Matrices:** `COMPETENCY_MATRICES.md`
+**3. Competency Matrices:** `docs/learning-paths/competency-matrices/COMPETENCY_MATRICES.md`
 - 7 detailed skill matrices (Programming, ML, Statistics, Software Engineering, Communication, Collaboration, Research)
 - 4-level proficiency framework (Beginner → Expert)
 - Milestone-specific competency requirements
@@ -655,7 +655,7 @@ Export slides as PDF handout and share via course website for self-assessment.
 
 ## Competency Matrices Guide
 
-### Using COMPETENCY_MATRICES.md
+### Using docs/learning-paths/competency-matrices/COMPETENCY_MATRICES.md
 
 This comprehensive document helps students track skill development throughout the capstone.
 
@@ -670,7 +670,7 @@ This comprehensive document helps students track skill development throughout th
 - Students download and fill out electronically
 - Convert to PDF for easy sharing:
   ```bash
-  pandoc COMPETENCY_MATRICES.md -o COMPETENCY_MATRICES.pdf
+  pandoc docs/learning-paths/competency-matrices/COMPETENCY_MATRICES.md -o COMPETENCY_MATRICES.pdf
   ```
 
 #### Option 2: Google Docs
@@ -749,7 +749,7 @@ At the start of each milestone:
 3. Documents in milestone proposal
 4. Reflects on achievement in milestone report
 
-**Template included in COMPETENCY_MATRICES.md**
+**Template included in docs/learning-paths/competency-matrices/COMPETENCY_MATRICES.md**
 
 #### Strategy 3: Portfolio Development
 **Map competencies to resume/portfolio items.**
@@ -851,7 +851,7 @@ Here's how to use all materials together for a comprehensive capstone program:
 **Week -8:**
 - Announce capstone to registered students
 - Share `capstone_prerequisites_appendix.tex` slides as PDF
-- Share `COMPETENCY_MATRICES.md` for self-assessment
+- Share `docs/learning-paths/competency-matrices/COMPETENCY_MATRICES.md` for self-assessment
 - Students complete initial competency assessment
 
 **Week -6:**

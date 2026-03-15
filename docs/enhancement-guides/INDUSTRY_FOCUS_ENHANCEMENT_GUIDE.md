@@ -252,11 +252,15 @@ This guide provides instructions for integrating industry-focused practical ML c
 
 ```
 academic-presentations/
-├── data_science_applications/
-│   ├── industry_focus_enhancements.tex           # 60+ slides
-│   └── INDUSTRY_FOCUS_ENHANCEMENT_GUIDE.md       # This file
-└── bibliographies/
-    └── industry_focus_references.bib             # 80+ references
+├── 07-capstone-projects/
+│   └── industry-focus/
+│       └── industry_focus_enhancements.tex       # 60+ slides
+├── docs/
+│   └── enhancement-guides/
+│       └── INDUSTRY_FOCUS_ENHANCEMENT_GUIDE.md   # This file
+└── shared/
+    └── bibliographies/
+        └── industry_focus_references.bib         # 80+ references
 ```
 
 ---
