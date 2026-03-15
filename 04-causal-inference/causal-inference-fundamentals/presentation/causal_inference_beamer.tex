@@ -938,7 +938,7 @@ df = pd.DataFrame(data)
 group_means = df.groupby(['period', 'treated'])['y'].mean().unstack()
 
 # DID regression
-# Y_it = α + β*Treated_i + γ*Post_t + δ*(Treated_i × Post_t) + ε_it
+# Y_it = alpha + beta*Treated_i + gamma*Post_t + delta*(Treated_i * Post_t) + epsilon_it
 X = df[['treated', 'post', 'treat']].astype(int)
 y = df['y']
 
