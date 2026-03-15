@@ -2,22 +2,26 @@
 
 ## Overview
 
-This directory contains materials for **ab-testing**.
+This directory contains A/B testing materials under the Causal Inference domain.
 
 ## Scope
 
-- Keep content for this topic only.
-- Preserve compatibility with repository-wide structure and naming.
-- Use this folder as the canonical location for future migrations.
+- Keep A/B testing content in this topic boundary.
+- Preserve audience-specific decks while maintaining shared methodological consistency.
+- Use this folder as the canonical ownership path for all A/B testing assets.
 
-## Subdirectories
+## Presentation Tracks
 
-- `presentation/` - slides and lecture notes
-- `code/` - source code and runnable examples
-- `exercises/` - assignments, quizzes, and practice
+- `presentation/ab_testing_experimental_design_beamer.tex` (full instructional track)
+- `presentation/a_b_testing_interview.tex` (interview-prep track)
+
+## Decision Record
+
+- Architecture decision: [A/B testing track split policy](../../docs/architecture/ab_testing_track_decision.md)
 
 ## Notes
 
-- During migration phases, update this README when files are moved here.
-- Prefer small commits and validate compilation/tests after structural changes.
+- Shared theory fixes should be applied to both decks.
+- Audience-specific examples can differ by design.
+- Keep code in `code/` and exercises in `exercises/`.
 
