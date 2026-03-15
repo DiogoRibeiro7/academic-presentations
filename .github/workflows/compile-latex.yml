@@ -30,7 +30,7 @@ jobs:
           - 01-foundations/optimization/presentation/optimization_beamer
           - 03-bayesian-methods/mcmc/presentation/mcmc_beamer
           - 04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer
-          - 01-foundations/statistical-modeling/presentation/statistical_learning_beamer
+          - 01-foundations/statistical-modeling/presentation/statistical_modeling_beamer
           - 03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer
           - 01-foundations/feature-engineering/presentation/feature_engineering_beamer
           - 04-causal-inference/ab-testing/presentation/a_b_testing_interview
@@ -52,11 +52,19 @@ jobs:
         env:
           TEXINPUTS: ".:$GITHUB_WORKSPACE//:"
 
-      - name: Upload PDF artifact
+      - name: Build presentation artifact name
+        if: success()
+        id: presentation_artifact
+        env:
+          PRESENTATION_PATH: ${{ matrix.presentation }}
+        run: |
+          safe_name=$(echo "$PRESENTATION_PATH" | tr '/\\' '-')
+          echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
+      - name: Upload presentation PDF artifact
         uses: actions/upload-artifact@v7
         if: success()
         with:
-          name: ${{ matrix.presentation }}-pdf
+          name: ${{ steps.presentation_artifact.outputs.name }}
           path: ${{ matrix.presentation }}.pdf
           retention-days: 30
 
@@ -83,11 +91,19 @@ jobs:
         env:
           TEXINPUTS: ".:$GITHUB_WORKSPACE//:"
 
-      - name: Upload PDF artifact
+      - name: Build exercise artifact name
+        if: success()
+        id: exercise_artifact
+        env:
+          EXERCISE_PATH: ${{ matrix.exercise }}
+        run: |
+          safe_name=$(echo "$EXERCISE_PATH" | tr '/\\' '-')
+          echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
+      - name: Upload exercise PDF artifact
         uses: actions/upload-artifact@v7
         if: success()
         with:
-          name: ${{ matrix.exercise }}-pdf
+          name: ${{ steps.exercise_artifact.outputs.name }}
           path: ${{ matrix.exercise }}.pdf
           retention-days: 30
 
