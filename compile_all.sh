@@ -13,7 +13,7 @@ presentations=(
   "01-foundations/optimization/presentation/optimization_beamer"
   "03-bayesian-methods/mcmc/presentation/mcmc_beamer"
   "04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer"
-  "01-foundations/statistical-modeling/presentation/statistical_learning_beamer"
+  "01-foundations/statistical-modeling/presentation/statistical_modeling_beamer"
   "03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer"
   "01-foundations/feature-engineering/presentation/feature_engineering_beamer"
   "04-causal-inference/ab-testing/presentation/a_b_testing_interview"
@@ -58,3 +58,4 @@ for doc in "${exercises[@]}"; do
 done
 
 echo "Compilation complete!"
+

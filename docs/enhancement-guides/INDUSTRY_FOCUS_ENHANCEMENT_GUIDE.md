@@ -337,7 +337,7 @@ Pick specific topics most relevant to your audience.
 
 ### Option 1: Full Integration into Main Presentation
 
-1. **Add to `statistical_learning_beamer.tex` or create new presentation:**
+1. **Add to `statistical_modeling_beamer.tex` or create new presentation:**
 
 ```latex
 % In preamble, after other packages:
@@ -356,10 +356,10 @@ Pick specific topics most relevant to your audience.
 
 3. **Compile:**
 ```bash
-pdflatex statistical_learning_beamer.tex
-bibtex statistical_learning_beamer
-pdflatex statistical_learning_beamer.tex
-pdflatex statistical_learning_beamer.tex
+pdflatex statistical_modeling_beamer.tex
+bibtex statistical_modeling_beamer
+pdflatex statistical_modeling_beamer.tex
+pdflatex statistical_modeling_beamer.tex
 ```
 
 ---
@@ -371,7 +371,7 @@ pdflatex statistical_learning_beamer.tex
 ```latex
 \documentclass[aspectratio=169,11pt]{beamer}
 
-% Copy preamble from statistical_learning_beamer.tex (lines 1-79)
+% Copy preamble from statistical_modeling_beamer.tex (lines 1-79)
 % ...
 
 % Title information
@@ -789,3 +789,4 @@ This content is based on:
 **Good luck with your industry-focused ML teaching! 🚀**
 
 For questions or suggestions, contact Diogo Ribeiro.
+

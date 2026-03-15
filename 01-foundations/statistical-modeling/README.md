@@ -20,4 +20,5 @@ This directory contains materials for **statistical-modeling**.
 
 - During migration phases, update this README when files are moved here.
 - Prefer small commits and validate compilation/tests after structural changes.
+- Canonical presentation filenames use `statistical_modeling_*` (not `statistical_learning_*`).
 

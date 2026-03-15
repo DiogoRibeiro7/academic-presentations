@@ -50,10 +50,10 @@ This enhancement module provides **comprehensive materials** for semester-long c
 
 **Integration instructions:**
 ```latex
-% In statistical_learning_beamer.tex
+% In statistical_modeling_beamer.tex
 % After the "Applications and Case Studies" section
 
-\input{statistical_learning_enhancements.tex}  % Existing enhancements
+\input{statistical_modeling_enhancements.tex}  % Existing enhancements
 \input{capstone_projects_enhancements.tex}     % NEW: Capstone projects
 ```
 
@@ -107,7 +107,7 @@ This enhancement module provides **comprehensive materials** for semester-long c
 To integrate all capstone project slides into your presentation:
 
 ```latex
-% In your main .tex file (e.g., statistical_learning_beamer.tex)
+% In your main .tex file (e.g., statistical_modeling_beamer.tex)
 % At the desired integration point:
 
 \input{capstone_projects_enhancements.tex}
@@ -968,3 +968,4 @@ This enhancement module is released under [Your License]. Free to use and adapt 
 ---
 
 **Happy teaching! Your students will build amazing capstone projects.**
+
