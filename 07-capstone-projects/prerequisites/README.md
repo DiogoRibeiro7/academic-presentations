@@ -10,13 +10,11 @@ This directory contains materials for **prerequisites**.
 - Preserve compatibility with repository-wide structure and naming.
 - Use this folder as the canonical location for future migrations.
 
-## Subdirectories
+## Primary Files
 
-- presentation/ - slides and lecture notes
-- code/ - source code and runnable examples
-- xercises/ - assignments, quizzes, and practice
+- `capstone_prerequisites_appendix.tex`
 
 ## Notes
 
-- During migration phases, update this README when files are moved here.
-- Prefer small commits and validate compilation/tests after structural changes.
+- This file was relocated from the former `data_science_applications` area.
+

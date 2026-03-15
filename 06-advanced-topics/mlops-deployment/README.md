@@ -12,11 +12,12 @@ This directory contains materials for **mlops-deployment**.
 
 ## Subdirectories
 
-- presentation/ - slides and lecture notes
-- code/ - source code and runnable examples
-- xercises/ - assignments, quizzes, and practice
+- `presentation/` - slides and lecture notes
+- `code/` - source code and runnable examples
+- `exercises/` - assignments, quizzes, and practice
 
 ## Notes
 
 - During migration phases, update this README when files are moved here.
 - Prefer small commits and validate compilation/tests after structural changes.
+

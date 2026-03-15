@@ -10,10 +10,13 @@ Project-driven materials for final application, integration, and industry contex
 - `prerequisites/`
 - `industry-focus/`
 
-## Structure
+## Relocated Files
 
-Each topic follows:
-- `presentation/` - lecture slides
-- `code/` - implementation examples
-- `exercises/` - practice and assignments
-- `README.md` - topic guide
+- `project-guides/capstone_projects_enhancements.tex`
+- `prerequisites/capstone_prerequisites_appendix.tex`
+- `industry-focus/industry_focus_enhancements.tex`
+
+## Notes
+
+- These files were migrated from the former consolidated applications area.
+- Keep topic ownership split across the three subdirectories above.
