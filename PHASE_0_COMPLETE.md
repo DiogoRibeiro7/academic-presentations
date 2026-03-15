@@ -33,7 +33,7 @@
 
 ### The Purpose of data_science_applications/
 
-This directory serves **TWO distinct purposes**:
+This directory serves **two distinct purposes**:
 
 #### Purpose 1: Modular Presentation Sections
 Files that are **LaTeX sections** (not standalone docs):
@@ -50,7 +50,7 @@ Files that are **complete LaTeX documents**:
 - `feature_engineering_beamer.tex` (52K) - Standalone
 - `statistical_learning_beamer.tex` (35K) - Standalone
 
-**Use Case**: These can compile independently
+**Use Case**: These can compile independently.
 
 ---
 
@@ -167,7 +167,7 @@ academic-presentations/
 │
 ├── 08-data-science-applications-course/  # NEW - Composite course
 │   ├── presentation/
-│   │   ├── main.tex
+│   │   ├── main_presentation.tex
 │   │   └── sections/
 │   └── assessments/
 │
@@ -213,9 +213,10 @@ academic-presentations/
 4. **Consolidate competency matrices** to `/learning-paths/competency-matrices/`
 5. **Keep Time Series standalone version** (most recent, Nov 11)
 
-### ⏸️ Pending Manual Review (Optional)
+### Pending Manual Review
 
-Since we now understand the modular vs standalone distinction, **no manual reviews are required**. The files serve different purposes.
+No blocking manual review is required for Phase 0 sign-off.
+Any deeper content-quality review can be handled in Phase 2+ after structural migration.
 
 ---
 
@@ -241,6 +242,16 @@ Phase 1 will create:
 5. Documentation structure
 
 **No files will be moved in Phase 1** - only structure creation.
+
+---
+
+## Handoff Checklist
+
+Before starting Phase 1:
+1. Confirm working tree is clean or intentionally staged.
+2. Keep backup tag `pre-reorganization-backup` unchanged.
+3. Use small commits per domain to keep rollback simple.
+4. Compile moved LaTeX content after each migration batch.
 
 ---
 

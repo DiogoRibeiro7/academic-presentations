@@ -149,7 +149,7 @@ We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guideline
 
 **Quick links:**
 - Report bugs: [GitHub Issues](https://github.com/diogoribeiro7/academic-presentations/issues)
-- Suggest features: [GitHub Discussions](https://github.com/diogoribeiro7/academic-presentations/discussions)
+- Suggest features: [GitHub Issues](https://github.com/diogoribeiro7/academic-presentations/issues/new)
 - Submit changes: [Pull Requests](https://github.com/diogoribeiro7/academic-presentations/pulls)
 
 ---
@@ -243,7 +243,7 @@ We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guideline
 For questions or issues:
 - **Email:** dfr@esmad.ipp.pt
 - **GitHub Issues:** [Report a bug](https://github.com/diogoribeiro7/academic-presentations/issues/new)
-- **Discussions:** [Ask a question](https://github.com/diogoribeiro7/academic-presentations/discussions)
+- **Support:** [Open an issue](https://github.com/diogoribeiro7/academic-presentations/issues/new)
 
 ---
 

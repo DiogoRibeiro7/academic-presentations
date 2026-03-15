@@ -64,11 +64,15 @@ jobs:
               return re.findall(doi_pattern, content, re.IGNORECASE)
 
           def check_doi(doi):
-              """Check if DOI resolves correctly."""
-              url = f"https://doi.org/{doi}"
+              """Check DOI registration via doi.org handle API (avoids publisher-side false negatives)."""
+              url = f"https://doi.org/api/handles/{doi}"
               try:
-                  response = requests.head(url, timeout=10, allow_redirects=True)
-                  return response.status_code < 400
+                  response = requests.get(url, timeout=15)
+                  if response.status_code != 200:
+                      return False
+                  payload = response.json()
+                  # responseCode == 1 means success from handle resolver.
+                  return payload.get("responseCode") == 1
               except Exception as e:
                   print(f"Error checking {doi}: {e}")
                   return False
@@ -118,8 +122,8 @@ jobs:
             urls=$(grep -oP 'https://github\.com/[^\s\)\]]+' "$file" || true)
 
             for url in $urls; do
-              # Remove trailing punctuation
-              url=$(echo "$url" | sed 's/[.,;:)]$//')
+              # Remove trailing punctuation/braces (common in markdown and BibTeX snippets)
+              url=$(echo "$url" | sed 's/[.,;:)}]\+$//')
 
               # Check if URL is accessible
               status=$(curl -o /dev/null -s -w "%{http_code}" -L "$url")

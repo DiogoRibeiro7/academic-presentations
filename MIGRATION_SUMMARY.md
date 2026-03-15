@@ -56,8 +56,8 @@ academic-presentations/
 │   ├── statistical-modeling/
 │   │   └── presentation/
 │   │       ├── diogo_ribeiro_beamer_extended.tex
-│   │       ├── statistical_learning_beamer.tex
-│   │       └── statistical_learning_enhancements.tex
+│   │       ├── statistical_modeling_beamer.tex
+│   │       └── statistical_modeling_enhancements.tex
 │   ├── feature-engineering/
 │   │   ├── presentation/
 │   │   │   └── feature_engineering_beamer.tex
@@ -393,3 +393,4 @@ git reset --hard pre-reorganization-backup
 **Directories Removed**: 20+
 
 **Status**: ✅ **Content Migration Complete** - Ready for Path Updates (Phase 12)
+

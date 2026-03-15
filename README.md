@@ -526,6 +526,10 @@ latexmk -pdf rl_beamer.tex
 - Push to GitHub → GitHub Actions automatically compiles all PDFs
 - Download compiled PDFs from Actions artifacts or Releases
 
+**Build artifact policy:**
+- LaTeX auxiliary files and presentation PDFs are generated outputs and are ignored by git.
+- Exercise and assessment outputs may be tracked when explicitly required for coursework delivery.
+
 ### Running Code Examples
 
 **Python:**

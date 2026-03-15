@@ -5,7 +5,7 @@
 
 ## 📚 Overview
 
-This guide provides instructions for integrating the enhanced statistical learning content into the main presentation (`statistical_learning_beamer.tex`). The enhancements add 55+ new slides covering:
+This guide provides instructions for integrating the enhanced statistical learning content into the main presentation (`statistical_modeling_beamer.tex`). The enhancements add 55+ new slides covering:
 
 1. **Advanced Ensemble Methods** (8 slides)
 2. **Online Learning Algorithms** (4 slides)
@@ -176,7 +176,7 @@ This guide provides instructions for integrating the enhanced statistical learni
 - Modular delivery
 
 **Steps:**
-1. Compile `statistical_learning_enhancements.tex` as standalone document
+1. Compile `statistical_modeling_enhancements.tex` as standalone document
 2. Add preamble and document structure
 3. Reference from main presentation
 4. Use for advanced course module or workshop
@@ -202,7 +202,7 @@ This guide provides instructions for integrating the enhanced statistical learni
 
 ```bash
 cd data_science_applications/
-cp statistical_learning_beamer.tex statistical_learning_beamer_original.tex
+cp statistical_modeling_beamer.tex statistical_modeling_beamer_original.tex
 ```
 
 ### Step 2: Update Preamble
@@ -219,14 +219,14 @@ Update bibliography:
 
 ```latex
 % If using BibTeX, add to bibliography section
-\addbibresource{../bibliographies/statistical_learning_enhancements_references.bib}
+\addbibresource{../bibliographies/statistical_modeling_enhancements_references.bib}
 ```
 
 Or merge bibliography files:
 
 ```bash
 cd ../bibliographies/
-cat statistical_learning_references.bib statistical_learning_enhancements_references.bib > statistical_learning_complete_references.bib
+cat statistical_learning_references.bib statistical_modeling_enhancements_references.bib > statistical_learning_complete_references.bib
 ```
 
 ### Step 3: Insert Ensemble Methods Section
@@ -236,7 +236,7 @@ cat statistical_learning_references.bib statistical_learning_enhancements_refere
 The existing presentation has case studies. Add ensemble methods as a new major section after applications.
 
 **Method:**
-1. Open `statistical_learning_beamer.tex`
+1. Open `statistical_modeling_beamer.tex`
 2. Find the end of "Applications and Case Studies" section
 3. Insert marker and ensemble slides
 
@@ -360,10 +360,10 @@ The `\tableofcontents` command will automatically update with new sections.
 
 ```bash
 cd data_science_applications/
-pdflatex statistical_learning_beamer.tex
-bibtex statistical_learning_beamer  # If using BibTeX
-pdflatex statistical_learning_beamer.tex  # Run twice for references
-pdflatex statistical_learning_beamer.tex  # Third time for TOC
+pdflatex statistical_modeling_beamer.tex
+bibtex statistical_modeling_beamer  # If using BibTeX
+pdflatex statistical_modeling_beamer.tex  # Run twice for references
+pdflatex statistical_modeling_beamer.tex  # Third time for TOC
 ```
 
 **Check:**
@@ -697,3 +697,4 @@ The statistical learning enhancements provide:
 **Last Updated:** January 5, 2025
 **Version:** 1.0
 **Status:** Ready for integration
+

@@ -33,6 +33,10 @@
 *.synctex.gz(busy)
 *.pdfsync
 
+# Generated presentation outputs (keep exercise/assessment outputs if intentionally tracked)
+**/presentation/*.pdf
+09-unit-tests/*.pdf
+
 # Intermediate files
 *-converted-to.*
 

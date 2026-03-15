@@ -82,6 +82,15 @@
 \titlepage
 \end{frame}
 
+% Learning goals
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish predictive association from causal effects using potential outcomes and DAGs;
+\item select identification strategies (RCT, IV, RDD, DiD, matching) based on assumptions and data constraints;
+\item run practical diagnostics and communicate limitations transparently in policy and business settings.
+\end{itemize}
+\end{frame}
+
 % Table of contents
 \begin{frame}{Outline}
 \tableofcontents
@@ -929,7 +938,7 @@ df = pd.DataFrame(data)
 group_means = df.groupby(['period', 'treated'])['y'].mean().unstack()
 
 # DID regression
-# Y_it = α + β*Treated_i + γ*Post_t + δ*(Treated_i × Post_t) + ε_it
+# Y_it = alpha + beta*Treated_i + gamma*Post_t + delta*(Treated_i * Post_t) + epsilon_it
 X = df[['treated', 'post', 'treat']].astype(int)
 y = df['y']
 

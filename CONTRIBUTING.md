@@ -138,7 +138,7 @@ Help improve READMEs, guides, and documentation:
 2. **Clone** your fork locally:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/academic-presentations.git
+git clone https://github.com/diogoribeiro7/academic-presentations.git
 cd academic-presentations
 ```
 
