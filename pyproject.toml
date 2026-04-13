@@ -201,7 +201,7 @@ per-file-ignores = [
 
 [project.optional-dependencies]
 dev = [
-    "black>=23.7.0",
+    "black>=25.11.0",
     "isort>=5.12.0",
     "flake8>=6.1.0",
     "pylint>=2.17.0",
