@@ -1,3 +1,58 @@
+# ==========================
+# Operating system files
+# ==========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ==========================
+# Editor and IDE files
+# ==========================
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vscode-test/
+*.sw?
+*~
+
+# ==========================
+# Python files and environments
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.pyenv/
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+build/
+dist/
+htmlcov/
+.coverage
+*.cover
+.cache/
+nosetests.xml
+pytestdebug.log
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
 # LaTeX auxiliary files
 *.aux
 *.lof
@@ -33,15 +88,10 @@
 *.synctex.gz(busy)
 *.pdfsync
 
-# Generated presentation outputs (keep exercise/assessment outputs if intentionally tracked)
-**/presentation/*.pdf
-09-unit-tests/*.pdf
+# Generated presentation outputs
 
 # Intermediate files
 *-converted-to.*
-
-# Latexmk
-*.fdb_latexmk
 
 # Glossaries
 *.acn
