@@ -57,41 +57,35 @@
 % ================================================================
 
 % Theme selection
-\usetheme{Madrid}  % Clean and professional
+\usetheme{Madrid}
 \usecolortheme{default}
-
-% Customize colors
-\setbeamercolor{structure}{fg=ESMADBlue}
-\setbeamercolor{palette primary}{bg=ESMADBlue,fg=white}
-\setbeamercolor{palette secondary}{bg=ESMADLightBlue,fg=white}
-\setbeamercolor{palette tertiary}{bg=ESMADBlue,fg=white}
-\setbeamercolor{palette quaternary}{bg=ESMADAccent,fg=white}
-
-\setbeamercolor{frametitle}{bg=ESMADBlue,fg=white}
-\setbeamercolor{framesubtitle}{bg=ESMADBlue,fg=white}
-
-\setbeamercolor{title}{fg=ESMADBlue}
-\setbeamercolor{author}{fg=TextDark}
-\setbeamercolor{date}{fg=ESMADGray}
-
-\setbeamercolor{item}{fg=ESMADBlue}
-\setbeamercolor{subitem}{fg=ESMADLightBlue}
-\setbeamercolor{subsubitem}{fg=ESMADGray}
-
-\setbeamercolor{block title}{bg=ESMADBlue,fg=white}
-\setbeamercolor{block body}{bg=ESMADLightGray,fg=TextDark}
-
-\setbeamercolor{block title example}{bg=ESMADLightBlue,fg=white}
-\setbeamercolor{block body example}{bg=ESMADLightGray,fg=TextDark}
-
-\setbeamercolor{block title alerted}{bg=ESMADAccent,fg=white}
-\setbeamercolor{block body alerted}{bg=ESMADLightGray,fg=TextDark}
-
-% Remove navigation symbols
 \setbeamertemplate{navigation symbols}{}
 
-% Add frame numbers
-\setbeamertemplate{footline}[frame number]
+% ---------------------------------
+% Cores
+% ---------------------------------
+\definecolor{ESMADRed}{RGB}{180,0,0}
+\setbeamercolor{palette primary}{bg=ESMADRed, fg=white}
+\setbeamercolor{palette secondary}{bg=ESMADRed!85!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=ESMADRed!65!black, fg=white}
+\setbeamercolor{frametitle}{bg=ESMADRed, fg=white}
+\setbeamercolor{title}{fg=white, bg=ESMADRed}
+\setbeamercolor{section in toc}{fg=ESMADRed}
+\setbeamercolor{block title}{bg=ESMADRed!10, fg=black}
+\setbeamercolor{block body}{bg=black!2, fg=black}
+
+% Rodapé simples (secção + número)
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.75\paperwidth,ht=2.6ex,dp=1.1ex,left]{author in head/foot}%
+    \hspace{0.8em}\insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.6ex,dp=1.1ex,right]{date in head/foot}%
+    \insertframenumber/\inserttotalframenumber\hspace{0.8em}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
 
 % Itemize/enumerate styling
 \setbeamertemplate{itemize items}[circle]
