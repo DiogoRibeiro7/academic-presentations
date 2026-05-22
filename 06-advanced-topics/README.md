@@ -9,6 +9,7 @@ Specialized topics extending the core data science curriculum.
 - `explainable-ai/`
 - `mlops-deployment/`
 - `computer-science/`
+- `ai-agents/`
 
 ## Structure
 
