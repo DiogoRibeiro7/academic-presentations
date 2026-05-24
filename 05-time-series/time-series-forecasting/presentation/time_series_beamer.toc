@@ -1,8 +1,0 @@
-\beamer@sectionintoc {1}{Introduction to Time Series}{3}{0}{1}
-\beamer@sectionintoc {2}{Classical Time Series Models}{8}{0}{2}
-\beamer@sectionintoc {3}{Vector Autoregression (VAR)}{13}{0}{3}
-\beamer@sectionintoc {4}{State Space Models}{16}{0}{4}
-\beamer@sectionintoc {5}{Forecasting}{20}{0}{5}
-\beamer@sectionintoc {6}{Modern Deep Learning Approaches}{24}{0}{6}
-\beamer@sectionintoc {7}{Best Practices and Pitfalls}{30}{0}{7}
-\beamer@sectionintoc {8}{Conclusion}{33}{0}{8}
