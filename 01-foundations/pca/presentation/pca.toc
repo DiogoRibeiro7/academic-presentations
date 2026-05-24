@@ -1,8 +1,0 @@
-\beamer@sectionintoc {1}{Motivation and Intuition}{3}{0}{1}
-\beamer@sectionintoc {2}{Classical PCA: Algebra and Optimization}{7}{0}{2}
-\beamer@sectionintoc {3}{Population vs Sample PCA}{15}{0}{3}
-\beamer@sectionintoc {4}{Grassmann Manifold View}{17}{0}{4}
-\beamer@sectionintoc {5}{Asymptotic Performance of PCA}{20}{0}{5}
-\beamer@sectionintoc {6}{Excess Risk Quantiles and Non-Asymptotics}{23}{0}{6}
-\beamer@sectionintoc {7}{Example: Spiked Covariance Model}{27}{0}{7}
-\beamer@sectionintoc {8}{Summary and References}{30}{0}{8}

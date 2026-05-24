@@ -1,0 +1,611 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ================================================================
+% Building AI Agents for Production
+% 90-minute technical session
+% ================================================================
+
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{listings}
+\usepackage{booktabs}
+
+% Author information
+\authorname{Diogo Ribeiro}
+\authoremail{dfr@esmad.ipp.pt}
+\authororcid{0009-0001-2022-7072}
+\authorinstitution{ESMAD - Escola Superior de Média Arte e Design}
+\authorcompany{Lead Data Scientist, Mysense.ai}
+
+% Presentation information
+\title{Building AI Agents}
+\subtitle{Architecture, Reliability, and Production Operations}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\tocslide
+
+% ================================================================
+\section{Session Plan}
+% ================================================================
+
+\begin{frame}{90-Minute Session Plan}
+  \begin{table}
+    \small
+    \begin{tabular}{@{}ll@{}}
+      \toprule
+      Time & Block \\
+      \midrule
+      0-10 min & Agent definitions and decision criteria \\
+      10-30 min & Architecture and orchestration patterns \\
+      30-50 min & Tool contracts, memory, retrieval \\
+      50-70 min & Safety, evaluation, and observability \\
+      70-85 min & End-to-end case study walkthrough \\
+      85-90 min & Final checklist and Q\&A \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Delivery Modes}
+  \textbf{Use this same deck in three modes:}
+  \begin{itemize}
+    \item \textbf{Core 60 min:} skip slides marked as ``Deep Dive''
+    \item \textbf{Standard 75 min:} include selected Deep Dive slides
+    \item \textbf{Full 90 min:} run all slides with checkpoints and discussion
+  \end{itemize}
+
+  \vspace{0.5em}
+  \begin{block}{Deep Dive marker}
+    Slides labeled \textbf{Deep Dive} are optional expansion content.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Learning Outcomes}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item Decide when to use an agent vs a deterministic workflow
+    \item Design an agent architecture with explicit control boundaries
+    \item Define robust tool contracts and memory policies
+    \item Build an evaluation loop that measures quality and cost
+    \item Identify failure modes before they reach production
+  \end{itemize}
+\end{frame}
+
+% ================================================================
+\section{Agent Fundamentals}
+% ================================================================
+
+\begin{frame}{What Is an AI Agent?}
+  \begin{definitionbox}{Production Agent}
+    A software system that iteratively selects actions, uses tools, updates state, and optimizes for a task objective under safety and cost constraints.
+  \end{definitionbox}
+
+  \vspace{0.4em}
+  \textbf{Properties that matter:}
+  \begin{itemize}
+    \item Explicit objective and termination criteria
+    \item Observable state transitions
+    \item Typed integration surfaces
+    \item Safety and governance controls
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Agent vs Single LLM Call}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Single LLM call}
+    \begin{itemize}
+      \item One-shot response
+      \item No execution state
+      \item Limited external action
+      \item Best for simple transformations
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Agentic system}
+    \begin{itemize}
+      \item Iterative control loop
+      \item Plan, act, observe, adapt
+      \item Tool invocation and validation
+      \item Best for multi-step workflows
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{When You Should Not Use an Agent}
+  \begin{alertbox}{Common overengineering trap}
+    If a deterministic pipeline solves the problem with lower cost and higher reliability, do not use an agent.
+  \end{alertbox}
+
+  \vspace{0.4em}
+  \begin{itemize}
+    \item Static ETL transformations
+    \item Low-latency hard real-time tasks
+    \item Strictly regulated deterministic outputs
+    \item Fixed, non-branching logic
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Decision Matrix: Agent or Workflow?}
+  \begin{table}
+    \small
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      Criterion & High & Low \\
+      \midrule
+      Task ambiguity & Agent & Workflow \\
+      Branching depth & Agent & Workflow \\
+      Need for autonomy & Agent & Workflow \\
+      Regulatory strictness & Workflow & Agent \\
+      Acceptable latency & Workflow & Agent \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Transition: From Definitions to Design}
+  \begin{block}{Next}
+    We now move from \textbf{what an agent is} to \textbf{how to structure one} so behavior is predictable and auditable.
+  \end{block}
+\end{frame}
+
+% ================================================================
+\section{Architecture and Orchestration}
+% ================================================================
+
+\begin{frame}{Reference Architecture Layers}
+  \begin{itemize}
+    \item \textbf{Interaction:} request intake, UX, response contracts
+    \item \textbf{Policy:} authorization, data governance, action gating
+    \item \textbf{Orchestration:} planner, executor, retry, stop logic
+    \item \textbf{Model:} reasoning, extraction, ranking, verification
+    \item \textbf{Tools:} APIs, DB, workflows, code execution wrappers
+    \item \textbf{State:} working memory, session log, long-term knowledge
+    \item \textbf{Observability:} traces, metrics, replay artifacts
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Control Loop as a Deterministic Core}
+  \begin{equation*}
+    s_{t+1} = T(s_t, a_t, o_t), \qquad a_t = \pi_\theta(s_t)
+  \end{equation*}
+
+  \begin{itemize}
+    \item $s_t$: current state (goal, plan, context, constraints)
+    \item $a_t$: proposed action (tool call, clarification, finalize)
+    \item $o_t$: observed output (tool result, validation status)
+    \item $T$: deterministic transition logic in application code
+  \end{itemize}
+
+  \begin{block}{Engineering rule}
+    Keep control transitions deterministic. Isolate model stochasticity to action proposal.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Execution Patterns and Trade-offs}
+  \begin{table}
+    \small
+    \begin{tabular}{@{}llll@{}}
+      \toprule
+      Pattern & Strength & Risk & Use Case \\
+      \midrule
+      Router & Cheap, simple & Limited depth & Support triage \\
+      ReAct & Adaptive & Drift loops & Research/operations \\
+      Plan/Execute & Auditable & Planning overhead & Long workflows \\
+      DAG workflow & Predictable & Less adaptive & Enterprise flows \\
+      Multi-agent & Specialization & Coordination cost & Complex domains \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Termination Design}
+  \textbf{A production agent must know when to stop.}
+  \begin{itemize}
+    \item Goal achieved with validated outputs
+    \item Budget exhausted (tokens, latency, tool-call quota)
+    \item Confidence below threshold with no safe next action
+    \item Policy gate requires human decision
+    \item Repeated failure class without recovery path
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Checkpoint 1: Architecture Review}
+  \begin{examplebox}{Quick review prompt}
+    For your current use case, define:
+    \begin{itemize}
+      \item Agent objective
+      \item Required tools
+      \item Termination conditions
+      \item Mandatory human approval points
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+% ================================================================
+\section{Tools, State, and Memory}
+% ================================================================
+
+\begin{frame}[fragile]{Tool Contract Principles}
+  \begin{itemize}
+    \item Strong input schema
+    \item Deterministic output envelope
+    \item Explicit error taxonomy
+    \item Idempotency key for mutating calls
+  \end{itemize}
+
+  \begin{lstlisting}[language=Python, caption=Minimal tool envelope]
+{
+  "ok": true,
+  "data": {...},
+  "error_code": null,
+  "trace_id": "abc-123"
+}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Mutation Tool Contract}
+  \begin{lstlisting}[language=Python, caption=Refund action contract]
+{
+  "name": "create_refund",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "order_id": {"type": "string"},
+      "reason_code": {"type": "string", "enum": ["damaged", "late", "wrong_item"]},
+      "amount_cents": {"type": "integer", "minimum": 1}
+    },
+    "required": ["order_id", "reason_code", "amount_cents"]
+  },
+  "idempotency_key_required": true
+}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}{State Model}
+  \textbf{State object should be explicit and minimal.}
+  \begin{itemize}
+    \item Request metadata and user intent
+    \item Active plan and completed steps
+    \item Evidence references (not full raw payloads)
+    \item Tool execution history with outcomes
+    \item Policy flags and pending approvals
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Memory Strategy}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Working memory}
+    \begin{itemize}
+      \item Active context
+      \item Current constraints
+      \item Latest tool outputs
+    \end{itemize}
+
+    \textbf{Session memory}
+    \begin{itemize}
+      \item Prior decisions
+      \item User preferences
+      \item Interaction history
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Long-term memory}
+    \begin{itemize}
+      \item Stable domain facts
+      \item Playbooks
+      \item Policy documents
+    \end{itemize}
+
+    \textbf{Never persist}
+    \begin{itemize}
+      \item Secrets
+      \item Credentials
+      \item Sensitive raw payloads
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Retrieval and Grounding}
+  \begin{itemize}
+    \item Retrieval is evidence support, not authority transfer
+    \item Rank by relevance, trust, and freshness
+    \item Attach provenance to every grounded claim
+    \item Require citation for high-stakes outputs
+  \end{itemize}
+
+  \vspace{0.5em}
+  \begin{equation*}
+    U(d) = \alpha R(d) + \beta T(d) - \gamma S(d)
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Checkpoint 2: Tool and Memory Design}
+  \begin{examplebox}{Design exercise}
+    Pick one high-risk tool in your domain and define:
+    \begin{itemize}
+      \item Input schema and output envelope
+      \item Idempotency strategy
+      \item Required approvals
+      \item Memory retention policy
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+% ================================================================
+\section{Safety, Evaluation, and Operations}
+% ================================================================
+
+\begin{frame}{Failure Taxonomy}
+  \begin{itemize}
+    \item \textbf{Reasoning failures:} invalid decomposition, wrong assumptions
+    \item \textbf{Tool failures:} timeouts, schema mismatch, side-effect duplication
+    \item \textbf{Grounding failures:} hallucinated or stale claims
+    \item \textbf{Policy failures:} unauthorized or unsafe action paths
+    \item \textbf{Coordination failures:} state divergence across branches
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Safety Controls That Actually Work}
+  \begin{itemize}
+    \item Pre-action policy checks (role, scope, data class)
+    \item Execution sandboxing and network egress controls
+    \item Human approval gates for high-impact mutations
+    \item Post-action reconciliation checks
+    \item Immutable audit logs with trace ids
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluation Stack}
+  \textbf{Three evaluation levels:}
+  \begin{enumerate}
+    \item \textbf{Unit-level:} tool contract correctness
+    \item \textbf{Workflow-level:} scenario replay and regression sets
+    \item \textbf{Production-level:} online metrics and drift monitoring
+  \end{enumerate}
+
+  \vspace{0.4em}
+  \begin{block}{Release gate}
+    Ship only if all three levels pass quality and safety thresholds.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Core Metrics}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Quality}
+    \begin{itemize}
+      \item Task success rate
+      \item Plan validity
+      \item Tool-call precision/recall
+      \item Hallucination incidence
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Operations}
+    \begin{itemize}
+      \item p50/p95 latency
+      \item Cost per successful task
+      \item Retry rate per step
+      \item Escalation rate
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Observability and Debugging}
+  \begin{itemize}
+    \item Per-step trace with prompt/tool/result metadata
+    \item Correlation id across model and tool calls
+    \item Structured error events with failure class
+    \item Replay mode for deterministic postmortems
+    \item Diff between expected and observed transitions
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Cost Governance}
+  \begin{itemize}
+    \item Per-request token budgets
+    \item Per-agent step limits
+    \item Caching for repeated retrieval and deterministic calls
+    \item Model routing: expensive models only for critical steps
+    \item Cost-per-outcome monitoring, not just token tracking
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Transition: From Components to End-to-End Delivery}
+  \begin{block}{Next}
+    We now combine architecture, tooling, memory, and controls in one production case study.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Checkpoint 3: Reliability Readiness}
+  \begin{examplebox}{Readiness questions}
+    \begin{itemize}
+      \item Can you replay any failure from logs?
+      \item Do you have a regression set for top workflows?
+      \item Are mutation tools idempotent and approval-gated?
+      \item Do you track cost per successful outcome?
+    \end{itemize}
+  \end{examplebox}
+\end{frame}
+
+% ================================================================
+\section{Case Study Walkthrough}
+% ================================================================
+
+\begin{frame}{Case Study: Customer Support Resolution Agent}
+  \textbf{Goal:} Resolve tickets with minimal human intervention while protecting policy and customer trust.
+
+  \vspace{0.4em}
+  \textbf{Tools:}
+  \begin{itemize}
+    \item CRM lookup
+    \item Order and shipment systems
+    \item Refund/credit mutation endpoint
+    \item Knowledge base retrieval
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Case Study Flow}
+  \begin{enumerate}
+    \item Classify issue and confidence level
+    \item Retrieve policy and customer/order evidence
+    \item Propose resolution plan with mutation requirements
+    \item Run policy checks and approval gate if needed
+    \item Execute mutation and verify post-state
+    \item Respond with explanation and audit metadata
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Case Study: Plan Record}
+  \begin{lstlisting}[language=Python, caption=Plan object persisted in state]
+{
+  "goal": "Resolve ticket #T-90821",
+  "steps": [
+    {"id": 1, "action": "lookup_order", "status": "done"},
+    {"id": 2, "action": "check_policy", "status": "done"},
+    {"id": 3, "action": "propose_refund", "status": "done"},
+    {"id": 4, "action": "execute_refund", "status": "pending_approval"}
+  ],
+  "stop_if": ["approval_rejected", "budget_exceeded", "policy_violation"]
+}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Case Study: Failure and Recovery}
+  \textbf{Failure:} refund API timeout after mutation accepted upstream.
+
+  \vspace{0.4em}
+  \textbf{Recovery strategy:}
+  \begin{itemize}
+    \item Retry with same idempotency key
+    \item Reconcile state by querying source-of-truth ledger
+    \item If inconsistent, escalate with trace id and pause automation
+    \item Emit incident signal for reliability dashboard
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{From Pilot to Production}
+  \begin{enumerate}
+    \item Start with read-only paths
+    \item Introduce one low-risk mutation tool
+    \item Add approval gate and post-action verification
+    \item Expand coverage by failure-class maturity
+    \item Scale only after metric stability for 2-4 weeks
+  \end{enumerate}
+\end{frame}
+
+% ================================================================
+\section{Closing}
+% ================================================================
+
+\begin{frame}{Anti-Patterns to Avoid}
+  \begin{itemize}
+    \item Prompt tuning before system boundary definition
+    \item Untyped tool calls and implicit side effects
+    \item No deterministic replay path
+    \item Missing approval gates on mutating actions
+    \item Shipping with no regression benchmark
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Production Readiness Checklist}
+  \begin{theorembox}{Before you deploy}
+    \begin{itemize}
+      \item Objective and stop criteria are explicit
+      \item Tool interfaces are typed and idempotent
+      \item Transition logic is deterministic and auditable
+      \item Safety controls exist pre-action and post-action
+      \item Evaluation covers quality, reliability, latency, and cost
+      \item Incident replay is operationally usable
+    \end{itemize}
+  \end{theorembox}
+\end{frame}
+
+\begin{frame}{Facilitator Timing Guide}
+  \begin{itemize}
+    \item \textbf{By slide 10}: finish fundamentals
+    \item \textbf{By slide 20}: finish architecture and orchestration
+    \item \textbf{By slide 30}: finish tools, memory, retrieval
+    \item \textbf{By slide 37}: finish safety/evaluation/operations
+    \item \textbf{Slides 38+}: case study, summary, Q\&A
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Q\&A}
+  \begin{block}{Discussion prompts}
+    \begin{itemize}
+      \item Which workflow in your team is best for first deployment?
+      \item What is your highest-risk mutation action?
+      \item Which metric will define success in the first 30 days?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\appendix
+\section{Appendix: Deep Dives}
+
+\begin{frame}{Deep Dive: Planner Design Choices}
+  \begin{itemize}
+    \item \textbf{Single-shot planner:} fast, but brittle under changing evidence
+    \item \textbf{Rolling planner:} re-plans each step, more robust but costlier
+    \item \textbf{Hybrid:} coarse global plan + local rolling re-plan
+  \end{itemize}
+
+  \vspace{0.4em}
+  \begin{alertbox}{Recommendation}
+    Start with hybrid planning for long-running workflows with external dependencies.
+  \end{alertbox}
+\end{frame}
+
+\begin{frame}{Deep Dive: Tool Error Taxonomy}
+  \begin{table}
+    \small
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      Error Class & Retry? & Typical Handling \\
+      \midrule
+      ValidationError & No & fix input / ask clarification \\
+      AuthError & No & escalate / refresh auth context \\
+      TimeoutError & Yes & bounded retries + backoff \\
+      ConflictError & Maybe & reconcile state, retry if safe \\
+      PolicyDenied & No & halt and request approval \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Deep Dive: Retrieval Evaluation}
+  \begin{itemize}
+    \item Build query set from real production intents
+    \item Measure top-k hit rate and citation correctness
+    \item Include freshness tests for time-sensitive policies
+    \item Track failure by source tier (internal docs vs external content)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Deep Dive: Regression Harness}
+  \begin{itemize}
+    \item Store fixed input tasks with expected outcomes
+    \item Replay with deterministic tool mocks when possible
+    \item Compare plan traces, not only final answers
+    \item Fail release on safety regressions even if accuracy improves
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Deep Dive: Rollout Strategy}
+  \begin{enumerate}
+    \item Internal alpha with shadow mode
+    \item Limited beta with read-only or low-risk actions
+    \item Gradual percentage rollout with automatic rollback trigger
+    \item Full rollout after stable SLO and incident trend
+  \end{enumerate}
+\end{frame}
+
+\end{document}
