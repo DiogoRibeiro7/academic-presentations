@@ -1,0 +1,38 @@
+# yamllint configuration for academic-presentations
+#
+# Referenced from .pre-commit-config.yaml. Starts from the shipped defaults and
+# relaxes the rules that conflict with how GitHub Actions workflows are written.
+#
+# Run locally with:  pre-commit run yamllint --all-files
+
+extends: default
+
+rules:
+  # Workflow files use long `uses:`/`run:` lines and long expression strings.
+  line-length:
+    max: 300
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  # GitHub Actions workflows do not begin with a `---` marker.
+  document-start: disable
+
+  # `on:` in a workflow is a key, not the boolean `true`.
+  truthy:
+    check-keys: false
+
+  # The config files use banner comments indented to match their block.
+  comments-indentation: disable
+
+  # Both block and flow sequence styles appear across the workflows.
+  indentation:
+    spaces: consistent
+    indent-sequences: whatever
+
+  # Workflows are written as `branches: [ main ]`, which is the common Actions style.
+  brackets:
+    max-spaces-inside: 1
+
+  # The repository is developed on Windows, so the working tree is checked out
+  # with CRLF endings; git normalises to LF on commit.
+  new-lines: disable
