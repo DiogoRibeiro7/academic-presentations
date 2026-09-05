@@ -37,35 +37,58 @@ def _load_author_metadata() -> dict[str, str]:
     return metadata
 
 
+def _strip_tex_comments(text: str) -> str:
+    """Return TeX source with unescaped comments removed line by line."""
+    active_lines: list[str] = []
+    for line in text.splitlines():
+        cut = len(line)
+        for index, char in enumerate(line):
+            if char != "%":
+                continue
+
+            backslashes = 0
+            cursor = index - 1
+            while cursor >= 0 and line[cursor] == "\\":
+                backslashes += 1
+                cursor -= 1
+
+            if backslashes % 2 == 0:
+                cut = index
+                break
+
+        active_lines.append(line[:cut])
+
+    return "\n".join(active_lines)
+
+
 def validate() -> None:
-    """Fail if the theme drifts from the canonical author metadata."""
+    """Fail if active theme definitions drift from canonical author metadata."""
     metadata = _load_author_metadata()
     theme = THEME_FILE.read_text(encoding="utf-8")
+    active_theme = _strip_tex_comments(theme)
 
-    display_name = metadata["name"].split(",", maxsplit=1)
-    if len(display_name) != 2:
+    display_name = metadata["name"].split(",")
+    if len(display_name) != 2 or not all(part.strip() for part in display_name):
         raise ValueError("author name must use 'Surname, Given name' format")
     expected_display_name = f"{display_name[1].strip()} {display_name[0].strip()}"
 
     required_fragments = (
-        f"% Author: {expected_display_name}",
-        f"% Institution: {metadata['affiliation']}",
         f"\\authorname{{{expected_display_name}}}",
         f"\\authororcid{{{metadata['orcid']}}}",
-        f"\\def\\@authorinstitution{{{metadata['affiliation']}}}%",
+        f"\\def\\@authorinstitution{{{metadata['affiliation']}}}",
     )
 
-    missing = [fragment for fragment in required_fragments if fragment not in theme]
+    missing = [fragment for fragment in required_fragments if fragment not in active_theme]
     if missing:
         raise ValueError(
             "shared Beamer theme is out of sync with shared/author.json: "
             + "; ".join(missing)
         )
 
-    stale = [marker for marker in LEGACY_MARKERS if marker in theme]
+    stale = [marker for marker in LEGACY_MARKERS if marker in active_theme]
     if stale:
         raise ValueError(
-            "shared Beamer theme still contains stale affiliation/employer metadata: "
+            "shared Beamer theme still contains stale active affiliation/employer metadata: "
             + "; ".join(stale)
         )
 
