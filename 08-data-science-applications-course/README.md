@@ -22,12 +22,12 @@ This course is built from reusable LaTeX sections (NOT standalone documents):
 
 ### Available Sections
 
-| Section | Source | Slides | Topics Covered |
-|---------|--------|--------|----------------|
-| Deep Learning | `sections/deep_learning_section.tex` | ~45 | Neural networks, CNNs, RNNs, Transformers |
-| Time Series | `sections/time_series_section.tex` | ~40 | ARIMA, ML methods, deep learning for TS |
-| Explainable AI | `sections/explainable_ai_section.tex` | ~40 | SHAP, LIME, interpretability |
-| MLOps & Deployment | `sections/mlops_deployment_section.tex` | ~35 | Production ML, monitoring, DevOps |
+| Section            | Source                                  | Slides | Topics Covered                            |
+| ------------------ | --------------------------------------- | ------ | ----------------------------------------- |
+| Deep Learning      | `sections/deep_learning_section.tex`    | ~45    | Neural networks, CNNs, RNNs, Transformers |
+| Time Series        | `sections/time_series_section.tex`      | ~40    | ARIMA, ML methods, deep learning for TS   |
+| Explainable AI     | `sections/explainable_ai_section.tex`   | ~40    | SHAP, LIME, interpretability              |
+| MLOps & Deployment | `sections/mlops_deployment_section.tex` | ~35    | Production ML, monitoring, DevOps         |
 
 ## Usage
 
@@ -59,13 +59,16 @@ The `main_presentation.tex` file includes selected sections:
 ### Customization Options
 
 **Option 1: Full Course** (~160 slides, 2-3 days workshop)
+
 - Include all 4 sections
 
 **Option 2: ML Deployment Focus** (~80 slides, 1-day workshop)
+
 - Deep Learning section
 - MLOps section
 
 **Option 3: Advanced Topics** (~80 slides, 1-day)
+
 - Time Series section
 - Explainable AI section
 
@@ -75,18 +78,18 @@ The `main_presentation.tex` file includes selected sections:
 
 The sections in this domain are **SHORTER** versions designed for overview presentations. For in-depth coverage, use the standalone topic presentations in their respective domains:
 
-| Section (This Domain) | Standalone Version (Other Domains) |
-|-----------------------|-----------------------------------|
-| `deep_learning_section.tex` (25K, ~45 slides) | `/02-deep-learning/deep-learning-fundamentals/` (26K, more depth) |
-| `time_series_section.tex` (16K, ~40 slides) | `/05-time-series/time-series-forecasting/` (24K, comprehensive) |
-| `explainable_ai_section.tex` (21K, ~40 slides) | `/06-advanced-topics/explainable-ai/` (24K, more examples) |
+| Section (This Domain)                          | Standalone Version (Other Domains)                                |
+| ---------------------------------------------- | ----------------------------------------------------------------- |
+| `deep_learning_section.tex` (25K, ~45 slides)  | `/02-deep-learning/deep-learning-fundamentals/` (26K, more depth) |
+| `time_series_section.tex` (16K, ~40 slides)    | `/05-time-series/time-series-forecasting/` (24K, comprehensive)   |
+| `explainable_ai_section.tex` (21K, ~40 slides) | `/06-advanced-topics/explainable-ai/` (24K, more examples)        |
 
 **Use this domain for**: Industry training, executive briefings, survey courses
 **Use standalone domains for**: Academic courses, professional certifications, deep learning
 
 ## Materials
 
-```
+```text
 08-data-science-applications-course/
 ├── presentation/
 │   ├── main_presentation.tex      # Master file for composing sections
@@ -113,13 +116,16 @@ The sections in this domain are **SHORTER** versions designed for overview prese
 ## Compilation
 
 ### Compile Full Course
+
 ```bash
 cd presentation/
 pdflatex main_presentation.tex
 ```
 
 ### Compile Custom Selection
+
 Edit `main_presentation.tex` to include only desired sections:
+
 ```latex
 \input{sections/deep_learning_section.tex}
 % \input{sections/time_series_section.tex}    % Commented out
@@ -129,6 +135,7 @@ Edit `main_presentation.tex` to include only desired sections:
 ## Maintenance
 
 When updating content:
+
 1. **Section updates**: Edit files in `presentation/sections/`
 2. **Synchronization**: If changes should propagate to standalone versions, update those separately
 3. **Independence**: Sections are self-contained (no cross-references between sections)
@@ -136,6 +143,7 @@ When updating content:
 ## Prerequisites
 
 Varies by sections included:
+
 - Programming (Python/R)
 - Basic ML knowledge
 - Statistics fundamentals

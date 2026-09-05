@@ -9,6 +9,7 @@
 ## 1. Naming Issues Identified
 
 ### Issue 1.1: Directory Named with .tex Extension
+
 - **Current**: `introduction_to_programming_R.tex/` (directory incorrectly named)
 - **Should be**: `introduction_to_programming_R/`
 - **Action**: Rename directory
@@ -18,51 +19,51 @@
 
 ### 2.1: Causal Inference Materials
 
-| File | Location 1 | Location 2 | Size | Decision |
-|------|------------|------------|------|----------|
-| `causal_inference_beamer.tex` | `/data_science_applications/` | Root has placeholder dir `/causal_inference/` (empty?) | 55KB | Consolidate to new `/04-causal-inference/` |
-| `causal_inference_enhancements.tex` | `/data_science_applications/` | N/A | 64KB | Move to `/04-causal-inference/` |
+| File                                | Location 1                    | Location 2                                             | Size | Decision                                   |
+| ----------------------------------- | ----------------------------- | ------------------------------------------------------ | ---- | ------------------------------------------ |
+| `causal_inference_beamer.tex`       | `/data_science_applications/` | Root has placeholder dir `/causal_inference/` (empty?) | 55KB | Consolidate to new `/04-causal-inference/` |
+| `causal_inference_enhancements.tex` | `/data_science_applications/` | N/A                                                    | 64KB | Move to `/04-causal-inference/`            |
 
 **Initial Verdict**: `/data_science_applications/` has the actual content.
 
 ### 2.2: Statistical Learning/Modeling Materials
 
-| File | Location 1 | Location 2 | Difference |
-|------|------------|------------|------------|
-| `statistical_learning_beamer.tex` | `/data_science_applications/` | `/statistical_modeling/` may have different content | Need to diff |
-| `statistical_learning_enhancements.tex` | `/data_science_applications/` | N/A | Enhancement version |
+| File                                    | Location 1                    | Location 2                                          | Difference          |
+| --------------------------------------- | ----------------------------- | --------------------------------------------------- | ------------------- |
+| `statistical_learning_beamer.tex`       | `/data_science_applications/` | `/statistical_modeling/` may have different content | Need to diff        |
+| `statistical_learning_enhancements.tex` | `/data_science_applications/` | N/A                                                 | Enhancement version |
 
 **Initial Action Required**: Compare files to determine which is authoritative.
 
 ### 2.3: Deep Learning Materials
 
-| File | Location 1 | Location 2 |
-|------|------------|------------|
+| File                       | Location 1                    | Location 2        |
+| -------------------------- | ----------------------------- | ----------------- |
 | `deep_learning_beamer.tex` | `/data_science_applications/` | `/deep_learning/` |
 
 **Initial Action Required**: Determine which version is current.
 
 ### 2.4: Feature Engineering Materials
 
-| File | Location 1 | Location 2 |
-|------|------------|------------|
+| File                             | Location 1                    | Location 2                     |
+| -------------------------------- | ----------------------------- | ------------------------------ |
 | `feature_engineering_beamer.tex` | `/data_science_applications/` | Separate topic dir (uncertain) |
-| Code | `/code/feature_engineering/` | N/A |
+| Code                             | `/code/feature_engineering/`  | N/A                            |
 
 **Verdict**: Presentation and code are already separated, need to consolidate.
 
 ### 2.5: Time Series Materials
 
-| File | Location 1 | Location 2 |
-|------|------------|------------|
+| File                     | Location 1                    | Location 2      |
+| ------------------------ | ----------------------------- | --------------- |
 | `time_series_beamer.tex` | `/data_science_applications/` | `/time_series/` |
 
 **Initial Action Required**: Compare to determine latest version.
 
 ### 2.6: Explainable AI Materials
 
-| File | Location 1 | Location 2 |
-|------|------------|------------|
+| File                        | Location 1                    | Location 2         |
+| --------------------------- | ----------------------------- | ------------------ |
 | `explainable_ai_beamer.tex` | `/data_science_applications/` | `/explainable_ai/` |
 
 **Initial Action Required**: Compare versions.
@@ -70,17 +71,20 @@
 ## 3. New Content Categories Discovered
 
 ### 3.1: MLOps & Deployment
+
 - **File**: `mlops_deployment_beamer.tex` (in `/data_science_applications/`)
 - **Size**: 22KB
 - **Destination**: `/06-advanced-topics/mlops-deployment/`
 
 ### 3.2: A/B Testing
+
 - **File**: `ab_testing_experimental_design_beamer.tex` (in `/data_science_applications/`)
 - **Size**: 34KB
 - **Destination**: `/04-causal-inference/ab-testing/`
 - **Also in**: `/interview/a_b_testing.tex` (16KB - different content?)
 
 ### 3.3: Capstone Projects
+
 - **Files**:
   - `capstone_projects_enhancements.tex` (73KB)
   - `capstone_prerequisites_appendix.tex` (22KB)
@@ -88,36 +92,44 @@
 - **Destination**: New `/07-capstone-projects/`
 
 ### 3.4: Industry Focus
+
 - **Files**:
   - `industry_focus_enhancements.tex` (66KB)
   - `INDUSTRY_FOCUS_ENHANCEMENT_GUIDE.md` (27KB)
 - **Destination**: `/07-capstone-projects/industry-focus/`
 
 ### 3.5: Assessment Materials
+
 - **Location**: `/data_science_applications/assessments/`
 - **Destination**: Root `/assessments/` (already exists)
 - **Action**: Merge with existing assessments
 
 ### 3.6: Competency Matrices
+
 - **File**: `COMPETENCY_MATRICES.md` (26KB)
 - **Destination**: `/learning-paths/competency-matrices/`
 
 ## 4. Build Artifacts Analysis
 
 ### 4.1: PDF Files (Compiled Presentations)
+
 Found in multiple locations:
+
 - `/data_science_applications/*.pdf` (3 files, ~1.5MB total)
 - `/introduction_to_programming_R.tex/*.pdf` (1 file, 804KB)
 - `/exercises/*/*.pdf` (should be kept - exercise solutions)
 
 **Decision**:
+
 - Keep PDFs in `/exercises/` (final output)
 - Remove PDFs from source directories (should be generated by CI/CD)
 
 ### 4.2: LaTeX Auxiliary Files
+
 Pattern: `*.aux, *.log, *.nav, *.out, *.snm, *.toc, *.vrb, *.fls, *.fdb_latexmk, *.synctex.gz`
 
 **Locations**:
+
 - `/data_science_applications/` - 50+ auxiliary files
 - `/introduction_to_programming_R.tex/` - 12+ auxiliary files
 
@@ -130,6 +142,7 @@ Pattern: `*.aux, *.log, *.nav, *.out, *.snm, *.toc, *.vrb, *.fls, *.fdb_latexmk,
 ### 5.1: `/data_science_applications/` Breakdown
 
 This directory contains multiple presentations and enhancement files:
+
 1. `ab_testing_experimental_design_beamer.tex`
 2. `causal_inference_beamer.tex`
 3. `deep_learning_beamer.tex`
@@ -148,12 +161,15 @@ Plus enhancements and guides (additional files).
 ## 6. Phase 0 Action Plan
 
 ### Step 1: Fix Naming Issues (Completed)
+
 ```bash
 git mv introduction_to_programming_R.tex introduction_to_programming_R
 ```
 
 ### Step 2: Create Deduplication Comparison Report (Completed)
+
 Compare duplicate files to determine authoritative versions:
+
 ```bash
 diff data_science_applications/causal_inference_beamer.tex causal_inference/... (if exists)
 diff data_science_applications/deep_learning_beamer.tex deep_learning/...
@@ -161,14 +177,17 @@ diff data_science_applications/deep_learning_beamer.tex deep_learning/...
 ```
 
 ### Step 3: Document Build Artifact Removal (Completed)
+
 List all files to be removed from git tracking.
 
 ### Step 4: Create Backup Tag (Completed)
+
 ```bash
 git tag pre-reorganization-v1
 ```
 
 ### Step 5: Update `.gitignore` (Pending in later phase)
+
 Add comprehensive ignore patterns for build artifacts.
 
 ## 7. Recommended Order of Operations
@@ -183,19 +202,23 @@ Add comprehensive ignore patterns for build artifacts.
 ## 8. Risks Identified
 
 ### Low Risk
+
 - Renaming `introduction_to_programming_R.tex/` directory
 - Removing build artifacts
 
 ### Medium Risk
+
 - Choosing between duplicate versions
 - Breaking LaTeX paths during moves
 
 ### High Risk
+
 - None identified (incremental approach mitigates risk)
 
 ## 9. Next Steps
 
 After Phase 0 completion:
+
 1. Proceed to Phase 1: Create new directory structure
 2. Start incremental migration with smallest domain (Time Series)
 3. Test compilation after each migration step

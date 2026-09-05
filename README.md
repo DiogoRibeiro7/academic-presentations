@@ -1,8 +1,8 @@
 # Academic Presentations
+
 **Comprehensive Data Science & Machine Learning Course Materials**
 
-**Diogo Ribeiro**<br>
-_Faculty of Media Arts and Design, Technical University of Porto_
+**Diogo Ribeiro** — _Faculty of Media Arts and Design, Technical University of Porto_
 
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0001--2022--7072-green.svg)](https://orcid.org/0009-0001-2022-7072)
 [![Email](https://img.shields.io/badge/Email-dfr%40esmad.ipp.pt-blue.svg)](mailto:dfr@esmad.ipp.pt)
@@ -10,32 +10,80 @@ _Faculty of Media Arts and Design, Technical University of Porto_
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
 [![Code License: MIT](https://img.shields.io/badge/Code%20License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 Overview
+A collection of professional academic presentations covering advanced topics in statistics, machine
+learning, deep learning, and data science — built for graduate courses, research seminars,
+professional training, and self-study.
 
-This repository contains a comprehensive collection of **professional academic presentations** covering advanced topics in statistics, machine learning, deep learning, and data science. The materials are designed for:
+**[📊 Browse slide previews](https://diogoribeiro7.github.io/academic-presentations/)** ·
+[Course catalog](#-course-catalog) ·
+[Getting started](#-getting-started) ·
+[Contributing](./CONTRIBUTING.md) ·
+[Changelog](./CHANGELOG.md)
 
-- 🎓 **Graduate-level courses** in Data Science, Statistics, and Computer Science
-- 🔬 **Research seminars** and academic conferences
-- 🏢 **Professional training** programs in industry
-- 📚 **Self-study** for advanced learners
+> **Sections below are collapsible.** Click any ▸ heading to expand just the part you need.
 
-### Key Features
+---
 
-✅ **15+ comprehensive presentations** with 100+ hours of content<br>
-✅ **Production-ready code** in Python and R (27,000+ lines)<br>
-✅ **140+ curated references** with DOIs<br>
-✅ **Professional LaTeX theme** with consistent styling<br>
-✅ **Hands-on exercises** and assessments<br>
-✅ **Automated PDF generation** via GitHub Actions<br>
+## 🧭 Contents
 
-## 📚 Course Catalog & Learning Objectives
+| Section                                                       | What's inside                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------- |
+| [📚 Course catalog](#-course-catalog)                         | All modules, learning objectives, topics, prerequisites |
+| [📁 Repository structure](#-repository-structure)             | Directory layout and conventions                        |
+| [🚀 Getting started](#-getting-started)                       | Install LaTeX/Python/R, compile slides, run exercises   |
+| [🎨 Theme & styling](#-theme--styling)                        | ESMAD Beamer theme and usage template                   |
+| [🎯 Pick your path](#-pick-your-path)                         | Guides for students, educators, and researchers         |
+| [🤖 Automation & contributing](#-automation--contributing)    | CI/CD workflows and how to contribute                   |
+| [📄 License, citation & contact](#-license-citation--contact) | Licensing, BibTeX, and how to reach out                 |
 
-### 🔷 Deep Learning & Neural Networks
+### At a glance
 
-#### **Deep Learning Fundamentals**
+|                  |                                                |
+| ---------------- | ---------------------------------------------- |
+| 📚 Presentations | 15+ comprehensive decks, 100+ hours of content |
+| 💻 Code          | 27,000+ lines of production-ready Python & R   |
+| 📖 References    | 140+ curated papers with DOIs                  |
+| 🎨 Theme         | One professional LaTeX theme, fully documented |
+| 📝 Assessments   | Exercises, quizzes, exams, and grading rubrics |
+| 🤖 Build         | Automated PDF compilation via GitHub Actions   |
+
+---
+
+## 📚 Course catalog
+
+Every module lives in its own directory with a `presentation/`, and most also ship `code/` and
+`exercises/`. Expand a domain below for learning objectives and topic lists.
+
+| Module                                                                        | Domain           | Level                 | Duration       |
+| ----------------------------------------------------------------------------- | ---------------- | --------------------- | -------------- |
+| [R Programming](./00-programming-fundamentals/r-programming/)                 | Programming      | Beginner              | 2–3 weeks      |
+| [Statistical Learning Theory](./01-foundations/statistical-modeling/)         | ML theory        | Intermediate          | 4–5 weeks      |
+| [Feature Engineering](./01-foundations/feature-engineering/)                  | ML practice      | Beginner–Intermediate | 2–3 weeks      |
+| [Principal Component Analysis](./01-foundations/pca/)                         | Foundations      | Intermediate          | 1–2 weeks      |
+| [Optimization for Data Science](./01-foundations/optimization/)               | Optimization     | Intermediate–Advanced | 3–4 weeks      |
+| [Deep Learning Fundamentals](./02-deep-learning/deep-learning-fundamentals/)  | Deep learning    | Intermediate–Advanced | 3–4 weeks      |
+| [Reinforcement Learning](./02-deep-learning/reinforcement-learning/)          | Deep learning    | Advanced              | 4–5 weeks      |
+| [Advanced MCMC Methods](./03-bayesian-methods/mcmc/)                          | Bayesian         | Advanced              | 3–4 weeks      |
+| [Bayesian Machine Learning](./03-bayesian-methods/bayesian-machine-learning/) | Bayesian         | Advanced              | 3–4 weeks      |
+| [Causal Inference](./04-causal-inference/causal-inference-fundamentals/)      | Causal           | Advanced              | 4–5 weeks      |
+| [A/B Testing & Experimentation](./04-causal-inference/ab-testing/)            | Applied          | Intermediate          | 1–2 weeks      |
+| [Time Series Analysis](./05-time-series/time-series-forecasting/)             | Forecasting      | Intermediate–Advanced | 3–4 weeks      |
+| [Explainable AI & Interpretability](./06-advanced-topics/explainable-ai/)     | Advanced topics  | Intermediate–Advanced | 2–3 weeks      |
+| [Building AI Agents](./06-advanced-topics/ai-agents/)                         | Advanced topics  | Advanced              | 90-minute deck |
+| [OOP & Streaming Pipelines](./06-advanced-topics/computer-science/)           | Computer science | Intermediate          | 2 weeks        |
+| [Capstone Projects](./07-capstone-projects/)                                  | Projects         | Advanced              | Course-length  |
+| [Data Science Applications](./08-data-science-applications-course/)           | Applied course   | Intermediate          | Full course    |
+| [Testing Suites Guide](./09-unit-tests/)                                      | Engineering      | Intermediate          | 1 week         |
+
+<details>
+<summary><b>🔷 Deep Learning &amp; Neural Networks</b> — deep learning fundamentals, reinforcement learning</summary>
+
+### Deep Learning Fundamentals
+
 📂 [`02-deep-learning/deep-learning-fundamentals/`](./02-deep-learning/deep-learning-fundamentals/)
 
 **Learning Objectives:**
+
 - Understand the mathematical foundations of neural networks
 - Implement backpropagation and gradient descent from scratch
 - Master modern optimization techniques (SGD, Adam, AdamW)
@@ -45,6 +93,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Apply regularization techniques (dropout, batch normalization)
 
 **Topics Covered:**
+
 - Perceptron and multilayer networks
 - Activation functions (ReLU, sigmoid, tanh, Swish)
 - Loss functions and optimization
@@ -59,10 +108,12 @@ This repository contains a comprehensive collection of **professional academic p
 
 ---
 
-#### **Reinforcement Learning**
+### Reinforcement Learning
+
 📂 [`02-deep-learning/reinforcement-learning/`](./02-deep-learning/reinforcement-learning/)
 
 **Learning Objectives:**
+
 - Formulate problems as Markov Decision Processes
 - Derive and apply Bellman equations
 - Implement value iteration and policy iteration
@@ -73,6 +124,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Design multi-agent systems
 
 **Topics Covered:**
+
 - Markov Decision Processes and dynamic programming
 - Monte Carlo methods
 - Temporal Difference learning (SARSA, Q-learning)
@@ -85,14 +137,17 @@ This repository contains a comprehensive collection of **professional academic p
 **Level:** Advanced<br>
 **Duration:** 4-5 weeks (graduate course)
 
----
+</details>
 
-### 🔷 Machine Learning Theory & Practice
+<details>
+<summary><b>🔷 Machine Learning Theory &amp; Practice</b> — statistical learning, feature engineering, explainable AI</summary>
 
-#### **Statistical Learning Theory**
+### Statistical Learning Theory
+
 📂 [`01-foundations/statistical-modeling/`](./01-foundations/statistical-modeling/)
 
 **Learning Objectives:**
+
 - Understand bias-variance tradeoff
 - Master regularization techniques (Ridge, Lasso, Elastic Net)
 - Apply cross-validation and model selection
@@ -102,6 +157,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Evaluate models using appropriate metrics
 
 **Topics Covered:**
+
 - Supervised learning fundamentals
 - Linear and logistic regression
 - Regularization and model selection
@@ -116,10 +172,12 @@ This repository contains a comprehensive collection of **professional academic p
 
 ---
 
-#### **Feature Engineering**
+### Feature Engineering
+
 📂 [`01-foundations/feature-engineering/`](./01-foundations/feature-engineering/)
 
 **Learning Objectives:**
+
 - Design effective feature engineering pipelines
 - Handle missing data with advanced imputation techniques
 - Encode categorical variables appropriately
@@ -129,6 +187,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Build end-to-end ML pipelines with scikit-learn
 
 **Topics Covered:**
+
 - Missing value imputation (mean, median, KNN, MICE)
 - Categorical encoding (one-hot, ordinal, target, entity embeddings)
 - Feature scaling (standard, min-max, robust)
@@ -143,10 +202,12 @@ This repository contains a comprehensive collection of **professional academic p
 
 ---
 
-#### **Explainable AI & Model Interpretability**
+### Explainable AI & Model Interpretability
+
 📂 [`06-advanced-topics/explainable-ai/`](./06-advanced-topics/explainable-ai/)
 
 **Learning Objectives:**
+
 - Understand the interpretability-accuracy tradeoff
 - Explain model predictions using SHAP values
 - Apply LIME for local explanations
@@ -157,6 +218,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Use modern XAI tools (SHAP, LIME, InterpretML)
 
 **Topics Covered:**
+
 - Global vs local explanations
 - Model-agnostic methods (SHAP, LIME, permutation importance)
 - Model-specific interpretability (linear models, trees, neural networks)
@@ -169,14 +231,17 @@ This repository contains a comprehensive collection of **professional academic p
 **Level:** Intermediate to Advanced<br>
 **Duration:** 2-3 weeks
 
----
+</details>
 
-### 🔷 Bayesian Methods & MCMC
+<details>
+<summary><b>🔷 Bayesian Methods &amp; MCMC</b> — advanced MCMC, Bayesian machine learning</summary>
 
-#### **Advanced MCMC Methods**
+### Advanced MCMC Methods
+
 📂 [`03-bayesian-methods/mcmc/`](./03-bayesian-methods/mcmc/)
 
 **Learning Objectives:**
+
 - Understand Bayesian inference and posterior distributions
 - Derive Metropolis-Hastings acceptance probability
 - Implement MCMC algorithms from scratch
@@ -186,6 +251,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Apply MCMC to real Bayesian models
 
 **Topics Covered:**
+
 - Bayesian inference fundamentals
 - Metropolis-Hastings algorithm
 - Hamiltonian Monte Carlo and leapfrog integration
@@ -200,10 +266,12 @@ This repository contains a comprehensive collection of **professional academic p
 
 ---
 
-#### **Bayesian Machine Learning**
+### Bayesian Machine Learning
+
 📂 [`03-bayesian-methods/bayesian-machine-learning/`](./03-bayesian-methods/bayesian-machine-learning/)
 
 **Learning Objectives:**
+
 - Apply Bayesian inference to machine learning problems
 - Build Bayesian linear and logistic regression models
 - Implement Gaussian Processes for regression
@@ -213,6 +281,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Quantify predictive uncertainty
 
 **Topics Covered:**
+
 - Bayesian linear regression
 - Gaussian Processes
 - Bayesian neural networks
@@ -224,14 +293,17 @@ This repository contains a comprehensive collection of **professional academic p
 **Level:** Advanced<br>
 **Duration:** 3-4 weeks
 
----
+</details>
 
-### 🔷 Causal Inference & Econometrics
+<details>
+<summary><b>🔷 Causal Inference &amp; Experimentation</b> — causal inference, A/B testing</summary>
 
-#### **Causal Inference**
+### Causal Inference
+
 📂 [`04-causal-inference/causal-inference-fundamentals/`](./04-causal-inference/causal-inference-fundamentals/)
 
 **Learning Objectives:**
+
 - Understand potential outcomes framework
 - Draw and interpret causal DAGs
 - Implement Instrumental Variables (IV/2SLS)
@@ -242,6 +314,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Identify and address confounding
 
 **Topics Covered:**
+
 - Potential outcomes and causal graphs
 - Instrumental Variables and weak instruments
 - Regression Discontinuity (sharp and fuzzy)
@@ -257,12 +330,46 @@ This repository contains a comprehensive collection of **professional academic p
 
 ---
 
-### 🔷 Time Series & Forecasting
+### A/B Testing & Experimentation
 
-#### **Time Series Analysis**
+📂 [`04-causal-inference/ab-testing/`](./04-causal-inference/ab-testing/)
+
+**Learning Objectives:**
+
+- Design statistically rigorous A/B tests
+- Calculate required sample sizes
+- Perform hypothesis testing correctly
+- Control for multiple comparisons
+- Understand statistical power and effect sizes
+- Apply sequential testing methods
+- Analyze experimental results
+- Avoid common pitfalls (peeking, p-hacking)
+
+**Topics Covered:**
+
+- Experimental design
+- Hypothesis testing and p-values
+- Sample size calculations
+- Multiple testing corrections
+- Bayesian A/B testing
+- Sequential analysis
+- Common pitfalls and best practices
+
+**Prerequisites:** Statistics, probability<br>
+**Level:** Intermediate<br>
+**Duration:** 1-2 weeks
+
+</details>
+
+<details>
+<summary><b>🔷 Time Series &amp; Forecasting</b> — classical and deep forecasting methods</summary>
+
+### Time Series Analysis
+
 📂 [`05-time-series/time-series-forecasting/`](./05-time-series/time-series-forecasting/)
 
 **Learning Objectives:**
+
 - Analyze time series components (trend, seasonality)
 - Test for and achieve stationarity
 - Build ARIMA and SARIMA models
@@ -273,6 +380,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Apply hybrid methods (Prophet, N-BEATS)
 
 **Topics Covered:**
+
 - Stationarity and unit root tests
 - ARMA, ARIMA, SARIMA models
 - Vector Autoregression (VAR)
@@ -286,14 +394,17 @@ This repository contains a comprehensive collection of **professional academic p
 **Level:** Intermediate to Advanced<br>
 **Duration:** 3-4 weeks
 
----
+</details>
 
-### 🔷 Optimization & Computational Methods
+<details>
+<summary><b>🔷 Optimization &amp; Computational Methods</b> — convex optimization through evolutionary search</summary>
 
-#### **Optimization for Data Science**
+### Optimization for Data Science
+
 📂 [`01-foundations/optimization/`](./01-foundations/optimization/)
 
 **Learning Objectives:**
+
 - Formulate optimization problems
 - Understand convexity and its implications
 - Derive and apply KKT conditions
@@ -305,6 +416,7 @@ This repository contains a comprehensive collection of **professional academic p
 - Optimize neural network training
 
 **Topics Covered:**
+
 - Convex optimization fundamentals
 - Gradient descent (batch, SGD, mini-batch)
 - Momentum methods and Nesterov acceleration
@@ -318,126 +430,242 @@ This repository contains a comprehensive collection of **professional academic p
 **Level:** Intermediate to Advanced<br>
 **Duration:** 3-4 weeks
 
----
+</details>
 
-### 🔷 Applied Data Science
+<details>
+<summary><b>🔷 Programming, Engineering &amp; Applied Modules</b> — R, PCA, OOP &amp; streaming, AI agents, capstones</summary>
 
-#### **A/B Testing & Experimentation**
-📂 [`04-causal-inference/ab-testing/`](./04-causal-inference/ab-testing/)
+| Module                           | Directory                                                                                    | Focus                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **R Programming**                | [`00-programming-fundamentals/r-programming/`](./00-programming-fundamentals/r-programming/) | R from basics to data science workflows                                     |
+| **Principal Component Analysis** | [`01-foundations/pca/`](./01-foundations/pca/)                                               | PCA theory, geometry, and applied dimensionality reduction                  |
+| **OOP & Streaming Pipelines**    | [`06-advanced-topics/computer-science/`](./06-advanced-topics/computer-science/)             | Object-oriented design principles and streaming pipeline processing         |
+| **Building AI Agents**           | [`06-advanced-topics/ai-agents/`](./06-advanced-topics/ai-agents/)                           | Agent architecture, reliability, and production operations (90-minute deck) |
+| **Capstone Projects**            | [`07-capstone-projects/`](./07-capstone-projects/)                                           | Project guides, prerequisites appendix, and industry-focused briefs         |
+| **Data Science Applications**    | [`08-data-science-applications-course/`](./08-data-science-applications-course/)             | Full applied course: "Data Science in Practice — Industry Applications"     |
+| **Testing Suites Guide**         | [`09-unit-tests/`](./09-unit-tests/)                                                         | Writing and structuring test suites for data science code                   |
+| **MLOps & Deployment**           | [`06-advanced-topics/mlops-deployment/`](./06-advanced-topics/mlops-deployment/)             | Planned module — directory scaffolded, slides in progress                   |
 
-**Learning Objectives:**
-- Design statistically rigorous A/B tests
-- Calculate required sample sizes
-- Perform hypothesis testing correctly
-- Control for multiple comparisons
-- Understand statistical power and effect sizes
-- Apply sequential testing methods
-- Analyze experimental results
-- Avoid common pitfalls (peeking, p-hacking)
-
-**Topics Covered:**
-- Experimental design
-- Hypothesis testing and p-values
-- Sample size calculations
-- Multiple testing corrections
-- Bayesian A/B testing
-- Sequential analysis
-- Common pitfalls and best practices
-
-**Prerequisites:** Statistics, probability<br>
-**Level:** Intermediate<br>
-**Duration:** 1-2 weeks
+</details>
 
 ---
 
-## 🏗️ Repository Structure
+## 📁 Repository structure
+
+<details>
+<summary><b>Full directory tree</b></summary>
 
 ```
 academic-presentations/
-├── README.md                           # This file
-├── CONTRIBUTING.md                     # Contribution guidelines
-├── CHANGELOG.md                        # Version history
-├── LICENSE                            # CC BY-SA 4.0 for content
+├── README.md                            # This file
+├── CONTRIBUTING.md                      # Contribution guidelines
+├── CHANGELOG.md                         # Version history
+├── ACCESSIBILITY.md                     # Accessibility guidance
+├── QUALITY.md                           # Quality standards
+├── compile_all.sh                       # Build every presentation
 │
-├── .github/                           # 🤖 GitHub Actions automation
+├── .github/                             # 🤖 GitHub Actions automation
 │   ├── workflows/
-│   │   ├── compile-latex.yml         # Auto-compile PDFs
-│   │   ├── check-links.yml           # Verify all URLs
-│   │   └── generate-previews.yml     # Create PDF previews
-│   ├── dependabot.yml                # Dependency updates
+│   │   ├── compile-latex.yml            # Auto-compile PDFs
+│   │   ├── check-links.yml              # Verify all URLs
+│   │   └── generate-previews.yml        # Create PDF previews
+│   ├── dependabot.yml                   # Dependency updates
 │   └── markdown-link-check-config.json
 │
-├── shared/                            # 🔄 Shared resources
-│   ├── theme/                        # 🎨 Professional LaTeX theme
-│   │   ├── esmad_beamer_theme.sty   # Custom Beamer theme
+├── shared/                              # 🔄 Shared resources
+│   ├── theme/                           # 🎨 Professional LaTeX theme
+│   │   ├── esmad_beamer_theme.sty       # Custom Beamer theme
 │   │   ├── esmad_beamer_theme_highcontrast.sty
-│   │   ├── STYLE_GUIDE.md           # Theme documentation
-│   │   └── template_presentation.tex # Example template
-│   └── bibliographies/               # 📚 Reference libraries (140+ papers)
-│       ├── mcmc_references.bib      # MCMC methods (30+ refs)
-│       ├── causal_inference_references.bib # Causal inference (50+ refs)
-│       └── statistical_learning_references.bib # ML/Stats (60+ refs)
+│   │   ├── STYLE_GUIDE.md               # Theme documentation
+│   │   └── template_presentation.tex    # Example template
+│   ├── bibliographies/                  # 📚 Reference libraries (140+ papers)
+│   │   ├── mcmc_references.bib
+│   │   ├── causal_inference_references.bib
+│   │   ├── statistical_learning_references.bib
+│   │   ├── capstone_projects_references.bib
+│   │   ├── industry_focus_references.bib
+│   │   └── *_enhancements_references.bib
+│   └── utilities/                       # Shared LaTeX/helper utilities
 │
-├── 00-programming-fundamentals/      # 💻 Programming Basics
-│   └── r-programming/
-│       └── presentation/
-│           └── R_programming.tex
+├── 00-programming-fundamentals/         # 💻 Programming basics
+│   └── r-programming/                   # R: A Comprehensive Introduction
 │
-├── 01-foundations/                   # 📊 Core Foundations
-│   ├── statistical-modeling/
-│   │   └── presentation/            # Statistical Learning Theory
-│   ├── feature-engineering/
-│   │   └── presentation/            # Feature Engineering
-│   ├── pca/
-│   │   └── presentation/            # Principal Component Analysis
-│   └── optimization/
-│       └── presentation/            # Optimization for Data Science
+├── 01-foundations/                      # 📊 Core foundations
+│   ├── statistical-modeling/            # Statistical Learning Theory
+│   ├── feature-engineering/             # Feature Engineering
+│   ├── pca/                             # Principal Component Analysis
+│   └── optimization/                    # Optimization for Data Science
 │
-├── 02-deep-learning/                 # 🧠 Deep Learning
+├── 02-deep-learning/                    # 🧠 Deep learning
 │   ├── deep-learning-fundamentals/
-│   │   └── presentation/            # Deep Learning Fundamentals
 │   └── reinforcement-learning/
-│       └── presentation/            # Reinforcement Learning
 │
-├── 03-bayesian-methods/              # 🎲 Bayesian Statistics
-│   ├── mcmc/
-│   │   ├── presentation/            # MCMC Methods
-│   │   └── exercises/               # MCMC Exercises
-│   └── bayesian-machine-learning/
-│       └── presentation/            # Bayesian ML
+├── 03-bayesian-methods/                 # 🎲 Bayesian statistics
+│   ├── mcmc/                            # MCMC methods
+│   └── bayesian-machine-learning/       # Bayesian ML
 │
-├── 04-causal-inference/              # ⚖️ Causal Methods
+├── 04-causal-inference/                 # ⚖️ Causal methods
 │   ├── causal-inference-fundamentals/
-│   │   ├── presentation/            # Causal Inference Fundamentals
-│   │   └── exercises/               # Causal Inference Exercises
-│   └── ab-testing/
-│       └── presentation/            # A/B Testing & Experimentation
+│   └── ab-testing/                      # A/B Testing & Experimentation
 │
-├── 05-time-series/                   # ⏱️ Time Series
+├── 05-time-series/                      # ⏱️ Time series
 │   └── time-series-forecasting/
-│       └── presentation/            # Time Series Analysis
 │
-├── 06-advanced-topics/               # 🔬 Advanced Topics
-│   ├── explainable-ai/
-│   │   └── presentation/            # Explainable AI
-│   └── computer-science/
-│       └── presentation/            # OOP & Streaming Pipelines
+├── 06-advanced-topics/                  # 🔬 Advanced topics
+│   ├── explainable-ai/                  # Explainable AI
+│   ├── ai-agents/                       # Building AI Agents
+│   ├── computer-science/                # OOP & streaming pipelines
+│   └── mlops-deployment/                # Planned module
 │
-├── 07-capstone-projects/             # 🎓 Projects
-│   ├── industry-focus/              # Industry applications
-│   ├── project-guides/              # Project guidelines
-│   └── prerequisites/               # Prerequisites
+├── 07-capstone-projects/                # 🎓 Projects
+│   ├── industry-focus/                  # Industry applications
+│   ├── project-guides/                  # Project guidelines
+│   └── prerequisites/                   # Prerequisites appendix
 │
-└── 08-data-science-applications-course/  # 🎯 Applied Course
-    ├── presentation/                # Full course materials
-    └── assessments/                 # Course assessments
+├── 08-data-science-applications-course/ # 🎯 Applied course
+│   ├── presentation/                    # Full course materials
+│   ├── exercises/
+│   └── assessments/                     # Course assessments
+│
+├── 09-unit-tests/                       # 🧪 Testing suites guide
+│
+├── assessments/                         # 📝 Quizzes, exams, rubrics
+├── datasets/                            # 📦 Example datasets
+├── docs/                                # 📖 Guides and architecture notes
+├── scripts/                             # 🔧 Maintenance scripts
+└── tests/                               # ✅ Repository test suite
 ```
 
-## 🎨 Professional Theme & Styling
+**Per-module convention:** each module directory contains `presentation/` (Beamer slides), and where
+applicable `code/` (Python/R implementations) and `exercises/` (problem sets).
 
-All presentations use the **ESMAD Beamer Theme** for consistent, professional appearance:
+</details>
 
-### Theme Features
+---
+
+## 🚀 Getting started
+
+<details>
+<summary><b>1. Prerequisites</b> — LaTeX, Python, R</summary>
+
+**LaTeX distribution:**
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install texlive-full
+
+# macOS
+brew install --cask mactex
+
+# Windows
+# Download and install MiKTeX or TeX Live
+```
+
+**Python environment (for code examples):**
+
+```bash
+pip install -r requirements.txt
+
+# Or install the core set directly:
+pip install numpy scipy matplotlib seaborn pandas scikit-learn statsmodels
+pip install torch tensorflow  # For deep learning examples
+pip install shap lime         # For XAI examples
+```
+
+A conda environment is also provided in [`environment.yml`](./environment.yml).
+
+**R environment (for R examples):**
+
+```r
+install.packages(c(
+  "AER", "rdrobust", "fixest", "did",  # Causal inference
+  "caret", "recipes", "mice",           # Feature engineering
+  "forecast", "vars", "fable"           # Time series
+))
+```
+
+Or run the bundled installer: [`install_r_packages.R`](./install_r_packages.R).
+
+</details>
+
+<details>
+<summary><b>2. Compiling presentations</b> — manual, latexmk, or CI</summary>
+
+**Manual compilation:**
+
+```bash
+cd 02-deep-learning/deep-learning-fundamentals/presentation/
+pdflatex deep_learning_beamer.tex
+pdflatex deep_learning_beamer.tex  # Run twice for references
+```
+
+**Using latexmk (recommended):**
+
+```bash
+cd 02-deep-learning/reinforcement-learning/presentation/
+latexmk -pdf rl_beamer.tex
+```
+
+**Compile everything:**
+
+```bash
+./compile_all.sh
+```
+
+**Automated compilation:**
+
+- Push to GitHub → GitHub Actions automatically compiles all PDFs
+- Download compiled PDFs from Actions artifacts or Releases
+
+**Build artifact policy:**
+
+- Compiled PDFs are tracked in git, so any deck can be read straight from GitHub without
+  downloading a release or compiling it yourself.
+- LaTeX auxiliary files (`.aux`, `.log`, `.fls`, `.fdb_latexmk`, `.nav`, `.snm`, `.out`) are
+  generated noise and are ignored.
+- CI additionally attaches freshly compiled PDFs to each release, so the release assets always
+  reflect the latest source even if a tracked PDF is a commit behind.
+
+</details>
+
+<details>
+<summary><b>3. Running code and exercises</b></summary>
+
+**Python:**
+
+```bash
+# MCMC examples (if code/ directory exists with implementations)
+# Example references are embedded in presentation materials
+
+# Exercises and assessments
+cd 03-bayesian-methods/mcmc/exercises/
+pdflatex mcmc_exercises.tex
+```
+
+**Exercises:**
+
+```bash
+# MCMC exercises
+cd 03-bayesian-methods/mcmc/exercises/
+pdflatex mcmc_exercises.tex
+
+# Causal inference exercises
+cd 04-causal-inference/causal-inference-fundamentals/exercises/
+pdflatex causal_inference_exercises.tex
+```
+
+</details>
+
+---
+
+## 🎨 Theme & styling
+
+All presentations use the **ESMAD Beamer Theme** for a consistent, professional appearance.
+
+<details>
+<summary><b>Theme features and usage template</b></summary>
+
+### Features
 
 ✅ **Professional color palette** (ESMAD Blue, accents)<br>
 ✅ **Custom environments** (theorems, definitions, examples, alerts)<br>
@@ -445,6 +673,7 @@ All presentations use the **ESMAD Beamer Theme** for consistent, professional ap
 ✅ **Code listing styles** with syntax highlighting<br>
 ✅ **Author information** with ORCID integration<br>
 ✅ **Slide templates** (title, TOC, contact, references)<br>
+✅ **High-contrast variant** for accessibility<br>
 
 ### Usage
 
@@ -471,109 +700,44 @@ All presentations use the **ESMAD Beamer Theme** for consistent, professional ap
 \end{document}
 ```
 
-See [`shared/theme/STYLE_GUIDE.md`](./shared/theme/STYLE_GUIDE.md) for complete documentation.
+See [`shared/theme/STYLE_GUIDE.md`](./shared/theme/STYLE_GUIDE.md) for complete documentation, and
+[`ACCESSIBILITY.md`](./ACCESSIBILITY.md) for accessibility guidance.
 
-## 🔧 Getting Started
+</details>
 
-### Prerequisites
+---
 
-**LaTeX Distribution:**
-```bash
-# Ubuntu/Debian
-sudo apt-get install texlive-full
+## 🎯 Pick your path
 
-# macOS
-brew install --cask mactex
+<details>
+<summary><b>📖 For students</b> — learning paths and study tips</summary>
 
-# Windows
-# Download and install MiKTeX or TeX Live
-```
-
-**Python Environment (for code examples):**
-```bash
-pip install numpy scipy matplotlib seaborn pandas scikit-learn statsmodels
-pip install torch tensorflow  # For deep learning examples
-pip install shap lime  # For XAI examples
-```
-
-**R Environment (for R examples):**
-```r
-install.packages(c(
-  "AER", "rdrobust", "fixest", "did",  # Causal inference
-  "caret", "recipes", "mice",           # Feature engineering
-  "forecast", "vars", "fable"           # Time series
-))
-```
-
-### Compiling Presentations
-
-**Manual compilation:**
-```bash
-cd 02-deep-learning/deep-learning-fundamentals/presentation/
-pdflatex deep_learning_beamer.tex
-pdflatex deep_learning_beamer.tex  # Run twice for references
-```
-
-**Using latexmk (recommended):**
-```bash
-cd 02-deep-learning/reinforcement-learning/presentation/
-latexmk -pdf rl_beamer.tex
-```
-
-**Automated compilation:**
-- Push to GitHub → GitHub Actions automatically compiles all PDFs
-- Download compiled PDFs from Actions artifacts or Releases
-
-**Build artifact policy:**
-- LaTeX auxiliary files and presentation PDFs are generated outputs and are ignored by git.
-- Exercise and assessment outputs may be tracked when explicitly required for coursework delivery.
-
-### Running Code Examples
-
-**Python:**
-```bash
-# MCMC examples (if code/ directory exists with implementations)
-# Example references are embedded in presentation materials
-
-# Exercises and assessments
-cd 03-bayesian-methods/mcmc/exercises/
-pdflatex mcmc_exercises.tex
-```
-
-**Exercises:**
-```bash
-# MCMC exercises
-cd 03-bayesian-methods/mcmc/exercises/
-pdflatex mcmc_exercises.tex
-
-# Causal inference exercises
-cd 04-causal-inference/causal-inference-fundamentals/exercises/
-pdflatex causal_inference_exercises.tex
-```
-
-## 📖 For Students
-
-### Recommended Learning Paths
+### Recommended learning paths
 
 **Path 1: Machine Learning Fundamentals**
+
 1. Statistical Learning (4 weeks)
 2. Feature Engineering (2 weeks)
 3. Optimization (3 weeks)
 4. Explainable AI (2 weeks)
 
 **Path 2: Deep Learning Specialization**
+
 1. Deep Learning Fundamentals (4 weeks)
 2. Optimization (focus on neural networks)
 3. Reinforcement Learning (4 weeks)
 4. Time Series Analysis (focus on deep methods)
 
 **Path 3: Causal & Bayesian Methods**
+
 1. Causal Inference (5 weeks)
 2. Bayesian ML (4 weeks)
 3. MCMC Methods (3 weeks)
 4. A/B Testing (2 weeks)
 
-### Study Tips
+Competency matrices and additional paths live in [`docs/learning-paths/`](./docs/learning-paths/).
+
+### Study tips
 
 - 📚 **Start with slides** to understand concepts
 - 💻 **Run code examples** to see methods in action
@@ -581,11 +745,15 @@ pdflatex causal_inference_exercises.tex
 - 📖 **Read references** for deeper knowledge
 - 🤝 **Join discussions** (create GitHub issues)
 
-## 👨‍🏫 For Educators
+</details>
 
-### Course Integration
+<details>
+<summary><b>👨‍🏫 For educators</b> — course integration, customization, assessments</summary>
+
+### Course integration
 
 These materials can be integrated into:
+
 - Graduate courses in Data Science/Statistics/CS
 - Professional training programs
 - Workshop series
@@ -598,15 +766,21 @@ These materials can be integrated into:
 3. **Add** your own examples and exercises
 4. **Maintain** attribution (CC BY-SA 4.0)
 
-### Assessment Resources
+### Assessment resources
 
 Use the materials in [`assessments/`](./assessments/):
+
 - Quizzes for each topic
 - Midterm and final exams
 - Grading rubrics
 - Project ideas
 
-## 🔬 For Researchers
+Per-topic enhancement guides are in [`docs/enhancement-guides/`](./docs/enhancement-guides/).
+
+</details>
+
+<details>
+<summary><b>🔬 For researchers</b> — citation and bibliographies</summary>
 
 ### Citation
 
@@ -623,7 +797,7 @@ If you use these materials in your research or teaching, please cite:
 }
 ```
 
-### Using the Bibliographies
+### Using the bibliographies
 
 All presentations reference comprehensive BibTeX files:
 
@@ -640,17 +814,39 @@ All presentations reference comprehensive BibTeX files:
 ```
 
 **Available:**
+
 - `shared/bibliographies/mcmc_references.bib`: 30+ MCMC papers
 - `shared/bibliographies/causal_inference_references.bib`: 50+ causal inference papers
 - `shared/bibliographies/statistical_learning_references.bib`: 60+ ML/stats papers
+- Plus capstone, industry-focus, and per-topic enhancement bibliographies
 
 All include DOIs for easy access.
 
-## 🤝 Contributing
+</details>
 
-We welcome contributions! See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for guidelines.
+---
 
-### How to Contribute
+## 🤖 Automation & contributing
+
+<details>
+<summary><b>CI/CD workflows</b></summary>
+
+- **`compile-latex.yml`**: Auto-compiles all LaTeX on push
+- **`check-links.yml`**: Verifies all URLs and DOIs weekly
+- **`generate-previews.yml`**: Creates PDF preview gallery
+- **`dependabot.yml`**: Keeps dependencies updated
+
+Pre-commit hooks (formatting, spell check, LaTeX lint) are configured in
+[`.pre-commit-config.yaml`](./.pre-commit-config.yaml).
+
+**PDF preview gallery:** https://diogoribeiro7.github.io/academic-presentations/
+
+</details>
+
+<details>
+<summary><b>How to contribute</b></summary>
+
+Contributions are welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md) for full guidelines.
 
 1. **Fork** the repository
 2. **Create** a feature branch
@@ -658,7 +854,7 @@ We welcome contributions! See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for guideli
 4. **Test** compilation and code
 5. **Submit** a pull request
 
-### Contribution Types
+**Contribution types:**
 
 - 🐛 Fix errors in presentations
 - 📚 Add new presentations
@@ -668,39 +864,28 @@ We welcome contributions! See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for guideli
 - 📝 Create exercises
 - 🎨 Improve theme/styling
 
-## 🤖 Automation & CI/CD
+Quality standards are documented in [`QUALITY.md`](./QUALITY.md).
 
-### GitHub Actions Workflows
+</details>
 
-- **`compile-latex.yml`**: Auto-compiles all LaTeX on push
-- **`check-links.yml`**: Verifies all URLs and DOIs weekly
-- **`generate-previews.yml`**: Creates PDF preview gallery
-- **`dependabot.yml`**: Keeps dependencies updated
+---
 
-### PDF Preview Gallery
+## 📄 License, citation & contact
 
-View slide previews at: **https://diogoribeiro7.github.io/academic-presentations/**
+<details>
+<summary><b>License</b> — CC BY-SA 4.0 for content, MIT for code</summary>
 
-## 📊 Repository Statistics
-
-- 📚 **15+ comprehensive presentations**
-- 💻 **27,000+ lines of code** (Python & R)
-- 📖 **140+ curated references** with DOIs
-- 📝 **14 pages of exercises** (2 comprehensive problem sets)
-- 🎨 **1 professional LaTeX theme** with full documentation
-- 🤖 **Fully automated** PDF compilation and testing
-
-## 📄 License
-
-### Content (Presentations & Exercises)
+### Content (presentations & exercises)
 
 Licensed under [Creative Commons Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
 
 **You are free to:**
+
 - ✅ Share — copy and redistribute
 - ✅ Adapt — remix, transform, and build upon
 
 **Under the terms:**
+
 - 📝 Attribution required
 - 🔄 ShareAlike for derivatives
 
@@ -708,16 +893,19 @@ Licensed under [Creative Commons Attribution-ShareAlike 4.0 International](http:
 
 Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 
-## 📞 Contact & Collaboration
+</details>
 
-### Professional Inquiries
+<details>
+<summary><b>Contact &amp; collaboration</b></summary>
+
+### Professional inquiries
 
 - **Email**: dfr@esmad.ipp.pt
 - **Institution**: Faculty of Media Arts and Design, Technical University of Porto
 - **LinkedIn**: [diogo-ribeiro-9094604a](https://www.linkedin.com/in/diogo-ribeiro-9094604a/)
 - **ORCID**: [0009-0001-2022-7072](https://orcid.org/0009-0001-2022-7072)
 
-### Research Interests
+### Research interests
 
 - Markov Chain Monte Carlo and Bayesian computation
 - Machine learning and deep learning
@@ -725,7 +913,7 @@ Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 - Financial risk modeling
 - Time series analysis and forecasting
 
-### Collaboration Opportunities
+### Collaboration opportunities
 
 - 🎓 Guest lectures and workshops
 - 🏢 Corporate training programs
@@ -733,22 +921,23 @@ Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 - 📝 Joint publications
 - 🌐 Conference presentations
 
-## 🌟 Acknowledgments
+</details>
+
+<details>
+<summary><b>Acknowledgments</b></summary>
 
 - **Students and colleagues** for valuable feedback
 - **Open source community** for tools and inspiration
 - **Academic community** for rigorous peer review
 
-## 📈 Version History
-
-See [`CHANGELOG.md`](./CHANGELOG.md) for detailed version history.
+</details>
 
 ---
 
-**Last Updated**: September 2026<br>
-**Repository Maintainer**: Diogo Ribeiro<br>
-**Status**: ✅ Actively maintained<br>
-**Latest Release**: [View releases](https://github.com/diogoribeiro7/academic-presentations/releases)
+**Repository maintainer**: Diogo Ribeiro ·
+**Status**: ✅ Actively maintained ·
+**History**: [CHANGELOG.md](./CHANGELOG.md) ·
+[View releases](https://github.com/diogoribeiro7/academic-presentations/releases)
 
 ![GitHub stars](https://img.shields.io/github/stars/diogoribeiro7/academic-presentations?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/diogoribeiro7/academic-presentations?style=social)

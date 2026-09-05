@@ -52,3 +52,25 @@ pytorch
 tensorflow
 df
 # Variable names often look like misspellings
+
+# Domain acronyms and author names flagged as typos
+
+te
+
+ehr
+
+fpr
+
+teh
+
+ede
+
+hte
+
+ges
+
+commnet
+
+alph
+mape
+compliers

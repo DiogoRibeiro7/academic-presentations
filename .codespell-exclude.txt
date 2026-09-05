@@ -1,0 +1,3 @@
+# Lines listed in this file are skipped by codespell.
+# One full line of text per entry (not a pattern).
+# Word-level exceptions belong in .codespell-ignore.txt instead.
