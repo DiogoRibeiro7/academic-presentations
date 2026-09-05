@@ -9,14 +9,16 @@ on:
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/normalize_beamer_preambles.py'
   pull_request:
-    branches: [ main ]
+    branches: [ main, refactor/canonical-author-affiliation ]
     paths:
       - '**.tex'
       - 'shared/author.json'
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/normalize_beamer_preambles.py'
   workflow_dispatch:
 
 jobs:
@@ -31,6 +33,17 @@ jobs:
       - name: Validate canonical author metadata
         run: python scripts/validate_author_metadata.py
 
+  validate-beamer-shell:
+    name: Validate Beamer Shell
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check canonical Beamer preambles
+        run: python scripts/normalize_beamer_preambles.py --check
+
   compile-presentations:
     name: Compile All Presentations
     runs-on: ubuntu-latest
@@ -38,19 +51,27 @@ jobs:
     strategy:
       matrix:
         presentation:
-          - 05-time-series/time-series-forecasting/presentation/time_series_beamer
-          - 06-advanced-topics/explainable-ai/presentation/interpretability_beamer
+          - 00-programming-fundamentals/r-programming/presentation/R_programming
+          - 01-foundations/feature-engineering/presentation/feature_engineering_beamer
+          - 01-foundations/optimization/presentation/optimization_beamer
+          - 01-foundations/pca/presentation/pca
+          - 01-foundations/statistical-modeling/presentation/diogo_ribeiro_beamer_extended
+          - 01-foundations/statistical-modeling/presentation/statistical_modeling_beamer
           - 02-deep-learning/deep-learning-fundamentals/presentation/deep_learning_beamer
           - 02-deep-learning/reinforcement-learning/presentation/rl_beamer
-          - 01-foundations/optimization/presentation/optimization_beamer
-          - 03-bayesian-methods/mcmc/presentation/mcmc_beamer
-          - 04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer
-          - 01-foundations/statistical-modeling/presentation/statistical_modeling_beamer
           - 03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer
-          - 01-foundations/feature-engineering/presentation/feature_engineering_beamer
+          - 03-bayesian-methods/mcmc/presentation/mcmc_beamer
           - 04-causal-inference/ab-testing/presentation/a_b_testing_interview
-          - 01-foundations/pca/presentation/pca
-          - 00-programming-fundamentals/r-programming/presentation/R_programming
+          - 04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer
+          - 05-time-series/time-series-forecasting/presentation/ARMA_processes
+          - 05-time-series/time-series-forecasting/presentation/stationary_ergodicity
+          - 05-time-series/time-series-forecasting/presentation/time_series_beamer
+          - 06-advanced-topics/ai-agents/presentation/ai_agents_beamer
+          - 06-advanced-topics/computer-science/presentation/object_oriented_programming
+          - 06-advanced-topics/computer-science/presentation/streaming_pipeline_processing
+          - 06-advanced-topics/explainable-ai/presentation/interpretability_beamer
+          - 08-data-science-applications-course/presentation/main_presentation
+          - shared/theme/template_presentation
       fail-fast: false
 
     steps:
@@ -76,6 +97,7 @@ jobs:
         run: |
           safe_name=$(echo "$PRESENTATION_PATH" | tr '/\\' '-')
           echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
+
       - name: Upload presentation PDF artifact
         uses: actions/upload-artifact@v7
         if: success()
@@ -115,6 +137,7 @@ jobs:
         run: |
           safe_name=$(echo "$EXERCISE_PATH" | tr '/\\' '-')
           echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
+
       - name: Upload exercise PDF artifact
         uses: actions/upload-artifact@v7
         if: success()
@@ -125,7 +148,7 @@ jobs:
 
   create-release:
     name: Create Release with PDFs
-    needs: [validate-author-metadata, compile-presentations, compile-exercises]
+    needs: [validate-author-metadata, validate-beamer-shell, compile-presentations, compile-exercises]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
@@ -162,19 +185,20 @@ jobs:
 
   compilation-status:
     name: Report Compilation Status
-    needs: [validate-author-metadata, compile-presentations, compile-exercises]
+    needs: [validate-author-metadata, validate-beamer-shell, compile-presentations, compile-exercises]
     runs-on: ubuntu-latest
     if: always()
 
     steps:
       - name: Check compilation status
         run: |
-          if [ "${{ needs.validate-author-metadata.result }}" == "success" ] && [ "${{ needs.compile-presentations.result }}" == "success" ] && [ "${{ needs.compile-exercises.result }}" == "success" ]; then
-            echo "✅ All documents compiled and metadata validated successfully!"
+          if [ "${{ needs.validate-author-metadata.result }}" == "success" ] && [ "${{ needs.validate-beamer-shell.result }}" == "success" ] && [ "${{ needs.compile-presentations.result }}" == "success" ] && [ "${{ needs.compile-exercises.result }}" == "success" ]; then
+            echo "✅ All documents compiled and repository contracts validated successfully!"
             exit 0
           else
             echo "❌ Some checks failed"
             echo "Author metadata: ${{ needs.validate-author-metadata.result }}"
+            echo "Beamer shell: ${{ needs.validate-beamer-shell.result }}"
             echo "Presentations: ${{ needs.compile-presentations.result }}"
             echo "Exercises: ${{ needs.compile-exercises.result }}"
             exit 1
