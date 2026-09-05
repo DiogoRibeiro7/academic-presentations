@@ -26,8 +26,9 @@ jobs:
           use-verbose-mode: 'yes'
           config-file: '.github/markdown-link-check-config.json'
           folder-path: '.'
-          file-path: './README.md, ./CONTRIBUTING.md, ./CHANGELOG.md'
           max-depth: -1
+          check-modified-files-only: ${{ github.event_name == 'pull_request' && 'yes' || 'no' }}
+          base-branch: main
 
   check-bibtex-dois:
     name: Check BibTeX DOI Links
