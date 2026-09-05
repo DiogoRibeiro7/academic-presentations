@@ -1,4 +1,32 @@
-\documentclass[aspectratio=169,11pt]{beamer}
+\documentclass{beamer}
+
+% BEGIN CANONICAL BEAMER SHELL
+\usepackage{bookmark}
+
+% Theme and color customization
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
+% END CANONICAL BEAMER SHELL
 
 % =========================
 % Encoding & fonts (fix UTF-8 issues in \lstlisting)
@@ -7,8 +35,6 @@
 \usepackage[T1]{fontenc}
 
 % Theme and appearance
-\usetheme{Madrid}
-\usecolortheme{seahorse}
 \usefonttheme{professionalfonts}
 \setbeamertemplate{navigation symbols}{}
 
@@ -21,8 +47,6 @@
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{listings}
 \usepackage{subcaption}
 \usepackage{hyperref}
 
@@ -43,9 +67,6 @@
 
 % Customize theme colors
 \setbeamercolor{structure}{fg=navyblue}
-\setbeamercolor{title}{fg=white,bg=navyblue}
-\setbeamercolor{frametitle}{fg=white,bg=navyblue}
-\setbeamercolor{section in toc}{fg=navyblue}
 
 % Code listing settings
 % NOTE: literate= maps problematic UTF-8 characters used inside \lstlisting.

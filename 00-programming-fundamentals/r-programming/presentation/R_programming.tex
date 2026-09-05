@@ -1,5 +1,33 @@
 
-\documentclass[aspectratio=169]{beamer}
+\documentclass{beamer}
+
+% BEGIN CANONICAL BEAMER SHELL
+\usepackage{bookmark}
+
+% Theme and color customization
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
+% END CANONICAL BEAMER SHELL
 
 % Encoding and fonts
 \usepackage[utf8]{inputenc}
@@ -15,11 +43,9 @@
 \usepackage{booktabs}
 
 % Colors and links
-\usepackage{xcolor}
 \usepackage{hyperref}
 
 % Listings and code
-\usepackage{listings}
 
 % TikZ for diagrams
 \usepackage{tikz}
@@ -29,8 +55,6 @@
 \DeclareUnicodeCharacter{2605}{\ding{72}} % ★ black star
 \DeclareUnicodeCharacter{2606}{\ding{73}} % ☆ white star
 
-\usetheme{Madrid}
-\usecolortheme{default}
 
 % Enhanced code highlighting
 \lstdefinestyle{Rstyle}{%
@@ -69,6 +93,7 @@
 }
 
 %-------------------------------------------------------------------------------
+
 \begin{document}
 
 \begin{frame}

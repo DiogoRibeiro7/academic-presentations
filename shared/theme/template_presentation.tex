@@ -1,4 +1,32 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass{beamer}
+
+% BEGIN CANONICAL BEAMER SHELL
+\usepackage{bookmark}
+
+% Theme and color customization
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
+% END CANONICAL BEAMER SHELL
 
 % ================================================================
 % ESMAD Professional Academic Presentation Template
