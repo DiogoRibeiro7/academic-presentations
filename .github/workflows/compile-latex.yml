@@ -46,6 +46,7 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ matrix.presentation }}.tex
+          work_in_root_file_dir: true
           args: -pdf -interaction=nonstopmode -halt-on-error
           latexmk_use_lualatex: false
           latexmk_use_xelatex: false
