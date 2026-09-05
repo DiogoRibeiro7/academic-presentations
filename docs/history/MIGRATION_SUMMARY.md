@@ -25,26 +25,26 @@ Successfully reorganized the `academic-presentations` repository from **24 top-l
 
 ### Files Moved: **~150+ files**
 
-| Phase | Domain | Files Moved | Status |
-|-------|--------|-------------|--------|
-| 0 | Pre-migration cleanup | 1 directory renamed | ✅ Complete |
-| 1 | Structure creation | 9 domains, 40+ subdirectories | ✅ Complete |
-| 2 | Shared resources | 12 files (theme + bibliographies) | ✅ Complete |
-| 3 | Programming Fundamentals | 1 presentation | ✅ Complete |
-| 4 | Foundations | 10+ files (4 topics) | ✅ Complete |
-| 5 | Deep Learning | 2 presentations | ✅ Complete |
-| 6 | Bayesian Methods | 8+ files (presentations + code + tests) | ✅ Complete |
-| 7 | Causal Inference | 12+ files (presentations + code + exercises) | ✅ Complete |
-| 8 | Time Series | 3 presentations | ✅ Complete |
-| 9 | Advanced Topics | 5+ files (3 topics) | ✅ Complete |
-| 10 | Capstone Projects | 5 files | ✅ Complete |
-| 11 | Data Science Applications Course | 8+ files (modular sections) | ✅ Complete |
+| Phase | Domain                           | Files Moved                                  | Status      |
+| ----- | -------------------------------- | -------------------------------------------- | ----------- |
+| 0     | Pre-migration cleanup            | 1 directory renamed                          | ✅ Complete |
+| 1     | Structure creation               | 9 domains, 40+ subdirectories                | ✅ Complete |
+| 2     | Shared resources                 | 12 files (theme + bibliographies)            | ✅ Complete |
+| 3     | Programming Fundamentals         | 1 presentation                               | ✅ Complete |
+| 4     | Foundations                      | 10+ files (4 topics)                         | ✅ Complete |
+| 5     | Deep Learning                    | 2 presentations                              | ✅ Complete |
+| 6     | Bayesian Methods                 | 8+ files (presentations + code + tests)      | ✅ Complete |
+| 7     | Causal Inference                 | 12+ files (presentations + code + exercises) | ✅ Complete |
+| 8     | Time Series                      | 3 presentations                              | ✅ Complete |
+| 9     | Advanced Topics                  | 5+ files (3 topics)                          | ✅ Complete |
+| 10    | Capstone Projects                | 5 files                                      | ✅ Complete |
+| 11    | Data Science Applications Course | 8+ files (modular sections)                  | ✅ Complete |
 
 ---
 
 ## New Directory Structure
 
-```
+```text
 academic-presentations/
 ├── 00-programming-fundamentals/
 │   └── r-programming/
@@ -202,10 +202,12 @@ academic-presentations/
 ### 1. Modular vs Standalone Presentations
 
 **Discovery**: `data_science_applications/` contained TWO types of files:
+
 - **Standalone documents**: Complete LaTeX files with `\documentclass{}`
 - **Modular sections**: LaTeX sections starting with `\section{}` for inclusion
 
 **Decision**: Kept BOTH versions:
+
 - Standalone → Topic directories (e.g., `02-deep-learning/`)
 - Modular → `08-data-science-applications-course/presentation/sections/`
 
@@ -214,6 +216,7 @@ academic-presentations/
 ### 2. Domain Organization
 
 Created **9 domains** instead of originally proposed 6:
+
 - Added **00-programming-fundamentals** (R programming)
 - Added **07-capstone-projects** (project guides, industry focus)
 - Added **08-data-science-applications-course** (modular composite course)
@@ -221,12 +224,14 @@ Created **9 domains** instead of originally proposed 6:
 ### 3. Enhancement Guides
 
 Moved all `*_ENHANCEMENT_GUIDE.md` files to `/docs/enhancement-guides/`
+
 - Previously scattered in topic directories
 - Now centralized for easier maintenance
 
 ### 4. Competency Matrices
 
 Moved to `/docs/learning-paths/competency-matrices/`
+
 - Aligns with learning path documentation
 - Provides structured assessment framework
 
@@ -239,6 +244,7 @@ Moved to `/docs/learning-paths/competency-matrices/`
 All `.tex` files now need updated paths for:
 
 1. **Theme references**:
+
    ```latex
    % OLD: \usepackage{../theme/esmad_beamer_theme}
    % NEW: \usepackage{../../shared/theme/esmad_beamer_theme}
@@ -255,6 +261,7 @@ All `.tex` files now need updated paths for:
 ### Python/R Code
 
 Check for any relative imports or path dependencies:
+
 - Most code is self-contained
 - Verify test paths in `03-bayesian-methods/mcmc/code/tests/`
 
@@ -263,6 +270,7 @@ Check for any relative imports or path dependencies:
 ### GitHub Actions
 
 Update workflow paths in:
+
 - `.github/workflows/compile-latex.yml`
 - `.github/workflows/check-links.yml`
 
@@ -300,22 +308,27 @@ The following old directories were successfully removed after migration:
 ## Benefits Achieved
 
 ### ✅ Improved Navigation
+
 - **Before**: 24 root directories, unclear relationships
 - **After**: 9 domains, clear hierarchy
 
 ### ✅ Topic Cohesion
+
 - **Before**: Code, presentations, exercises separated
 - **After**: All related materials together in topic directories
 
 ### ✅ Scalability
+
 - **Before**: Adding topics cluttered root
 - **After**: New topics fit into existing domain structure
 
 ### ✅ Learning Path Support
+
 - **Before**: Implicit in documentation only
 - **After**: Structure mirrors pedagogical organization
 
 ### ✅ Consistency
+
 - **Before**: Mixed organizational patterns
 - **After**: Uniform structure across all topics
 
@@ -324,9 +337,11 @@ The following old directories were successfully removed after migration:
 ## Rollback Information
 
 ### Git Tags Created
+
 - `pre-reorganization-backup` - Safe rollback point before any changes
 
 ### Rollback Command
+
 ```bash
 git reset --hard pre-reorganization-backup
 ```
@@ -338,23 +353,27 @@ git reset --hard pre-reorganization-backup
 ## Next Steps
 
 ### Phase 12: Update LaTeX Paths ⏳
+
 - Create script to update theme/bibliography paths
 - Test compilation of all presentations
 - Fix any broken references
 
 ### Phase 13: Update Documentation ⏳
+
 - Update main README.md with new structure
 - Update CONTRIBUTING.md
 - Update GitHub Actions workflows
 - Create QUICK_START.md
 
 ### Phase 14: Final Validation ⏳
+
 - Compile all presentations
 - Run all tests
 - Verify all links
 - Test GitHub Actions
 
 ### Phase 15: Deployment
+
 - Review changes
 - Commit all changes
 - Create pull request
@@ -365,23 +384,23 @@ git reset --hard pre-reorganization-backup
 
 ## Migration Completion Status
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 0 | Pre-migration cleanup | ✅ Complete |
-| 1 | Structure creation | ✅ Complete |
-| 2 | Shared resources | ✅ Complete |
-| 3 | Programming Fundamentals | ✅ Complete |
-| 4 | Foundations | ✅ Complete |
-| 5 | Deep Learning | ✅ Complete |
-| 6 | Bayesian Methods | ✅ Complete |
-| 7 | Causal Inference | ✅ Complete |
-| 8 | Time Series | ✅ Complete |
-| 9 | Advanced Topics | ✅ Complete |
-| 10 | Capstone Projects | ✅ Complete |
-| 11 | Data Science Applications Course | ✅ Complete |
-| **12** | **LaTeX path updates** | **⏳ Pending** |
+| Phase  | Description                        | Status         |
+| ------ | ---------------------------------- | -------------- |
+| 0      | Pre-migration cleanup              | ✅ Complete    |
+| 1      | Structure creation                 | ✅ Complete    |
+| 2      | Shared resources                   | ✅ Complete    |
+| 3      | Programming Fundamentals           | ✅ Complete    |
+| 4      | Foundations                        | ✅ Complete    |
+| 5      | Deep Learning                      | ✅ Complete    |
+| 6      | Bayesian Methods                   | ✅ Complete    |
+| 7      | Causal Inference                   | ✅ Complete    |
+| 8      | Time Series                        | ✅ Complete    |
+| 9      | Advanced Topics                    | ✅ Complete    |
+| 10     | Capstone Projects                  | ✅ Complete    |
+| 11     | Data Science Applications Course   | ✅ Complete    |
+| **12** | **LaTeX path updates**             | **⏳ Pending** |
 | **13** | **Documentation & GitHub Actions** | **⏳ Pending** |
-| **14** | **Final validation** | **⏳ Pending** |
+| **14** | **Final validation**               | **⏳ Pending** |
 
 ---
 
@@ -393,4 +412,3 @@ git reset --hard pre-reorganization-backup
 **Directories Removed**: 20+
 
 **Status**: ✅ **Content Migration Complete** - Ready for Path Updates (Phase 12)
-

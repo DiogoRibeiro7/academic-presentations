@@ -10,15 +10,18 @@
 ### Completed Tasks
 
 1. ✅ **Fixed Naming Issue**
+
    - Renamed `introduction_to_programming_R.tex/` → `introduction_to_programming_R/`
    - Status: Committed via git mv
 
 2. ✅ **Created Deduplication Analysis**
+
    - Generated `DEDUPLICATION_REPORT.md`
    - Identified 6 potential duplicate topics
    - **Key Discovery**: data_science_applications contains TWO types of files
 
 3. ✅ **Created Backup Tag**
+
    - Tag created: `pre-reorganization-backup`
    - Safe rollback point established
 
@@ -36,7 +39,9 @@
 This directory serves **two distinct purposes**:
 
 #### Purpose 1: Modular Presentation Sections
+
 Files that are **LaTeX sections** (not standalone docs):
+
 - `deep_learning_beamer.tex` (25K) - Section
 - `time_series_beamer.tex` (16K) - Section
 - `explainable_ai_beamer.tex` (21K) - Section
@@ -45,7 +50,9 @@ Files that are **LaTeX sections** (not standalone docs):
 **Use Case**: These are meant to be `\input{}` into a master presentation for "Data Science Applications" course
 
 #### Purpose 2: Standalone Presentations
+
 Files that are **complete LaTeX documents**:
+
 - `causal_inference_beamer.tex` (55K) - Standalone
 - `feature_engineering_beamer.tex` (52K) - Standalone
 - `statistical_learning_beamer.tex` (35K) - Standalone
@@ -58,30 +65,30 @@ Files that are **complete LaTeX documents**:
 
 ### Category 1: Keep BOTH Versions (Not Duplicates)
 
-| Topic | Standalone Version | Modular Section Version | Relationship |
-|-------|-------------------|-------------------------|--------------|
-| Deep Learning | `/deep_learning/deep_learning_beamer.tex` (26K) | `/data_science_applications/deep_learning_beamer.tex` (25K) | Different - keep both |
-| Time Series | `/time_series/time_series_beamer.tex` (24K) | `/data_science_applications/time_series_beamer.tex` (16K) | Standalone is newer/larger - keep both |
-| Explainable AI | `/explainable_ai/interpretability_beamer.tex` (24K) | `/data_science_applications/explainable_ai_beamer.tex` (21K) | Different names - keep both |
+| Topic          | Standalone Version                                  | Modular Section Version                                      | Relationship                           |
+| -------------- | --------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| Deep Learning  | `/deep_learning/deep_learning_beamer.tex` (26K)     | `/data_science_applications/deep_learning_beamer.tex` (25K)  | Different - keep both                  |
+| Time Series    | `/time_series/time_series_beamer.tex` (24K)         | `/data_science_applications/time_series_beamer.tex` (16K)    | Standalone is newer/larger - keep both |
+| Explainable AI | `/explainable_ai/interpretability_beamer.tex` (24K) | `/data_science_applications/explainable_ai_beamer.tex` (21K) | Different names - keep both            |
 
 **Decision**: These are intentionally different versions - standalone vs modular. **Keep both.**
 
 ### Category 2: True Standalones (Move to Topic Directories)
 
-| Content | Current Location | Destination |
-|---------|------------------|-------------|
-| Causal Inference | `/data_science_applications/` | `/04-causal-inference/causal-inference-fundamentals/presentation/` |
-| Feature Engineering | `/data_science_applications/` | `/01-foundations/feature-engineering/presentation/` |
-| Statistical Learning | `/data_science_applications/` | `/01-foundations/statistical-modeling/presentation/` |
+| Content              | Current Location              | Destination                                                        |
+| -------------------- | ----------------------------- | ------------------------------------------------------------------ |
+| Causal Inference     | `/data_science_applications/` | `/04-causal-inference/causal-inference-fundamentals/presentation/` |
+| Feature Engineering  | `/data_science_applications/` | `/01-foundations/feature-engineering/presentation/`                |
+| Statistical Learning | `/data_science_applications/` | `/01-foundations/statistical-modeling/presentation/`               |
 
 ### Category 3: Enhancement Materials
 
-| File | Type | Destination |
-|------|------|-------------|
-| `causal_inference_enhancements.tex` | Content | Same dir as causal_inference |
-| `statistical_learning_enhancements.tex` | Content | Same dir as statistical_learning |
-| `capstone_projects_enhancements.tex` | Content | `/07-capstone-projects/` |
-| `industry_focus_enhancements.tex` | Content | `/07-capstone-projects/industry-focus/` |
+| File                                    | Type    | Destination                             |
+| --------------------------------------- | ------- | --------------------------------------- |
+| `causal_inference_enhancements.tex`     | Content | Same dir as causal_inference            |
+| `statistical_learning_enhancements.tex` | Content | Same dir as statistical_learning        |
+| `capstone_projects_enhancements.tex`    | Content | `/07-capstone-projects/`                |
+| `industry_focus_enhancements.tex`       | Content | `/07-capstone-projects/industry-focus/` |
 
 ### Category 4: Modular Sections for "Data Science Applications Course"
 
@@ -90,7 +97,8 @@ Files that are **complete LaTeX documents**:
 **Destination**: `/08-data-science-applications-course/` (NEW)
 
 **Structure**:
-```
+
+```text
 08-data-science-applications-course/
 ├── presentation/
 │   ├── main_presentation.tex          # Master file that includes all sections
@@ -112,14 +120,17 @@ Files that are **complete LaTeX documents**:
 Beyond the 6 domains in the original proposal, we need:
 
 ### 7. Programming Fundamentals (00-programming-fundamentals)
+
 - R Programming introduction
 - Python basics (if exists)
 
 ### 8. Data Science Applications Course (08-data-science-applications-course)
+
 - Composite course using modular sections
 - Industry-focused combined presentation
 
 ### 9. Capstone Projects (07-capstone-projects)
+
 - Capstone project materials
 - Industry focus content
 - Prerequisites appendix
@@ -128,7 +139,7 @@ Beyond the 6 domains in the original proposal, we need:
 
 ## Updated Directory Structure (Refined)
 
-```
+```text
 academic-presentations/
 │
 ├── 00-programming-fundamentals/
@@ -235,6 +246,7 @@ Any deeper content-quality review can be handled in Phase 2+ after structural mi
 ## Phase 1 Preview
 
 Phase 1 will create:
+
 1. All 9 domain directories (00-programming through 08-data-science-applications)
 2. Standard subdirectories for each topic (presentation/, code/, exercises/)
 3. README.md templates for each domain and topic
@@ -248,6 +260,7 @@ Phase 1 will create:
 ## Handoff Checklist
 
 Before starting Phase 1:
+
 1. Confirm working tree is clean or intentionally staged.
 2. Keep backup tag `pre-reorganization-backup` unchanged.
 3. Use small commits per domain to keep rollback simple.
