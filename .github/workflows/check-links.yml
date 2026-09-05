@@ -107,13 +107,20 @@ jobs:
                   print(f"⚠️ DOI resolver unavailable for {doi}: {exc}")
                   return None
 
-              if 200 <= response.status_code < 400:
+              status = response.status_code
+              if 200 <= status < 400:
                   return True
-              if response.status_code in {404, 410}:
+              if status in {408, 425, 429} or status >= 500:
+                  print(
+                      f"⚠️ DOI resolver returned HTTP {status} for {doi}; "
+                      "treating this as temporarily unverifiable"
+                  )
+                  return None
+              if 400 <= status < 500:
                   return False
 
               print(
-                  f"⚠️ DOI resolver returned HTTP {response.status_code} for {doi}; "
+                  f"⚠️ DOI resolver returned unexpected HTTP {status} for {doi}; "
                   "treating this as temporarily unverifiable"
               )
               return None
