@@ -38,6 +38,10 @@
     },
     {
       "pattern": "^https://diogoribeiro7.github.io/academic-presentations"
+    },
+    {
+      "comment": "LinkedIn answers non-browser requests with HTTP 999 (anti-scraping), so profile links cannot be verified from CI.",
+      "pattern": "^https://www.linkedin.com"
     }
   ],
   "replacementPatterns": [],
