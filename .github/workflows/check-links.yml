@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Check links in Markdown files
         uses: gaurav-nelson/github-action-markdown-link-check@v1
@@ -51,7 +53,7 @@ jobs:
           : > "$scope_file"
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'shared/bibliographies/*.bib' > "$scope_file"
+            git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$GITHUB_SHA" -- 'shared/bibliographies/*.bib' > "$scope_file"
           else
             find shared/bibliographies -maxdepth 1 -type f -name '*.bib' | sort > "$scope_file"
           fi
