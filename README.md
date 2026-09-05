@@ -2,13 +2,11 @@
 **Comprehensive Data Science & Machine Learning Course Materials**
 
 **Diogo Ribeiro**<br>
-_ESMAD - Escola Superior de Média Arte e Design_<br>
-_Lead Data Scientist, Mysense.ai_
+_Faculty of Media Arts and Design, Technical University of Porto_
 
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0001--2022--7072-green.svg)](https://orcid.org/0009-0001-2022-7072)
 [![Email](https://img.shields.io/badge/Email-dfr%40esmad.ipp.pt-blue.svg)](mailto:dfr@esmad.ipp.pt)
-[![Institution](https://img.shields.io/badge/Institution-ESMAD-orange.svg)](https://www.esmad.ipp.pt/)
-[![Company](https://img.shields.io/badge/Company-Mysense.ai-purple.svg)](https://mysense.ai/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Diogo%20Ribeiro-blue.svg)](https://www.linkedin.com/in/diogo-ribeiro-9094604a/)
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
 [![Code License: MIT](https://img.shields.io/badge/Code%20License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -621,7 +619,7 @@ If you use these materials in your research or teaching, please cite:
   year = {2025},
   publisher = {GitHub},
   url = {https://github.com/diogoribeiro7/academic-presentations},
-  note = {ESMAD \& Mysense.ai}
+  note = {Faculty of Media Arts and Design, Technical University of Porto}
 }
 ```
 
@@ -715,8 +713,8 @@ Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 ### Professional Inquiries
 
 - **Email**: dfr@esmad.ipp.pt
-- **Institution**: ESMAD - Escola Superior de Média Arte e Design
-- **Company**: Mysense.ai (Lead Data Scientist)
+- **Institution**: Faculty of Media Arts and Design, Technical University of Porto
+- **LinkedIn**: [diogo-ribeiro-9094604a](https://www.linkedin.com/in/diogo-ribeiro-9094604a/)
 - **ORCID**: [0009-0001-2022-7072](https://orcid.org/0009-0001-2022-7072)
 
 ### Research Interests
@@ -737,8 +735,6 @@ Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 
 ## 🌟 Acknowledgments
 
-- **ESMAD** for institutional support
-- **Mysense.ai** for industry applications and insights
 - **Students and colleagues** for valuable feedback
 - **Open source community** for tools and inspiration
 - **Academic community** for rigorous peer review
@@ -749,7 +745,7 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for detailed version history.
 
 ---
 
-**Last Updated**: January 2025<br>
+**Last Updated**: September 2026<br>
 **Repository Maintainer**: Diogo Ribeiro<br>
 **Status**: ✅ Actively maintained<br>
 **Latest Release**: [View releases](https://github.com/diogoribeiro7/academic-presentations/releases)
