@@ -5,17 +5,32 @@ on:
     branches: [ main, develop ]
     paths:
       - '**.tex'
+      - 'shared/author.json'
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
+      - 'scripts/validate_author_metadata.py'
   pull_request:
     branches: [ main ]
     paths:
       - '**.tex'
+      - 'shared/author.json'
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
+      - 'scripts/validate_author_metadata.py'
   workflow_dispatch:
 
 jobs:
+  validate-author-metadata:
+    name: Validate Author Metadata
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Validate canonical author metadata
+        run: python scripts/validate_author_metadata.py
+
   compile-presentations:
     name: Compile All Presentations
     runs-on: ubuntu-latest
@@ -46,6 +61,7 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: ${{ matrix.presentation }}.tex
+          work_in_root_file_dir: true
           args: -pdf -interaction=nonstopmode -halt-on-error
           latexmk_use_lualatex: false
           latexmk_use_xelatex: false
@@ -109,7 +125,7 @@ jobs:
 
   create-release:
     name: Create Release with PDFs
-    needs: [compile-presentations, compile-exercises]
+    needs: [validate-author-metadata, compile-presentations, compile-exercises]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
@@ -146,18 +162,19 @@ jobs:
 
   compilation-status:
     name: Report Compilation Status
-    needs: [compile-presentations, compile-exercises]
+    needs: [validate-author-metadata, compile-presentations, compile-exercises]
     runs-on: ubuntu-latest
     if: always()
 
     steps:
       - name: Check compilation status
         run: |
-          if [ "${{ needs.compile-presentations.result }}" == "success" ] && [ "${{ needs.compile-exercises.result }}" == "success" ]; then
-            echo "✅ All documents compiled successfully!"
+          if [ "${{ needs.validate-author-metadata.result }}" == "success" ] && [ "${{ needs.compile-presentations.result }}" == "success" ] && [ "${{ needs.compile-exercises.result }}" == "success" ]; then
+            echo "✅ All documents compiled and metadata validated successfully!"
             exit 0
           else
-            echo "❌ Some documents failed to compile"
+            echo "❌ Some checks failed"
+            echo "Author metadata: ${{ needs.validate-author-metadata.result }}"
             echo "Presentations: ${{ needs.compile-presentations.result }}"
             echo "Exercises: ${{ needs.compile-exercises.result }}"
             exit 1

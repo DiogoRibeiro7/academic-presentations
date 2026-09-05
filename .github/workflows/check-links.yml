@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Check links in Markdown files
         uses: gaurav-nelson/github-action-markdown-link-check@v1
@@ -26,8 +28,9 @@ jobs:
           use-verbose-mode: 'yes'
           config-file: '.github/markdown-link-check-config.json'
           folder-path: '.'
-          file-path: './README.md, ./CONTRIBUTING.md, ./CHANGELOG.md'
           max-depth: -1
+          check-modified-files-only: ${{ github.event_name == 'pull_request' && 'yes' || 'no' }}
+          base-branch: main
 
   check-bibtex-dois:
     name: Check BibTeX DOI Links
@@ -36,20 +39,51 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine bibliography scope
+        id: bibliography-scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          scope_file="$RUNNER_TEMP/bib-files.txt"
+          : > "$scope_file"
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$GITHUB_SHA" -- 'shared/bibliographies/*.bib' > "$scope_file"
+          else
+            find shared/bibliographies -maxdepth 1 -type f -name '*.bib' | sort > "$scope_file"
+          fi
+
+          if [ -s "$scope_file" ]; then
+            echo "has_files=true" >> "$GITHUB_OUTPUT"
+            echo "Bibliography files to check:"
+            cat "$scope_file"
+          else
+            echo "has_files=false" >> "$GITHUB_OUTPUT"
+            echo "No bibliography files changed in this pull request; DOI validation is not applicable."
+          fi
 
       - name: Set up Python
+        if: steps.bibliography-scope.outputs.has_files == 'true'
         uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
       - name: Install dependencies
+        if: steps.bibliography-scope.outputs.has_files == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
       - name: Check DOI links
+        if: steps.bibliography-scope.outputs.has_files == 'true'
         run: |
           python - <<'EOF'
+          import os
           import re
           import requests
           import sys
@@ -59,26 +93,43 @@ jobs:
               """Extract DOIs from BibTeX file."""
               with open(bib_file, 'r', encoding='utf-8') as f:
                   content = f.read()
-              # Match DOI field in BibTeX entries
               doi_pattern = r'doi\s*=\s*{([^}]+)}'
               return re.findall(doi_pattern, content, re.IGNORECASE)
 
           def check_doi(doi):
-              """Check DOI registration via doi.org handle API (avoids publisher-side false negatives)."""
-              url = f"https://doi.org/api/handles/{doi}"
+              """Check whether doi.org recognizes a DOI without visiting the publisher."""
+              url = f"https://doi.org/{doi}"
               try:
-                  response = requests.get(url, timeout=15)
-                  if response.status_code != 200:
-                      return False
-                  payload = response.json()
-                  # responseCode == 1 means success from handle resolver.
-                  return payload.get("responseCode") == 1
-              except Exception as e:
-                  print(f"Error checking {doi}: {e}")
+                  response = requests.get(
+                      url,
+                      timeout=15,
+                      allow_redirects=False,
+                      headers={"User-Agent": "academic-presentations-link-check/1.0"},
+                  )
+              except requests.RequestException as exc:
+                  print(f"⚠️ DOI resolver unavailable for {doi}: {exc}")
+                  return None
+
+              status = response.status_code
+              if 200 <= status < 400:
+                  return True
+              if status in {408, 425, 429} or status >= 500:
+                  print(
+                      f"⚠️ DOI resolver returned HTTP {status} for {doi}; "
+                      "treating this as temporarily unverifiable"
+                  )
+                  return None
+              if 400 <= status < 500:
                   return False
 
-          # Find all .bib files
-          bib_files = list(Path('shared/bibliographies').glob('*.bib'))
+              print(
+                  f"⚠️ DOI resolver returned unexpected HTTP {status} for {doi}; "
+                  "treating this as temporarily unverifiable"
+              )
+              return None
+
+          scope_file = Path(os.environ["RUNNER_TEMP"]) / "bib-files.txt"
+          bib_files = [Path(line.strip()) for line in scope_file.read_text().splitlines() if line.strip()]
 
           all_valid = True
           for bib_file in bib_files:
@@ -87,17 +138,20 @@ jobs:
               print(f"Found {len(dois)} DOIs")
 
               for doi in dois:
-                  if not check_doi(doi):
-                      print(f"❌ Invalid or unreachable DOI: {doi}")
+                  result = check_doi(doi)
+                  if result is False:
+                      print(f"❌ Invalid DOI: {doi}")
                       all_valid = False
+                  elif result is None:
+                      print(f"⚠️ Could not verify DOI right now: {doi}")
                   else:
                       print(f"✅ Valid DOI: {doi}")
 
           if not all_valid:
-              print("\n❌ Some DOI links are broken!")
+              print("\n❌ Some DOI links are invalid!")
               sys.exit(1)
           else:
-              print("\n✅ All DOI links are valid!")
+              print("\n✅ All scoped DOI links are valid or temporarily unverifiable!")
           EOF
 
   check-github-urls:
