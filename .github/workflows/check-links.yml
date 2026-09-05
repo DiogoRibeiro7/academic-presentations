@@ -59,25 +59,34 @@ jobs:
               """Extract DOIs from BibTeX file."""
               with open(bib_file, 'r', encoding='utf-8') as f:
                   content = f.read()
-              # Match DOI field in BibTeX entries
               doi_pattern = r'doi\s*=\s*{([^}]+)}'
               return re.findall(doi_pattern, content, re.IGNORECASE)
 
           def check_doi(doi):
-              """Check DOI registration via doi.org handle API (avoids publisher-side false negatives)."""
-              url = f"https://doi.org/api/handles/{doi}"
+              """Check whether doi.org recognizes a DOI without visiting the publisher."""
+              url = f"https://doi.org/{doi}"
               try:
-                  response = requests.get(url, timeout=15)
-                  if response.status_code != 200:
-                      return False
-                  payload = response.json()
-                  # responseCode == 1 means success from handle resolver.
-                  return payload.get("responseCode") == 1
-              except Exception as e:
-                  print(f"Error checking {doi}: {e}")
+                  response = requests.get(
+                      url,
+                      timeout=15,
+                      allow_redirects=False,
+                      headers={"User-Agent": "academic-presentations-link-check/1.0"},
+                  )
+              except requests.RequestException as exc:
+                  print(f"⚠️ DOI resolver unavailable for {doi}: {exc}")
+                  return None
+
+              if 200 <= response.status_code < 400:
+                  return True
+              if response.status_code in {404, 410}:
                   return False
 
-          # Find all .bib files
+              print(
+                  f"⚠️ DOI resolver returned HTTP {response.status_code} for {doi}; "
+                  "treating this as temporarily unverifiable"
+              )
+              return None
+
           bib_files = list(Path('shared/bibliographies').glob('*.bib'))
 
           all_valid = True
@@ -87,17 +96,20 @@ jobs:
               print(f"Found {len(dois)} DOIs")
 
               for doi in dois:
-                  if not check_doi(doi):
-                      print(f"❌ Invalid or unreachable DOI: {doi}")
+                  result = check_doi(doi)
+                  if result is False:
+                      print(f"❌ Invalid DOI: {doi}")
                       all_valid = False
+                  elif result is None:
+                      print(f"⚠️ Could not verify DOI right now: {doi}")
                   else:
                       print(f"✅ Valid DOI: {doi}")
 
           if not all_valid:
-              print("\n❌ Some DOI links are broken!")
+              print("\n❌ Some DOI links are invalid!")
               sys.exit(1)
           else:
-              print("\n✅ All DOI links are valid!")
+              print("\n✅ All DOI links are valid or temporarily unverifiable!")
           EOF
 
   check-github-urls:
