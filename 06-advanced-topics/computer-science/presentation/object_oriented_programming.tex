@@ -1,10 +1,31 @@
 % OOP_intro_beamer.tex
 \documentclass[aspectratio=169,11pt]{beamer}
 
-% Theme and appearance (kept standard for portability)
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
 \usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Packages
 \usepackage[utf8]{inputenc}
@@ -15,11 +36,10 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, shapes, calc}
-\usepackage{listings}
 \usepackage{xspace}
 \usepackage{hyperref}
 
-% Pseudocode style (no language specified)
+% Pseudocode language definition. Its visual style inherits the canonical model.
 \lstdefinelanguage{Pseudo}{
   morekeywords={class,object,interface,abstract,extends,implements,private,public,protected,
   static,virtual,override,final,new,delete,constructor,method,property,field,this,self,return,
@@ -29,18 +49,15 @@
   morecomment=[s]{/*}{*/},
   morestring=[b]"
 }
-\lstset{
+\lstdefinestyle{pseudocode}{
+  style=code,
   language=Pseudo,
-  basicstyle=\ttfamily\small,
-  keywordstyle=\bfseries,
-  commentstyle=\itshape,
-  showstringspaces=false,
   frame=single,
   columns=fullflexible,
   keepspaces=true,
-  tabsize=2,
   escapeinside={(*}{*)}
 }
+\lstset{style=pseudocode}
 
 % Shortcuts
 \newcommand{\term}[1]{\textbf{#1}}
@@ -54,6 +71,7 @@
 \title{An Introduction to Object-Oriented Programming (OOP)}
 \subtitle{Concepts, Modeling, Design Principles, and Trade-offs}
 \author{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 \begin{document}
