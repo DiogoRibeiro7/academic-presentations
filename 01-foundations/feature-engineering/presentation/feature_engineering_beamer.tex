@@ -6,11 +6,32 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
-% Theme and appearance
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
-\usecolortheme{seahorse}
+\usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{listings}
+\usepackage{xcolor}
 \setbeamertemplate{navigation symbols}{}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Packages
 \usepackage{amsmath,amsthm,amssymb}
@@ -21,10 +42,15 @@
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{listings}
 \usepackage{subcaption}
 \usepackage{hyperref}
+
+% Content-specific colors
+\definecolor{navyblue}{RGB}{0,32,96}
+\definecolor{crimson}{RGB}{178,34,52}
+\definecolor{forest}{RGB}{34,139,34}
+\definecolor{gold}{RGB}{255,215,0}
+\definecolor{purple}{RGB}{128,0,128}
 
 % Hyperref setup
 \hypersetup{
@@ -34,33 +60,13 @@
   citecolor=navyblue
 }
 
-% Custom colors
-\definecolor{navyblue}{RGB}{0,32,96}
-\definecolor{crimson}{RGB}{178,34,52}
-\definecolor{forest}{RGB}{34,139,34}
-\definecolor{gold}{RGB}{255,215,0}
-\definecolor{purple}{RGB}{128,0,128}
-
-% Customize theme colors
-\setbeamercolor{structure}{fg=navyblue}
-\setbeamercolor{title}{fg=white,bg=navyblue}
-\setbeamercolor{frametitle}{fg=white,bg=navyblue}
-\setbeamercolor{section in toc}{fg=navyblue}
-
-% Code listing settings
-% NOTE: literate= maps problematic UTF-8 characters used inside \lstlisting.
+% Preserve Unicode mappings needed inside listings while inheriting the
+% canonical visual code style.
 \lstset{
-    language=Python,
-    basicstyle=\ttfamily\footnotesize, % smaller to reduce overfull boxes
-    keywordstyle=\color{navyblue}\bfseries,
-    commentstyle=\color{forest}\itshape,
-    stringstyle=\color{crimson},
+    style=code,
     numbers=left,
     numberstyle=\tiny\color{gray},
     stepnumber=1,
-    tabsize=2,
-    showstringspaces=false,
-    breaklines=true,
     frame=single,
     rulecolor=\color{gray!30},
     keepspaces=true,
@@ -97,9 +103,8 @@
 % Title information
 \title[Feature Engineering]{Feature Engineering \& Selection}
 \subtitle{From Raw Data to ML-Ready Features}
-\author[D. Ribeiro]{Diogo Ribeiro\\
-\small ESMAD -- Escola Superior de Média Arte e Design\\
-\small Lead Data Scientist, Mysense.ai}
+\author[D. Ribeiro]{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 % Custom commands
@@ -1778,8 +1783,7 @@ Feature engineering is iterative. Start simple, validate thoroughly, and improve
 \vspace{1cm}
 
 \textbf{Diogo Ribeiro}\\
-ESMAD -- Escola Superior de Média Arte e Design\\
-Lead Data Scientist, Mysense.ai\\
+Faculty of Media Arts and Design, Technical University of Porto\\
 
 \vspace{0.5cm}
 

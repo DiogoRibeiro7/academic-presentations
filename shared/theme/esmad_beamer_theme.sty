@@ -1,73 +1,79 @@
 % ================================================================
-% Academic Beamer Theme
-% Professional Academic Presentation Style
+% Academic Beamer compatibility helpers
+% Canonical presentation model: Madrid + default colour theme + red palette
 % ================================================================
 % Author: Diogo Ribeiro
 % Institution: Faculty of Media Arts and Design, Technical University of Porto
-% Version: 1.1
+% Version: 2.0
 % Date: 2026
 % ================================================================
 
-\ProvidesPackage{esmad_beamer_theme}[2026/09/05 Academic Beamer Theme]
+\ProvidesPackage{esmad_beamer_theme}[2026/09/06 Canonical Academic Beamer Model]
 
 % ================================================================
 % Required Packages
 % ================================================================
 
+\RequirePackage{bookmark}
 \RequirePackage[table,dvipsnames]{xcolor}
+\RequirePackage{listings}
 \RequirePackage{graphicx}
 \RequirePackage{tikz}
 \RequirePackage{tcolorbox}
 \RequirePackage{fontawesome5}
-\RequirePackage{hyperref}
 \RequirePackage{amsmath,amsthm,amssymb}
 \RequirePackage{algorithm,algpseudocode}
 \RequirePackage{booktabs}
 \RequirePackage{colortbl}
 
 % ================================================================
-% Color Scheme
-% ================================================================
-
-\definecolor{ESMADBlue}{RGB}{0, 51, 102}
-\definecolor{ESMADLightBlue}{RGB}{51, 102, 153}
-\definecolor{ESMADAccent}{RGB}{204, 51, 0}
-\definecolor{ESMADGray}{RGB}{128, 128, 128}
-\definecolor{ESMADLightGray}{RGB}{240, 240, 240}
-
-\definecolor{TextDark}{RGB}{33, 33, 33}
-\definecolor{TextLight}{RGB}{250, 250, 250}
-
-\definecolor{CodeBackground}{RGB}{248, 248, 248}
-\definecolor{CodeComment}{RGB}{0, 128, 0}
-\definecolor{CodeKeyword}{RGB}{128, 0, 128}
-\definecolor{CodeString}{RGB}{186, 33, 33}
-
-\definecolor{forest}{RGB}{34, 139, 34}
-\definecolor{navyblue}{RGB}{0, 0, 128}
-\definecolor{crimson}{RGB}{220, 20, 60}
-\definecolor{gold}{RGB}{255, 215, 0}
-
-% ================================================================
-% Beamer Settings
+% Canonical Beamer Model
 % ================================================================
 
 \usetheme{Madrid}
 \usecolortheme{default}
-\setbeamertemplate{navigation symbols}{}
 
-\definecolor{ESMADRed}{RGB}{180,0,0}
-\setbeamercolor{palette primary}{bg=ESMADRed, fg=white}
-\setbeamercolor{palette secondary}{bg=ESMADRed!85!black, fg=white}
-\setbeamercolor{palette tertiary}{bg=ESMADRed!65!black, fg=white}
-\setbeamercolor{frametitle}{bg=ESMADRed, fg=white}
-\setbeamercolor{title}{fg=white, bg=ESMADRed}
-\setbeamercolor{section in toc}{fg=ESMADRed}
-\setbeamercolor{block title}{bg=ESMADRed!10, fg=black}
-\setbeamercolor{block body}{bg=black!2, fg=black}
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
-\setbeamertemplate{itemize items}[circle]
-\setbeamertemplate{enumerate items}[default]
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+% ================================================================
+% Compatibility Colours
+% ================================================================
+
+% Keep legacy colour names available for old content, but map them onto the
+% canonical red/neutral model so imported helper environments do not reintroduce
+% the former blue presentation identity.
+\colorlet{ESMADBlue}{red!90!black}
+\colorlet{ESMADLightBlue}{red!65!black}
+\colorlet{ESMADAccent}{red}
+\colorlet{ESMADGray}{gray}
+\colorlet{ESMADLightGray}{black!4}
+\colorlet{TextDark}{black!90}
+\colorlet{TextLight}{white}
+\colorlet{CodeBackground}{black!3}
+\colorlet{CodeComment}{gray}
+\colorlet{CodeKeyword}{blue}
+\colorlet{CodeString}{red!60!black}
+\definecolor{forest}{RGB}{34, 139, 34}
+\definecolor{navyblue}{RGB}{0, 0, 128}
+\definecolor{crimson}{RGB}{220, 20, 60}
+\definecolor{gold}{RGB}{255, 215, 0}
 
 % ================================================================
 % Canonical Author Information
@@ -93,61 +99,18 @@
 \authorinstitution{}
 \authorcompany{}
 
-% ================================================================
-% Title Page Customization
-% ================================================================
-
-\defbeamertemplate*{title page}{esmad}[1][]
-{
-  \vbox{}
-  \vfill
-  \begingroup
-    \centering
-    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
-      \usebeamerfont{title}\inserttitle\par%
-      \ifx\insertsubtitle\@empty%
-      \else%
-        \vskip0.25em%
-        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
-      \fi%
-    \end{beamercolorbox}%
-    \vskip1em\par
-    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
-      \usebeamerfont{author}\@authorname\\
-      \vskip0.3em
-      {\small\textit{\@authorinstitution}}
-    \end{beamercolorbox}
-    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
-      \usebeamerfont{institute}
-      \faEnvelope~\href{mailto:\@authoremail}{\@authoremail}~~
-      \faOrcid~\href{https://orcid.org/\@authororcid}{\@authororcid}
-    \end{beamercolorbox}
-    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
-      \usebeamerfont{date}\insertdate
-    \end{beamercolorbox}\vskip0.5em
-  \endgroup
-  \vfill
-}
+% Feed the canonical author values into standard Beamer metadata. Individual
+% decks remain free to set their own title, subtitle and date.
+\author{\@authorname}
+\institute{\@authorinstitution}
 
 % ================================================================
-% Footer with Contact Information
+% Compatibility Listing Style
 % ================================================================
 
-\setbeamertemplate{footline}{
-  \leavevmode%
-  \hbox{%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
-    \usebeamerfont{author in head/foot}\@authorname
-  \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
-    \usebeamerfont{title in head/foot}\insertshorttitle
-  \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
-    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
-    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
-  \end{beamercolorbox}}%
-  \vskip0pt%
-}
+% Retain the historical style name for old source files, but make it an alias
+% of the canonical code model rather than a separate visual language.
+\lstdefinestyle{esmadcode}{style=code}
 
 % ================================================================
 % Custom Blocks and Boxes
@@ -155,8 +118,8 @@
 
 \newenvironment{theorembox}[1]{%
   \begin{tcolorbox}[
-    colback=ESMADLightGray,
-    colframe=ESMADBlue,
+    colback=black!3,
+    colframe=red!90!black,
     fonttitle=\bfseries,
     title={#1}
   ]
@@ -166,8 +129,8 @@
 
 \newenvironment{definitionbox}[1]{%
   \begin{tcolorbox}[
-    colback=ESMADLightGray,
-    colframe=ESMADLightBlue,
+    colback=black!3,
+    colframe=red!75!black,
     fonttitle=\bfseries,
     title={#1}
   ]
@@ -178,7 +141,7 @@
 \newenvironment{examplebox}[1]{%
   \begin{tcolorbox}[
     colback=white,
-    colframe=ESMADLightBlue,
+    colframe=red!65!black,
     fonttitle=\bfseries,
     title={#1},
     boxrule=1.5pt
@@ -190,7 +153,7 @@
 \newenvironment{alertbox}[1]{%
   \begin{tcolorbox}[
     colback=white,
-    colframe=ESMADAccent,
+    colframe=red,
     fonttitle=\bfseries,
     title={#1},
     boxrule=2pt
@@ -198,35 +161,6 @@
 }{%
   \end{tcolorbox}
 }
-
-% ================================================================
-% Code Listing Style
-% ================================================================
-
-\RequirePackage{listings}
-
-\lstdefinestyle{esmadcode}{
-    backgroundcolor=\color{CodeBackground},
-    commentstyle=\color{CodeComment},
-    keywordstyle=\color{CodeKeyword},
-    numberstyle=\tiny\color{ESMADGray},
-    stringstyle=\color{CodeString},
-    basicstyle=\ttfamily\small,
-    breakatwhitespace=false,
-    breaklines=true,
-    captionpos=b,
-    keepspaces=true,
-    numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=2,
-    frame=single,
-    rulecolor=\color{ESMADGray}
-}
-
-\lstset{style=esmadcode}
 
 % ================================================================
 % Mathematical Notation Helpers
@@ -280,7 +214,7 @@
       \faEnvelope & \href{mailto:\@authoremail}{\@authoremail}\\[0.3em]
       \faOrcid & \href{https://orcid.org/\@authororcid}{\@authororcid}\\[0.3em]
       \faGithub & \href{https://github.com/diogoribeiro7}{github.com/diogoribeiro7}\\[0.3em]
-      \faLinkedin & \href{https://linkedin.com/in/diogoribeiro7}{linkedin.com/in/diogoribeiro7}
+      \faLinkedin & \href{https://www.linkedin.com/in/diogo-ribeiro-9094604a/}{linkedin.com/in/diogo-ribeiro-9094604a}
     \end{tabular}\\[1em]
 
     \vfill
@@ -302,15 +236,12 @@
   \end{itemize}
   \vfill
   \centering
-  {\small
-  \textbf{Generated with \LaTeX~Beamer}\\
-  Theme: Professional Academic Style
-  }
+  {\small\textbf{Generated with \LaTeX~Beamer}}
 \end{frame}
 }
 
 % ================================================================
-% Table of Contents Slide
+% Convenience Slides
 % ================================================================
 
 \newcommand{\tocslide}{
@@ -318,10 +249,6 @@
   \tableofcontents
 \end{frame}
 }
-
-% ================================================================
-% Section Slide Template
-% ================================================================
 
 \AtBeginSection[]{
   \begin{frame}

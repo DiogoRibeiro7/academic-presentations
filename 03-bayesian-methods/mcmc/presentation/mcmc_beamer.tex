@@ -1,9 +1,31 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 
-% Theme and appearance
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
-\usecolortheme{seahorse}
+\usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Packages
 \usepackage{amsmath,amsthm,amssymb}
@@ -12,28 +34,19 @@
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{listings}
 \usepackage{subcaption}
 
-% Custom colors
+% Content-specific colors
 \definecolor{navyblue}{RGB}{0,32,96}
 \definecolor{crimson}{RGB}{178,34,52}
 \definecolor{forest}{RGB}{34,139,34}
 \definecolor{gold}{RGB}{255,215,0}
 
-% Customize theme colors
-\setbeamercolor{structure}{fg=navyblue}
-\setbeamercolor{title}{fg=white,bg=navyblue}
-\setbeamercolor{frametitle}{fg=white,bg=navyblue}
-\setbeamercolor{section in toc}{fg=navyblue}
-
 % Title information
 \title[Advanced MCMC]{Markov Chain Monte Carlo}
 \subtitle{Theory, Modern Algorithms, and Applications}
-\author[D. Ribeiro]{Diogo Ribeiro\\
-\small ESMAD -- Escola Superior de Média Arte e Design\\
-\small Lead Data Scientist, Mysense.ai}
+\author[D. Ribeiro]{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 % Custom commands
@@ -982,8 +995,7 @@ class AdaptiveMetropolis:
 \vspace{1cm}
 
 \textbf{Diogo Ribeiro}\\
-ESMAD -- Escola Superior de Média Arte e Design\\
-Lead Data Scientist, Mysense.ai\\
+Faculty of Media Arts and Design, Technical University of Porto\\
 
 \vspace{0.5cm}
 
