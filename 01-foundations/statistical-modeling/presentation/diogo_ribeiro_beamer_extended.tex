@@ -1,13 +1,30 @@
 \documentclass[aspectratio=169]{beamer}
 
-% ---------------- Beamer Setup ----------------
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
 \usecolortheme{default}
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}[frame number]
-\setbeamertemplate{itemize items}[circle]
-\setbeamertemplate{enumerate items}[default]
-\setbeamertemplate{blocks}[rounded][shadow=true]
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Fonts/encoding
 \usepackage[utf8]{inputenc}
@@ -17,38 +34,21 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{bookmark}
-\usepackage{listings}
-\usepackage{xcolor}
 \usepackage{array}
 \usepackage{multicol}
 
-% Listings style
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+% Language-specific listing variants inherit the canonical visual model.
 \lstdefinestyle{rcode}{
+  style=code,
   language=R,
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{blue},
-  commentstyle=\color{codegray},
-  stringstyle=\color{red!60!black},
-  backgroundcolor=\color{codebg},
-  showstringspaces=false,
   frame=single,
-  framerule=0.2pt,
-  breaklines=true
+  framerule=0.2pt
 }
 \lstdefinestyle{pycode}{
+  style=code,
   language=Python,
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{blue},
-  commentstyle=\color{codegray},
-  stringstyle=\color{red!60!black},
-  backgroundcolor=\color{codebg},
-  showstringspaces=false,
   frame=single,
-  framerule=0.2pt,
-  breaklines=true
+  framerule=0.2pt
 }
 
 % Section TOC at start of each section
@@ -62,7 +62,7 @@
 \title[Explanatory Statistical Modeling]{Explanatory Statistical Modeling}
 \subtitle{From Linear Models to GLMs, Ordinal Models, and Survival}
 \author[Diogo Ribeiro]{\textbf{Diogo Ribeiro}}
-\institute{Senior Data Scientist \& Mathematician}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 \begin{document}
@@ -94,7 +94,8 @@
 
 \begin{frame}{About Me}
 \begin{itemize}
-  \item \textbf{Diogo Ribeiro} --- Senior Data Scientist \& Mathematician.
+  \item \textbf{Diogo Ribeiro} --- Mathematician \& Data Scientist.
+  \item Faculty of Media Arts and Design, Technical University of Porto.
   \item Focus: time series, streaming analytics, and interpretable models.
   \item Motto: lean models, clean code, reproducible pipelines.
 \end{itemize}
