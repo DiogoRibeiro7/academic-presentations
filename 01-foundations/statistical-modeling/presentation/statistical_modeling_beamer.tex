@@ -1,9 +1,31 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 
-% Theme and appearance
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
-\usecolortheme{seahorse}
+\usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Encoding (safe even on new LaTeX)
 \usepackage[utf8]{inputenc}
@@ -18,37 +40,21 @@
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{listings}
-% \usepackage[caption=false]{subcaption} % <-- removed: incompatible with beamer
 \usepackage{hyperref}
 
-% Custom colors
+% Content-specific colors
 \definecolor{navyblue}{RGB}{0,32,96}
 \definecolor{crimson}{RGB}{178,34,52}
 \definecolor{forest}{RGB}{34,139,34}
 \definecolor{gold}{RGB}{255,215,0}
 \definecolor{purple}{RGB}{128,0,128}
 
-% Customize theme colors
-\setbeamercolor{structure}{fg=navyblue}
-\setbeamercolor{title}{fg=white,bg=navyblue}
-\setbeamercolor{frametitle}{fg=white,bg=navyblue}
-\setbeamercolor{section in toc}{fg=navyblue}
-
-% Code listing settings
+% Preserve the deck's listing layout while inheriting the canonical code style.
 \lstset{
-    language=Python,
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{navyblue}\bfseries,
-    commentstyle=\color{forest}\itshape,
-    stringstyle=\color{crimson},
+    style=code,
     numbers=left,
     numberstyle=\tiny\color{gray},
     stepnumber=1,
-    tabsize=2,
-    showstringspaces=false,
-    breaklines=true,
     frame=single,
     rulecolor=\color{gray!30}
 }
@@ -56,9 +62,8 @@
 % Title information
 \title[Statistical Learning Theory]{Statistical Learning Theory}
 \subtitle{Foundations for Data Science Applications}
-\author[D. Ribeiro]{Diogo Ribeiro\\
-\small ESMAD -- Escola Superior de Média Arte e Design\\
-\small Lead Data Scientist, Mysense.ai}
+\author[D. Ribeiro]{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 % Custom commands
@@ -359,33 +364,24 @@ where $f(x) = \E[Y|X = x]$ and $\sigma^2 = \Var[Y|X = x]$.
 \begin{figure}
 \centering
 \begin{tikzpicture}[scale=0.8]
-% Target
 \draw[thick] (0,3) circle (0.2);
 \fill (0,3) circle (0.05);
 \node[below] at (0,2.7) {True function};
-
-% Low bias, low variance
 \draw (2,3) circle (0.2);
 \foreach \i in {1,...,8}
   \fill[blue] ($(2,3) + 0.1*rand*(1,1)$) circle (0.03);
 \node[below] at (2,2.7) {\small Low bias};
 \node[below] at (2,2.5) {\small Low variance};
-
-% Low bias, high variance
 \draw (4,3) circle (0.2);
 \foreach \i in {1,...,8}
   \fill[red] ($(4,3) + 0.3*rand*(1,1)$) circle (0.03);
 \node[below] at (4,2.7) {\small Low bias};
 \node[below] at (4,2.5) {\small High variance};
-
-% High bias, low variance
 \draw (2,1) circle (0.2);
 \foreach \i in {1,...,8}
   \fill[green] ($(2.3,1.3) + 0.1*rand*(1,1)$) circle (0.03);
 \node[below] at (2,0.7) {\small High bias};
 \node[below] at (2,0.5) {\small Low variance};
-
-% High bias, high variance
 \draw (4,1) circle (0.2);
 \foreach \i in {1,...,8}
   \fill[purple] ($(4.4,1.4) + 0.3*rand*(1,1)$) circle (0.03);
@@ -420,7 +416,6 @@ def generate_data(n_samples=50, noise_std=0.3):
     y = true_function(X) + np.random.normal(0, noise_std, n_samples)
     return X.reshape(-1, 1), y
 
-# Generate multiple datasets for bias-variance analysis
 n_datasets = 100
 degrees = [1, 4, 15]
 X_test = np.linspace(0, 1, 100).reshape(-1, 1)
@@ -437,7 +432,6 @@ for degree in degrees:
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         predictions.append(y_pred)
-    
     predictions = np.array(predictions)
     bias_squared = np.mean((np.mean(predictions, axis=0) - y_test_true)**2)
     variance = np.mean(np.var(predictions, axis=0))
@@ -504,7 +498,6 @@ Deep learning models with millions of parameters often generalize well despite h
 
 \section{PAC Learning Theory}
 
-% --- Entire PAC block must be inside a frame ---
 \begin{frame}{PAC Learning Theory}
 \begin{definition}[PAC Learnability]
 A hypothesis class $\mathcal{H}$ is \textbf{PAC-learnable} if there exists an algorithm $A$ and polynomial function $p(\cdot, \cdot, \cdot, \cdot)$ such that:
@@ -551,7 +544,6 @@ The \textbf{VC dimension} of $\mathcal{H}$ is the size of the largest set that c
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \textbf{Examples:}
-
 \begin{itemize}
 \item \textbf{Linear classifiers in $\Real^d$}: VC dim = $d + 1$
 \item \textbf{Decision trees of depth $h$}: VC dim $\approx 2^h$
@@ -563,15 +555,12 @@ The \textbf{VC dimension} of $\mathcal{H}$ is the size of the largest set that c
 \begin{figure}
 \centering
 \begin{tikzpicture}[scale=0.8]
-% Linear classifier in 2D - can shatter 3 points
 \node at (1,3) {\textbf{Linear in 2D}};
 \fill[blue] (0.5,2.5) circle (0.05);
 \fill[red] (1.5,2.5) circle (0.05);
 \fill[blue] (1,1.5) circle (0.05);
 \draw (0.3,1.3) -- (1.7,2.7);
 \node at (1,1) {\small VC dim = 3};
-
-% Show that 4 points cannot always be shattered
 \node at (4,3) {\textbf{Cannot shatter 4}};
 \fill[blue] (3.5,2.5) circle (0.05);
 \fill[red] (4.5,2.5) circle (0.05);
@@ -707,27 +696,24 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import Ridge
 import numpy as np
 
-# Generate sample data
 from sklearn.datasets import make_regression
-X, y = make_regression(n_samples=100, 
-                       n_features=20, 
+X, y = make_regression(n_samples=100,
+                       n_features=20,
                        noise=0.1,
                        random_state=42)
 
-# Test different regularization strengths
 alphas = np.logspace(-4, 2, 20)
 cv_scores = []
 
 for alpha in alphas:
     model = Ridge(alpha=alpha)
     scores = cross_val_score(
-        model, X, y, 
-        cv=5, 
+        model, X, y,
+        cv=5,
         scoring='neg_mean_squared_error'
     )
     cv_scores.append(-scores.mean())
 
-# Select best alpha
 best_alpha = alphas[np.argmin(cv_scores)]
 print(f"Best alpha: {best_alpha:.4f}")
 \end{lstlisting}
@@ -814,17 +800,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_boston
 
-# Load data (Boston housing as example)
 X, y = load_boston(return_X_y=True)
-
-# Create pipeline with feature selection
 pipe = Pipeline([
     ('scaler', StandardScaler()),
     ('selector', SelectKBest(f_regression)),
     ('regressor', LinearRegression())
 ])
-
-# Test different numbers of features
 param_range = range(1, X.shape[1] + 1)
 train_scores, val_scores = validation_curve(
     pipe, X, y,
@@ -833,13 +814,10 @@ train_scores, val_scores = validation_curve(
     cv=5,
     scoring='neg_mean_squared_error'
 )
-
-# Plot bias-variance tradeoff
 import matplotlib.pyplot as plt
 train_mean = -train_scores.mean(axis=1)
 val_mean = -val_scores.mean(axis=1)
 val_std = val_scores.std(axis=1)
-
 plt.figure(figsize=(10, 6))
 plt.plot(param_range, train_mean, 'o-', label='Training MSE')
 plt.plot(param_range, val_mean, 'o-', label='Validation MSE')
@@ -859,27 +837,21 @@ from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import validation_curve
 import numpy as np
 
-# Simulate high-dimensional data
 np.random.seed(42)
 n_samples, n_features = 100, 5000
 X = np.random.randn(n_samples, n_features)
 true_coef = np.zeros(n_features)
-true_coef[:10] = np.random.randn(10)  # Only first 10 are relevant
+true_coef[:10] = np.random.randn(10)
 y = X @ true_coef + 0.1 * np.random.randn(n_samples)
-
-# Compare Ridge and Lasso
 alphas = np.logspace(-3, 2, 20)
-
 ridge_train, ridge_val = validation_curve(
     Ridge(), X, y, param_name='alpha', param_range=alphas,
     cv=5, scoring='neg_mean_squared_error'
 )
-
 lasso_train, lasso_val = validation_curve(
     Lasso(max_iter=2000), X, y, param_name='alpha', param_range=alphas,
     cv=5, scoring='neg_mean_squared_error'
 )
-
 print("Ridge vs Lasso in high-dimensional setting:")
 print("- Ridge: Continuous shrinkage, keeps all features")
 print("- Lasso: Sparse solutions, automatic feature selection")
@@ -1174,8 +1146,7 @@ Theory guides practice, but practical considerations (interpretability, speed, f
 \vspace{1cm}
 
 \textbf{Diogo Ribeiro}\\
-ESMAD -- Escola Superior de Média Arte e Design\\
-Lead Data Scientist, Mysense.ai\\
+Faculty of Media Arts and Design, Technical University of Porto\\
 
 \vspace{0.5cm}
 
