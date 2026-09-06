@@ -1,8 +1,31 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
-\usecolortheme{seahorse}
+\usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage{graphicx}
@@ -14,21 +37,17 @@
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{bayesnet}
 
+% Content-specific colors
 \definecolor{navyblue}{RGB}{0,32,96}
 \definecolor{crimson}{RGB}{178,34,52}
 \definecolor{forest}{RGB}{34,139,34}
 \definecolor{gold}{RGB}{255,215,0}
 \definecolor{purple}{RGB}{128,0,128}
 
-\setbeamercolor{structure}{fg=navyblue}
-\setbeamercolor{title}{fg=white,bg=navyblue}
-\setbeamercolor{frametitle}{fg=white,bg=navyblue}
-
 \title[Bayesian ML]{Bayesian Machine Learning}
 \subtitle{Neural Networks and Gaussian Processes}
-\author[D. Ribeiro]{Diogo Ribeiro\\
-\small ESMAD -- Escola Superior de Média Arte e Design\\
-\small Lead Data Scientist, Mysense.ai}
+\author[D. Ribeiro]{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 \newcommand{\E}{\mathbb{E}}
@@ -1055,8 +1074,7 @@ Bayesian ML will become the \textbf{standard approach} for safety-critical appli
 \vspace{1cm}
 
 \textbf{Diogo Ribeiro}\\
-ESMAD -- Escola Superior de Média Arte e Design\\
-Lead Data Scientist, Mysense.ai\\
+Faculty of Media Arts and Design, Technical University of Porto\\
 
 \vspace{0.5cm}
 
