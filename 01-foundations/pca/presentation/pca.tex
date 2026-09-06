@@ -1,9 +1,31 @@
 \documentclass{beamer}
 
-% THEME & PACKAGES
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
 \usecolortheme{default}
 \usefonttheme{professionalfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -18,8 +40,8 @@
 % TITLE INFO (no article name here)
 \title[Principal Component Analysis]{Principal Component Analysis:\\
 From Classical Ideas to Geometric and Statistical Analysis}
-\author{Diogo Ribeiro} 
-\institute{TSIW / Department of Informatics}
+\author{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 % SHORTCUTS
