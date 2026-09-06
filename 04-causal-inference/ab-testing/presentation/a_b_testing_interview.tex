@@ -1,67 +1,62 @@
 \documentclass[aspectratio=169]{beamer}
 
-% ---------------- Beamer Setup ----------------
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
 \usecolortheme{default}
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}[frame number]
-\setbeamertemplate{itemize items}[circle]
-\setbeamertemplate{enumerate items}[default]
-\setbeamertemplate{blocks}[rounded][shadow=true]
-
-% Fonts/encoding
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-% \usepackage{lmodern}  % Commented out - not available
-\usepackage{amsmath,amssymb}
-\usepackage{booktabs}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{bookmark}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{array}
-\usepackage{multicol}
 
-% Listings style
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codebg}{rgb}{0.97,0.97,0.97}
-\lstdefinestyle{rcode}{
-  language=R,
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{blue},
-  commentstyle=\color{codegray},
-  stringstyle=\color{red!60!black},
-  backgroundcolor=\color{codebg},
-  showstringspaces=false,
-  frame=single,
-  framerule=0.2pt,
-  breaklines=true
-}
-\lstdefinestyle{pycode}{
+\lstdefinestyle{code}{
   language=Python,
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\small,
   keywordstyle=\color{blue},
-  commentstyle=\color{codegray},
+  commentstyle=\color{gray},
   stringstyle=\color{red!60!black},
-  backgroundcolor=\color{codebg},
   showstringspaces=false,
-  frame=single,
-  framerule=0.2pt,
+  tabsize=2,
   breaklines=true
 }
+\lstset{style=code}
 
-\title[Experimentation \& Causal Inference]{Experimentation, Causal Inference,\\
-Metrics, Modeling, and MLOps (Everything Explained)}
-\author{Diogo Ribeiro}
-\institute{Data Science Lead \,|\, Mathematics}
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+
+% Commands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\indep}{\perp\!\!\!\perp}
+\newcommand{\ATE}{\mathrm{ATE}}
+\newcommand{\ITT}{\mathrm{ITT}}
+\newcommand{\MDE}{\mathrm{MDE}}
+\newcommand{\SE}{\mathrm{SE}}
+
+% Title information
+\title[A/B Testing]{A/B Testing \& Experimentation}
+\subtitle{Design, Analysis, and Interview-Ready Reasoning}
+\author[D. Ribeiro]{Diogo Ribeiro}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
-
-\AtBeginSection[]{
-  \begin{frame}{Roadmap}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
 
 \begin{document}
 
@@ -69,308 +64,839 @@ Metrics, Modeling, and MLOps (Everything Explained)}
   \titlepage
 \end{frame}
 
-\begin{frame}{Agenda}
+\begin{frame}{Learning Goals}
+\begin{itemize}
+  \item design randomized experiments around a clear estimand and unit of randomization;
+  \item calculate power and sample size while accounting for variance, clustering, and multiple testing;
+  \item choose estimators and diagnostics that remain valid under practical implementation issues;
+  \item communicate both statistical and business significance in an interview or product setting.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
   \tableofcontents
 \end{frame}
 
-\section{A/B Testing: Core Concepts}
-\begin{frame}{A/B Testing (Controlled Experiments)}
-  \textbf{Definition:} Randomly split units into Control (A) and Treatment (B) and compare outcomes.\\[0.5em]
-  \textbf{Why:} Randomization balances observed/unobserved factors $\Rightarrow$ causal attribution.\\[0.5em]
-  \textbf{Units of Randomization:} user, session, cluster/geo. \\[0.25em]
-  \textbf{Key rule:} use the smallest unit that avoids \emph{interference}.
-  \begin{itemize}
-    \item Stable hashing for assignment (e.g., \texttt{hash(user\_id) mod K}).
-    \item Stratification (blocking) by country/device to reduce variance.
-    \item Exposure integrity: only eligible, actually-exposed users in analysis.
-  \end{itemize}
+% ============================================================
+\section{Why Experiment?}
+% ============================================================
+
+\begin{frame}{Prediction Is Not Intervention}
+\begin{columns}
+\begin{column}{0.55\textwidth}
+\textbf{Predictive question:}
+\[
+  \Prob(Y=1\mid X=x)
+\]
+\begin{itemize}
+  \item Who is likely to click?
+  \item Which customers are likely to churn?
+  \item What demand will we observe tomorrow?
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Causal question:}
+\[
+  \E[Y(1)-Y(0)]
+\]
+\begin{itemize}
+  \item What happens if we change the product?
+  \item Did the campaign create incremental lift?
+  \item Would users have converted anyway?
+\end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{alertblock}{Why A/B Tests?}
+Randomization removes systematic differences in potential outcomes between treatment groups, allowing a credible causal comparison.
+\end{alertblock}
+
+\begin{block}{Core Object}
+A/B testing is not primarily a hypothesis-testing exercise. It is a \textbf{design problem} for estimating a decision-relevant causal effect.
+\end{block}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Metrics and Decisioning}
-  \begin{itemize}
-    \item \textbf{Primary metric:} single pre-declared decision metric (e.g., D7 retention).
-    \item \textbf{Secondary metrics:} additional success indicators (adoption, time-to-value).
-    \item \textbf{Guardrails:} safety metrics that must not degrade (e.g., p95 latency, crash-free sessions).
-    \item \textbf{KPI:} Key Performance Indicator; connects work to OKRs (Objectives \& Key Results).
-  \end{itemize}
+\begin{frame}{Potential Outcomes View}
+For unit $i$:
+\[
+  Y_i(1) = \text{outcome if treated}, \qquad
+  Y_i(0) = \text{outcome if control}.
+\]
+
+Individual treatment effect:
+\[
+  \tau_i = Y_i(1)-Y_i(0).
+\]
+
+Average treatment effect:
+\[
+  \ATE = \E[Y_i(1)-Y_i(0)].
+\]
+
+\begin{alertblock}{Fundamental Problem}
+We can observe only one of $Y_i(1)$ or $Y_i(0)$ for a given unit. Randomization creates comparable groups so that averages recover the missing counterfactual.
+\end{alertblock}
 \end{frame}
 
-\section{Hypothesis Testing \& Power}
-\begin{frame}{Statistical Testing Basics}
-  \begin{itemize}
-    \item \textbf{Null (H$_0$):} no effect; \textbf{Alternative (H$_1$):} effect exists.
-    \item \textbf{p-value:} probability of stats as extreme as observed, if H$_0$ true.
-    \item \textbf{$\alpha$ (Type I error):} false positive rate (commonly 0.05).
-    \item \textbf{$\beta$ (Type II error):} false negative rate; \textbf{Power} $=1-\beta$.
-    \item \textbf{Confidence Interval (CI):} Range that would contain the true effect in repeated samples (under the model).
-  \end{itemize}
+\begin{frame}{What Randomization Gives Us}
+Let $T_i\in\{0,1\}$ denote treatment assignment.
+
+Under randomized assignment:
+\[
+  (Y_i(1),Y_i(0)) \indep T_i.
+\]
+
+Then:
+\[
+  \E[Y_i\mid T_i=1]-\E[Y_i\mid T_i=0]
+  = \E[Y_i(1)]-\E[Y_i(0)]
+  = \ATE.
+\]
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Randomization handles:}
+\begin{itemize}
+  \item observed confounders;
+  \item unobserved confounders;
+  \item model misspecification in the mean comparison.
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Randomization does not automatically handle:}
+\begin{itemize}
+  \item noncompliance;
+  \item interference;
+  \item attrition;
+  \item instrumentation bugs;
+  \item multiple testing and peeking.
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Sample Size \& MDE (Minimum Detectable Effect)}
-  \textbf{Two-proportion sample size per arm (approx.):}
-  \[
-    n \approx \frac{2\,\bar{p}(1-\bar{p})\,\big(z_{1-\alpha/2}+z_{1-\beta}\big)^2}{\text{MDE}^2}
-  \]
-  \begin{itemize}
-    \item $\bar{p}$: baseline rate (e.g., 0.12); $z_{1-\alpha/2}\approx1.96$ for $\alpha=0.05$; $z_{1-\beta}\approx0.84$ for 80\% power.
-    \item \textbf{Duration:} $ \text{days} \approx \frac{n}{\text{eligible users/day/arm}} $, then round to full weeks to cover seasonality.
-  \end{itemize}
+% ============================================================
+\section{Experiment Design}
+% ============================================================
+
+\begin{frame}{Start with the Estimand}
+Before selecting a metric or test, define the effect you want.
+
+\begin{block}{Examples}
+\begin{itemize}
+  \item \textbf{User-level ITT:} effect of assignment to the new experience on 7-day conversion.
+  \item \textbf{Session-level effect:} effect on average revenue per session.
+  \item \textbf{Cluster-level effect:} effect of store-level pricing policy on weekly revenue.
+\end{itemize}
+\end{block}
+
+\textbf{Questions to answer:}
+\begin{enumerate}
+  \item What is the experimental unit?
+  \item What is randomized?
+  \item What is the outcome window?
+  \item What population is targeted?
+  \item Is the target ITT, per-protocol, or treatment-on-treated?
+\end{enumerate}
 \end{frame}
 
-\begin{frame}{Variance Reduction: CUPED}
-  \textbf{CUPED =} Controlled Experiments Using Pre-Experiment Data.
-  \begin{itemize}
-    \item Use pre-period covariate $X$ correlated with outcome $Y$.
-  \end{itemize}
-  \vspace{0.5em}
-  \textbf{Adjustment:}\quad $Y^* = Y - \theta\,(X-\mathbb{E}[X])$, \quad $\theta=\frac{\mathrm{Cov}(Y,X)}{\mathrm{Var}(X)}$\\[0.5em]
-  \textbf{Variance factor:}\quad $\mathrm{Var}(Y^*) \approx (1-R^2)\,\mathrm{Var}(Y)$ where $R^2$ comes from regressing $Y$ on $X$.
-\end{frame}
-
-\section{Multiple Testing \& Sequential Designs}
-\begin{frame}{Multiple Testing}
-  \begin{itemize}
-    \item Testing many variants/slices inflates false positives.
-    \item \textbf{FWER} (Family-Wise Error Rate): Prob($\geq1$ false positive).
-    \item \textbf{FDR} (False Discovery Rate): Expected fraction of false among declared positives.
-    \item \textbf{Controls:} Holm--Bonferroni (FWER, more powerful than Bonferroni); Benjamini--Hochberg (FDR).
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Sequential Testing (Interim Looks)}
-  \begin{itemize}
-    \item \textbf{Peeking} inflates Type I error.
-    \item \textbf{Fixed-horizon:} Decide once at the end.
-    \item \textbf{Alpha-spending:} e.g., O'Brien--Fleming boundaries allocate $\alpha$ across interim looks with conservative early thresholds.
-  \end{itemize}
-\end{frame}
-
-\section{Data Quality \& Integrity}
-\begin{frame}{SRM (Sample Ratio Mismatch)}
-  \textbf{Definition:} Observed allocation differs from expected (e.g., 50/50 planned, 54/46 observed).\\[0.5em]
-  \textbf{Why it matters:} Indicates routing/eligibility/bot issues that can bias estimates.\\[0.5em]
-  \textbf{Detection:} $\chi^2$ goodness-of-fit on counts; alert if $p < 0.001$ sustained.
-\end{frame}
-
-\begin{frame}{Exposure Integrity \& Instrumentation}
-  \begin{itemize}
-    \item Idempotent events with keys; link exposure $\rightarrow$ outcome.
-    \item Normalize time zones (store in UTC); handle late events with watermarks.
-    \item Exclude bots/internal traffic; audit coverage and eligibility.
-  \end{itemize}
-\end{frame}
-
-\section{Interference \& Network Effects}
-\begin{frame}{When Independence Fails}
-  \begin{itemize}
-    \item \textbf{Interference:} One unit's treatment affects another's outcome (social features, shared infra).
-    \item \textbf{Mitigations:} cluster randomization (geo/store), switchback experiments, measure spillovers.
-    \item Use cluster-robust standard errors in inference.
-  \end{itemize}
-\end{frame}
-
-\section{When A/B Isn't Feasible}
-\begin{frame}{Difference-in-Differences (DiD)}
-  \begin{itemize}
-    \item Compare before/after changes between treated and control groups.
-    \item \textbf{Assumption:} Parallel trends.
-    \item \textbf{Good practice:} Event-study plots; cluster-robust SEs; wild bootstrap if few clusters.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Synthetic Control, RDD, IV}
-  \begin{itemize}
-    \item \textbf{Synthetic Control:} Weighted donor pool mimics treated pre-period; validate via placebo-in-space/time.
-    \item \textbf{RDD:} Treatment at threshold; check manipulation (McCrary), estimate locally with optimal bandwidth.
-    \item \textbf{IV:} Instrument $Z$ affects treatment $T$ but not outcome $Y$ directly; requires relevance, exogeneity, exclusion.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Propensity Scores (PSM/PSW)}
-  \begin{itemize}
-    \item Model $P(T=1\mid X)$ to match/weight units and balance covariates.
-    \item \textbf{Diagnostics:} Standardized Mean Difference (SMD) $<0.1$, overlap, no extreme weights.
-    \item Sensitivity: Rosenbaum bounds for unobserved confounding.
-  \end{itemize}
-\end{frame}
-
-\section{Modeling \& Evaluation}
-\begin{frame}{Logit/Probit (Binary Models)}
-  \begin{itemize}
-    \item \textbf{Logit:} $\mathrm{logit}(p)=\log\frac{p}{1-p}=\beta_0+\beta^\top x$; odds ratios $e^{\beta_j}$.
-    \item \textbf{Probit:} $\Phi^{-1}(p)=\beta_0+\beta^\top x$; similar to logit.
-    \item \textbf{Regularization:} L1 (sparsity), L2 (stability/multicollinearity).
-    \item \textbf{Calibration:} Reliability plots; Platt scaling or isotonic regression.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Tree Ensembles \& Neural Nets}
-  \begin{itemize}
-    \item \textbf{Random Forest:} bagged trees; robust; limited tuning.
-    \item \textbf{GBMs (XGBoost/LightGBM):} sequential trees; strong on tabular data.
-    \item \textbf{NNs:} FFN (tabular), CNN (images), RNN/LSTM (sequences). Regularize with dropout/weight decay.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Imbalance \& Metrics}
-  \begin{itemize}
-    \item \textbf{Imbalance:} Class weights/focal loss; avoid SMOTE in time series.
-    \item \textbf{Metrics:} ROC-AUC, PR-AUC, Precision, Recall, F1, Brier score (probability calibration).
-    \item \textbf{Explainability:} Feature importance, PDP/ICE, SHAP (global \& local).
-  \end{itemize}
-\end{frame}
-
-\section{Monitoring \& Drift}
-\begin{frame}{Drift Types \& Tests}
-  \begin{itemize}
-    \item \textbf{Data drift:} feature distribution shifts. \textbf{Concept drift:} relationship changes.
-    \item \textbf{PSI (Population Stability Index):} binned divergence; org thresholds (e.g., 0.1, 0.25).
-    \item \textbf{KS test:} max CDF distance; sensitive on large $n$.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Retraining \& Ops}
-  \begin{itemize}
-    \item \textbf{Triggers:} retrain on drift thresholds or performance decay.
-    \item \textbf{Cadence:} scheduled retrains with backtesting before promotion.
-    \item Track schema checks, latency, decision logs.
-  \end{itemize}
-\end{frame}
-
-\section{MLOps \& Delivery}
-\begin{frame}{Ops \& Tooling}
-  \begin{itemize}
-    \item \textbf{CI/CD:} Continuous Integration/Delivery---tests, builds, deploys.
-    \item \textbf{Canary:} small \% rollout; measure before expand.
-    \item \textbf{Shadow:} parallel predictions; no user impact.
-    \item \textbf{Feature store:} consistent batch/online features.
-    \item \textbf{Model registry:} versions, lineage, approvals.
-    \item \textbf{Kill switch:} instant rollback.
-  \end{itemize}
-\end{frame}
-
-\section{Visualization Principles}
-\begin{frame}{Design for Decision}
-  \begin{itemize}
-    \item Start from the decision/question; one message per slide.
-    \item Maximize data-ink ratio (Tufte); remove chart junk.
-    \item Honest axes; colorblind-safe palettes; add context lines/targets.
-  \end{itemize}
-\end{frame}
-
-\section{SQL \& Warehousing}
-\begin{frame}[fragile]{Cohort Retention (SQL Skeleton)}
-\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
-WITH installs AS (
-  SELECT user_id, MIN(event_ts) AS install_ts
-  FROM events
-  WHERE event_name = 'install'
-  GROUP BY 1
-),
-activity AS (
-  SELECT e.user_id,
-         DATE_DIFF('day', i.install_ts, e.event_ts) AS dfi
-  FROM events e
-  JOIN installs i USING (user_id)
-  WHERE e.event_name = 'app_open'
-    AND e.event_ts BETWEEN i.install_ts
-                        AND i.install_ts + INTERVAL '28 day'
-),
-dedup AS (
-  SELECT user_id, dfi,
-         ROW_NUMBER() OVER (
-           PARTITION BY user_id, dfi ORDER BY updated_at DESC
-         ) AS rn
-  FROM activity
-)
-SELECT dfi,
-       COUNT(DISTINCT CASE WHEN dfi = 0 THEN user_id END) AS n0,
-       COUNT(DISTINCT CASE WHEN rn = 1 THEN user_id END) AS active,
-       COUNT(DISTINCT CASE WHEN rn = 1 THEN user_id END)::float
-       / NULLIF(COUNT(DISTINCT CASE WHEN dfi = 0 THEN user_id END), 0)
-       AS retention
-FROM dedup
-GROUP BY 1
-ORDER BY 1;
-\end{lstlisting}
-\end{frame}
-
-\section{Retention \& Survival}
-\begin{frame}{Kaplan--Meier \& Cox PH}
-  \begin{itemize}
-    \item \textbf{KM:} Nonparametric survival $S(t)$ with censoring.
-    \item \textbf{Cox PH:} Hazard model with multiplicative covariate effects; test proportional hazards via Schoenfeld residuals.
-    \item Compare cohorts with log-rank test.
-  \end{itemize}
-\end{frame}
-
-\section{Pitfalls \& Remedies}
-\begin{frame}{Common Pitfalls}
-  \begin{itemize}
-    \item Peeking without correction $\Rightarrow$ inflated Type I error.
-    \item Ignoring SRM $\Rightarrow$ biased estimates.
-    \item Leakage from future/post-treatment variables.
-    \item Metric misalignment (optimize clicks vs. retention).
-    \item Multiple testing without correction; Simpson's paradox.
-    \item No post-ship monitoring; regression to the mean.
-  \end{itemize}
-\end{frame}
-
-\section{Glossary (Abbreviations)}
-\begin{frame}{Quick Reference}
+\begin{frame}{Unit of Randomization}
+\begin{table}
+\centering
 \small
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{p{2.5cm}p{3.2cm}p{3.2cm}p{3.0cm}}
 \toprule
-A/B & Control vs. treatment experiment \\
-KPI & Key Performance Indicator \\
-SRM & Sample Ratio Mismatch \\
-MDE & Minimum Detectable Effect \\
-CUPED & Variance reduction using pre-period covariates \\
-FWER & Family-Wise Error Rate \\
-FDR & False Discovery Rate \\
-RCT & Randomized Controlled Trial \\
-DiD & Difference-in-Differences \\
-RDD & Regression Discontinuity Design \\
-IV & Instrumental Variables \\
-PSM/PSW & Propensity Score Matching/Weighting \\
-ROC-AUC/PR-AUC & Discrimination summaries under class imbalance \\
-Brier & Probability calibration error (MSE of probs) \\
-PSI & Population Stability Index \\
-KS & Kolmogorov--Smirnov test \\
-p95 & 95th percentile (latency tail) \\
-PDP/ICE & Partial Dependence / Individual Conditional Expectation \\
-SHAP & Shapley-based local/global explanations \\
+\textbf{Unit} & \textbf{Strength} & \textbf{Risk} & \textbf{Example} \\
+\midrule
+User & Stable assignment, simple analysis & Cross-device identity & Product UI \\
+Session & More samples & Same user in both arms & Short-lived UX \\
+Household & Reduces interference & Hard identity resolution & Subscription offers \\
+Store / region & Operationally realistic & Low number of clusters & Pricing / operations \\
+Time block & Easy deployment & Time confounding & Infrastructure change \\
 \bottomrule
 \end{tabular}
+\end{table}
+
+\begin{alertblock}{Interview Signal}
+Always connect the randomization unit to the mechanism of interference and to the variance structure of the estimator.
+\end{alertblock}
 \end{frame}
 
-\section{Appendix: Formulas \& Checks}
-\begin{frame}{Formulas}
-\small
+\begin{frame}{Treatment Allocation}
+For a two-arm experiment, common allocations are:
 \begin{itemize}
-  \item \textbf{Two-proportion MDE (given $n$):}
-  \(\displaystyle \mathrm{MDE} \approx \sqrt{\frac{2\,\bar{p}(1-\bar{p})\,(z_{1-\alpha/2}+z_{1-\beta})^2}{n}}\)
-  \item \textbf{CUPED:} \( Y^* = Y - \theta(X-\mathbb{E}[X]),\ \theta=\frac{\mathrm{Cov}(Y,X)}{\mathrm{Var}(X)} \)
-  \item \textbf{BH-FDR:} sort p-values $p_{(i)}$, find largest $k$ with $p_{(k)} \leq \frac{k}{m}q$, declare $1..k$.
-  \item \textbf{Holm:} order p-values; compare $p_{(i)} \leq \frac{\alpha}{m-i+1}$ sequentially.
-  \item \textbf{O'Brien--Fleming (alpha-spending):} conservative early, liberal late boundaries.
+  \item 50/50: maximizes power for a fixed total sample under equal variance.
+  \item 90/10 or 95/5: reduces treatment exposure for risky launches, but costs power.
+  \item Multi-arm: useful for several variants, but introduces multiplicity.
+\end{itemize}
+
+If group sizes are $n_T$ and $n_C$, then for independent outcomes:
+\[
+  \Var(\bar{Y}_T-\bar{Y}_C)
+  = \frac{\sigma_T^2}{n_T} + \frac{\sigma_C^2}{n_C}.
+\]
+
+When variances and costs are equal, balanced allocation minimizes this variance.
+\end{frame}
+
+\begin{frame}{Stratification and Blocking}
+Randomize within important pre-treatment strata:
+\begin{itemize}
+  \item country / market;
+  \item platform;
+  \item baseline engagement;
+  \item customer segment.
+\end{itemize}
+
+\begin{block}{Why Block?}
+If a covariate strongly predicts the outcome, blocking can improve balance and reduce variance without biasing the randomized comparison.
+\end{block}
+
+\begin{alertblock}{Do Not Stratify on Post-Treatment Variables}
+Strata must be defined from information available before treatment assignment.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Interference and SUTVA}
+Standard analysis assumes one unit's outcome depends only on its own assignment:
+\[
+  Y_i = Y_i(T_i).
+\]
+
+But many systems violate this:
+\begin{itemize}
+  \item social networks;
+  \item marketplaces;
+  \item recommender systems;
+  \item delivery platforms;
+  \item pricing and inventory systems.
+\end{itemize}
+
+\begin{block}{Possible Responses}
+\begin{itemize}
+  \item randomize clusters;
+  \item use switchback experiments;
+  \item model spillovers explicitly;
+  \item define exposure mappings.
+\end{itemize}
+\end{block}
+\end{frame}
+
+% ============================================================
+\section{Metrics and Guardrails}
+% ============================================================
+
+\begin{frame}{Primary Metric}
+A primary metric should be:
+\begin{itemize}
+  \item causally downstream of the treatment;
+  \item sensitive enough to detect meaningful changes;
+  \item difficult to game;
+  \item aligned with the product or scientific goal;
+  \item measurable reliably during the experiment window.
+\end{itemize}
+
+\begin{block}{Example}
+For a checkout redesign:
+\begin{itemize}
+  \item Primary: purchase conversion rate.
+  \item Secondary: checkout completion time.
+  \item Guardrail: payment failure rate.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Guardrail Metrics}
+Guardrails protect dimensions that should not deteriorate.
+
+Examples:
+\begin{itemize}
+  \item latency and crash rate;
+  \item cancellation/refund rate;
+  \item customer complaints;
+  \item long-term retention;
+  \item fairness or market-specific constraints.
+\end{itemize}
+
+\begin{alertblock}{Decision Rule}
+A statistically significant increase in the primary metric may still be unacceptable if a critical guardrail worsens materially.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Ratio Metrics}
+Examples:
+\[
+  \text{CTR} = \frac{\text{clicks}}{\text{impressions}},
+  \qquad
+  \text{ARPU} = \frac{\text{revenue}}{\text{users}}.
+\]
+
+Care is required because:
+\begin{itemize}
+  \item numerator and denominator may both change under treatment;
+  \item observations inside a user are correlated;
+  \item ratio-of-means and mean-of-ratios answer different questions.
+\end{itemize}
+
+\begin{block}{Practical Rule}
+Define the estimand at the unit of randomization whenever possible. Aggregate events to the randomized unit before inference.
+\end{block}
+\end{frame}
+
+% ============================================================
+\section{Power and Sample Size}
+% ============================================================
+
+\begin{frame}{Statistical Power}
+For a two-sided test at significance level $\alpha$:
+\begin{itemize}
+  \item Type I error: reject a true null with probability $\alpha$.
+  \item Type II error: fail to detect a real effect with probability $\beta$.
+  \item Power: $1-\beta$.
+\end{itemize}
+
+Typical planning targets:
+\[
+  \alpha = 0.05,
+  \qquad
+  1-\beta = 0.80 \text{ or } 0.90.
+\]
+
+\begin{alertblock}{Power Is a Design Quantity}
+A non-significant result from an underpowered experiment does not establish equivalence or absence of effect.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{MDE and Sample Size for Means}
+Suppose both groups have variance $\sigma^2$ and equal sample size $n$.
+For target absolute effect $\Delta$:
+\[
+  n
+  \approx
+  2\sigma^2
+  \frac{(z_{1-\alpha/2}+z_{1-\beta})^2}{\Delta^2}.
+\]
+
+Equivalently, the minimum detectable effect is approximately:
+\[
+  \MDE
+  \approx
+  \sqrt{2}\,\sigma
+  \frac{z_{1-\alpha/2}+z_{1-\beta}}{\sqrt{n}}.
+\]
+
+\textbf{Implications:}
+\begin{itemize}
+  \item Halving MDE requires about 4$\times$ the sample.
+  \item Lower-variance outcomes improve power dramatically.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Checks \& Runbooks}
-\small
+\begin{frame}{Sample Size for Proportions}
+For control conversion $p_C$ and treatment conversion $p_T$:
+\[
+  \Delta = p_T-p_C.
+\]
+
+A common normal approximation is:
+\[
+ n \approx
+ \frac{
+  2\bar{p}(1-\bar{p})(z_{1-\alpha/2}+z_{1-\beta})^2
+ }{\Delta^2},
+\]
+where $\bar{p}\approx(p_C+p_T)/2$.
+
+\begin{block}{Example}
+Baseline conversion $10\%$, target lift $+1$ percentage point:
+\[
+  p_C=0.10,\quad p_T=0.11,\quad \Delta=0.01.
+\]
+Small absolute effects often require large samples.
+\end{block}
+\end{frame}
+
+\begin{frame}{Cluster Randomization}
+Within-cluster correlation reduces effective sample size.
+
+If mean cluster size is $m$ and intra-cluster correlation is $\rho$:
+\[
+  \text{Design Effect}
+  \approx 1 + (m-1)\rho.
+\]
+
+Approximate effective sample size:
+\[
+  n_{\text{eff}}
+  \approx
+  \frac{n}{1+(m-1)\rho}.
+\]
+
+\begin{alertblock}{Important}
+Large numbers of users do not compensate for a very small number of randomized clusters. In cluster experiments, the number of independent clusters is often the real bottleneck.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Variance Reduction}
+Pre-treatment covariates can improve precision.
+
+For outcome $Y$ and baseline covariate $X$, regression adjustment can reduce variance roughly in proportion to predictive strength.
+
 \begin{itemize}
-  \item Pre-register primary metric, guardrails, decision rule.
-  \item Powering with realistic MDE; round duration to full cycles.
-  \item Instrumentation dry run; SRM alarms; exposure audits.
-  \item Sensitivity: heterogeneity, alternative tests (Welch/MWU), outliers.
-  \item Post-ship: DiD vs. non-adopters; kill switch; rollback plan.
+  \item CUPED / ANCOVA-style adjustment.
+  \item Pre-experiment outcome history.
+  \item Stratification variables.
+\end{itemize}
+
+\begin{block}{Core Principle}
+Use only pre-treatment information for variance reduction. Covariate adjustment should improve precision, not redefine the causal comparison.
+\end{block}
+\end{frame}
+
+% ============================================================
+\section{Estimation and Inference}
+% ============================================================
+
+\begin{frame}{Difference in Means}
+Estimator:
+\[
+  \hat{\tau}
+  = \bar{Y}_T-\bar{Y}_C.
+\]
+
+For independent observations:
+\[
+  \widehat{\SE}(\hat{\tau})
+  =
+  \sqrt{
+    \frac{s_T^2}{n_T}
+    +
+    \frac{s_C^2}{n_C}
+  }.
+\]
+
+Approximate confidence interval:
+\[
+  \hat{\tau}
+  \pm
+  z_{1-\alpha/2}\widehat{\SE}(\hat{\tau}).
+\]
+
+\begin{alertblock}{Default Estimand}
+For randomized experiments with noncompliance, difference in outcomes by assignment estimates the intention-to-treat effect.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Regression Adjustment}
+A simple adjusted model is:
+\[
+  Y_i
+  = \alpha + \tau T_i + \bm{\gamma}^{\top}X_i + \varepsilon_i.
+\]
+
+With randomized $T_i$ and pre-treatment $X_i$:
+\begin{itemize}
+  \item treatment coefficient can improve precision;
+  \item covariates account for baseline outcome heterogeneity;
+  \item robust standard errors are typically preferred.
+\end{itemize}
+
+\begin{block}{Important Distinction}
+Regression adjustment in an RCT is not being used to \emph{create} identification. Randomization already provides identification; adjustment primarily improves precision.
+\end{block}
+\end{frame}
+
+\begin{frame}{Binary Outcomes}
+For conversion or click-through rates:
+\begin{itemize}
+  \item difference in proportions is directly interpretable;
+  \item risk ratios or odds ratios may also be reported;
+  \item logistic regression is useful for covariate adjustment, but the coefficient scale is log-odds.
+\end{itemize}
+
+\begin{block}{Prefer Decision-Relevant Scales}
+If the business question is “how many extra conversions?”, report absolute percentage-point lift and uncertainty, not only an odds ratio.
+\end{block}
+\end{frame}
+
+\begin{frame}{Heavy-Tailed Metrics}
+Revenue and engagement metrics often have:
+\begin{itemize}
+  \item extreme skewness;
+  \item many zeros;
+  \item a few very large observations.
+\end{itemize}
+
+Possible approaches:
+\begin{itemize}
+  \item robust standard errors;
+  \item bootstrap inference;
+  \item pre-specified winsorization;
+  \item transformed or two-part models;
+  \item longer aggregation windows.
+\end{itemize}
+
+\begin{alertblock}{Do Not Tune Outliers After Seeing Treatment Effects}
+Any trimming or winsorization rule should be pre-specified or justified independently of observed arm differences.
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+\section{Sequential Testing and Multiplicity}
+% ============================================================
+
+\begin{frame}{The Peeking Problem}
+Repeatedly testing at level $\alpha=0.05$ and stopping when $p<0.05$ inflates the false-positive rate.
+
+\begin{itemize}
+  \item Every interim look creates another opportunity to reject.
+  \item Fixed-horizon p-values assume a fixed analysis plan.
+\end{itemize}
+
+\begin{alertblock}{Bad Practice}
+“Run the experiment until it becomes significant.”
+\end{alertblock}
+
+\begin{block}{Better Options}
+\begin{itemize}
+  \item fixed-horizon design;
+  \item group-sequential boundaries;
+  \item alpha spending;
+  \item always-valid confidence sequences / e-values where appropriate.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Group Sequential Testing}
+Suppose we pre-plan interim looks at information fractions
+\[
+  0<t_1<\cdots<t_K=1.
+\]
+
+We choose critical boundaries $c_1,\dots,c_K$ so that:
+\[
+  \Prob_{H_0}\left(
+    \exists k: |Z_k|>c_k
+  \right) \le \alpha.
+\]
+
+Common families:
+\begin{itemize}
+  \item O'Brien--Fleming: conservative early, near-standard late.
+  \item Pocock: more even boundaries across looks.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Closing}
+\begin{frame}{Multiple Metrics and Variants}
+If testing $m$ hypotheses, familywise error increases.
+
+Common corrections:
+\begin{itemize}
+  \item Bonferroni: threshold $\alpha/m$.
+  \item Holm: step-down FWER control.
+  \item Benjamini--Hochberg: FDR control.
+\end{itemize}
+
+\begin{block}{Product Practice}
+Designate one or a small number of primary metrics. Treat secondary metrics as supporting evidence unless multiplicity is explicitly addressed.
+\end{block}
+\end{frame}
+
+% ============================================================
+\section{Implementation Failures}
+% ============================================================
+
+\begin{frame}{Sample Ratio Mismatch (SRM)}
+If expected assignment is 50/50 but observed counts are far from it, investigate.
+
+For observed counts $(n_T,n_C)$ and expected proportions $(0.5,0.5)$, a chi-square goodness-of-fit test can flag discrepancies.
+
+Possible causes:
+\begin{itemize}
+  \item broken randomization;
+  \item logging loss;
+  \item filtering after assignment;
+  \item bot or fraud rules;
+  \item eligibility logic depending on treatment.
+\end{itemize}
+
+\begin{alertblock}{SRM Is a Data-Quality Alarm}
+Do not “adjust it away” and proceed. Understand the mechanism first.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Noncompliance}
+Examples:
+\begin{itemize}
+  \item assigned users never see treatment;
+  \item control users access the new feature elsewhere;
+  \item treatment exposure is partial.
+\end{itemize}
+
+\textbf{Primary analysis:}
+\[
+  \ITT
+  = \E[Y\mid Z=1]-\E[Y\mid Z=0],
+\]
+where $Z$ is randomized assignment.
+
+\begin{block}{Why ITT?}
+Assignment remains randomized even when actual exposure is not. Conditioning directly on exposure can reintroduce selection bias.
+\end{block}
+\end{frame}
+
+\begin{frame}{Attrition and Missing Outcomes}
+If missingness differs by arm:
+\begin{itemize}
+  \item compare attrition rates;
+  \item inspect whether treatment affects observability;
+  \item use pre-specified missing-data methods;
+  \item consider bounds or sensitivity analysis.
+\end{itemize}
+
+\begin{alertblock}{Danger}
+Analyzing only users with observed outcomes can destroy randomization if observation itself is treatment-affected.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Instrumentation Checks}
+Before interpreting treatment effects:
+\begin{enumerate}
+  \item verify assignment counts;
+  \item verify treatment exposure;
+  \item validate event logging;
+  \item check baseline covariate balance;
+  \item inspect metric distributions;
+  \item confirm experiment duration and eligibility rules.
+\end{enumerate}
+
+\begin{block}{A/A Tests}
+A/A experiments can test the experimentation platform, metric noise, assignment logic, and false-positive calibration.
+\end{block}
+\end{frame}
+
+% ============================================================
+\section{Heterogeneity and Long-Term Effects}
+% ============================================================
+
+\begin{frame}{Treatment Effect Heterogeneity}
+The overall ATE may hide important variation:
+\[
+  \tau(x)
+  = \E[Y(1)-Y(0)\mid X=x].
+\]
+
+Examples:
+\begin{itemize}
+  \item new vs established users;
+  \item geography;
+  \item device/platform;
+  \item baseline engagement.
+\end{itemize}
+
+\begin{alertblock}{Subgroup Fishing}
+Post-hoc subgroup search creates severe multiplicity and overfitting. Pre-specify important segments or use honest exploratory methods with validation.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Novelty and Learning Effects}
+Short experiments may estimate short-run reactions rather than durable effects.
+
+Potential dynamics:
+\begin{itemize}
+  \item novelty boost;
+  \item adaptation / learning;
+  \item fatigue;
+  \item delayed conversion;
+  \item retention effects.
+\end{itemize}
+
+\begin{block}{Design Response}
+Select duration based not only on sample size but also on the time scale of the mechanism and business decision.
+\end{block}
+\end{frame}
+
+\begin{frame}{Surrogate Metrics}
+Teams often optimize short-term proxies for long-term outcomes.
+
+Examples:
+\begin{itemize}
+  \item clicks as proxy for satisfaction;
+  \item daily activity as proxy for retention;
+  \item immediate revenue as proxy for lifetime value.
+\end{itemize}
+
+\begin{alertblock}{Risk}
+A treatment can improve the surrogate while harming the long-term target. Validate surrogate relationships using historical experiments when possible.
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+\section{Interview Framework}
+% ============================================================
+
+\begin{frame}{How to Answer an Experiment Design Question}
+A strong structure:
+\begin{enumerate}
+  \item Clarify the business/product question.
+  \item Define the causal estimand.
+  \item Choose the unit of randomization.
+  \item Define treatment/control precisely.
+  \item Select primary and guardrail metrics.
+  \item Estimate sample size / runtime.
+  \item Specify analysis and stopping rules.
+  \item List implementation diagnostics.
+  \item Discuss risks: interference, attrition, noncompliance.
+  \item Explain the launch decision rule.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Example Interview Prompt}
+\textbf{Prompt:} “We want to change the recommendation algorithm. How would you test it?”
+
+A strong answer should mention:
+\begin{itemize}
+  \item user-level randomization unless interference suggests otherwise;
+  \item primary metric aligned with value, not only clicks;
+  \item latency / diversity / retention guardrails;
+  \item pre-experiment variance reduction;
+  \item adequate duration for repeated usage;
+  \item exposure logging and SRM checks;
+  \item possible network or inventory interference;
+  \item decision rule based on confidence interval and practical effect size.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Pricing Experiment}
+Pricing is harder because:
+\begin{itemize}
+  \item users may communicate prices;
+  \item demand shifts alter inventory;
+  \item competitors react;
+  \item treatment changes marketplace equilibrium.
+\end{itemize}
+
+\begin{block}{Possible Designs}
+\begin{itemize}
+  \item geography-level randomization;
+  \item matched markets;
+  \item switchback designs;
+  \item synthetic-control or quasi-experimental alternatives if randomized pricing is infeasible.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{What Does “Significant” Mean?}
+Suppose:
+\[
+  \hat{\tau}=0.20\%\text{ points},
+  \qquad
+  95\%\,\mathrm{CI}=[0.05,0.35]\%\text{ points}.
+\]
+
+Questions:
+\begin{itemize}
+  \item Is the effect statistically distinguishable from zero? Yes.
+  \item Is it economically meaningful? Depends on scale/cost.
+  \item Are guardrails healthy?
+  \item Does the CI exclude effects too small to matter?
+  \item Is the result robust across implementation checks?
+\end{itemize}
+
+\begin{alertblock}{Interview Signal}
+Do not reduce decision-making to “p < 0.05”. Use effect sizes, uncertainty, costs, risks, and guardrails.
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+\section{Common Pitfalls}
+% ============================================================
+
+\begin{frame}{Failure Modes}
+\begin{itemize}
+  \item Peeking and optional stopping.
+  \item Changing the primary metric after seeing results.
+  \item Segment fishing.
+  \item Incorrect unit of analysis.
+  \item Ignoring clustering / repeated observations.
+  \item Sample ratio mismatch.
+  \item Differential logging or attrition.
+  \item Novelty effects and insufficient runtime.
+  \item Interference between units.
+  \item Reporting relative lift without absolute scale.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Practical Pre-Launch Checklist}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Design}
+\begin{itemize}
+  \item estimand defined;
+  \item randomization unit selected;
+  \item eligibility frozen;
+  \item treatment/control documented;
+  \item primary metric specified;
+  \item guardrails specified.
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Inference}
+\begin{itemize}
+  \item MDE agreed;
+  \item power/sample size computed;
+  \item stopping rule specified;
+  \item multiplicity plan documented;
+  \item variance-reduction plan fixed;
+  \item diagnostics ready.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Summary}
+% ============================================================
+
+\begin{frame}{Key Takeaways}
+\begin{itemize}
+  \item Randomization identifies causal effects, but good design is still essential.
+  \item Start from the estimand and unit of randomization, not from a statistical test.
+  \item Power depends on effect size, variance, allocation, clustering, and duration.
+  \item Sequential monitoring and multiple comparisons need explicit control.
+  \item Instrumentation failures can invalidate even a perfectly randomized design.
+  \item Business decisions require effect sizes, uncertainty, guardrails, and costs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Interview Cheat Sheet}
+When asked about experimentation, cover:
+\begin{enumerate}
+  \item goal / estimand;
+  \item randomization unit;
+  \item primary + guardrail metrics;
+  \item sample size and MDE;
+  \item estimator + confidence interval;
+  \item stopping and multiplicity;
+  \item SRM / logging / exposure checks;
+  \item interference and noncompliance;
+  \item practical decision threshold.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
   \centering
-  \Large Questions \& Discussion
+  {\Huge Thank You}
+
+  \vspace{0.8cm}
+  \textbf{Questions \& Discussion}
+
+  \vspace{1cm}
+  \textbf{Diogo Ribeiro}\\
+  Faculty of Media Arts and Design, Technical University of Porto\\[0.5cm]
+  \texttt{dfr@esmad.ipp.pt}\\
+  \texttt{https://orcid.org/0009-0001-2022-7072}
 \end{frame}
 
 \end{document}
