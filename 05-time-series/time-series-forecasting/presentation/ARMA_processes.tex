@@ -1,8 +1,30 @@
 \documentclass{beamer}
 
-% Theme and appearance
+% Canonical Beamer model
+\usepackage{bookmark}
 \usetheme{Madrid}
 \usecolortheme{default}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{code}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true
+}
+\lstset{style=code}
+
+\setbeamercolor{palette primary}{bg=red, fg=white}
+\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
+\setbeamercolor{frametitle}{bg=red, fg=white}
+\setbeamercolor{title}{bg=red, fg=white}
+\setbeamercolor{section in toc}{fg=red}
 
 % Packages
 \usepackage[utf8]{inputenc}
@@ -17,9 +39,7 @@
 \title[ARMA Models]{Linear Time Series Models: ARMA Processes}
 \subtitle{From Stationary Noise to Structured Dynamics}
 \author{Diogo Ribeiro}
-\institute{%
-  \textit{Data Science and Applied Mathematics}
-}
+\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 % Optional: remove navigation symbols
