@@ -44,7 +44,7 @@ pytorch-forecasting>=1.0.0
 # ============================================================================
 # Causal Inference
 # ============================================================================
-linearmodels>=5.3  # IV/2SLS, panel data
+linearmodels>=7.0  # IV/2SLS, panel data
 econml>=0.14.0  # Causal ML from Microsoft
 dowhy>=0.9.0  # Causal inference library
 causalml>=0.14.0  # Uber's causal ML library
