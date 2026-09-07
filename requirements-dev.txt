@@ -109,7 +109,7 @@ types-PyYAML>=6.0.12
 # ============================================================================
 pipdeptree>=2.13.0  # Show package dependencies
 pip-tools>=7.0.0  # Pin dependencies
-watchdog>=3.0.0  # File system monitoring
+watchdog>=6.0.0  # File system monitoring
 
 # ============================================================================
 # Installation Notes
