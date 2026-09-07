@@ -89,7 +89,7 @@ scipy>=1.11.0  # Includes scipy.optimize
 
 # Bayesian optimization
 scikit-optimize>=0.9.0
-optuna>=3.3.0
+optuna>=4.9.0
 hyperopt>=0.2.7
 ax-platform>=0.3.5
 
