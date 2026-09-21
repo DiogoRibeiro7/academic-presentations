@@ -6,6 +6,17 @@ All standalone Beamer presentations in this repository should use the same visua
 
 The canonical model is deliberately simple: Madrid, the default Beamer color theme, a red palette, and a common `listings` style. The shared theme package exists as a compatibility/helper layer for decks that already use it; it must not introduce a competing visual identity.
 
+
+## Presentation Entry-Point Contract
+
+Every presentation topic exposes `presentation/main.tex` as its primary build entry point. The primary entry point selects exactly one standalone Beamer source in the same directory. This gives every topic the same command and CI target without forcing unrelated lectures into one physical source file.
+
+A topic may keep additional named standalone entry points only when they are genuinely different presentations, such as the extended statistical-modeling deck, the ARMA and stationarity lectures, or the streaming-pipeline lecture. Those additional tracks must inherit the same shared presentation shell.
+
+The shared shell lives in `shared/theme/esmad_beamer_theme.sty`. Standalone Beamer sources must load that package. Deck-local packages, notation, TikZ libraries, R/SQL/Python listing definitions, and scientific figures remain local when the subject requires them.
+
+Do not use `main_presentation.tex` article/PDF wrappers as presentation entry points. Those files are legacy aggregation helpers. In this repository, `main.tex` means the source entry point that builds the primary Beamer deck.
+
 ## Canonical Beamer Model
 
 Preserve any existing `\documentclass` options. For example, both of these are valid:
