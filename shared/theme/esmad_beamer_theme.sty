@@ -22,7 +22,6 @@
 \RequirePackage{tcolorbox}
 \RequirePackage{fontawesome5}
 \RequirePackage{amsmath,amsthm,amssymb}
-\RequirePackage{algorithm,algpseudocode}
 \RequirePackage{booktabs}
 \RequirePackage{colortbl}
 
@@ -187,28 +186,31 @@
 % Mathematical Notation Helpers
 % ================================================================
 
-\newcommand{\Normal}{\mathcal{N}}
-\newcommand{\Uniform}{\mathcal{U}}
-\newcommand{\Bernoulli}{\text{Bernoulli}}
-\newcommand{\Binomial}{\text{Binomial}}
-\newcommand{\Poisson}{\text{Poisson}}
-\newcommand{\Exponential}{\text{Exp}}
-\newcommand{\Beta}{\text{Beta}}
-\newcommand{\GammaDist}{\text{Gamma}}
-
-\DeclareMathOperator{\E}{\mathbb{E}}
-\DeclareMathOperator{\Var}{Var}
-\DeclareMathOperator{\Cov}{Cov}
-\DeclareMathOperator{\Corr}{Corr}
-\newcommand{\Prob}{\mathbb{P}}
-
-\DeclareMathOperator{\softmax}{softmax}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator*{\argmin}{arg\,min}
-
-\newcommand{\vect}[1]{\boldsymbol{#1}}
-\newcommand{\mat}[1]{\mathbf{#1}}
-\newcommand{\indep}{\perp\!\!\!\perp}
+% These helpers are deliberately installed at document start rather than when
+% the package is loaded.  Decks therefore remain free to define their own
+% notation in the preamble without colliding with the shared compatibility
+% layer.  \providecommand makes the shared definitions true fallbacks.
+\AtBeginDocument{%
+  \providecommand{\Normal}{\mathcal{N}}%
+  \providecommand{\Uniform}{\mathcal{U}}%
+  \providecommand{\Bernoulli}{\mathrm{Bernoulli}}%
+  \providecommand{\Binomial}{\mathrm{Binomial}}%
+  \providecommand{\Poisson}{\mathrm{Poisson}}%
+  \providecommand{\Exponential}{\mathrm{Exp}}%
+  \providecommand{\Beta}{\mathrm{Beta}}%
+  \providecommand{\GammaDist}{\mathrm{Gamma}}%
+  \providecommand{\E}{\mathbb{E}}%
+  \providecommand{\Var}{\operatorname{Var}}%
+  \providecommand{\Cov}{\operatorname{Cov}}%
+  \providecommand{\Corr}{\operatorname{Corr}}%
+  \providecommand{\Prob}{\mathbb{P}}%
+  \providecommand{\softmax}{\operatorname{softmax}}%
+  \providecommand{\argmax}{\operatorname*{arg\,max}}%
+  \providecommand{\argmin}{\operatorname*{arg\,min}}%
+  \providecommand{\vect}[1]{\boldsymbol{##1}}%
+  \providecommand{\mat}[1]{\mathbf{##1}}%
+  \providecommand{\indep}{\perp\!\!\!\perp}%
+}
 
 % ================================================================
 % Reference Slide Template
