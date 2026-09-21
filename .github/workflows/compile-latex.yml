@@ -98,7 +98,10 @@ jobs:
           echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
       - name: Upload presentation PDF artifact
         uses: actions/upload-artifact@v7
-        if: success()
+        # Pull requests only need compilation validation. Artifact storage is
+        # intentionally reserved for push/manual runs so a transient GitHub
+        # artifact-service failure cannot turn a valid LaTeX build red.
+        if: success() && github.event_name != 'pull_request'
         with:
           name: ${{ steps.presentation_artifact.outputs.name }}
           path: ${{ matrix.presentation }}.pdf
@@ -137,7 +140,8 @@ jobs:
           echo "name=${safe_name}-pdf" >> "$GITHUB_OUTPUT"
       - name: Upload exercise PDF artifact
         uses: actions/upload-artifact@v7
-        if: success()
+        # As above, artifact persistence is not part of PR correctness.
+        if: success() && github.event_name != 'pull_request'
         with:
           name: ${{ steps.exercise_artifact.outputs.name }}
           path: ${{ matrix.exercise }}.pdf
