@@ -59,6 +59,14 @@ The following standalone decks have been migrated with reviewable shell-level ch
 
 Existing decks that consume the shared theme now inherit the canonical visual model through that theme.
 
+### Canonical presentation entry points
+
+- [x] Add `presentation/main.tex` as the primary entry point for every presentation topic.
+- [x] Keep named standalone entry points only for genuine additional presentation tracks.
+- [x] Make every standalone Beamer source inherit the shared canonical theme.
+- [x] Enforce the entry-point contract in CI.
+- [x] Remove the obsolete `develop` branch trigger from the LaTeX workflow.
+
 ### LaTeX regression coverage
 
 - [x] Compile presentation sources from their own source directories.
