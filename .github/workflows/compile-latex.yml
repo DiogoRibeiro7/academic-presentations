@@ -10,6 +10,7 @@ on:
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/validate_presentation_contract.py'
   pull_request:
     branches: [ main ]
     paths:
@@ -19,6 +20,7 @@ on:
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/validate_presentation_contract.py'
   workflow_dispatch:
 
 jobs:
@@ -32,6 +34,9 @@ jobs:
 
       - name: Validate canonical author metadata
         run: python scripts/validate_author_metadata.py
+
+      - name: Validate presentation contract
+        run: python scripts/validate_presentation_contract.py
 
   compile-presentations:
     name: Compile All Presentations
