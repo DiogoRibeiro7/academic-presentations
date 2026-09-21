@@ -2,7 +2,7 @@ name: Compile LaTeX Documents
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - '**.tex'
       - '.github/workflows/compile-latex.yml'
@@ -10,6 +10,7 @@ on:
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/validate_presentation_contract.py'
   pull_request:
     branches: [ main ]
     paths:
@@ -19,6 +20,7 @@ on:
       - 'shared/theme/**'
       - 'shared/bibliographies/**'
       - 'scripts/validate_author_metadata.py'
+      - 'scripts/validate_presentation_contract.py'
   workflow_dispatch:
 
 jobs:
@@ -33,6 +35,9 @@ jobs:
       - name: Validate canonical author metadata
         run: python scripts/validate_author_metadata.py
 
+      - name: Validate presentation contract
+        run: python scripts/validate_presentation_contract.py
+
   compile-presentations:
     name: Compile All Presentations
     runs-on: ubuntu-latest
@@ -40,26 +45,31 @@ jobs:
     strategy:
       matrix:
         presentation:
-          - 00-programming-fundamentals/r-programming/presentation/R_programming
-          - 01-foundations/feature-engineering/presentation/feature_engineering_beamer
-          - 01-foundations/optimization/presentation/optimization_beamer
-          - 01-foundations/pca/presentation/pca
+          # Primary deck entry points: one canonical main.tex per topic.
+          - 00-programming-fundamentals/r-programming/presentation/main
+          - 01-foundations/feature-engineering/presentation/main
+          - 01-foundations/optimization/presentation/main
+          - 01-foundations/pca/presentation/main
+          - 01-foundations/statistical-modeling/presentation/main
+          - 02-deep-learning/deep-learning-fundamentals/presentation/main
+          - 02-deep-learning/reinforcement-learning/presentation/main
+          - 03-bayesian-methods/bayesian-machine-learning/presentation/main
+          - 03-bayesian-methods/mcmc/presentation/main
+          - 04-causal-inference/ab-testing/presentation/main
+          - 04-causal-inference/causal-inference-fundamentals/presentation/main
+          - 05-time-series/time-series-forecasting/presentation/main
+          - 06-advanced-topics/ai-agents/presentation/main
+          - 06-advanced-topics/computer-science/presentation/main
+          - 06-advanced-topics/explainable-ai/presentation/main
+          - 08-data-science-applications-course/presentation/main
+
+          # Genuine additional standalone tracks in multi-deck topic folders.
           - 01-foundations/statistical-modeling/presentation/diogo_ribeiro_beamer_extended
-          - 01-foundations/statistical-modeling/presentation/statistical_modeling_beamer
-          - 02-deep-learning/deep-learning-fundamentals/presentation/deep_learning_beamer
-          - 02-deep-learning/reinforcement-learning/presentation/rl_beamer
-          - 03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer
-          - 03-bayesian-methods/mcmc/presentation/mcmc_beamer
-          - 04-causal-inference/ab-testing/presentation/a_b_testing_interview
-          - 04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer
           - 05-time-series/time-series-forecasting/presentation/ARMA_processes
           - 05-time-series/time-series-forecasting/presentation/stationary_ergodicity
-          - 05-time-series/time-series-forecasting/presentation/time_series_beamer
-          - 06-advanced-topics/ai-agents/presentation/ai_agents_beamer
-          - 06-advanced-topics/computer-science/presentation/object_oriented_programming
           - 06-advanced-topics/computer-science/presentation/streaming_pipeline_processing
-          - 06-advanced-topics/explainable-ai/presentation/interpretability_beamer
-          - 08-data-science-applications-course/presentation/main_presentation
+
+          # Reference template must remain compilable.
           - shared/theme/template_presentation
       fail-fast: false
 

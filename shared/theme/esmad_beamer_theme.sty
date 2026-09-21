@@ -32,13 +32,27 @@
 
 \usetheme{Madrid}
 \usecolortheme{default}
+\usefonttheme{professionalfonts}
 
-\setbeamercolor{palette primary}{bg=red, fg=white}
-\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
-\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
-\setbeamercolor{frametitle}{bg=red, fg=white}
-\setbeamercolor{title}{bg=red, fg=white}
-\setbeamercolor{section in toc}{fg=red}
+% Re-apply the visual shell when the document starts.  Several historical
+% decks still contain local Beamer colour/template declarations in their
+% preambles; this hook makes the shared contract authoritative without
+% rewriting their teaching content during structural migration.
+\newcommand{\applycanonicalpresentationstyle}{%
+  \setbeamertemplate{navigation symbols}{}%
+  \setbeamertemplate{footline}[frame number]%
+  \setbeamertemplate{itemize items}[circle]%
+  \setbeamercolor{palette primary}{bg=red, fg=white}%
+  \setbeamercolor{palette secondary}{bg=red!95!black, fg=white}%
+  \setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}%
+  \setbeamercolor{frametitle}{bg=red, fg=white}%
+  \setbeamercolor{title}{bg=red, fg=white}%
+  \setbeamercolor{section in toc}{fg=red}%
+  \setbeamercolor{structure}{fg=red!90!black}%
+}
+
+\applycanonicalpresentationstyle
+\AtBeginDocument{\applycanonicalpresentationstyle}
 
 \lstdefinestyle{code}{
   language=Python,
@@ -103,6 +117,13 @@
 % decks remain free to set their own title, subtitle and date.
 \author{\@authorname}
 \institute{\@authorinstitution}
+
+% Keep rendered identity consistent even when a legacy deck still declares
+% stale author/institution metadata later in its preamble.
+\AtBeginDocument{%
+  \author{\@authorname}%
+  \institute{\@authorinstitution}%
+}
 
 % ================================================================
 % Compatibility Listing Style
