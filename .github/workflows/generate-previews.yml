@@ -17,29 +17,29 @@ jobs:
       matrix:
         presentation:
           - name: "Time Series Analysis"
-            path: "05-time-series/time-series-forecasting/presentation/time_series_beamer"
+            path: "05-time-series/time-series-forecasting/presentation/main"
           - name: "Explainable AI"
-            path: "06-advanced-topics/explainable-ai/presentation/interpretability_beamer"
+            path: "06-advanced-topics/explainable-ai/presentation/main"
           - name: "Deep Learning"
-            path: "02-deep-learning/deep-learning-fundamentals/presentation/deep_learning_beamer"
+            path: "02-deep-learning/deep-learning-fundamentals/presentation/main"
           - name: "Reinforcement Learning"
-            path: "02-deep-learning/reinforcement-learning/presentation/rl_beamer"
+            path: "02-deep-learning/reinforcement-learning/presentation/main"
           - name: "Optimization"
-            path: "01-foundations/optimization/presentation/optimization_beamer"
+            path: "01-foundations/optimization/presentation/main"
           - name: "MCMC Methods"
-            path: "03-bayesian-methods/mcmc/presentation/mcmc_beamer"
+            path: "03-bayesian-methods/mcmc/presentation/main"
           - name: "Causal Inference"
-            path: "04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer"
+            path: "04-causal-inference/causal-inference-fundamentals/presentation/main"
           - name: "Statistical Learning"
-            path: "01-foundations/statistical-modeling/presentation/statistical_learning_beamer"
+            path: "01-foundations/statistical-modeling/presentation/main"
           - name: "Bayesian ML"
-            path: "03-bayesian-methods/bayesian-machine-learning/presentation/bayesian_ml_beamer"
+            path: "03-bayesian-methods/bayesian-machine-learning/presentation/main"
           - name: "Feature Engineering"
-            path: "01-foundations/feature-engineering/presentation/feature_engineering_beamer"
+            path: "01-foundations/feature-engineering/presentation/main"
           - name: "PCA"
-            path: "01-foundations/pca/presentation/pca"
+            path: "01-foundations/pca/presentation/main"
           - name: "R Programming"
-            path: "00-programming-fundamentals/r-programming/presentation/R_programming"
+            path: "00-programming-fundamentals/r-programming/presentation/main"
       fail-fast: false
 
     steps:
@@ -224,7 +224,7 @@ jobs:
               <header>
                 <h1>Academic Presentations</h1>
                 <p class="subtitle">Data Science & Machine Learning Course Materials</p>
-                <p class="subtitle">by Diogo Ribeiro - ESMAD</p>
+                <p class="subtitle">by Diogo Ribeiro - Faculty of Media Arts and Design</p>
               </header>
 
               <div class="gallery">
