@@ -8,7 +8,7 @@ This directory contains resources shared across all presentations and topics in 
 
 ### 1. Theme (`theme/`)
 
-**ESMAD Beamer Theme** - Professional LaTeX theme for all presentations
+**FMAD - UTP Beamer Theme** - Professional LaTeX theme for all presentations
 
 Files:
 - `esmad_beamer_theme.sty` - Main theme package
