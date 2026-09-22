@@ -2,7 +2,7 @@
 
 **Comprehensive Data Science & Machine Learning Course Materials**
 
-**Diogo Ribeiro** — _Faculty of Media Arts and Design, Technical University of Porto_
+**Diogo Ribeiro** — _FMAD - UTP_
 
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0001--2022--7072-green.svg)](https://orcid.org/0009-0001-2022-7072)
 [![Email](https://img.shields.io/badge/Email-dfr%40esmad.ipp.pt-blue.svg)](mailto:dfr@esmad.ipp.pt)
@@ -31,7 +31,7 @@ professional training, and self-study.
 | [📚 Course catalog](#-course-catalog)                         | All modules, learning objectives, topics, prerequisites |
 | [📁 Repository structure](#-repository-structure)             | Directory layout and conventions                        |
 | [🚀 Getting started](#-getting-started)                       | Install LaTeX/Python/R, compile slides, run exercises   |
-| [🎨 Theme & styling](#-theme--styling)                        | ESMAD Beamer theme and usage template                   |
+| [🎨 Theme & styling](#-theme--styling)                        | FMAD - UTP Beamer theme and usage template              |
 | [🎯 Pick your path](#-pick-your-path)                         | Guides for students, educators, and researchers         |
 | [🤖 Automation & contributing](#-automation--contributing)    | CI/CD workflows and how to contribute                   |
 | [📄 License, citation & contact](#-license-citation--contact) | Licensing, BibTeX, and how to reach out                 |
@@ -660,14 +660,14 @@ pdflatex causal_inference_exercises.tex
 
 ## 🎨 Theme & styling
 
-All presentations use the **ESMAD Beamer Theme** for a consistent, professional appearance.
+All presentations use the **FMAD - UTP Beamer Theme** for a consistent, professional appearance.
 
 <details>
 <summary><b>Theme features and usage template</b></summary>
 
 ### Features
 
-✅ **Professional color palette** (ESMAD Blue, accents)<br>
+✅ **Canonical red presentation palette**<br>
 ✅ **Custom environments** (theorems, definitions, examples, alerts)<br>
 ✅ **Mathematical notation helpers** (`\Normal`, `\E`, `\Var`, etc.)<br>
 ✅ **Code listing styles** with syntax highlighting<br>
@@ -793,7 +793,7 @@ If you use these materials in your research or teaching, please cite:
   year = {2025},
   publisher = {GitHub},
   url = {https://github.com/diogoribeiro7/academic-presentations},
-  note = {Faculty of Media Arts and Design, Technical University of Porto}
+  note = {FMAD - UTP}
 }
 ```
 
@@ -901,7 +901,7 @@ Code examples licensed under [MIT License](https://opensource.org/licenses/MIT)
 ### Professional inquiries
 
 - **Email**: dfr@esmad.ipp.pt
-- **Institution**: Faculty of Media Arts and Design, Technical University of Porto
+- **Institution**: FMAD - UTP
 - **LinkedIn**: [diogo-ribeiro-9094604a](https://www.linkedin.com/in/diogo-ribeiro-9094604a/)
 - **ORCID**: [0009-0001-2022-7072](https://orcid.org/0009-0001-2022-7072)
 
