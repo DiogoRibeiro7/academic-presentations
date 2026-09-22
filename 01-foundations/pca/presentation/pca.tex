@@ -37,6 +37,15 @@ From Classical Ideas to Geometric and Statistical Analysis}
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item derive PCA from variance maximization, reconstruction error minimization, and the singular value decomposition;
+    \item distinguish covariance-scale PCA from correlation-scale PCA and interpret principal directions only relative to the chosen centering/scaling convention;
+    \item reason about subspace estimation error through eigengaps, principal angles, sample size, dimensionality, and distributional assumptions.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Outline}
   \tableofcontents
 \end{frame}
@@ -261,27 +270,14 @@ From Classical Ideas to Geometric and Statistical Analysis}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Explained Variance and Choosing $k$} % ~5 min
+\begin{frame}{Explained Variance and Choosing $k$}
   \begin{itemize}
-    \item Total variance:
-    \[
-      \mathrm{tr}(\Sigma_n) = \sum_{j=1}^d \lambda_j.
-    \]
-    \item Variance explained by first $k$ PCs:
-    \[
-      \sum_{j=1}^k \lambda_j.
-    \]
-    \item Proportion of variance explained (PVE):
-    \[
-      \mathrm{PVE}(k) =
-        \frac{\sum_{j=1}^k \lambda_j}{\sum_{j=1}^d \lambda_j}.
-    \]
-    \item Practical heuristics:
-    \begin{itemize}
-      \item Scree plot (look for “elbow”).
-      \item Choose smallest $k$ with $\mathrm{PVE}(k) \ge$ (e.g.) $0.9$.
-      \item Application-specific trade-off: model complexity vs information retained.
-    \end{itemize}
+    \item For covariance PCA, total sample variance is $\mathrm{tr}(\Sigma_n)=\sum_{j=1}^d\lambda_j$, and the first $k$ components account for
+      \[\mathrm{PVE}(k)=\frac{\sum_{j=1}^k\lambda_j}{\sum_{j=1}^d\lambda_j}.\]
+    \item PVE is descriptive, not a universal model-selection criterion. A 90\% or 95\% threshold has no generic statistical justification.
+    \item The relevant $k$ depends on the target: reconstruction, visualization, denoising, downstream prediction, or estimation of a latent subspace can imply different choices.
+    \item If variables are standardized first, PCA is effectively performed on the correlation scale. This changes the geometry by giving variables equal marginal variance before decomposition.
+    \item In high dimension, apparent eigenvalue separation can arise from sampling noise; stability across resamples and problem-specific spectral diagnostics can be more informative than a scree elbow alone.
   \end{itemize}
 \end{frame}
 
@@ -567,8 +563,8 @@ From Classical Ideas to Geometric and Statistical Analysis}
   \vspace{0.2cm}
   \textbf{Interpretation:}
   \begin{itemize}
-    \item For large enough $n$, PCA’s excess risk decays as $1/n$.
-    \item The leading constant encodes both spectral structure and higher moments.
+    \item In the fixed-dimensional regular regime covered by the stated eigengap, moment, and concentration assumptions, the bound has order $1/n$.
+    \item The leading constant encodes spectral separation and distributional information; the statement should not be extrapolated automatically to high-dimensional regimes where $d/n$ remains non-negligible.
   \end{itemize}
 \end{frame}
 
@@ -593,7 +589,7 @@ From Classical Ideas to Geometric and Statistical Analysis}
       \Sigma = S + \sigma^2 I_d,
     \]
     where $S$ has rank $k$ and encodes the signal.
-    \item The top-$k$ eigenvectors of $\Sigma$ recover the signal subspace.
+    \item At the population level, when the non-zero signal eigenvalues are separated from the isotropic noise level, the leading eigenspace of $\Sigma$ coincides with the signal subspace.
   \end{itemize}
 \end{frame}
 
@@ -643,49 +639,27 @@ From Classical Ideas to Geometric and Statistical Analysis}
 \section{Summary and References}
 %========================================
 
-\begin{frame}{Summary of the Lecture} % ~5 min
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Classical PCA:
-    \begin{itemize}
-      \item Eigen-decomposition / SVD framework.
-      \item Equivalent max-variance and min-error formulations.
-    \end{itemize}
-    \item Geometric viewpoint:
-    \begin{itemize}
-      \item Parameter is a subspace $\Rightarrow$ point on $\Gr(d,k)$.
-      \item Use distances and tangent spaces to measure errors.
-    \end{itemize}
-    \item Statistical performance:
-    \begin{itemize}
-      \item PCA behaves as an $M$-estimator on a manifold.
-      \item Asymptotic normality of subspace error.
-      \item Excess risk $E_n$ decays like $1/n$ with a distribution-aware constant.
-    \end{itemize}
-    \item Tools:
-    \begin{itemize}
-      \item Principal angles, Grassmannian geometry.
-      \item Block Rayleigh quotient and generalized self-concordance.
-    \end{itemize}
+    \item PCA estimates a linear subspace, not a unique basis: rotations within the selected subspace represent the same geometric object.
+    \item Variance maximization and reconstruction-error minimization are equivalent on centered data, but interpretation depends on whether PCA is performed on the covariance or correlation scale.
+    \item Explained variance is a descriptive spectral quantity. Choosing the number of components should be tied to the inferential or predictive objective rather than a universal percentage threshold.
+    \item Subspace estimation becomes unstable when relevant eigengaps are small; sampling variability, dimensionality, and higher-order moments influence finite-sample behavior.
+    \item The $1/n$ excess-risk statements discussed here belong to a regular fixed-dimensional regime under explicit moment and eigengap assumptions; high-dimensional PCA can behave differently.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{References (Core Reading)} % ~2 min
+\begin{frame}{Selected References}
   \small
-  \textbf{Classical PCA and spectral methods}
   \begin{itemize}
-    \item I.T. Jolliffe. \emph{Principal Component Analysis}. Springer.
-    \item T. Hastie, R. Tibshirani, J. Friedman. \emph{The Elements of Statistical Learning}, Ch.\ 14.
-  \end{itemize}
-  \vspace{0.2cm}
-  \textbf{Geometric and statistical analysis of PCA}
-  \begin{itemize}
-    \item A. El Hanchi, M. A. Erdogdu, C. J. Maddison. \emph{A Geometric Analysis of PCA}.
+    \item I. T. Jolliffe (2002). \textit{Principal Component Analysis}, 2nd ed. Springer.
+    \item I. T. Jolliffe and J. Cadima (2016). "Principal component analysis: a review and recent developments." \textit{Philosophical Transactions of the Royal Society A}, 374.
+    \item T. Hastie, R. Tibshirani, and J. Friedman (2009). \textit{The Elements of Statistical Learning}, 2nd ed., Chapter 14.
+    \item D. Paul (2007). "Asymptotics of sample eigenstructure for a large dimensional spiked covariance model." \textit{Statistica Sinica}, 17, 1617--1642.
+    \item A. El Hanchi, M. A. Erdogdu, and C. J. Maddison. \textit{A Geometric Analysis of PCA}.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Thank You}
-  \centering
-  Questions?
-\end{frame}
+\contactslide
 
 \end{document}
