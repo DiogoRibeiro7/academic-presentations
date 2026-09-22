@@ -2,31 +2,7 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 \usepackage{../../../shared/theme/esmad_beamer_theme}
 
-% Canonical Beamer model
-\usepackage{bookmark}
-\usetheme{Madrid}
-\usecolortheme{default}
-\usefonttheme{professionalfonts}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstdefinestyle{code}{
-  language=Python,
-  basicstyle=\ttfamily\small,
-  keywordstyle=\color{blue},
-  commentstyle=\color{gray},
-  stringstyle=\color{red!60!black},
-  showstringspaces=false,
-  tabsize=2,
-  breaklines=true
-}
-
-\setbeamercolor{palette primary}{bg=red, fg=white}
-\setbeamercolor{palette secondary}{bg=red!95!black, fg=white}
-\setbeamercolor{palette tertiary}{bg=red!90!black, fg=white}
-\setbeamercolor{frametitle}{bg=red, fg=white}
-\setbeamercolor{title}{bg=red, fg=white}
-\setbeamercolor{section in toc}{fg=red}
+% Shared canonical Beamer shell is provided by esmad_beamer_theme.
 
 % Packages
 \usepackage[utf8]{inputenc}
@@ -69,8 +45,6 @@
 
 \title{Streaming \& Pipeline Processing}
 \subtitle{Event Time, Windows, State, and Reliable Delivery}
-\author{Diogo Ribeiro}
-\institute{Faculty of Media Arts and Design, Technical University of Porto}
 \date{\today}
 
 \begin{document}
