@@ -120,11 +120,9 @@
 \begin{frame}{The Art and Science of Feature Engineering}
 \begin{columns}
 \begin{column}{0.6\textwidth}
-\begin{quote}
-\textit{"Coming up with features is difficult, time-consuming, requires expert knowledge. 'Applied machine learning' is basically feature engineering."} 
-\\[0.2cm]
-\hfill -- Andrew Ng
-\end{quote}
+\begin{block}{Working principle}
+Feature engineering is the construction of measurable representations from raw variables under domain, sampling, and deployment constraints. The objective is not to maximize the number of transformations, but to improve the information available to the downstream analysis without leaking unavailable information.
+\end{block}
 
 \vspace{0.3cm}
 \textbf{Why Features Matter:}
@@ -156,13 +154,13 @@
 \draw[->, thick] (fe) -- (ml);
 
 % Side annotation
-\node[right=1cm] at (fe.east) {\textbf{80\% of}};
-\node[right=1cm] at (1.5,1.2) {\textbf{DS time!}};
+\node[right=1cm] at (fe.east) {\textbf{Representation}};
+\node[right=1cm] at (1.5,1.2) {\textbf{matters}};
 \end{tikzpicture}
 \end{figure}
 
-\begin{alertblock}{The 80-20 Rule}
-80\% of data science time is spent on data preparation and feature engineering, 20\% on modeling.
+\begin{alertblock}{Methodological point}
+The amount of work spent on data preparation varies by problem. What matters statistically is that preprocessing decisions are learned only from information available at the relevant training or prediction time.
 \end{alertblock}
 \end{column}
 \end{columns}
@@ -324,8 +322,8 @@ for name, transformed in transformations.items():
 \begin{itemize}
 \item \textbf{StandardScaler}: $z = \frac{x - \mu}{\sigma}$
   \begin{itemize}
-  \item Good for normally distributed data
-  \item Sensitive to outliers
+  \item Places features on a common variance scale; normality is not required
+  \item Sensitive to outliers through the sample mean and standard deviation
   \end{itemize}
 
 \item \textbf{MinMaxScaler}: $x' = \frac{x - \min(x)}{\max(x) - \min(x)}$
@@ -341,11 +339,8 @@ for name, transformed in transformations.items():
   \end{itemize}
 \end{itemize}
 
-\begin{alertblock}{When to Use What?}
-\textbf{Tree-based}: Often no scaling needed\\
-\textbf{Linear models}: StandardScaler typically\\
-\textbf{Neural networks}: MinMaxScaler or StandardScaler\\
-\textbf{With outliers}: RobustScaler
+\begin{alertblock}{Scaling depends on the estimator}
+Distance-based methods, penalized linear models, gradient-based optimization, and covariance-based methods can be scale-sensitive in different ways. Tree splits are usually invariant to monotone rescaling, but downstream preprocessing and regularization can still change the practical pipeline.
 \end{alertblock}
 \end{column}
 \end{columns}
@@ -431,7 +426,7 @@ Hashing & Very High & Streaming data \\
 \end{itemize}
 
 \begin{alertblock}{Pitfall Warning}
-\textcolor{crimson}{\textbf{Target leakage}} in target encoding! Always use cross-validation or leave-one-out.
+Target encoding is supervised preprocessing. Encoding statistics must be estimated without using the validation/test target values; out-of-fold or ordered schemes are common approaches. Leave-one-out alone does not guarantee leakage-free model evaluation if the overall preprocessing is fitted before splitting.
 \end{alertblock}
 \end{column}
 \end{columns}
@@ -813,7 +808,7 @@ X, y = data.data, data.target
 
 print(f"Original dimensions: {X.shape}")
 
-# Standardize features (crucial for PCA)
+# Standardize when equal feature weighting on the variance scale is intended
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
@@ -905,7 +900,7 @@ methods = {
     'PCA': 'Linear, fast, interpretable',
     'Kernel PCA': 'Non-linear, medium speed, less interpretable',
     't-SNE': 'Non-linear, slow, great for visualization',
-    'UMAP': 'Non-linear, fast, preserves global structure'
+    'UMAP': 'Non-linear, fast, neighborhood-preserving embedding'
 }
 for method, description in methods.items():
     print(f"{method:10}: {description}")
@@ -944,8 +939,8 @@ Isomap & No & Medium & Geodesic distances \\
 \begin{alertblock}{Common Pitfalls}
 \begin{itemize}
 \item t-SNE: Don't interpret distances between clusters
-\item UMAP: Hyperparameters matter a lot
-\item All: Validate on downstream task performance
+\item UMAP: Local/global geometry depends strongly on hyperparameters and preprocessing
+\item All: Embeddings used for prediction must be fitted within the training/resampling pipeline
 \end{itemize}
 \end{alertblock}
 \end{column}
@@ -968,13 +963,10 @@ Isomap & No & Medium & Geodesic distances \\
 \end{itemize}
 
 \vspace{0.3cm}
-\textbf{The Bias-Variance Perspective:}
-\begin{align}
-\text{Fewer features} &\Rightarrow \text{Higher bias, Lower variance}\\
-\text{More features} &\Rightarrow \text{Lower bias, Higher variance}
-\end{align}
+\textbf{Statistical perspective:}
+Feature selection changes the hypothesis space, regularization path, and data-dependent search procedure. Its effect on bias and variance depends on the estimator, signal structure, correlation among predictors, and how selection is validated.
 
-\textbf{Goal:} Find the sweet spot that minimizes total error.
+\textbf{Goal:} improve the target criterion under a validation design that includes the selection procedure itself.
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{figure}
@@ -1056,6 +1048,7 @@ print(f"After variance threshold: {X_variance.shape[1]}")
 # 2. Univariate statistical tests
 # For classification: f_classif, chi2, mutual_info_classif
 k_best_f = SelectKBest(score_func=f_classif, k=10)
+# Fit this selector inside each training fold, not once before CV
 X_f_test = k_best_f.fit_transform(X, y)
 f_scores = k_best_f.scores_
 f_pvalues = k_best_f.pvalues_
@@ -1065,6 +1058,7 @@ print(f"F-test scores range: [{f_scores.min():.2f}, {f_scores.max():.2f}]")
 
 # 3. Mutual Information
 mi_selector = SelectKBest(score_func=mutual_info_classif, k=10)
+# Same rule: supervised selection belongs inside the resampling pipeline
 X_mi = mi_selector.fit_transform(X, y)
 mi_scores = mi_selector.scores_
 
@@ -1598,9 +1592,9 @@ print(f"Selected features: {list(selected_feature_names)}")
 \begin{itemize}
 \item[$\square$] Remove low-variance features
 \item[$\square$] Check for multicollinearity
-\item[$\square$] Apply statistical tests
-\item[$\square$] Use model-based importance
-\item[$\square$] Validate on hold-out set
+\item[$\square$] Fit supervised selectors inside each training fold
+\item[$\square$] Use model-based importance only on training/resampling data
+\item[$\square$] Reserve untouched evaluation data for final assessment
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -1610,7 +1604,7 @@ print(f"Selected features: {list(selected_feature_names)}")
 \item[$\square$] Fit transformers only on training data
 \item[$\square$] Audit features for target information
 \item[$\square$] Validate business logic
-\item[$\square$] Check correlation with target
+\item[$\square$] Check whether each feature would exist at prediction time
 \end{itemize}
 
 \vspace{0.3cm}
@@ -1640,139 +1634,33 @@ Feature engineering is iterative. Start simple, validate thoroughly, and improve
 \end{alertblock}
 \end{frame}
 
-\section{Summary and Next Steps}
+\section{Summary}
 
-\begin{frame}{Key Takeaways}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Core Principles:}
-\begin{itemize}
-\item \textcolor{forest}{\textbf{Domain knowledge}} is as important as technical skills
-\item \textcolor{forest}{\textbf{Systematic approach}} beats ad-hoc feature creation
-\item \textcolor{forest}{\textbf{Validation}} is crucial for avoiding overfitting
-\item \textcolor{forest}{\textbf{Pipelines}} ensure reproducibility and prevent leakage
-\end{itemize}
+\begin{frame}{Synthesis}
+  \begin{itemize}
+    \item Feature engineering is part of the statistical model: transformations change the information set, scale, geometry, and sometimes the estimand seen by the learner.
+    \item Any transformation that uses the target or population-level statistics must be fitted inside the training portion of each resampling split when predictive performance is being estimated.
+    \item Scaling is estimator-dependent. Standardization is not a normality requirement, and PCA on standardized variables answers a different question from PCA on the original covariance scale.
+    \item Feature selection is itself a data-dependent search step. Selection outside cross-validation produces optimistic performance estimates and can distort post-selection inference.
+    \item Dimensionality-reduction embeddings optimize method-specific objectives; attractive visual separation is not evidence of predictive usefulness or true cluster structure.
+  \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Technical Skills Learned:}
-\begin{itemize}
-\item Data type-specific transformations
-\item Categorical encoding strategies
-\item Dimensionality reduction techniques
-\item Feature selection methods
-\item Pipeline design and implementation
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Common Pitfalls Avoided:}
-\begin{itemize}
-\item \textcolor{crimson}{Data leakage} through improper preprocessing
-\item \textcolor{crimson}{Overfitting} with too many features
-\item \textcolor{crimson}{Scale issues} in mixed-type data
-\item \textcolor{crimson}{Target leakage} in feature creation
-\item \textcolor{crimson}{Irreproducible} results
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{The Art vs Science}
-\textbf{Science}: Statistical methods, validation procedures, systematic evaluation
-
-\textbf{Art}: Domain insights, creative feature combinations, business intuition
-\end{block}
-\end{column}
-\end{columns}
-
-\vspace{0.5cm}
-\begin{center}
-\textcolor{navyblue}{\Large \textbf{Great features can make a mediocre algorithm shine, while poor features can cripple the best algorithms.}}
-\end{center}
+  \begin{alertbox}{Pipeline principle}
+    The reproducible unit is the entire transformation-and-model pipeline, evaluated under the same information constraints that will hold at prediction time.
+  \end{alertbox}
 \end{frame}
 
-\begin{frame}{Next Steps in Your Data Science Journey}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Immediate Next Topics:}
-\begin{enumerate}
-\item \textbf{Causal Inference for Data Scientists}
-   \begin{itemize}
-   \item Moving beyond correlation
-   \item Experimental design
-   \item Observational causal methods
-   \end{itemize}
-
-\item \textbf{Explainable AI \& Model Interpretability}
-   \begin{itemize}
-   \item SHAP and LIME
-   \item Global vs local explanations
-   \item Building trust in models
-   \end{itemize}
-
-\item \textbf{Experimental Design \& A/B Testing}
-   \begin{itemize}
-   \item Rigorous experiment design
-   \item Statistical power and sample sizes
-   \item Online experimentation
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Practice Projects:}
-\begin{itemize}
-\item Build end-to-end feature engineering pipeline
-\item Kaggle competition with focus on feature engineering
-\item Industry-specific feature creation
-\item Automated feature engineering tools
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Advanced Topics to Explore:}
-\begin{itemize}
-\item Automated feature engineering (Featuretools)
-\item Deep feature synthesis
-\item Graph-based features
-\item Text feature engineering
-\item Image feature extraction
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Tools to Master:}
-\begin{itemize}
-\item Advanced sklearn pipelines
-\item Feature-engine library
-\item Category encoders
-\item Featuretools for automation
-\end{itemize}
-\end{column}
-\end{columns}
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item M. Kuhn and K. Johnson (2019). \textit{Feature Engineering and Selection}. CRC Press.
+    \item T. Hastie, R. Tibshirani, and J. Friedman (2009). \textit{The Elements of Statistical Learning}, 2nd ed. Springer.
+    \item I. T. Jolliffe and J. Cadima (2016). "Principal component analysis: a review and recent developments." \textit{Philosophical Transactions of the Royal Society A}, 374.
+    \item L. van der Maaten and G. Hinton (2008). "Visualizing Data using t-SNE." \textit{JMLR}, 9, 2579--2605.
+    \item L. McInnes, J. Healy, and J. Melville (2018). "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction." arXiv:1802.03426.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-{\Huge Thank You}
-
-\vspace{0.8cm}
-
-\textbf{Questions \& Discussion}
-
-\vspace{1cm}
-
-\textbf{Diogo Ribeiro}\\
-FMAD - UTP\\
-
-\vspace{0.5cm}
-
-\texttt{dfr@esmad.ipp.pt}\\
-\texttt{https://orcid.org/0009-0001-2022-7072}
-
-\vspace{0.8cm}
-
-\textit{Slides and code available at:}\\
-\texttt{github.com/diogoribeiro7/academic-presentations}
-
-\vspace{0.5cm}
-
-\textit{Next: Causal Inference for Data Scientists}
-\end{center}
-\end{frame}
+\contactslide
 
 \end{document}
