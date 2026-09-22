@@ -5,10 +5,6 @@
 % A comprehensive introduction to time series methods
 % ================================================================
 
-% Work around name clash: theme defines \Gamma, which already exists in LaTeX.
-% Save the original math \Gamma and relax \Gamma so the theme can \newcommand it.
-\let\GammaSymbol\Gamma
-\let\Gamma\relax
 
 % Use the shared canonical presentation theme
 \usepackage{../../../shared/theme/esmad_beamer_theme}
@@ -31,6 +27,15 @@
 
 \begin{frame}
   \titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item distinguish stochastic assumptions, deterministic structure, and transformations used in common time-series models;
+    \item select forecasting and inferential methods according to horizon, loss function, data frequency, available covariates, and the stability of the data-generating process;
+    \item evaluate models with time-respecting validation, appropriate baselines, residual diagnostics, and uncertainty estimates rather than relying on in-sample fit alone.
+  \end{itemize}
 \end{frame}
 
 \tocslide
@@ -88,50 +93,37 @@
   Used when variation increases with level (common in economics).
 \end{frame}
 
-\begin{frame}{Stationarity}
+\begin{frame}{Stationarity: A Modeling Assumption, Not a Universal Requirement}
   \begin{definitionbox}[title={Weak (Covariance) Stationarity}]
-    A time series is weakly stationary if:
-    \begin{enumerate}
-      \item $\E[y_t] = \mu$ for all $t$ (constant mean)
-      \item $\Var(y_t) = \sigma^2$ for all $t$ (constant variance)
-      \item $\Cov(y_t, y_{t-h}) = \gamma_h$ depends only on lag $h$
-    \end{enumerate}
+    A process is weakly stationary when its mean is constant, its variance is finite and constant, and its autocovariance depends on lag rather than calendar time.
   \end{definitionbox}
 
   \vspace{0.5em}
 
-  \begin{alertbox}[title={Why Stationarity Matters}]
-    Most time series models assume stationarity. Non-stationary series can lead to:
-    \begin{itemize}
-      \item Spurious regressions
-      \item Invalid statistical inference
-      \item Poor forecasting performance
-    \end{itemize}
+  \begin{itemize}
+    \item Stationarity is central to ARMA theory and many asymptotic results, but important model classes explicitly accommodate trends, seasonality, stochastic volatility, structural breaks, or time-varying states.
+    \item A unit-root or stationarity test does not decide the model by itself; test power, deterministic terms, breaks, and the purpose of the analysis matter.
+    \item For forecasting, a non-stationary level series can still be forecast successfully when the model represents its evolving structure appropriately.
+  \end{itemize}
+
+  \begin{alertbox}[title={Practical implication}]
+    Ask which aspects of the process must be stable for the proposed estimator or forecast to be valid, rather than applying differencing automatically.
   \end{alertbox}
 \end{frame}
 
-\begin{frame}{Achieving Stationarity}
-  \textbf{Common transformations:}
+\begin{frame}{Transformations and Model Specification}
+  Common transformations should be tied to a modeling purpose:
 
-  \begin{enumerate}
-    \item \textbf{Differencing:}
-    \begin{itemize}
-      \item First difference: $\Delta y_t = y_t - y_{t-1}$
-      \item Seasonal difference: $\Delta_s y_t = y_t - y_{t-s}$
-    \end{itemize}
+  \begin{itemize}
+    \item \textbf{Differencing} can remove stochastic trends, but overdifferencing can induce unnecessary moving-average structure and increase forecast variance.
+    \item \textbf{Detrending} is appropriate when a deterministic trend is a defensible part of the specification; it is not equivalent to differencing a unit-root process.
+    \item \textbf{Log or Box--Cox transformations} can stabilize scale-dependent variation and change the interpretation of forecast errors.
+    \item \textbf{Seasonal differencing or explicit seasonal terms} should reflect the periodic structure and forecast horizon rather than a default preprocessing recipe.
+  \end{itemize}
 
-    \item \textbf{Detrending:}
-    \begin{itemize}
-      \item Remove linear trend: $\tilde{y}_t = y_t - (\hat{\alpha} + \hat{\beta}t)$
-      \item Remove polynomial trend
-    \end{itemize}
-
-    \item \textbf{Log transformation:}
-    \begin{itemize}
-      \item Stabilize variance: $\log(y_t)$
-      \item Box-Cox transformation: $y_t^{(\lambda)} = \frac{y_t^\lambda - 1}{\lambda}$
-    \end{itemize}
-  \end{enumerate}
+  \begin{block}{Modeling principle}
+    Transformations alter both the stochastic structure and the scale of the estimand. Their consequences should be evaluated through diagnostics and out-of-sample performance.
+  \end{block}
 \end{frame}
 
 % ================================================================
@@ -608,33 +600,25 @@
 \section{Best Practices and Pitfalls}
 % ================================================================
 
-\begin{frame}{Model Selection and Validation}
-  \textbf{Time Series Cross-Validation:}
-
+\begin{frame}{Model Selection and Forecast Validation}
+  \textbf{Validation must reproduce the forecasting task:}
   \begin{itemize}
-    \item \textbf{Rolling window:} Train on $[1, t]$, test on $[t+1, t+h]$
-    \item \textbf{Expanding window:} Increasingly larger training sets
-    \item Never use future data for training (data leakage!)
+    \item choose forecast origins, horizon $h$, refitting frequency, and training-window policy to match deployment;
+    \item preserve temporal order and prevent information from the evaluation period entering feature construction or model fitting;
+    \item compare against defensible baselines such as seasonal naive, drift, or simple exponential smoothing where appropriate.
   \end{itemize}
 
-  \vspace{0.5em}
+  \vspace{0.4em}
 
-  \textbf{Model Selection Criteria:}
+  \textbf{Different criteria answer different questions:}
   \begin{itemize}
-    \item \textbf{AIC:} $-2\log L + 2k$ (penalizes complexity)
-    \item \textbf{BIC:} $-2\log L + k\log n$ (stronger penalty)
-    \item \textbf{Out-of-sample error:} Most reliable for forecasting
+    \item AIC and related likelihood criteria compare fitted probabilistic models under their modeling assumptions;
+    \item BIC uses a different penalty and has different asymptotic motivation;
+    \item rolling-origin out-of-sample loss directly targets a specified forecasting task, but results depend on the horizon, loss function, and evaluation period.
   \end{itemize}
 
-  \vspace{0.5em}
-
-  \begin{alertbox}{Overfitting Warning}
-    Complex models (many parameters, deep networks) can overfit!
-    \begin{itemize}
-      \item Use validation set
-      \item Regularization (L1/L2, dropout)
-      \item Ensemble methods
-    \end{itemize}
+  \begin{alertbox}{Selection is conditional}
+    There is no model-selection statistic that is uniformly best across forecasting objectives and data-generating regimes.
   \end{alertbox}
 \end{frame}
 
@@ -676,64 +660,26 @@
 \section{Conclusion}
 % ================================================================
 
-\begin{frame}{Summary}
-  \textbf{Classical Methods:}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item ARIMA: Foundation of time series analysis
-    \item VAR: Multivariate relationships
-    \item State Space: Flexible framework, optimal filtering
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Deep Learning:}
-  \begin{itemize}
-    \item LSTM/GRU: Handle long-term dependencies
-    \item Transformers: State-of-the-art for many tasks
-    \item Hybrid: Combine strengths of both approaches
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Key Takeaways:}
-  \begin{itemize}
-    \item No universal best method
-    \item Understand your data and problem
-    \item Validate carefully with proper time series CV
-    \item Consider ensemble of multiple approaches
+    \item Time-series analysis is defined by dependence, temporal ordering, and evolving information sets; methods that ignore these features can produce misleading validation or inference.
+    \item Classical ARIMA, VAR, and state-space models remain valuable because their assumptions and uncertainty structure are explicit and diagnostically accessible.
+    \item Deep-learning models can be useful when data volume, covariate structure, nonlinear interactions, or multi-series learning justify the added capacity, but they should be compared with strong statistical baselines.
+    \item Forecast accuracy is horizon- and loss-dependent. Point forecasts, prediction intervals, and probabilistic forecasts should be evaluated according to the actual decision problem.
+    \item Structural breaks and distribution shift are not merely monitoring issues; they can invalidate parameters, calibration, and historical validation results.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Further Reading}
-  \textbf{Classical Methods:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Hamilton (1994). \textit{Time Series Analysis}
-    \item Box, Jenkins, Reinsel (2015). \textit{Time Series Analysis: Forecasting and Control}
-    \item Lütkepohl (2005). \textit{New Introduction to Multiple Time Series Analysis}
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Deep Learning:}
-  \begin{itemize}
-    \item Goodfellow, Bengio, Courville (2016). \textit{Deep Learning}
-    \item Lim, Zohren (2021). ``Time-series forecasting with deep learning: a survey''
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Applied:}
-  \begin{itemize}
-    \item Hyndman, Athanasopoulos (2021). \textit{Forecasting: Principles and Practice}
-    \item Tsay (2014). \textit{Multivariate Time Series Analysis}
+    \item J. D. Hamilton (1994). \textit{Time Series Analysis}. Princeton University Press.
+    \item G. E. P. Box, G. M. Jenkins, G. C. Reinsel, and G. M. Ljung (2015). \textit{Time Series Analysis: Forecasting and Control}, 5th ed. Wiley.
+    \item R. J. Hyndman and G. Athanasopoulos (2021). \textit{Forecasting: Principles and Practice}, 3rd ed.
+    \item H. Lütkepohl (2005). \textit{New Introduction to Multiple Time Series Analysis}. Springer.
+    \item B. Lim and S. Zohren (2021). "Time-series forecasting with deep learning: a survey." \textit{Philosophical Transactions of the Royal Society A}, 379.
   \end{itemize}
 \end{frame}
-
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Mysense.ai for industry applications
-  \item Time series research community
-}
 
 \contactslide
 
