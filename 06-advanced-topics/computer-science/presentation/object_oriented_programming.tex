@@ -170,7 +170,7 @@ print(c.read()) // 1
 % =========================
 % 3. Four Pillars
 % =========================
-\section{The Four Pillars}
+\section{Core OOP Mechanisms}
 
 \begin{frame}{Encapsulation \mins{6}}
   \begin{itemize}
@@ -210,11 +210,11 @@ class BankAccount:
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Inheritance \mins{5}}
+\begin{frame}{Inheritance and Subtyping \mins{5}}
   \begin{itemize}
-    \item Mechanism for reusing and specializing behavior.
-    \item \term{Subtype} extends or refines a \term{supertype}.
-    \item Use with care: prefer composition when reuse is ornamental.
+    \item Inheritance is a language mechanism for sharing or specializing implementation; subtyping is a behavioral relationship about substitutability.
+    \item The two often coincide in class-based languages but are conceptually distinct.
+    \item Reuse alone is weak justification for inheritance when the subtype cannot honor the supertype contract.
   \end{itemize}
 \end{frame}
 
@@ -305,31 +305,27 @@ print(sum(s.area() for s in shapes))
 % =========================
 \section{Design Principles}
 
-\begin{frame}{SOLID in Practice \mins{10}}
+\begin{frame}{SOLID as Design Heuristics \mins{10}}
   \begin{itemize}
-    \item \textbf{S}: Single Responsibility — one reason to change.
-    \item \textbf{O}: Open/Closed — open for extension, closed for modification.
-    \item \textbf{L}: Substitution — subtypes must honor supertype contracts.
-    \item \textbf{I}: Interface Segregation — many small contracts over one large.
-    \item \textbf{D}: Dependency Inversion — depend on abstractions, not details.
+    \item \textbf{Single Responsibility}: seek cohesive responsibilities and understandable reasons for change; the boundary is a design judgment, not a measurable law.
+    \item \textbf{Open/Closed}: prefer extension mechanisms when variation is expected, but avoid speculative abstractions for changes that may never occur.
+    \item \textbf{Liskov Substitution}: subtypes should preserve the behavioral expectations clients rely on, including invariants and meaningful pre/postconditions.
+    \item \textbf{Interface Segregation}: avoid forcing clients to depend on operations they do not need; interface size should follow actual collaboration boundaries.
+    \item \textbf{Dependency Inversion}: place stable policy behind abstractions when that reduces coupling; an interface around every dependency can create noise without flexibility.
   \end{itemize}
-  \note{Keep examples language-agnostic; relate back to earlier shapes/order model.}
+
+  \begin{alertbox}{Use principles diagnostically}
+    SOLID helps reason about coupling and change. It does not replace domain modeling, performance analysis, testing, or empirical evidence about maintainability.
+  \end{alertbox}
 \end{frame}
 
-\begin{frame}{Composition over Inheritance \mins{5}}
+\begin{frame}{Composition and Inheritance \mins{5}}
   \begin{itemize}
-    \item Prefer assembling behavior from parts to rigid hierarchies.
-    \item Reduces coupling and diamond problems.
-    \item Inheritance still useful for true “is-a” relationships.
-  \end{itemize}
-\end{frame}
+    \item Composition can localize variation and avoid coupling to a superclass implementation.
 
-\begin{frame}{Law of Demeter \mins{3}}
+\begin{frame}{Law of Demeter as a Coupling Heuristic \mins{3}}
   \begin{itemize}
-    \item Talk only to your immediate collaborators.
-    \item Avoid “train wreck” calls (chained navigation across objects).
-  \end{itemize}
-\end{frame}
+    \item Long navigation chains can reveal that a client knows too much about another object's internal structure.
 
 % =========================
 % 6. Activity 1
@@ -463,7 +459,7 @@ class Checkout:
   \begin{itemize}
     \item God objects and feature envy.
     \item Overuse of inheritance; fragile base classes.
-    \item Anemic domain models (data holders with no behavior).
+    \item Anemic domain models when the domain genuinely requires behavior-rich invariants; simple data-transfer objects are not automatically a design smell.
     \item Leaky abstractions and tight coupling.
   \end{itemize}
 \end{frame}
@@ -471,7 +467,7 @@ class Checkout:
 \begin{frame}{Heuristics \mins{4}}
   \begin{itemize}
     \item Name classes by responsibility, not by data container role.
-    \item One clear reason to change.
+    \item Prefer cohesive responsibilities with a comprehensible change boundary.
     \item Prefer small, cohesive interfaces.
     \item Make illegal states unrepresentable.
   \end{itemize}
@@ -482,36 +478,30 @@ class Checkout:
 % =========================
 \section{Wrap-up}
 
-\begin{frame}{Quick Quiz \mins{6}}
-  \begin{enumerate}
-    \item What are the four pillars of OOP?
-    \item Why is composition often preferred over inheritance?
-    \item Give a brief example of polymorphism.
-    \item What makes a good interface?
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}{Key Takeaways \mins{3}}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Think in terms of responsibilities and collaborations.
-    \item Encapsulation and abstraction reduce coupling.
-    \item Use inheritance sparingly; embrace polymorphism via interfaces.
-    \item Apply principles pragmatically; measure outcomes.
+    \item Object orientation is one way to organize state, behavior, identity, and collaboration. It is most useful when those concepts map cleanly to the problem and lifecycle of the software.
+    \item Encapsulation is about preserving invariants and controlling dependencies, not simply making fields private.
+    \item Subtyping is behavioral: a subtype is useful only when clients can rely on the same contract without special-case knowledge.
+    \item SOLID, composition, Law of Demeter, and design patterns are heuristics for managing change and coupling. They should be tested against actual maintenance, performance, and complexity costs.
+    \item Procedural, functional, data-oriented, and object-oriented designs can coexist in the same system; architecture should follow the dominant problem structure rather than ideology.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Further Exploration \mins{2}}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Practice modeling small domains weekly.
-    \item Rewrite a procedural solution into object collaborations.
-    \item Study a few design patterns; implement tiny examples.
+    \item B. Meyer (1997). \textit{Object-Oriented Software Construction}, 2nd ed. Prentice Hall.
+    \item B. Liskov and J. M. Wing (1994). "A Behavioral Notion of Subtyping." \textit{ACM Transactions on Programming Languages and Systems}, 16(6), 1811--1841.
+    \item E. Gamma, R. Helm, R. Johnson, and J. Vlissides (1994). \textit{Design Patterns}. Addison-Wesley.
+    \item M. Fowler (2018). \textit{Refactoring}, 2nd ed. Addison-Wesley.
   \end{itemize}
 \end{frame}
 
-% =========================
-% Appendix
-% =========================
+\contactslide
+
 \appendix
+
 
 \begin{frame}{Appendix: Glossary}
 \begin{tabular}{@{}ll@{}}
@@ -558,11 +548,6 @@ Buffer / Q\&A & 5--15 \\
 \bottomrule
 \end{tabular}
 \note{Adjust in real time; use buffer for questions or deeper dives.}
-\end{frame}
-
-\begin{frame}[plain]
-  \centering
-  \Huge Thank you!
 \end{frame}
 
 \end{document}
