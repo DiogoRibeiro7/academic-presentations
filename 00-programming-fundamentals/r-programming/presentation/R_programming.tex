@@ -100,7 +100,7 @@
       \begin{itemize}
         \item \textbf{Statistical computing language} developed by Ross Ihaka and Robert Gentleman
         \item \textbf{Open-source} and free
-        \item \textbf{Functional programming} paradigm
+        \item \textbf{Multi-paradigm}: vectorized, functional, imperative, and object-oriented styles
         \item \textbf{Interpreted language} with REPL interface
         \item \textbf{Cross-platform}: Linux, macOS, Windows
         \item \textbf{Active community} with 18,000+ packages
@@ -110,36 +110,31 @@
       \centering
       % \includegraphics[width=0.8\textwidth]{r_logo.png}
       \vspace{1em}
-      \small Current version: R 4.3.x
+      \small Current release: R 4.6.1
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{R vs Python vs Other Tools}
-  \begin{table}
-    \centering
-    \small
-    \begin{tabular}{lccc}
-      \toprule
-      \textbf{Feature} & \textbf{R} & \textbf{Python} & \textbf{SPSS/SAS} \\
-      \midrule
-      Statistical Analysis & ★★★ & ★★☆ & ★★★ \\
-      Machine Learning     & ★★☆ & ★★★ & ★☆☆ \\
-      Data Visualization   & ★★★ & ★★☆ & ★★☆ \\
-      Learning Curve       & ★★☆ & ★★★ & ★☆☆ \\
-      Cost                 & Free & Free & Expensive \\
-      Community            & Large & Huge & Commercial \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
+\begin{frame}{R in the Data-Science Ecosystem}
+  \begin{itemize}
+    \item R is particularly strong in statistical modeling, visualization, reproducible analysis, and domain-specific scientific packages.
+    \item Python offers a broader general-purpose software ecosystem and is often preferred when analysis must integrate tightly with application code, services, or deep-learning infrastructure.
+    \item SAS, SPSS, Julia, SQL, and other tools remain appropriate in specific institutional, regulatory, numerical, or operational settings.
+    \item Tool choice should follow the analytical requirements, deployment environment, team expertise, reproducibility needs, and available libraries rather than a universal ranking.
+  \end{itemize}
+
+  \begin{block}{R is multi-paradigm}
+    R supports vectorized functional programming, first-class functions, object-oriented systems (S3/S4/R6), and imperative control flow. It is not usefully described as belonging to only one programming paradigm.
+  \end{block}
 \end{frame}
 
 \subsection{R Environment Setup}
 
+
 \begin{frame}[fragile]{Getting Started: Installation}
   \begin{enumerate}
     \item \textbf{Install R}: Download from \url{https://cran.r-project.org/}
-    \item \textbf{Install RStudio}: Download from \url{https://posit.co/products/open-source/rstudio/}
+    \item \textbf{Install an IDE if desired}: Posit RStudio, VS Code with an R extension, or another editor/notebook workflow
     \item \textbf{Alternative IDEs}: VS Code with R extension, Jupyter notebooks
   \end{enumerate}
 
@@ -1412,7 +1407,7 @@ ggsave("my_plot.png", width = 8, height = 6, dpi = 300)
 
 \subsection{Reproducible Research}
 
-\begin{frame}[fragile]{R Markdown for Reproducible Reports}
+\begin{frame}[fragile]{Quarto / R Markdown for Reproducible Reports}
 \begin{lstlisting}
 # YAML header example
 ---
@@ -1540,32 +1535,35 @@ use_git_ignore(c("*.RData", "*.Rhistory", ".DS_Store"))
 
 \begin{frame}[fragile]{Writing Efficient R Code}
 \begin{lstlisting}
-# Vectorization vs loops
-# Slow
+# Vectorized operation vs explicit loop
+# Often faster and clearer for elementwise arithmetic
 result <- numeric(1000)
 for (i in 1:1000) {
   result[i] <- i^2
 }
 
-# Fast
+# Vectorized
 result <- (1:1000)^2
 
 # Pre-allocate memory
-# Slow: growing objects
+# Avoid repeatedly growing objects
 x <- numeric(0)
 for (i in 1:1000) {
-  x <- c(x, i^2)  # Bad!
+  x <- c(x, i^2)  # repeated allocation/copying can be expensive
 }
 
-# Fast: pre-allocation
+# Prefer pre-allocation when an explicit loop is appropriate
 x <- numeric(1000)
 for (i in 1:1000) {
-  x[i] <- i^2}
+  x[i] <- i^2
+}
 
-# Use apply family instead of loops
+# Use the clearest primitive for the task; apply is not inherently faster than a loop
 data <- matrix(rnorm(10000), nrow = 100)
-row_means <- apply(data, 1, mean)  # by rows
-col_means <- apply(data, 2, mean)  # by columns
+row_means <- rowMeans(data)  # specialized vectorized primitive
+col_means <- colMeans(data)
+
+# Explicit loops can also be efficient when objects are pre-allocated
 \end{lstlisting}
 \end{frame}
 
@@ -1619,7 +1617,7 @@ microbenchmark(
         \item Statistical tests or regression modeling
         \item Data visualization with multiple plot types
       \end{itemize}
-    \item \textbf{Report}: Create an R Markdown document with:
+    \item \textbf{Report}: Create a Quarto or R Markdown document with:
       \begin{itemize}
         \item Introduction and methodology
         \item Results with embedded plots and tables
@@ -1638,8 +1636,8 @@ microbenchmark(
     \begin{column}{0.5\textwidth}
       \textbf{Statistical Methods:}
       \begin{itemize}
-        \item Machine learning with \texttt{caret}, \texttt{mlr3}
-        \item Time series analysis with \texttt{forecast}
+        \item Machine learning with \texttt{tidymodels}, \texttt{mlr3}, or domain-specific packages
+        \item Time series analysis with \texttt{fable}, \texttt{forecast}, and related packages
         \item Survival analysis with \texttt{survival}
         \item Bayesian analysis with \texttt{brms}, \texttt{rstanarm}
       \end{itemize}
@@ -1665,7 +1663,7 @@ microbenchmark(
       \begin{itemize}
         \item Big data with \texttt{sparklyr}
         \item Databases with \texttt{DBI}, \texttt{dbplyr}
-        \item APIs with \texttt{httr}, \texttt{jsonlite}
+        \item APIs with \texttt{httr2}, \texttt{curl}, \texttt{jsonlite}
         \item Cloud computing integration
       \end{itemize}
     \end{column}
@@ -1683,7 +1681,7 @@ microbenchmark(
 
   \textbf{Online Resources:}
   \begin{itemize}
-    \item RStudio Education: \url{https://education.rstudio.com/}
+    \item Posit learning resources: \url{https://posit.co/resources/}
     \item R-bloggers: \url{https://www.r-bloggers.com/}
     \item CRAN Task Views: \url{https://cran.r-project.org/web/views/}
     \item R Weekly: \url{https://rweekly.org/}
@@ -1691,83 +1689,36 @@ microbenchmark(
 
   \textbf{Communities:}
   \begin{itemize}
-    \item R Community on Twitter: \texttt{\#rstats}
+    \item R community spaces, including \texttt{\#rstats}, Posit Community, and local user groups
     \item Stack Overflow R tag
     \item Local R User Groups (R-Ladies, etc.)
   \end{itemize}
 \end{frame}
 
 %===============================================================================
-\section{Summary and Next Steps}
-%===============================================================================
+\section{Summary}
 
-\begin{frame}{What We've Covered}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item \textbf{R Fundamentals}: Data types, structures, and basic operations
-    \item \textbf{Data Management}: Import/export, cleaning, and manipulation
-    \item \textbf{Programming}: Control flow, functions, and best practices
-    \item \textbf{Modern R}: tidyverse ecosystem and pipe operator
-    \item \textbf{Statistical Analysis}: Descriptive stats, hypothesis testing, regression
-    \item \textbf{Visualization}: ggplot2 and the grammar of graphics
-    \item \textbf{Workflows}: Reproducible research, project organization
-    \item \textbf{Advanced Topics}: Package development, version control
+    \item R is a multi-paradigm language designed around vectorized data analysis, statistical computing, graphics, and interactive exploration.
+    \item Vectorization is useful when it maps naturally to the problem, but explicit loops are not inherently wrong. Pre-allocation, appropriate primitives, algorithmic complexity, and profiling matter more than style slogans.
+    \item Reproducibility requires more than a script: record package dependencies, inputs, random seeds, computational environment, and the commands needed to rebuild the analysis.
+    \item Base R, tidyverse, data.table, tidymodels, Bioconductor, and other ecosystems solve different problems. Consistency within a project matters more than allegiance to one style.
+    \item For serious analytical work, correctness and clarity should be established before micro-optimization; profile first, then optimize the actual bottleneck.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Key Takeaways}
-  \begin{enumerate}
-    \item \textbf{Think in vectors}: R is designed for vectorized operations
-    \item \textbf{Embrace the tidyverse}: Modern R is more readable and consistent
-    \item \textbf{Reproducibility matters}: Use projects, scripts, and R Markdown
-    \item \textbf{Visualization is key}: ggplot2 is powerful and flexible
-    \item \textbf{Practice regularly}: The more you use R, the more natural it becomes
-    \item \textbf{Join the community}: R has an incredibly supportive user base
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}{Next Steps for Your R Journey}
-  \textbf{Immediate actions:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Set up your R environment with RStudio
-    \item Complete the exercises from today's session
-    \item Start a small project with your own data
-  \end{itemize}
-
-  \textbf{Medium-term goals:}
-  \begin{itemize}
-    \item Master the tidyverse ecosystem
-    \item Learn advanced statistical methods relevant to your field
-    \item Contribute to open-source R packages
-  \end{itemize}
-
-  \textbf{Long-term development:}
-  \begin{itemize}
-    \item Attend R conferences (useR!, RStudio Conference)
-    \item Mentor others in R
-    \item Consider R package development
+    \item R Core Team. \textit{R: A Language and Environment for Statistical Computing}. R Foundation for Statistical Computing.
+    \item H. Wickham, M. Çetinkaya-Rundel, and G. Grolemund (2023). \textit{R for Data Science}, 2nd ed. O'Reilly.
+    \item H. Wickham (2019). \textit{Advanced R}, 2nd ed. Chapman \& Hall/CRC.
+    \item H. Wickham and J. Bryan (2023). \textit{R Packages}, 2nd ed. O'Reilly.
+    \item G. Grolemund and H. Wickham (2014). "A Cognitive Interpretation of Data Analysis." \textit{International Statistical Review}, 82(2), 184--204.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Questions and Discussion}
-  \centering
-  \Large
-  \textbf{Questions?}
-
-  \vspace{2em}
-
-  \textbf{Contact Information:}
-
-  \href{mailto:dfr@esmad.ipp.pt}{\texttt{dfr@esmad.ipp.pt}}
-
-  \vspace{1em}
-
-  \textbf{Resources from today:}
-
-  All code examples and exercises available on GitHub
-
-  \vspace{2em}
-
-  \textit{Thank you for your attention!}
-\end{frame}
+\contactslide
 
 \end{document}
