@@ -624,10 +624,10 @@
 
 \begin{frame}{Common Pitfalls}
   \begin{enumerate}
-    \item \textbf{Ignoring stationarity:}
+    \item \textbf{Mis-specifying temporal structure:}
     \begin{itemize}
-      \item Test for unit roots (ADF, KPSS)
-      \item Transform data appropriately
+      \item distinguish deterministic trend, stochastic trend, seasonality, breaks, and time-varying variance;
+      \item use unit-root or stationarity tests as evidence within a broader specification analysis, not as automatic preprocessing rules.
     \end{itemize}
 
     \item \textbf{Data snooping:}
