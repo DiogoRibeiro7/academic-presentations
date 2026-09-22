@@ -23,7 +23,7 @@ The repository should favor direct source edits, ordinary compile CI, and small 
 ### Canonical author identity
 
 - [x] Add `shared/author.json` as the canonical author metadata record.
-- [x] Set the active affiliation to **Faculty of Media Arts and Design, Technical University of Porto**.
+- [x] Set the active affiliation to **FMAD - UTP**.
 - [x] Keep ORCID `0009-0001-2022-7072` and the active `dfr@esmad.ipp.pt` contact address.
 - [x] Remove MySense.ai as a current affiliation from the shared theme and public README identity.
 - [x] Add the canonical LinkedIn profile.
@@ -107,7 +107,7 @@ They are intentionally deferred because previous full-file rewrites produced una
 
 The shared theme already prevents stale affiliation from rendering in many decks, but copied source metadata should also become honest and consistent.
 
-- [ ] Replace active `ESMAD - Escola Superior de Média Arte e Design` affiliation strings with the current faculty name where they describe Diogo's current affiliation.
+- [ ] Replace active `ESMAD - Escola Superior de Média Arte e Design` affiliation strings with `FMAD - UTP` where they describe Diogo's current affiliation.
 - [ ] Remove active `Lead Data Scientist, Mysense.ai` / MySense.ai metadata from presentation sources, templates, and current documentation.
 - [ ] Preserve genuine historical references in changelog/history material.
 - [ ] Keep technical compatibility names such as `esmad_beamer_theme.sty`, legacy color aliases, and the active `dfr@esmad.ipp.pt` email where renaming would add risk without user value.
