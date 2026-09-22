@@ -23,6 +23,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item formulate a sequential decision problem as an MDP and state the assumptions behind Bellman equations and dynamic-programming guarantees;
+    \item distinguish on-policy/off-policy learning, bootstrapping, function approximation, and exploration as separate sources of statistical and computational difficulty;
+    \item evaluate deep-RL algorithms through environment design, data regime, stability, safety, sample efficiency, and reproducible empirical comparison rather than action-space labels alone.
+  \end{itemize}
+\end{frame}
+
 % Table of contents
 \tocslide
 
@@ -58,7 +67,7 @@
     \begin{itemize}
       \item Learning from labeled examples
       \item Direct feedback (correct answer)
-      \item i.i.d. data assumption
+      \item Often formulated with independently sampled or exchangeable training examples, depending on the method
       \item Immediate evaluation
     \end{itemize}
 
@@ -84,7 +93,7 @@
     \vspace{0.5em}
 
     \begin{alertbox}{Key Difference}
-      RL must discover which actions yield the most reward through trial and error.
+      RL couples data collection and decision making: the policy changes which states, actions, and rewards will be observed next.
     \end{alertbox}
   \end{columns}
 \end{frame}
@@ -186,7 +195,7 @@
 
 \begin{frame}{Optimal Policy}
   \begin{theorembox}{Existence of Optimal Policy}
-    For any finite MDP, there exists an optimal deterministic policy $\pi^*$ such that:
+    For a finite discounted MDP, there exists a stationary deterministic policy $\pi^*$ that is optimal for all starting states:
     $$V^{\pi^*}(s) \geq V^\pi(s) \quad \forall s \in S, \forall \pi$$
   \end{theorembox}
 
@@ -239,7 +248,7 @@
   \vspace{0.5em}
 
   \begin{theorembox}{Convergence}
-    Both policy iteration and value iteration converge to optimal policy $\pi^*$ and value function $V^*$.
+    For finite discounted MDPs with exact Bellman updates, value iteration converges to $V^*$ by contraction, and standard policy iteration reaches an optimal policy in finitely many policy improvements.
   \end{theorembox}
 \end{frame}
 
@@ -309,7 +318,7 @@
   \begin{itemize}
     \item \alert{Model-free:} Don't need to know $P$ or $R$
     \item Learn from actual or simulated experience
-    \item Can be used with non-Markov environments
+    \item Uses sampled returns and therefore does not bootstrap; the meaning of a state-value estimate still depends on the state representation and evaluation target
   \end{itemize}
 
   \vspace{0.5em}
@@ -446,7 +455,7 @@
       Model required? & Yes & No & No \\
       Bootstraps? & Yes & No & Yes \\
       Complete episodes? & No & Yes & No \\
-      Converges? & Yes & Yes & Yes \\
+      Classical convergence results? & Yes$^*$ & Yes$^*$ & Yes$^*$ \\
       Bias & None & None & Initially biased \\
       Variance & Low & High & Low \\
       \bottomrule
@@ -454,6 +463,8 @@
   \end{table}
 
   \vspace{0.5em}
+
+  {\scriptsize $^*$Under method-specific assumptions such as finite/tabular representations, sufficient visitation, appropriate step sizes, and the relevant on/off-policy conditions.}\vspace{0.4em}
 
   \textbf{Advantages of TD:}
   \begin{itemize}
@@ -494,7 +505,7 @@
 
 \begin{frame}{Q-Learning: Off-Policy TD Control}
   \begin{definitionbox}{Q-Learning}
-    Off-policy TD control that learns optimal action-value function $Q^*$ directly.
+    Off-policy TD control whose tabular update targets the Bellman-optimality operator.
   \end{definitionbox}
 
   \vspace{0.5em}
@@ -518,7 +529,7 @@
 
   \vspace{0.5em}
 
-  \textbf{Key difference from SARSA:} Uses $\max_{a'} Q(S',a')$ instead of $Q(S',A')$.
+  \textbf{Key difference from SARSA:} Uses $\max_{a'} Q(S',a')$ instead of the next action sampled from the behavior policy. In the finite tabular setting, convergence to $Q^*$ requires conditions such as sufficient state-action visitation and suitable diminishing step sizes; these guarantees do not transfer automatically to nonlinear function approximation.
 \end{frame}
 
 \begin{frame}{On-Policy vs Off-Policy}
@@ -585,6 +596,18 @@
     \item Neural networks (deep RL)
     \item Decision trees, kernel methods
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Function Approximation and the Deadly Triad}
+  \begin{itemize}
+    \item \textbf{Function approximation} couples updates across many states or state-action pairs.
+    \item \textbf{Bootstrapping} uses an estimated value inside the target.
+    \item \textbf{Off-policy learning} evaluates or improves a policy different from the behavior policy that generated the data.
+  \end{itemize}
+
+  \begin{alertbox}{Why the combination matters}
+    Each ingredient can be useful, but their combination can produce instability or divergence. Deep Q-learning therefore relies on engineering devices such as replay buffers, target networks, clipping, normalization, and careful optimization; these mitigate failure modes rather than create a general convergence theorem.
+  \end{alertbox}
 \end{frame}
 
 \begin{frame}{Gradient-Based Value Function Approximation}
@@ -756,8 +779,8 @@
   \textbf{Advantages over value-based methods:}
   \begin{itemize}
     \item Can learn stochastic policies
-    \item Better convergence properties
-    \item Effective in high-dimensional or continuous action spaces
+    \item Directly represents stochastic policies and can optimize objectives defined on policy distributions
+    \item Natural fit for continuous or structured action spaces, though gradient estimates and optimization can still be unstable or high variance
   \end{itemize}
 \end{frame}
 
@@ -832,11 +855,11 @@
 
   \textbf{Proximal Policy Optimization (PPO):}
   \begin{itemize}
-    \item Constrains policy updates to trust region
+    \item Uses a clipped surrogate objective intended to discourage excessively large policy-ratio changes; it is not a hard trust-region constraint
     \item Clipped surrogate objective:
     $$L(\vect{\theta}) = \E[\min(r_t(\vect{\theta})\hat{A}_t, \text{clip}(r_t(\vect{\theta}), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$
     where $r_t(\vect{\theta}) = \frac{\pi(a|s;\vect{\theta})}{\pi(a|s;\vect{\theta}_{\text{old}})}$
-    \item Currently most popular deep RL algorithm
+    \item Widely used because of its relatively simple implementation and empirical robustness, but performance remains environment- and tuning-dependent
   \end{itemize}
 \end{frame}
 
@@ -862,7 +885,7 @@
   \begin{itemize}
     \item Actor-critic with deterministic policy
     \item Experience replay and target networks (like DQN)
-    \item Effective for continuous control tasks
+    \item Designed for continuous-action control, but can be sensitive to exploration, critic error, reward scaling, and hyperparameters
   \end{itemize}
 \end{frame}
 
@@ -1270,83 +1293,32 @@ for episode in range(1000):
 
 % ================================================================
 \section{Conclusion}
-% ================================================================
 
-\begin{frame}{Summary}
-  \textbf{Key Concepts Covered:}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Markov Decision Processes and Bellman equations
-    \item Dynamic programming methods (value iteration, policy iteration)
-    \item Monte Carlo and temporal difference learning
-    \item Q-learning and SARSA
-    \item Function approximation and deep RL
-    \item Policy gradient methods and actor-critic
-    \item Multi-agent reinforcement learning
+    \item Bellman equations provide exact recursive structure for Markov decision processes, but algorithmic guarantees depend on the state representation, data regime, function class, and update rule.
+    \item Tabular dynamic programming and tabular TD control have strong classical theory. Deep RL adds approximation, optimization, distribution shift, and data-collection feedback that substantially weaken simple convergence stories.
+    \item On-policy versus off-policy, model-free versus model-based, and value-based versus policy-based are design axes rather than an ordered ladder of increasingly advanced algorithms.
+    \item Offline and off-policy evaluation require particular care because learned policies may choose actions poorly supported by the data, making extrapolation error and coverage central issues.
+    \item Real-world RL evaluation should include multiple seeds, uncertainty across runs, baselines, ablations, safety constraints, and sensitivity to reward/model specification—not only the best episodic return.
   \end{itemize}
 
-  \vspace{0.5em}
-
-  \textbf{The RL Landscape:}
-  \begin{itemize}
-    \item \textbf{Model-free vs model-based:} Trade-off between simplicity and efficiency
-    \item \textbf{Value-based vs policy-based:} Different approaches to optimization
-    \item \textbf{On-policy vs off-policy:} Learning and behavior policies
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Practical Takeaways}
-  \begin{alertbox}{Best Practices}
-    \begin{enumerate}
-      \item Start simple: Use tabular methods for small problems
-      \item Understand your problem: Is it episodic? What's the state/action space?
-      \item Choose appropriate algorithm: DQN for discrete actions, PPO/DDPG for continuous
-      \item Monitor learning: Plot returns, check convergence
-      \item Tune hyperparameters: Learning rate, exploration, network architecture
-      \item Use established libraries: Stable-Baselines3, RLlib
-    \end{enumerate}
+  \begin{alertbox}{Algorithm selection}
+    Action-space type is only one input. Choose methods using the environment's stochasticity, horizon, data access, safety constraints, model availability, compute budget, and required evidence for deployment.
   \end{alertbox}
+\end{frame}
 
-  \vspace{0.5em}
-
-  \textbf{Resources for Further Learning:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Sutton \& Barto: "Reinforcement Learning: An Introduction" (2nd ed., 2018)
-    \item Spinning Up in Deep RL (OpenAI)
-    \item DeepMind x UCL RL Lecture Series
-    \item Papers: DQN, PPO, SAC, MuZero
+    \item R. S. Sutton and A. G. Barto (2018). \textit{Reinforcement Learning: An Introduction}, 2nd ed. MIT Press.
+    \item C. J. C. H. Watkins and P. Dayan (1992). "Q-learning." \textit{Machine Learning}, 8, 279--292.
+    \item V. Mnih et al. (2015). "Human-level control through deep reinforcement learning." \textit{Nature}, 518, 529--533.
+    \item J. Schulman et al. (2017). "Proximal Policy Optimization Algorithms." arXiv:1707.06347.
+    \item S. Fujimoto, H. van Hoof, and D. Meger (2018). "Addressing Function Approximation Error in Actor-Critic Methods." \textit{ICML}.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{The Future of RL}
-  \textbf{Exciting developments ahead:}
-  \begin{itemize}
-    \item More robust and safe RL algorithms
-    \item Better sample efficiency through model-based methods
-    \item Integration with foundation models and LLMs
-    \item Real-world deployment in robotics, healthcare, autonomous systems
-    \item Multi-agent systems for complex coordination problems
-  \end{itemize}
-
-  \vspace{1em}
-
-  \begin{block}{Final Thought}
-    Reinforcement learning is a powerful paradigm for sequential decision making that continues to push the boundaries of what's possible in AI.
-
-    \vspace{0.5em}
-
-    The combination of deep learning and RL has already achieved superhuman performance in games, and is poised to transform many real-world domains.
-  \end{block}
-\end{frame}
-
-% Acknowledgments slide
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Mysense.ai for industry applications and insights
-  \item The RL research community for groundbreaking work
-  \item OpenAI, DeepMind, and others for open-source contributions
-}
-
-% Contact information slide
 \contactslide
 
 \end{document}
