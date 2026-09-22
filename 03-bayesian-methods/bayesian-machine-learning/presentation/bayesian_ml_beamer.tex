@@ -57,117 +57,57 @@
 
 \section{Introduction to Bayesian Machine Learning}
 
-\begin{frame}{Why Bayesian Machine Learning?}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\textbf{Traditional ML Limitations:}
-\begin{itemize}
-\item \textcolor{crimson}{Point estimates:} Single "best" parameters
-\item \textcolor{crimson}{Overconfidence:} No uncertainty quantification
-\item \textcolor{crimson}{Overfitting:} Limited regularization mechanisms
-\item \textcolor{crimson}{Model selection:} Ad-hoc validation approaches
-\end{itemize}
+\begin{frame}{What a Bayesian Formulation Adds}
+  \begin{itemize}
+    \item A Bayesian model combines a likelihood with a prior to produce a posterior distribution over unknown quantities conditional on the assumed model.
+    \item Posterior uncertainty propagates parameter uncertainty into predictions, but it does not automatically account for model misspecification, distribution shift, or omitted structure.
+    \item Priors encode information or regularization assumptions explicitly; whether they improve inference depends on their compatibility with the problem and available data.
+    \item Marginal likelihoods, predictive criteria, and cross-validation answer different model-comparison questions and can favor different models.
+  \end{itemize}
 
-\vspace{0.5cm}
-\textbf{Bayesian Advantages:}
-\begin{itemize}
-\item \textcolor{forest}{Uncertainty quantification:} Principled confidence intervals
-\item \textcolor{forest}{Automatic regularization:} Prior knowledge integration
-\item \textcolor{forest}{Model comparison:} Marginal likelihood for selection
-\item \textcolor{forest}{Sequential learning:} Natural online updates
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-\begin{block}{Bayesian Paradigm}
-\begin{align}
-p(\btheta|\mathcal{D}) &= \frac{p(\mathcal{D}|\btheta)p(\btheta)}{p(\mathcal{D})}\\[0.3cm]
-\text{Posterior} &= \frac{\text{Likelihood} \times \text{Prior}}{\text{Evidence}}
-\end{align}
-\end{block}
-
-\begin{alertblock}{Key Insight}
-Treat parameters as random variables, not fixed unknowns
-\end{alertblock}
-\end{column}
-\end{columns}
+  \begin{block}{Bayesian update}
+    \[p(\btheta\mid\mathcal{D}) \propto p(\mathcal{D}\mid\btheta)\,p(\btheta)\]
+    The interpretation of the posterior is conditional on the likelihood, prior, parameterization, and data-generating assumptions.
+  \end{block}
 \end{frame}
 
-\begin{frame}{Bayesian vs Frequentist Perspectives}
-\begin{table}
-\centering
-\begin{tabular}{p{3cm}p{4cm}p{4cm}}
-\toprule
-\textbf{Aspect} & \textbf{Frequentist} & \textbf{Bayesian} \\
-\midrule
-Parameters & Fixed unknown constants & Random variables with distributions \\
-\midrule
-Uncertainty & Confidence intervals (repeated sampling) & Credible intervals (probability statements) \\
-\midrule
-Model Selection & Cross-validation, AIC/BIC & Marginal likelihood, posterior odds \\
-\midrule
-Regularization & $L_1$/$L_2$ penalties & Prior distributions \\
-\midrule
-Prediction & Point estimates & Predictive distributions \\
-\midrule
-Computational & Optimization-based & Integration-based (MCMC/VI) \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{frame}{Different Probability Frameworks, Overlapping Tools}
+  \begin{itemize}
+    \item Frequentist procedures evaluate estimators or tests under repeated sampling; Bayesian procedures condition on observed data and a specified prior-model combination.
+    \item Confidence and credible intervals have different formal interpretations, although both can be well or poorly calibrated under their respective assumptions.
+    \item Cross-validation, regularization, optimization, simulation, and predictive checking are not exclusive to one paradigm.
+    \item A useful comparison asks which assumptions, estimands, computational approximations, and decision criteria are appropriate for the problem rather than treating the paradigms as mutually exclusive toolboxes.
+  \end{itemize}
 
-\begin{block}{Bayesian Prediction}
-\[p(y^*|\bx^*, \mathcal{D}) = \int p(y^*|\bx^*, \btheta) p(\btheta|\mathcal{D}) d\btheta\]
-\textbf{Model averaging} over parameter uncertainty
-\end{block}
+  \begin{block}{Posterior predictive distribution}
+    \[p(y^*\mid\bx^*,\mathcal{D}) = \int p(y^*\mid\bx^*,\btheta)\,p(\btheta\mid\mathcal{D})\,d\btheta\]
+    This averages over posterior parameter uncertainty within the fitted model.
+  \end{block}
 \end{frame}
 
-\begin{frame}{Computational Challenges and Solutions}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The Integration Problem:}
-\[p(\btheta|\mathcal{D}) = \frac{p(\mathcal{D}|\btheta)p(\btheta)}{\int p(\mathcal{D}|\btheta)p(\btheta)d\btheta}\]
+\begin{frame}{Posterior Computation: Accuracy, Bias, and Cost}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{MCMC}
+      \begin{itemize}
+        \item constructs dependent draws whose stationary distribution is the target posterior under algorithmic regularity conditions;
+        \item Monte Carlo error decreases with effective sample size, but convergence can be slow or difficult to diagnose in challenging geometries;
+        \item HMC/NUTS can be effective for differentiable continuous models, but parameterization and diagnostics remain important.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Variational inference}
+      \begin{itemize}
+        \item converts posterior approximation into an optimization problem over a chosen family;
+        \item can be substantially faster and more scalable;
+        \item introduces approximation bias whose direction and impact depend on the variational family and objective.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 
-\textbf{Challenges:}
-\begin{itemize}
-\item High-dimensional integrals
-\item No closed-form solutions
-\item Computational complexity
-\item Scalability to big data
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Historical Solutions:}
-\begin{itemize}
-\item Conjugate priors
-\item Laplace approximation
-\item Variational methods
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Modern Approaches:}
-
-\begin{block}{Markov Chain Monte Carlo}
-\begin{itemize}
-\item Hamiltonian Monte Carlo
-\item No-U-Turn Sampler (NUTS)
-\item Exact sampling (asymptotically)
-\end{itemize}
-\end{block}
-
-\begin{block}{Variational Inference}
-\begin{itemize}
-\item Mean-field approximation
-\item Normalizing flows
-\item Automatic differentiation
-\item Scalable to large datasets
-\end{itemize}
-\end{block}
-
-\begin{alertblock}{Trade-offs}
-\textbf{MCMC:} Exact but slow\\
-\textbf{VI:} Approximate but fast
-\end{alertblock}
-\end{column}
-\end{columns}
+  \begin{alertblock}{No universal ordering}
+    MCMC and VI trade computation, approximation error, implementation complexity, and diagnostic transparency differently. The appropriate method depends on the inferential target and required precision.
+  \end{alertblock}
 \end{frame}
 
 \section{Bayesian Neural Networks}
@@ -940,126 +880,32 @@ class BayesianLinear(nn.Module):
 \end{columns}
 
 \vspace{0.3cm}
-\textbf{General Advice:} Always validate uncertainty estimates on real test cases where you know the ground truth uncertainty.
+\textbf{General Advice:} Evaluate predictive calibration, proper scoring rules, posterior predictive checks, and sensitivity to modeling assumptions; in real applications the true uncertainty is generally not observed directly.
 \end{frame}
 
-\section{Future Directions and Conclusions}
+\section{Conclusions}
 
-\begin{frame}{Current Research Frontiers}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Methodological Advances:}
-\begin{itemize}
-\item \textcolor{purple}{Continual learning} with uncertainty
-\item \textcolor{purple}{Federated Bayesian learning}
-\item \textcolor{purple}{Physics-informed priors}
-\item \textcolor{purple}{Causal discovery} with GPs
-\item \textcolor{purple}{Multi-modal} Bayesian models
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Computational Innovations:}
-\begin{itemize}
-\item \textcolor{crimson}{Quantum-enhanced} sampling
-\item \textcolor{crimson}{Neuromorphic computing} for BNNs
-\item \textcolor{crimson}{Distributed inference} at scale
-\item \textcolor{crimson}{Edge deployment} of Bayesian models
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Application Domains:}
-\begin{itemize}
-\item \textcolor{forest}{Autonomous systems} (vehicles, drones)
-\item \textcolor{forest}{Healthcare AI} with safety guarantees
-\item \textcolor{forest}{Climate modeling} and prediction
-\item \textcolor{forest}{Financial risk} assessment
-\item \textcolor{forest}{Scientific discovery} acceleration
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Societal Impact:}
-\begin{itemize}
-\item \textcolor{gold}{Trustworthy AI} development
-\item \textcolor{gold}{Algorithmic fairness} with uncertainty
-\item \textcolor{gold}{Privacy-preserving} ML
-\item \textcolor{gold}{Explainable AI} through Bayesian lens
-\end{itemize}
-\end{column}
-\end{columns}
-
-\begin{alertblock}{The Next Decade}
-Bayesian ML will become the \textbf{standard approach} for safety-critical applications requiring uncertainty quantification.
-\end{alertblock}
+\begin{frame}{Synthesis}
+  \begin{itemize}
+    \item Bayesian inference quantifies uncertainty conditional on a probabilistic model; posterior precision is not a guarantee of model adequacy.
+    \item Gaussian processes provide flexible function-space priors with analytically tractable Gaussian-regression posteriors, but kernel choice and computational scaling remain central modeling decisions.
+    \item Bayesian neural networks place distributions over network parameters or functions, yet practical inference commonly relies on approximations whose calibration must be evaluated.
+    \item MCMC and VI solve different computational problems and expose different failure modes. Approximation quality should be assessed relative to the estimand rather than by method label.
+    \item In high-stakes applications, uncertainty quantification is only one component of reliability; robustness, data quality, model misspecification, decision loss, and external validation remain separate concerns.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Summary and Key Takeaways}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Bayesian Neural Networks:}
-\begin{itemize}
-\item \textcolor{forest}{Uncertainty quantification} for deep learning
-\item \textcolor{forest}{Automatic regularization} through priors
-\item \textcolor{crimson}{Computational challenges} in large networks
-\item \textcolor{forest}{Growing adoption} in critical applications
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Gaussian Processes:}
-\begin{itemize}
-\item \textcolor{forest}{Non-parametric} Bayesian approach
-\item \textcolor{forest}{Exact inference} for regression
-\item \textcolor{forest}{Flexible} through kernel design
-\item \textcolor{crimson}{Scalability} remains a challenge
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Practical Guidelines:}
-\begin{itemize}
-\item Start with \textbf{simple baselines}
-\item Validate \textbf{uncertainty calibration}
-\item Consider \textbf{computational constraints}
-\item Use \textbf{appropriate software} tools
-\item Focus on \textbf{problem-specific} solutions
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{When to Use What?}
-\textbf{BNNs:} Large datasets, complex patterns, representation learning
-
-\textbf{GPs:} Small-medium datasets, interpretability, principled uncertainty
-\end{block}
-\end{column}
-\end{columns}
-
-\vspace{0.5cm}
-\begin{center}
-\textcolor{navyblue}{\Large \textbf{The future of ML is Bayesian: principled, uncertain, and trustworthy}}
-\end{center}
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item C. E. Rasmussen and C. K. I. Williams (2006). \textit{Gaussian Processes for Machine Learning}. MIT Press.
+    \item D. M. Blei, A. Kucukelbir, and J. D. McAuliffe (2017). "Variational Inference: A Review for Statisticians." \textit{JASA}, 112(518), 859--877.
+    \item R. M. Neal (1996). \textit{Bayesian Learning for Neural Networks}. Springer.
+    \item C. Blundell et al. (2015). "Weight Uncertainty in Neural Networks." \textit{ICML}.
+    \item A. Gelman et al. (2013). \textit{Bayesian Data Analysis}, 3rd ed. CRC Press.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-{\Huge Thank You}
-
-\vspace{0.8cm}
-
-\textbf{Questions \& Discussion}
-
-\vspace{1cm}
-
-\textbf{Diogo Ribeiro}\\
-FMAD - UTP\\
-
-\vspace{0.5cm}
-
-\texttt{dfr@esmad.ipp.pt}\\
-\texttt{https://orcid.org/0009-0001-2022-7072}
-
-\vspace{0.8cm}
-
-\textit{Slides and code available at:}\\
-\texttt{github.com/diogoribeiro7/academic-presentations}
-\end{center}
-\end{frame}
+\contactslide
 
 \end{document}
