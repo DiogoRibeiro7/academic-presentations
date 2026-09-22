@@ -23,6 +23,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item distinguish convexity, smoothness, strong convexity, constraints, and stochasticity as separate properties that determine which guarantees are available;
+    \item derive first- and second-order optimality conditions and state when KKT conditions are necessary or sufficient;
+    \item choose and evaluate optimization algorithms by problem structure, oracle cost, conditioning, accuracy requirements, and computational budget rather than by a universal optimizer ranking.
+  \end{itemize}
+\end{frame}
+
 % Table of contents
 \tocslide
 
@@ -132,8 +141,8 @@
 
   \vspace{1em}
 
-  \begin{alertbox}{Complexity}
-    Convex problems are "easy" (polynomial time). Non-convex and discrete problems are generally NP-hard.
+  \begin{alertbox}{Computational complexity}
+    Convexity gives powerful global optimality structure, but tractability still depends on the representation, oracle model, accuracy criterion, constraints, and problem class. Some non-convex or discrete problems are tractable, while many important formulations are computationally hard.
   \end{alertbox}
 \end{frame}
 
@@ -192,27 +201,23 @@
 \end{frame}
 
 \begin{frame}{Optimality Conditions}
-  \begin{theorembox}{First-Order Optimality (Unconstrained)}
-    For differentiable $f$, $\vect{x}^*$ is a minimum if and only if:
-    $$\nabla f(\vect{x}^*) = \vect{0}$$
+  \begin{theorembox}{First-order necessary condition}
+    If $f$ is differentiable and $\vect{x}^*$ is an unconstrained local minimum in the interior of the domain, then
+    $$\nabla f(\vect{x}^*)=\vect{0}.$$
+    Stationarity alone is not sufficient for a minimum in a general non-convex problem.
   \end{theorembox}
 
-  \vspace{0.5em}
+  \vspace{0.4em}
 
-  \begin{theorembox}{Second-Order Optimality}
-    \textbf{Necessary:} If $\vect{x}^*$ is a local minimum, then:
-    $$\nabla f(\vect{x}^*) = \vect{0} \quad \text{and} \quad \nabla^2 f(\vect{x}^*) \succeq 0$$
-
-    \textbf{Sufficient:} If $\nabla f(\vect{x}^*) = \vect{0}$ and $\nabla^2 f(\vect{x}^*) \succ 0$ (positive definite), then $\vect{x}^*$ is a strict local minimum.
+  \begin{theorembox}{Second-order conditions}
+    At an interior local minimum of a twice-differentiable function, the Hessian is positive semidefinite. If $\nabla f(\vect{x}^*)=0$ and $\nabla^2 f(\vect{x}^*)\succ0$, then $\vect{x}^*$ is a strict local minimum.
   \end{theorembox}
 
-  \vspace{0.5em}
+  \vspace{0.4em}
 
-  \textbf{For convex functions:}
-  \begin{itemize}
-    \item First-order condition is both necessary and sufficient
-    \item $\nabla f(\vect{x}^*) = \vect{0} \Rightarrow \vect{x}^*$ is global minimum
-  \end{itemize}
+  \begin{block}{Convex case}
+    For differentiable convex $f$ on a convex domain, $\nabla f(\vect{x}^*)=0$ is sufficient for global optimality. For constrained convex problems the corresponding condition uses the normal cone or KKT conditions under appropriate regularity.
+  \end{block}
 \end{frame}
 
 \begin{frame}{Convex Optimization Problem}
@@ -260,10 +265,11 @@
 
   \vspace{0.5em}
 
-  \textbf{Convergence conditions:}
+  \textbf{One standard guarantee:}
   \begin{itemize}
-    \item For convex, $L$-Lipschitz continuous $\nabla f$: converges with $\alpha_k = \frac{1}{L}$
-    \item Convergence rate: $f(\vect{x}_k) - f(\vect{x}^*) = O(1/k)$
+    \item If $f$ is convex and $L$-smooth, fixed-step gradient descent with a suitable step size such as $\alpha\leq 1/L$ has a sublinear function-value guarantee of order $O(1/k)$.
+    \item If $f$ is additionally strongly convex, stronger linear/geometric convergence bounds are available.
+    \item For non-convex objectives, typical guarantees concern decrease, stationarity, or gradient norms rather than convergence to a global minimum.
   \end{itemize}
 
   \vspace{0.5em}
@@ -371,12 +377,11 @@
 
   \vspace{0.5em}
 
-  \textbf{Why Adam is popular:}
+  \textbf{Why Adam is commonly used:}
   \begin{itemize}
-    \item Works well with default hyperparameters
-    \item Computationally efficient
-    \item Suitable for problems with noisy/sparse gradients
-    \item Currently the most widely used optimizer in deep learning
+    \item Per-coordinate scaling and momentum can make initial training less sensitive to heterogeneous gradient magnitudes.
+    \item It is computationally inexpensive relative to second-order methods and works well in many large stochastic problems.
+    \item Default hyperparameters are useful starting points, not guarantees; learning rate, schedule, batch size, parameterization, and objective geometry still matter.
   \end{itemize}
 \end{frame}
 
@@ -384,8 +389,8 @@
   \textbf{AdamW:}
   \begin{itemize}
     \item Decoupled weight decay from gradient-based updates
-    \item Better regularization than Adam with L2 penalty
-    \item Becoming preferred over Adam for many applications
+    \item Separates multiplicative weight decay from the adaptive gradient update
+    \item Often used when explicit weight decay is part of the training design
   \end{itemize}
 
   \vspace{0.5em}
@@ -435,13 +440,8 @@
 
   \vspace{0.5em}
 
-  \begin{alertbox}{Practical Advice}
-    \begin{itemize}
-      \item Start with Adam/AdamW with default parameters
-      \item If overfitting, add weight decay or use AdamW
-      \item For final tuning, try SGD with momentum and learning rate schedule
-      \item Monitor training curves to detect issues
-    \end{itemize}
+  \begin{alertbox}{Practical comparison}
+    Optimizer choice should be treated as part of the experimental design. Compare plausible methods under matched training budgets and learning-rate schedules, and report both optimization performance and downstream generalization rather than assuming a universal default.
   \end{alertbox}
 \end{frame}
 
@@ -474,7 +474,7 @@
 
 \begin{frame}{KKT Conditions}
   \begin{theorembox}{Karush-Kuhn-Tucker (KKT) Conditions}
-    For $\vect{x}^*$ to be optimal (assuming constraint qualifications hold):
+    Under a suitable constraint qualification, a local optimum of a differentiable constrained problem satisfies the KKT conditions. In a convex problem, KKT conditions are also sufficient under standard regularity such as Slater's condition:
 
     \textbf{1. Stationarity:}
     $$\nabla f(\vect{x}^*) + \sum_{i=1}^m \lambda_i^* \nabla g_i(\vect{x}^*) + \sum_{j=1}^p \nu_j^* \nabla h_j(\vect{x}^*) = \vect{0}$$
@@ -1186,88 +1186,28 @@ for epoch in range(num_epochs):
 
 % ================================================================
 \section{Conclusion}
-% ================================================================
 
-\begin{frame}{Summary}
-  \textbf{Key Concepts:}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Convex vs non-convex optimization
-    \item Gradient descent and variants (SGD, momentum, Adam)
-    \item Constrained optimization (Lagrangian, KKT conditions)
-    \item Evolutionary and metaheuristic algorithms
-    \item Bayesian optimization for hyperparameter tuning
-    \item Practical considerations (regularization, learning rates, debugging)
-  \end{itemize}
-
-  \vspace{1em}
-
-  \begin{block}{The Optimization Hierarchy}
-    \begin{enumerate}
-      \item If convex and small: Use Newton/L-BFGS
-      \item If convex and large: Use (mini-batch) SGD with momentum/Adam
-      \item If non-convex with gradients: Use Adam/AdamW with proper initialization
-      \item If black-box, expensive: Use Bayesian optimization
-      \item If no gradients or discrete: Use evolutionary/metaheuristic algorithms
-    \end{enumerate}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Practical Advice}
-  \begin{alertbox}{Best Practices}
-    \begin{enumerate}
-      \item \textbf{Start simple:} Try Adam with default settings
-      \item \textbf{Normalize data:} Zero mean, unit variance
-      \item \textbf{Use validation set:} Monitor for overfitting
-      \item \textbf{Visualize:} Plot loss curves, gradients
-      \item \textbf{Gradient checking:} Verify implementation with finite differences
-      \item \textbf{Tune hyperparameters:} Learning rate most important
-      \item \textbf{Use regularization:} Weight decay, dropout, early stopping
-      \item \textbf{Be patient:} Deep models may need many epochs
-    \end{enumerate}
-  \end{alertbox}
-
-  \vspace{0.5em}
-
-  \textbf{Resources:}
-  \begin{itemize}
-    \item Boyd \& Vandenberghe: "Convex Optimization" (2004)
-    \item Nocedal \& Wright: "Numerical Optimization" (2006)
-    \item Goodfellow et al.: "Deep Learning" (2016) - Chapter 8
+    \item Optimization guarantees are conditional on structure: convexity, smoothness, strong convexity, constraints, stochastic gradients, and oracle accuracy lead to different notions of convergence.
+    \item Stationary points are not automatically minima in non-convex problems, and successful training of a predictive model is not the same as solving the population-risk problem globally.
+    \item First-order, second-order, proximal, stochastic, derivative-free, Bayesian, and evolutionary methods exploit different information and cost models; no optimizer dominates across problem classes.
+    \item Hyperparameter optimization is itself a statistical search problem. Validation noise, repeated selection, and computational budget should be included in the evaluation design.
+    \item In machine learning, optimization error is only one component of performance; approximation, estimation, regularization, data quality, and distribution shift remain separate concerns.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Future Directions}
-  \textbf{Emerging trends:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item \textbf{AutoML:} Automated machine learning pipelines
-    \item \textbf{Neural ODEs:} Continuous-depth models, adjoint method
-    \item \textbf{Meta-learning:} Learning to optimize, learned optimizers
-    \item \textbf{Sparse optimization:} Efficient training of large models
-    \item \textbf{Quantum optimization:} Quantum algorithms for optimization
-    \item \textbf{Robust optimization:} Handling uncertainty and adversaries
+    \item S. Boyd and L. Vandenberghe (2004). \textit{Convex Optimization}. Cambridge University Press.
+    \item J. Nocedal and S. J. Wright (2006). \textit{Numerical Optimization}, 2nd ed. Springer.
+    \item Y. Nesterov (2004). \textit{Introductory Lectures on Convex Optimization}. Springer.
+    \item D. P. Kingma and J. Ba (2015). "Adam: A Method for Stochastic Optimization." \textit{ICLR}.
+    \item I. Loshchilov and F. Hutter (2019). "Decoupled Weight Decay Regularization." \textit{ICLR}.
   \end{itemize}
-
-  \vspace{1em}
-
-  \begin{block}{Final Thought}
-    Optimization is at the heart of machine learning and data science. Understanding optimization algorithms, their properties, and when to use them is essential for:
-    \begin{itemize}
-      \item Training models effectively
-      \item Solving real-world problems
-      \item Pushing the boundaries of what's possible with AI
-    \end{itemize}
-  \end{block}
 \end{frame}
 
-% Acknowledgments slide
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Mysense.ai for real-world optimization challenges
-  \item The optimization research community
-  \item Open-source contributors (PyTorch, TensorFlow, scikit-learn)
-}
-
-% Contact information slide
 \contactslide
 
 \end{document}
