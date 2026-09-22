@@ -79,44 +79,33 @@
 
 \section{Introduction and Motivation}
 
-\begin{frame}{From Statistics to Machine Learning}
-\begin{columns}
-\begin{column}[t]{0.6\textwidth}
-\textbf{The Evolution of Learning from Data:}
+\begin{frame}{Statistical Learning: Complementary Traditions}
+  Statistical learning sits at the intersection of statistical inference, approximation, optimization, and algorithmic prediction.
 
-\begin{itemize}
-\item \textcolor{crimson}{Classical Statistics (1900-1970):}
-  \begin{itemize}
-  \item Fixed parametric models
-  \item Hypothesis testing framework
-  \item Small sample theory
-  \item Focus on inference and explanation
-  \end{itemize}
-  
-\item \textcolor{forest}{Machine Learning (1980-present):}
-  \begin{itemize}
-  \item Algorithmic approach
-  \item High-dimensional data
-  \item Prediction-focused
-  \item Computational methods
-  \end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}[t]{0.4\textwidth}
-\begin{block}{Modern Data Science}
-\begin{itemize}
-\item Massive datasets
-\item Complex patterns
-\item Real-time decisions
-\item Business impact
-\end{itemize}
-\end{block}
+  \begin{columns}
+    \begin{column}[t]{0.5\textwidth}
+      \textbf{Statistical emphasis}
+      \begin{itemize}
+        \item explicit stochastic models and estimands;
+        \item sampling uncertainty and identifiability;
+        \item diagnostics and interpretable parameters.
+      \end{itemize}
+    \end{column}
+    \begin{column}[t]{0.5\textwidth}
+      \textbf{Machine-learning emphasis}
+      \begin{itemize}
+        \item predictive risk and generalization;
+        \item flexible function classes and optimization;
+        \item high-dimensional and computational regimes.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 
-\begin{alertblock}{The Challenge}
-How do we learn reliable patterns from finite data that generalize to unseen examples?
-\end{alertblock}
-\end{column}
-\end{columns}
+  \vspace{0.4em}
+
+  \begin{alertblock}{The useful distinction}
+    The methods overlap substantially. What changes is the target question, assumptions, loss function, and evidence required to justify a conclusion.
+  \end{alertblock}
 \end{frame}
 
 \begin{frame}{Real-World Learning Problems}
@@ -472,6 +461,15 @@ Deep learning models with millions of parameters often generalize well despite h
 
 \section{PAC Learning Theory}
 
+\begin{frame}{Scope of Generalization Guarantees}
+  \begin{itemize}
+    \item Classical PAC and VC results formalize generalization under a specified sampling framework, commonly i.i.d. observations from a fixed distribution.
+    \item The guarantee is conditional on the hypothesis class, loss, confidence level, and assumptions used in the theorem; it is not a universal certificate for a deployed model.
+    \item Dependence, adaptive data collection, distribution shift, label noise, or repeated model selection can require different arguments or invalidate a direct textbook bound.
+    \item Bounds may be mathematically informative even when numerically loose; their value often lies in clarifying which quantities control learnability.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{PAC Learning Theory}
 \begin{definition}[PAC Learnability]
 A hypothesis class $\mathcal{H}$ is \textbf{PAC-learnable} if there exists an algorithm $A$ and polynomial function $p(\cdot, \cdot, \cdot, \cdot)$ such that:
@@ -637,7 +635,7 @@ Larger hypothesis classes (higher VC dimension) have:
 \end{columns}
 
 \vspace{0.3cm}
-\textbf{Solution:} Cross-validation - resampling approach that makes better use of data.
+\textbf{Cross-validation:} a family of resampling procedures for estimating model-selection or predictive performance under a sampling scheme that should reflect the intended deployment population.
 \end{frame}
 
 \begin{frame}[fragile]{Cross-Validation: Theory and Practice}
@@ -1008,134 +1006,31 @@ Modern ML applications require:
 
 \section{Summary and Conclusions}
 
-\begin{frame}{Key Takeaways}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Fundamental Concepts:}
-\begin{itemize}
-\item \textcolor{forest}{Risk decomposition}: Understand sources of error
-\item \textcolor{forest}{Bias-variance tradeoff}: Balance simplicity and complexity
-\item \textcolor{forest}{PAC learning}: Formal guarantees for learnability
-\item \textcolor{forest}{VC dimension}: Measure of hypothesis class complexity
-\item \textcolor{forest}{Cross-validation}: Practical model selection tool
-\end{itemize}
+\begin{frame}{Synthesis}
+  \begin{itemize}
+    \item Generalization is defined relative to a population, loss function, sampling mechanism, and hypothesis class; changing any of these changes the learning problem.
+    \item Bias--variance decompositions, regularization, PAC/VC theory, stability, and cross-validation illuminate different aspects of model complexity and predictive risk rather than providing one universal complexity measure.
+    \item Validation estimates are themselves statistical estimates. Their relevance depends on how closely the resampling design matches future data and how much model selection has been performed on the same evidence.
+    \item Modern overparameterized models show that parameter count alone is an inadequate description of effective complexity; optimization dynamics, architecture, data geometry, and implicit regularization can matter.
+    \item Predictive performance does not imply causal identification, robustness to distribution shift, fairness, or calibrated uncertainty. Those require additional assumptions and evaluation.
+  \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Practical Guidelines:}
-\begin{itemize}
-\item Start with simple baselines
-\item Use proper validation methodology
-\item Consider business constraints
-\item Understand your data and domain
-\item Monitor for distribution shift
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Modern Challenges:}
-\begin{itemize}
-\item High-dimensional data requires new techniques
-\item Deep learning challenges classical theory
-\item Robustness and fairness are crucial
-\item Causality matters for decision-making
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{The Big Picture}
-Statistical learning theory provides:
-\begin{itemize}
-\item Principled foundation for ML
-\item Tools for understanding when/why methods work
-\item Guidance for method selection
-\item Framework for developing new algorithms
-\end{itemize}
-\end{block}
-
-\begin{alertblock}{Remember}
-Theory guides practice, but practical considerations (interpretability, speed, fairness) often dominate real decisions.
-\end{alertblock}
-\end{column}
-\end{columns}
+  \begin{alertblock}{Practical principle}
+    Use theory to make assumptions and failure modes explicit, then test the resulting claims against data collected in a way that represents the intended use.
+  \end{alertblock}
 \end{frame}
 
-\begin{frame}{Next Steps in the Data Science Track}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Immediate Next Topics:}
-\begin{enumerate}
-\item \textbf{Feature Engineering \& Selection}
-   \begin{itemize}
-   \item Automated feature engineering
-   \item Dimensionality reduction
-   \item Feature importance methods
-   \end{itemize}
-
-\item \textbf{Causal Inference}
-   \begin{itemize}
-   \item From correlation to causation
-   \item Experimental design
-   \item Observational causal methods
-   \end{itemize}
-
-\item \textbf{Model Interpretability}
-   \begin{itemize}
-   \item SHAP, LIME, and friends
-   \item Global vs local explanations
-   \item Interpretable model classes
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Hands-on Projects:}
-\begin{itemize}
-\item Implement bias-variance decomposition from scratch
-\item Build cross-validation framework
-\item Apply theory to real dataset
-\item Compare multiple algorithms systematically
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Further Reading:}
-\begin{itemize}
-\item Hastie, Tibshirani, Friedman: \emph{Elements of Statistical Learning}
-\item Shalev-Shwartz, Ben-David: \emph{Understanding Machine Learning}
-\item Vapnik: \emph{The Nature of Statistical Learning Theory}
-\end{itemize}
-\end{column}
-\end{columns}
-
-\vspace{0.5cm}
-\begin{center}
-\textcolor{navyblue}{\Large \textbf{Statistical learning theory is the foundation that makes all of data science principled and reliable.}}
-\end{center}
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item T. Hastie, R. Tibshirani, and J. Friedman (2009). \textit{The Elements of Statistical Learning}, 2nd ed. Springer.
+    \item S. Shalev-Shwartz and S. Ben-David (2014). \textit{Understanding Machine Learning: From Theory to Algorithms}. Cambridge University Press.
+    \item M. Mohri, A. Rostamizadeh, and A. Talwalkar (2018). \textit{Foundations of Machine Learning}, 2nd ed. MIT Press.
+    \item V. N. Vapnik (1998). \textit{Statistical Learning Theory}. Wiley.
+    \item M. Belkin, D. Hsu, S. Ma, and S. Mandal (2019). "Reconciling modern machine-learning practice and the classical bias--variance trade-off." \textit{PNAS}, 116(32), 15849--15854.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-{\Huge Thank You}
-
-\vspace{0.8cm}
-
-\textbf{Questions \& Discussion}
-
-\vspace{1cm}
-
-\textbf{Diogo Ribeiro}\\
-FMAD - UTP\\
-
-\vspace{0.5cm}
-
-\texttt{dfr@esmad.ipp.pt}\\
-\texttt{https://orcid.org/0009-0001-2022-7072}
-
-\vspace{0.8cm}
-
-\textit{Slides and code available at:}\\
-\texttt{github.com/diogoribeiro7/academic-presentations}
-
-\vspace{0.5cm}
-
-\textit{Next: Feature Engineering \& Selection}
-\end{center}
-\end{frame}
+\contactslide
 
 \end{document}
