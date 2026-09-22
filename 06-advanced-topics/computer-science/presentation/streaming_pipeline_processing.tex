@@ -107,9 +107,9 @@
 
 \begin{frame}{Watermarks \mins{7}}
   \begin{itemize}
-    \item A \term{watermark} asserts that most events older than $T$ have arrived.
-    \item Drives window completeness and trigger firing.
-    \item Heuristics: fixed lag (e.g., eventTime - 2 min), source-derived, or adaptive.
+    \item A \term{watermark} is a progress estimate over event time used by the runtime to decide when event-time operations may advance.
+    \item It is not a proof that no older event can still arrive unless the source contract makes that guarantee.
+    \item Watermark policies may be fixed-lag, source-derived, or adaptive; the policy determines latency versus completeness trade-offs.
   \end{itemize}
 \end{frame}
 
@@ -172,9 +172,9 @@ source("purchases")
 % =========================
 \begin{frame}{Stateful Processing \mins{8}}
   \begin{itemize}
-    \item Operator state: per-key or global.
-    \item Timers: register callbacks for event/processing time.
-    \item Snapshots/checkpoints persist state for recovery and exactly-once.
+    \item Operator state: per-key or operator/global depending on the runtime abstraction.
+    \item Timers: register callbacks for event or processing time.
+    \item Snapshots/checkpoints persist processing state for recovery; end-to-end delivery semantics additionally depend on source replay and sink commit behavior.
   \end{itemize}
 \end{frame}
 
@@ -192,20 +192,25 @@ source("clicks")
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Delivery Semantics \mins{6}}
+\begin{frame}{Delivery Semantics and Failure Scope \mins{6}}
   \begin{itemize}
-    \item \term{At-most-once}: may drop data, no duplicates.
-    \item \term{At-least-once}: no data loss, duplicates possible.
-    \item \term{Exactly-once} (effectively-once): no loss, no duplicates (with idempotence/transactions).
+    \item \term{At-most-once}: a record or effect may be lost after failures, but the system avoids replay-driven duplicates.
+    \item \term{At-least-once}: records are retried/replayed so successful processing is retried until acknowledged, which can duplicate downstream effects unless they are deduplicated or idempotent.
+    \item \term{Exactly-once processing}: each logical input contributes once to managed state within the guarantees of the stream processor.
+    \item \term{End-to-end exactly-once effects}: requires the source, processing state, and external sink to participate in a compatible transaction/idempotency protocol under a stated failure model.
   \end{itemize}
-  \note{End-to-end requires aligned semantics in source, processor, and sink.}
+
+  \begin{alertbox}{Scope matters}
+    "Exactly once" is not a property of a single operator in isolation. Clarify whether the claim covers internal state, emitted records, or externally visible side effects.
+  \end{alertbox}
 \end{frame}
 
 \begin{frame}{Exactly-Once Pattern \mins{6}}
 \begin{itemize}
-  \item Input: partition+offset or sequence IDs.
-  \item Processing: transactional state snapshots (barriers/checkpoints).
-  \item Output: idempotent/transactional sink with commit on checkpoint.
+  \item Input: replayable positions such as partition+offset or sequence IDs.
+  \item Processing: state snapshots/checkpoints that establish a consistent recovery point.
+  \item Output: transactional commit, idempotent upsert, or deduplication keyed to the logical event/effect.
+  \item Recovery: restore state, resume from the corresponding input position, and reconcile any externally visible effects whose commit outcome is uncertain.
 \end{itemize}
 \end{frame}
 
@@ -214,7 +219,7 @@ source("clicks")
 % =========================
 \begin{frame}{Stream–Stream Joins \mins{8}}
   \begin{itemize}
-    \item Requires windows + time alignment + per-key state.
+    \item Usually requires a bounded temporal condition, time alignment policy, and retained per-key state; unbounded stream-stream joins imply unbounded state.
     \item \term{Inner/Left/Right/Outer} joins over temporal intervals.
     \item Reordering late events: update/retract results as needed.
   \end{itemize}
@@ -242,9 +247,9 @@ source("orders").assignTimestamp(ts)
 
 \begin{frame}{Fault Tolerance \mins{8}}
   \begin{itemize}
-    \item Checkpoints + replay from durable logs.
-    \item Exactly-once sinks: two-phase commit or idempotent upserts.
-    \item Stateless vs stateful recovery times and trade-offs.
+    \item Checkpoints + replay from a durable source log recover processor state under the runtime's failure model.
+    \item External effects need compatible transactions, idempotent writes, or reconciliation logic; processor checkpoints alone do not guarantee exactly-once business effects.
+    \item Stateful recovery time depends on checkpoint size, restore bandwidth, replay distance, and downstream recovery behavior.
   \end{itemize}
 \end{frame}
 
@@ -341,28 +346,39 @@ source("orders").assignTimestamp(ts)
 
 % =========================
 \section{Wrap-up}
-% =========================
-\begin{frame}{Quick Quiz \mins{6}}
-  \begin{enumerate}
-    \item Why prefer event time over processing time for aggregation?
-    \item What role do watermarks play?
-    \item Compare tumbling, hopping, and session windows.
-    \item What is end-to-end exactly-once and how is it achieved?
-  \end{enumerate}
-\end{frame}
 
-\begin{frame}{Key Takeaways \mins{3}}
+\begin{frame}{Synthesis \mins{4}}
   \begin{itemize}
-    \item Treat time as data; design with watermarks and late events in mind.
-    \item Windows + triggers define latency vs accuracy trade-offs.
-    \item State and checkpoints enable correctness under failures.
-    \item Backpressure and idempotence are operational essentials.
+    \item Event-time processing separates when an event occurred from when the system observed it; watermark policy determines when the runtime acts on incomplete knowledge.
+    \item Windows, triggers, accumulation mode, and allowed lateness jointly define the semantics of emitted results. There is no universal "final" result unless the application specifies one.
+    \item Stateful correctness depends on explicit keys, state lifetime, checkpoint consistency, and recovery logic. State size is therefore both a semantic and capacity concern.
+    \item Delivery guarantees must be scoped end to end. Internal exactly-once state updates do not by themselves guarantee exactly-once external side effects.
+    \item Backpressure, skew, late data, duplicates, and partial failures are normal operating conditions that should appear in tests and observability dashboards rather than only in incident runbooks.
   \end{itemize}
 \end{frame}
 
-% =========================
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item T. Akidau et al. (2015). "The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing." \textit{VLDB}.
+    \item T. Akidau, S. Chernyak, and R. Lax (2018). \textit{Streaming Systems}. O'Reilly.
+    \item P. Carbone et al. (2015). "Apache Flink: Stream and Batch Processing in a Single Engine." \textit{IEEE Data Engineering Bulletin}.
+    \item J. Kreps, N. Narkhede, and J. Rao (2011). "Kafka: a Distributed Messaging System for Log Processing." \textit{NetDB}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Quick Quiz \mins{6}}
+  \begin{enumerate}
+    \item What does a watermark assert, and what does it not assert?
+    \item Which semantics are internal to the processor, and which require source/sink cooperation?
+    \item How do allowed lateness and accumulation policy change downstream correctness requirements?
+    \item When is idempotency insufficient and explicit reconciliation required?
+  \end{enumerate}
+\end{frame}
+
+\contactslide
+
 \appendix
-% =========================
 \begin{frame}{Appendix: Glossary}
 \small
 \begin{tabular}{@{}ll@{}}
@@ -371,7 +387,7 @@ Term & Meaning \\
 \midrule
 Event Time & Timestamp of occurrence \\
 Processing Time & Timestamp of observation \\
-Watermark & Lower bound on unseen event time \\
+Watermark & Event-time progress estimate used for runtime decisions \\
 Window & Temporal slice for grouping \\
 Trigger & Rule for emitting results \\
 Allowed Lateness & Grace period for late events \\
@@ -399,11 +415,6 @@ Quiz/Wrap & 7 \\
 Buffer / Q\&A & 5--15 \\
 \bottomrule
 \end{tabular}
-\end{frame}
-
-\begin{frame}[plain]
-  \centering
-  \Huge Thank you!
 \end{frame}
 
 \end{document}

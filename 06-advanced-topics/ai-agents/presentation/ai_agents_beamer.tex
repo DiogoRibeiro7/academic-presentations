@@ -75,7 +75,7 @@
 
 \begin{frame}{What Is an AI Agent?}
   \begin{definitionbox}{Production Agent}
-    A software system that iteratively selects actions, uses tools, updates state, and optimizes for a task objective under safety and cost constraints.
+    A software system that iteratively selects actions, uses tools, updates state, and pursues a task objective under explicit safety, cost, and termination constraints.
   \end{definitionbox}
 
   \vspace{0.4em}
@@ -124,21 +124,18 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Decision Matrix: Agent or Workflow?}
-  \begin{table}
-    \small
-    \begin{tabular}{@{}lll@{}}
-      \toprule
-      Criterion & High & Low \\
-      \midrule
-      Task ambiguity & Agent & Workflow \\
-      Branching depth & Agent & Workflow \\
-      Need for autonomy & Agent & Workflow \\
-      Regulatory strictness & Workflow & Agent \\
-      Acceptable latency & Workflow & Agent \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
+\begin{frame}{Agent or Workflow? Start from the Control Problem}
+  \begin{itemize}
+    \item \textbf{Task variability:} Does the workflow require open-ended interpretation or can the branches be enumerated?
+    \item \textbf{Action risk:} What is the cost of a wrong tool call, and can the action be reversed or reconciled?
+    \item \textbf{Latency and cost:} Is iterative model invocation compatible with the service-level objective and budget?
+    \item \textbf{Evidence requirements:} Must each action be justified by auditable rules, retrieved evidence, or human approval?
+    \item \textbf{Failure containment:} Can the system stop safely when observations are missing, contradictory, or outside the tested distribution?
+  \end{itemize}
+
+  \begin{alertbox}{Design principle}
+    Use the least autonomous architecture that satisfies the task. Ambiguity alone is not a reason to grant broad action authority.
+  \end{alertbox}
 \end{frame}
 
 \begin{frame}{Transition: From Definitions to Design}
@@ -163,20 +160,20 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Control Loop as a Deterministic Core}
+\begin{frame}{Control Loop with an Explicit Control Plane}
   \begin{equation*}
     s_{t+1} = T(s_t, a_t, o_t), \qquad a_t = \pi_\theta(s_t)
   \end{equation*}
 
   \begin{itemize}
-    \item $s_t$: current state (goal, plan, context, constraints)
+    \item $s_t$: recorded application state (goal, plan, constraints, approvals)
     \item $a_t$: proposed action (tool call, clarification, finalize)
-    \item $o_t$: observed output (tool result, validation status)
-    \item $T$: deterministic transition logic in application code
+    \item $o_t$: observed result, including external-system state and validation outcomes
+    \item $T$: application transition logic that should be explicit, bounded, and testable
   \end{itemize}
 
-  \begin{block}{Engineering rule}
-    Keep control transitions deterministic. Isolate model stochasticity to action proposal.
+  \begin{block}{Engineering principle}
+    Keep authorization, budgets, stop conditions, and mutation gates in application code. Make transitions deterministic where feasible, but record enough context to diagnose nondeterminism from models, external tools, clocks, and changing data sources.
   \end{block}
 \end{frame}
 
@@ -227,9 +224,9 @@
 \begin{frame}[fragile]{Tool Contract Principles}
   \begin{itemize}
     \item Strong input schema
-    \item Deterministic output envelope
-    \item Explicit error taxonomy
-    \item Idempotency key for mutating calls
+    \item Stable, versioned output envelope
+    \item Explicit error taxonomy and retry semantics
+    \item Idempotency key or reconciliation strategy for mutating calls
   \end{itemize}
 
   \begin{lstlisting}[language=Python, caption=Minimal tool envelope]
@@ -296,11 +293,11 @@
       \item Policy documents
     \end{itemize}
 
-    \textbf{Never persist}
+    \textbf{Retention and governance}
     \begin{itemize}
-      \item Secrets
-      \item Credentials
-      \item Sensitive raw payloads
+      \item Keep credentials and secrets out of model-visible memory
+      \item Minimize sensitive payload retention and enforce purpose/TTL/access controls
+      \item Preserve only the audit evidence required by policy, regulation, or incident response
     \end{itemize}
   \end{columns}
 \end{frame}
@@ -314,9 +311,9 @@
   \end{itemize}
 
   \vspace{0.5em}
-  \begin{equation*}
-    U(d) = \alpha R(d) + \beta T(d) - \gamma S(d)
-  \end{equation*}
+  \begin{block}{Retrieval evaluation}
+    Relevance is only one dimension. Evaluate source authority, freshness, coverage, citation correctness, and whether the retrieved evidence actually supports the downstream claim.
+  \end{block}
 \end{frame}
 
 \begin{frame}{Checkpoint 2: Tool and Memory Design}
@@ -345,7 +342,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Safety Controls That Actually Work}
+\begin{frame}{Practical Safety Controls}
   \begin{itemize}
     \item Pre-action policy checks (role, scope, data class)
     \item Execution sandboxing and network egress controls
@@ -364,8 +361,8 @@
   \end{enumerate}
 
   \vspace{0.4em}
-  \begin{block}{Release gate}
-    Ship only if all three levels pass quality and safety thresholds.
+  \begin{block}{Stage-appropriate release criteria}
+    Pre-production tests should gate known scenarios and safety invariants; shadow/canary stages then add online evidence before broader rollout. Thresholds must be defined for the use case and risk level.
   \end{block}
 \end{frame}
 
@@ -377,7 +374,7 @@
       \item Task success rate
       \item Plan validity
       \item Tool-call precision/recall
-      \item Hallucination incidence
+      \item Unsupported-claim rate under an operational definition
     \end{itemize}
 
     \column{0.5\textwidth}
@@ -396,7 +393,7 @@
     \item Per-step trace with prompt/tool/result metadata
     \item Correlation id across model and tool calls
     \item Structured error events with failure class
-    \item Replay mode for deterministic postmortems
+    \item Replay or reconstruction mode using recorded model versions, prompts, tool inputs/outputs, and external-state snapshots where available
     \item Diff between expected and observed transitions
   \end{itemize}
 \end{frame}
@@ -420,9 +417,9 @@
 \begin{frame}{Checkpoint 3: Reliability Readiness}
   \begin{examplebox}{Readiness questions}
     \begin{itemize}
-      \item Can you replay any failure from logs?
+      \item Can you reconstruct the important state and evidence for a failed run?
       \item Do you have a regression set for top workflows?
-      \item Are mutation tools idempotent and approval-gated?
+      \item Are high-impact mutations approval-gated and either idempotent or reconcilable?
       \item Do you track cost per successful outcome?
     \end{itemize}
   \end{examplebox}
@@ -490,7 +487,7 @@
     \item Introduce one low-risk mutation tool
     \item Add approval gate and post-action verification
     \item Expand coverage by failure-class maturity
-    \item Scale only after metric stability for 2-4 weeks
+    \item Expand only after stage-specific quality, safety, and incident criteria are stable for a period appropriate to traffic volume and risk
   \end{enumerate}
 \end{frame}
 
@@ -502,7 +499,7 @@
   \begin{itemize}
     \item Prompt tuning before system boundary definition
     \item Untyped tool calls and implicit side effects
-    \item No deterministic replay path
+    \item Insufficient trace data to reconstruct failures or compare runs
     \item Missing approval gates on mutating actions
     \item Shipping with no regression benchmark
   \end{itemize}
@@ -512,13 +509,33 @@
   \begin{theorembox}{Before you deploy}
     \begin{itemize}
       \item Objective and stop criteria are explicit
-      \item Tool interfaces are typed and idempotent
-      \item Transition logic is deterministic and auditable
+      \item Tool interfaces are typed; mutations are idempotent or reconcilable
+      \item Transition logic, gates, and recorded state are auditable
       \item Safety controls exist pre-action and post-action
       \item Evaluation covers quality, reliability, latency, and cost
       \item Incident replay is operationally usable
     \end{itemize}
   \end{theorembox}
+\end{frame}
+
+\begin{frame}{Synthesis}
+  \begin{itemize}
+    \item Agent reliability is primarily a systems property: model quality matters, but authorization, tool contracts, state management, stop conditions, and recovery paths determine whether failures are contained.
+    \item Autonomy should be scoped to the action risk. Read-only retrieval, reversible changes, and irreversible mutations deserve different control and approval policies.
+    \item Evaluation must decompose failure modes. Final-answer quality alone can hide invalid plans, unsupported evidence, unsafe tool calls, or duplicate side effects.
+    \item Reproducibility is often partial rather than literal. Record model/version/configuration, prompts, state transitions, retrieved evidence, and tool outcomes so runs can be reconstructed and compared.
+    \item More planning, memory, or multiple agents increase capability only when the added coordination cost and failure surface are justified by measured task performance.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item S. Yao et al. (2023). "ReAct: Synergizing Reasoning and Acting in Language Models." \textit{ICLR}.
+    \item T. Schick et al. (2023). "Toolformer: Language Models Can Teach Themselves to Use Tools." \textit{NeurIPS}.
+    \item X. Liu et al. (2024). "AgentBench: Evaluating LLMs as Agents." \textit{ICLR}.
+    \item Z. Xi et al. (2023). "The Rise and Potential of Large Language Model Based Agents: A Survey." arXiv:2309.07864.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Facilitator Timing Guide}
@@ -540,6 +557,8 @@
     \end{itemize}
   \end{block}
 \end{frame}
+
+\contactslide
 
 \appendix
 \section{Appendix: Deep Dives}
@@ -586,7 +605,7 @@
 \begin{frame}{Deep Dive: Regression Harness}
   \begin{itemize}
     \item Store fixed input tasks with expected outcomes
-    \item Replay with deterministic tool mocks when possible
+    \item Replay with fixed fixtures or deterministic tool mocks when possible
     \item Compare plan traces, not only final answers
     \item Fail release on safety regressions even if accuracy improves
   \end{itemize}
