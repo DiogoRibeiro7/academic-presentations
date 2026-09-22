@@ -322,10 +322,18 @@ print(sum(s.area() for s in shapes))
 \begin{frame}{Composition and Inheritance \mins{5}}
   \begin{itemize}
     \item Composition can localize variation and avoid coupling to a superclass implementation.
+    \item Inheritance can be appropriate when the subtype relation is behaviorally meaningful and the inherited contract is stable.
+    \item Choose between them by substitutability, lifecycle, extension pressure, testing cost, and language/runtime constraints rather than by a blanket rule.
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Law of Demeter as a Coupling Heuristic \mins{3}}
   \begin{itemize}
     \item Long navigation chains can reveal that a client knows too much about another object's internal structure.
+    \item The heuristic encourages narrow collaboration boundaries, but fluent APIs, immutable value objects, and query models can legitimately use chained calls.
+    \item Evaluate the dependency created by the chain rather than counting dots mechanically.
+  \end{itemize}
+\end{frame}
 
 % =========================
 % 6. Activity 1
