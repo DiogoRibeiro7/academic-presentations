@@ -224,7 +224,7 @@ jobs:
               <header>
                 <h1>Academic Presentations</h1>
                 <p class="subtitle">Data Science & Machine Learning Course Materials</p>
-                <p class="subtitle">by Diogo Ribeiro - Faculty of Media Arts and Design</p>
+                <p class="subtitle">by Diogo Ribeiro - FMAD - UTP</p>
               </header>
 
               <div class="gallery">
@@ -330,7 +330,7 @@ jobs:
               </div>
 
               <footer>
-                <p>&copy; 2025 Diogo Ribeiro - ESMAD & Mysense.ai</p>
+                <p>&copy; 2026 Diogo Ribeiro - FMAD - UTP</p>
                 <p>Licensed under CC BY-SA 4.0 (presentations) and MIT (code)</p>
                 <a href="https://github.com/diogoribeiro7/academic-presentations" class="github-link">View on GitHub</a>
               </footer>
