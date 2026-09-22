@@ -90,11 +90,9 @@
 \begin{frame}{Correlation vs Causation: The Fundamental Distinction}
 \begin{columns}
 \begin{column}{0.6\textwidth}
-\begin{quote}
-\textit{"Correlation does not imply causation, but it sure as hell provides a hint."} 
-\\[0.2cm]
-\hfill -- Edward Tufte
-\end{quote}
+\begin{block}{Central question}
+A causal analysis asks how an outcome would change under a well-defined intervention or treatment assignment, relative to an explicit counterfactual comparison.
+\end{block}
 
 \vspace{0.3cm}
 \textbf{The Problem with Pure Prediction:}
@@ -1644,14 +1642,8 @@ Modern causal inference emphasizes \textbf{design-based identification} over mod
 \end{itemize}
 
 \vspace{0.3cm}
-\begin{block}{The Hierarchy of Evidence}
-\begin{enumerate}
-\item Randomized experiments
-\item Natural experiments
-\item Quasi-experiments (RDD, DID, IV)
-\item Observational studies with controls
-\item Descriptive studies
-\end{enumerate}
+\begin{block}{Identification is design-dependent}
+No method is credible merely because of its label. Randomized and observational designs identify causal effects only under assumptions that connect the observed comparison to the target counterfactual. The relevant question is whether those assumptions are plausible for the estimand, population, treatment, and data at hand.
 \end{block}
 \end{column}
 \end{columns}
@@ -1661,162 +1653,31 @@ Modern causal inference emphasizes \textbf{design-based identification} over mod
 
 \section{Summary and Next Steps}
 
-\begin{frame}{Key Takeaways}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Core Principles:}
-\begin{itemize}
-\item \textcolor{forest}{\textbf{Causation $\neq$ Correlation}}: Association doesn't imply causation
-\item \textcolor{forest}{\textbf{Design matters}}: Identification strategy is crucial
-\item \textcolor{forest}{\textbf{Assumptions matter}}: Be explicit and test when possible
-\item \textcolor{forest}{\textbf{Context matters}}: External validity is key
-\end{itemize}
+\begin{frame}{Synthesis: Identification Before Estimation}
+  \begin{itemize}
+    \item Start with the estimand: define the treatment, outcome, population, intervention, and counterfactual comparison before selecting an estimator.
+    \item Identification comes from design and assumptions. Randomization, exclusion restrictions, continuity, parallel trends, ignorability, and overlap are not interchangeable assumptions.
+    \item Diagnostics can reveal some violations, but they do not prove identification assumptions that are fundamentally untestable from the observed data alone.
+    \item Estimation should follow identification. Flexible models, doubly robust estimators, or causal forests do not repair a design that fails to identify the target effect.
+    \item Report the estimand, assumptions, diagnostics, uncertainty, sensitivity analyses, and limits on external validity as part of the result rather than as afterthoughts.
+  \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Technical Skills Learned:}
-\begin{itemize}
-\item DAG construction and analysis
-\item Instrumental variables
-\item Regression discontinuity
-\item Difference-in-differences
-\item Propensity score methods
-\item Modern ML approaches (DML, causal forests)
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Practical Framework:}
-\begin{enumerate}
-\item Define the causal question
-\item Draw the DAG
-\item Choose identification strategy
-\item Validate assumptions
-\item Estimate and interpret
-\item Report honestly
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Business Impact:}
-\begin{itemize}
-\item \textcolor{crimson}{Better decisions}: Understanding what works
-\item \textcolor{crimson}{Resource allocation}: Target effective interventions
-\item \textcolor{crimson}{Policy evaluation}: Evidence-based choices
-\item \textcolor{crimson}{Strategic planning}: Anticipate intervention effects
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Common Applications:}
-\begin{itemize}
-\item Marketing campaign effectiveness
-\item Product feature impact
-\item Pricing strategy evaluation
-\item HR policy assessment
-\item Supply chain optimization
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{The Causal Mindset}
-\begin{itemize}
-\item Always ask: "What would happen if...?"
-\item Think about counterfactuals
-\item Consider selection and confounding
-\item Design for causal inference from the start
-\end{itemize}
-\end{block}
-\end{column}
-\end{columns}
-
-\vspace{0.5cm}
-\begin{center}
-\textcolor{navyblue}{\Large \textbf{Causal inference is the bridge between data science and evidence-based decision making.}}
-\end{center}
+  \begin{alertbox}{Practical rule}
+    The strongest causal conclusion is the strongest conclusion justified by the design and assumptions, not by the sophistication of the estimator.
+  \end{alertbox}
 \end{frame}
 
-\begin{frame}{Next Steps in Your Causal Journey}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Immediate Next Topics:}
-\begin{enumerate}
-\item \textbf{Experimental Design \& A/B Testing}
-   \begin{itemize}
-   \item Power analysis and sample sizes
-   \item Online experimentation platforms
-   \item Sequential testing methods
-   \end{itemize}
-
-\item \textbf{Explainable AI \& Model Interpretability}
-   \begin{itemize}
-   \item SHAP and LIME
-   \item Global vs local explanations
-   \item Causal vs predictive explanations
-   \end{itemize}
-
-\item \textbf{Time Series Analysis}
-   \begin{itemize}
-   \item Causal inference in time series
-   \item Synthetic control methods
-   \item Granger causality
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Advanced Topics to Explore:}
-\begin{itemize}
-\item Mediation analysis
-\item Interference and spillovers
-\item Machine learning + causality
-\item Structural equation modeling
-\item Bayesian causal inference
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Practice Projects:}
-\begin{itemize}
-\item Analyze marketing campaign data
-\item Evaluate policy using public data
-\item Design A/B test for product feature
-\item Build causal ML pipeline
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Essential Reading:}
-\begin{itemize}
-\item Pearl \& Mackenzie: "The Book of Why"
-\item Angrist \& Pischke: "Mostly Harmless Econometrics"
-\item Imbens \& Rubin: "Causal Inference for Statistics"
-\item Cunningham: "Causal Inference: The Mixtape"
-\end{itemize}
-\end{column}
-\end{columns}
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item J. Pearl (2009). \textit{Causality: Models, Reasoning, and Inference}, 2nd ed. Cambridge University Press.
+    \item G. W. Imbens and D. B. Rubin (2015). \textit{Causal Inference for Statistics, Social, and Biomedical Sciences}. Cambridge University Press.
+    \item J. D. Angrist and J.-S. Pischke (2009). \textit{Mostly Harmless Econometrics}. Princeton University Press.
+    \item P. R. Rosenbaum and D. B. Rubin (1983). "The Central Role of the Propensity Score in Observational Studies for Causal Effects." \textit{Biometrika}, 70(1), 41--55.
+    \item G. W. Imbens and T. Lemieux (2008). "Regression Discontinuity Designs: A Guide to Practice." \textit{Journal of Econometrics}, 142(2), 615--635.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-{\Huge Thank You}
-
-\vspace{0.8cm}
-
-\textbf{Questions \& Discussion}
-
-\vspace{1cm}
-
-\textbf{Diogo Ribeiro}\\
-ESMAD -- Escola Superior de Média Arte e Design\\
-Lead Data Scientist, Mysense.ai\\
-
-\vspace{0.5cm}
-
-\texttt{dfr@esmad.ipp.pt}\\
-\texttt{https://orcid.org/0009-0001-2022-7072}
-
-\vspace{0.8cm}
-
-\textit{Slides and code available at:}\\
-\texttt{github.com/diogoribeiro7/academic-presentations}
-
-\vspace{0.5cm}
-
-\textit{Next: Experimental Design \& A/B Testing}
-\end{center}
-\end{frame}
+\contactslide
 
 \end{document}
