@@ -27,6 +27,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item connect forward propagation and backpropagation to the optimization dynamics observed during training;
+    \item compare CNNs, recurrent architectures, and Transformers in terms of the structure and inductive biases they impose on a problem;
+    \item diagnose common optimization and generalization failures and justify architecture, regularization, and training choices against appropriate baselines.
+  \end{itemize}
+\end{frame}
+
 \tocslide
 
 % ================================================================
@@ -807,57 +816,31 @@
 \section{Conclusion}
 % ================================================================
 
-\begin{frame}{Summary}
-  \textbf{Key concepts covered:}
-
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item \textbf{Foundations:} Neurons, activation functions, backpropagation
-    \item \textbf{Optimization:} SGD, Adam, learning rate schedules
-    \item \textbf{Regularization:} Dropout, batch normalization, weight decay
-    \item \textbf{CNNs:} Convolution, pooling, ResNet
-    \item \textbf{RNNs:} LSTM, sequence modeling
-    \item \textbf{Transformers:} Attention, BERT, GPT
+    \item Deep learning is fundamentally a framework for \textbf{representation learning}: architecture determines which structural assumptions are easy or difficult for the model to express.
+    \item Backpropagation computes gradients, but successful training depends on the interaction between optimization, initialization, normalization, regularization, and data quality.
+    \item CNNs, recurrent networks, and Transformers are not a simple ladder of increasingly superior models; they encode different assumptions about locality, order, and interaction.
+    \item Scaling model capacity can improve approximation power, but it does not remove the need for baselines, validation, uncertainty analysis, or careful error diagnosis.
   \end{itemize}
 
   \vspace{0.5em}
 
-  \begin{alertbox}{The Deep Learning Revolution}
-    \begin{itemize}
-      \item Transforming AI and industry
-      \item Rapid progress in architectures and applications
-      \item Democratization through frameworks (PyTorch, TensorFlow)
-      \item Still many open questions!
-    \end{itemize}
+  \begin{alertbox}{Practical principle}
+    Prefer the simplest architecture whose inductive bias matches the data-generating structure, then justify additional complexity empirically.
   \end{alertbox}
 \end{frame}
 
-\begin{frame}{Further Reading}
-  \textbf{Books:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Goodfellow, Bengio, Courville (2016). \textit{Deep Learning}
-    \item Zhang et al. (2023). \textit{Dive into Deep Learning}
-  \end{itemize}
-
-  \textbf{Courses:}
-  \begin{itemize}
-    \item Stanford CS231n (CNNs for Visual Recognition)
-    \item Stanford CS224n (NLP with Deep Learning)
-    \item fast.ai Practical Deep Learning
-  \end{itemize}
-
-  \textbf{Key Papers:}
-  \begin{itemize}
-    \item Krizhevsky et al. (2012). "ImageNet Classification with Deep CNNs" (AlexNet)
-    \item He et al. (2015). "Deep Residual Learning" (ResNet)
-    \item Vaswani et al. (2017). "Attention Is All You Need" (Transformer)
+    \item I. Goodfellow, Y. Bengio, and A. Courville (2016). \textit{Deep Learning}. MIT Press.
+    \item Y. LeCun, Y. Bengio, and G. Hinton (2015). "Deep learning." \textit{Nature}, 521, 436--444.
+    \item S. Hochreiter and J. Schmidhuber (1997). "Long Short-Term Memory." \textit{Neural Computation}, 9(8), 1735--1780.
+    \item K. He, X. Zhang, S. Ren, and J. Sun (2016). "Deep Residual Learning for Image Recognition." \textit{CVPR}.
+    \item A. Vaswani et al. (2017). "Attention Is All You Need." \textit{Advances in Neural Information Processing Systems}.
   \end{itemize}
 \end{frame}
-
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Mysense.ai for deep learning applications
-  \item Deep learning research community
-}
 
 \contactslide
 
