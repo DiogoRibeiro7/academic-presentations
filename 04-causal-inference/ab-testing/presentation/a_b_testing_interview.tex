@@ -47,8 +47,8 @@
   breaklines=true
 }
 
-\title[Experimentation \& Causal Inference]{Experimentation, Causal Inference,\\
-Metrics, Modeling, and MLOps (Everything Explained)}
+\title[Experimentation \& Causal Inference]{Experimentation and Causal Inference:\\
+Design, Analysis, and Operational Validity}
 \date{\today}
 
 \AtBeginSection[]{
@@ -63,20 +63,28 @@ Metrics, Modeling, and MLOps (Everything Explained)}
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item define the estimand, randomization unit, eligibility rule, primary metric, and decision rule before an experiment begins;
+    \item reason about power, multiplicity, sequential monitoring, and variance reduction using assumptions appropriate to the design;
+    \item diagnose implementation failures such as sample-ratio mismatch, interference, non-compliance, and instrumentation errors without silently changing the estimand.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Agenda}
   \tableofcontents
 \end{frame}
 
 \section{A/B Testing: Core Concepts}
 \begin{frame}{A/B Testing (Controlled Experiments)}
-  \textbf{Definition:} Randomly split units into Control (A) and Treatment (B) and compare outcomes.\\[0.5em]
-  \textbf{Why:} Randomization balances observed/unobserved factors $\Rightarrow$ causal attribution.\\[0.5em]
-  \textbf{Units of Randomization:} user, session, cluster/geo. \\[0.25em]
-  \textbf{Key rule:} use the smallest unit that avoids \emph{interference}.
+  \textbf{Definition:} Randomly assign eligible experimental units to control and treatment conditions, then estimate a pre-defined treatment effect on a pre-defined outcome.\\[0.5em]
+  \textbf{Identification:} Randomization makes treatment assignment independent of potential outcomes \emph{in expectation}; realized covariate balance is a diagnostic, not the estimand.\\[0.5em]
+  \textbf{Units of randomization:} user, session, household, cluster, geography, or time block, depending on interference and operational constraints.
   \begin{itemize}
-    \item Stable hashing for assignment (e.g., \texttt{hash(user\_id) mod K}).
-    \item Stratification (blocking) by country/device to reduce variance.
-    \item Exposure integrity: only eligible, actually-exposed users in analysis.
+    \item Assignment must be stable and auditable, for example through deterministic hashing of an eligible unit identifier.
+    \item Blocking or stratification can improve precision when defined before randomization.
+    \item The primary analysis should normally follow assignment (intention-to-treat). Exposure- or compliance-based analyses answer different questions and require additional assumptions.
   \end{itemize}
 \end{frame}
 
@@ -93,10 +101,10 @@ Metrics, Modeling, and MLOps (Everything Explained)}
 \begin{frame}{Statistical Testing Basics}
   \begin{itemize}
     \item \textbf{Null (H$_0$):} no effect; \textbf{Alternative (H$_1$):} effect exists.
-    \item \textbf{p-value:} probability of stats as extreme as observed, if H$_0$ true.
+    \item \textbf{p-value:} under $H_0$ and the assumed sampling model, the probability of obtaining a test statistic at least as incompatible with $H_0$ as the observed statistic.
     \item \textbf{$\alpha$ (Type I error):} false positive rate (commonly 0.05).
     \item \textbf{$\beta$ (Type II error):} false negative rate; \textbf{Power} $=1-\beta$.
-    \item \textbf{Confidence Interval (CI):} Range that would contain the true effect in repeated samples (under the model).
+    \item \textbf{Confidence interval:} a procedure that attains its stated coverage rate under repeated sampling when its assumptions hold; it is not a posterior probability statement about the realized interval.
   \end{itemize}
 \end{frame}
 
@@ -107,6 +115,7 @@ Metrics, Modeling, and MLOps (Everything Explained)}
   \]
   \begin{itemize}
     \item $\bar{p}$: baseline rate (e.g., 0.12); $z_{1-\alpha/2}\approx1.96$ for $\alpha=0.05$; $z_{1-\beta}\approx0.84$ for 80\% power.
+    \item This approximation assumes independent observations, equal-sized arms, a fixed-horizon two-sided test, and a binary outcome; clustering, repeated measures, unequal allocation, or alternative estimators require design-specific variance calculations.
     \item \textbf{Duration:} $ \text{days} \approx \frac{n}{\text{eligible users/day/arm}} $, then round to full weeks to cover seasonality.
   \end{itemize}
 \end{frame}
@@ -143,7 +152,7 @@ Metrics, Modeling, and MLOps (Everything Explained)}
 \begin{frame}{SRM (Sample Ratio Mismatch)}
   \textbf{Definition:} Observed allocation differs from expected (e.g., 50/50 planned, 54/46 observed).\\[0.5em]
   \textbf{Why it matters:} Indicates routing/eligibility/bot issues that can bias estimates.\\[0.5em]
-  \textbf{Detection:} $\chi^2$ goodness-of-fit on counts; alert if $p < 0.001$ sustained.
+  \textbf{Detection:} compare observed and planned allocation counts, commonly with a $\chi^2$ goodness-of-fit test. Alert thresholds should be pre-specified and calibrated to traffic volume and operational risk; there is no universal p-value cutoff.
 \end{frame}
 
 \begin{frame}{Exposure Integrity \& Instrumentation}
@@ -362,9 +371,25 @@ SHAP & Shapley-based local/global explanations \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Closing}
-  \centering
-  \Large Questions \& Discussion
+\begin{frame}{Synthesis: Protect the Estimand}
+  \begin{itemize}
+    \item Experimental validity begins with the assignment mechanism, eligibility definition, estimand, metric construction, and analysis plan.
+    \item Statistical significance is not a decision rule by itself: uncertainty, minimum relevant effect, guardrails, costs, and downstream consequences all matter.
+    \item Peeking, multiplicity, non-compliance, interference, and post-treatment filtering change the inferential problem; they should be handled by design rather than repaired after seeing the result.
+    \item Operational checks such as SRM detection, exposure logging, and instrumentation audits protect the experiment, but they do not substitute for a valid statistical analysis.
+  \end{itemize}
 \end{frame}
+
+\begin{frame}{Selected References}
+  \small
+  \begin{itemize}
+    \item R. Kohavi, D. Tang, and Y. Xu (2020). \textit{Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing}. Cambridge University Press.
+    \item A. Deng, Y. Xu, R. Kohavi, and T. Walker (2013). "Improving the Sensitivity of Online Controlled Experiments by Utilizing Pre-Experiment Data." \textit{WSDM}, 123--132.
+    \item R. Johari, P. Koomen, L. Pekelis, and D. Walsh (2021). "Always Valid Inference: Continuous Monitoring of A/B Tests." \textit{Operations Research}, 70(3), 1806--1821.
+    \item D. C. Montgomery (2017). \textit{Design and Analysis of Experiments}, 9th ed. Wiley.
+  \end{itemize}
+\end{frame}
+
+\contactslide
 
 \end{document}
