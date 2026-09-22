@@ -27,6 +27,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item distinguish intrinsic interpretability from post-hoc explanation and separate global questions from local ones;
+    \item select explanation methods according to model class, audience, and decision context rather than treating SHAP or LIME as universal defaults;
+    \item evaluate explanation fidelity, stability, and limitations, including the distinction between explanatory evidence, causal claims, and fairness assessments.
+  \end{itemize}
+\end{frame}
+
 \tocslide
 
 % ================================================================
@@ -60,7 +69,7 @@
     \begin{itemize}
       \item \textbf{Trust:} Users need to understand decisions
       \item \textbf{Debugging:} Identify and fix model errors
-      \item \textbf{Regulation:} GDPR "right to explanation"
+      \item \textbf{Governance:} Some decisions require documentation, contestability, human oversight, or other accountability mechanisms
       \item \textbf{Fairness:} Detect and mitigate bias
       \item \textbf{Scientific insight:} Understand underlying phenomena
     \end{itemize}
@@ -91,9 +100,9 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{The Accuracy-Interpretability Tradeoff}
+\begin{frame}{Accuracy and Interpretability Are Not a Single Trade-off}
   \begin{center}
-    \textbf{Traditional view: Must choose between accuracy and interpretability}
+    \textbf{The relationship depends on the data, model class, target metric, and decision context}
   \end{center}
 
   \vspace{0.5em}
@@ -108,7 +117,7 @@
       \item Rule-based systems
     \end{itemize}
 
-    \textcolor{ESMADBlue}{\textbf{High interpretability, Lower accuracy}}
+    \textcolor{ESMADBlue}{\textbf{Interpretability is built into the model form}}
 
     \column{0.5\textwidth}
     \textbf{Black Box Models:}
@@ -119,13 +128,13 @@
       \item SVM with RBF kernel
     \end{itemize}
 
-    \textcolor{ESMADAccent}{\textbf{Low interpretability, Higher accuracy}}
+    \textcolor{ESMADAccent}{\textbf{Requires a separate explanation layer whose fidelity must be evaluated}}
   \end{columns}
 
   \vspace{1em}
 
-  \begin{block}{Modern Approach}
-    Use explanation methods to make black-box models transparent!
+  \begin{block}{Methodological caution}
+    A post-hoc explanation is evidence about model behaviour, not the same thing as an intrinsically interpretable model and not a causal explanation by default.
   \end{block}
 \end{frame}
 
@@ -734,63 +743,33 @@ print(metric_frame.by_group)
 \section{Conclusion}
 % ================================================================
 
-\begin{frame}{Summary}
-  \textbf{Key Takeaways:}
-
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Interpretability is crucial for trust, debugging, and fairness
-    \item \textbf{Global explanations:} Understand model behavior overall
-    \item \textbf{Local explanations:} Explain individual predictions
-    \item \textbf{SHAP:} Theoretically sound, widely applicable
-    \item \textbf{LIME:} Fast, intuitive, model-agnostic
-    \item \textbf{Fairness:} Multiple definitions, inherent trade-offs
+    \item Explanation should begin with a \textbf{question}: global behaviour, a local prediction, feature effects, debugging, auditability, or communication.
+    \item SHAP, LIME, permutation importance, PDP/ICE, and related methods answer different questions and rely on different assumptions; their outputs are not interchangeable.
+    \item Explanation quality is itself an empirical object. Fidelity, stability, sensitivity to background data, and robustness to perturbation should be evaluated.
+    \item Feature attribution is not causal attribution. A variable receiving a large explanation value does not establish that intervening on it would change the outcome.
+    \item Fairness involves statistical definitions, institutional choices, and consequences. Explanation can support an audit, but it cannot resolve normative trade-offs by itself.
   \end{itemize}
 
   \vspace{0.5em}
 
-  \begin{alertbox}{The Future of XAI}
-    \begin{itemize}
-      \item Regulatory requirements increasing
-      \item Better integration into ML pipelines
-      \item Standardization of methods and metrics
-      \item Causal explanations beyond correlations
-    \end{itemize}
+  \begin{alertbox}{High-stakes systems}
+    When an interpretable model can meet the performance requirement, it should be treated as a serious baseline rather than assuming that a black box plus post-hoc explanation is automatically preferable.
   \end{alertbox}
 \end{frame}
 
-\begin{frame}{Further Reading}
-  \textbf{Books:}
+\begin{frame}{Selected References}
+  \small
   \begin{itemize}
-    \item Molnar (2022). \textit{Interpretable Machine Learning}
-    \item Barocas, Hardt, Narayanan (2019). \textit{Fairness and Machine Learning}
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Key Papers:}
-  \begin{itemize}
-    \item Ribeiro et al. (2016). "Why Should I Trust You? Explaining Predictions" (LIME)
-    \item Lundberg \& Lee (2017). "A Unified Approach to Interpreting Model Predictions" (SHAP)
-    \item Doshi-Velez \& Kim (2017). "Towards A Rigorous Science of Interpretable ML"
-    \item Chouldechova (2017). "Fair Prediction with Disparate Impact"
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  \textbf{Tools:}
-  \begin{itemize}
-    \item SHAP: \url{https://github.com/slundberg/shap}
-    \item LIME: \url{https://github.com/marcotcr/lime}
-    \item InterpretML: \url{https://interpret.ml/}
-    \item Fairlearn: \url{https://fairlearn.org/}
+    \item M. T. Ribeiro, S. Singh, and C. Guestrin (2016). "Why Should I Trust You? Explaining the Predictions of Any Classifier." \textit{KDD}.
+    \item S. M. Lundberg and S.-I. Lee (2017). "A Unified Approach to Interpreting Model Predictions." \textit{Advances in Neural Information Processing Systems}.
+    \item F. Doshi-Velez and B. Kim (2017). "Towards A Rigorous Science of Interpretable Machine Learning." arXiv:1702.08608.
+    \item C. Molnar (2022). \textit{Interpretable Machine Learning}, 2nd ed.
+    \item C. Rudin (2019). "Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead." \textit{Nature Machine Intelligence}, 1, 206--215.
+    \item A. Chouldechova (2017). "Fair Prediction with Disparate Impact: A Study of Bias in Recidivism Prediction Instruments." \textit{Big Data}, 5(2), 153--163.
   \end{itemize}
 \end{frame}
-
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Mysense.ai for applied AI ethics work
-  \item XAI research community
-}
 
 \contactslide
 
