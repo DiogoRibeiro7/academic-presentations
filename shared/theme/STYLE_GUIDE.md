@@ -68,7 +68,7 @@ Use ordinary Beamer metadata in standalone decks:
 \title[Short Title]{Full Presentation Title}
 \subtitle{Optional Subtitle}
 \author{Diogo Ribeiro}
-\institute{Faculty of Media Arts and Design, Technical University of Porto}
+\institute{FMAD - UTP}
 \date{\today}
 ```
 
@@ -76,7 +76,7 @@ The canonical author identity for this repository is:
 
 - **Name:** Diogo Ribeiro
 - **ORCID:** 0009-0001-2022-7072
-- **Affiliation:** Faculty of Media Arts and Design, Technical University of Porto
+- **Affiliation:** FMAD - UTP
 - **Email:** dfr@esmad.ipp.pt
 - **LinkedIn:** https://www.linkedin.com/in/diogo-ribeiro-9094604a/
 
@@ -96,7 +96,7 @@ The filename is retained for compatibility. The package follows the canonical Ma
 \authorname{Diogo Ribeiro}
 \authoremail{dfr@esmad.ipp.pt}
 \authororcid{0009-0001-2022-7072}
-\authorinstitution{Faculty of Media Arts and Design, Technical University of Porto}
+\authorinstitution{FMAD - UTP}
 ```
 
 `\authorcompany{...}` remains only as a legacy no-op so older source files continue to compile. It must not be used for current metadata.
@@ -269,7 +269,7 @@ The consistency rule applies to the presentation shell, not to the scientific co
 - use `seahorse` or another competing Beamer color theme;
 - override title/frame-title colors with a deck-specific blue palette;
 - present the former MySense.ai role as current metadata;
-- replace the current faculty name with the old ESMAD display name;
+- replace the current FMAD - UTP affiliation with the old ESMAD display name;
 - remove aspect-ratio or font-size class options for the sake of consistency;
 - introduce source-normalization scripts or self-modifying workflows;
 - change mathematical or teaching content during a visual-shell migration.
@@ -306,5 +306,5 @@ Historical migration documents may describe older styling and should not be trea
 ---
 
 **Maintained by:** Diogo Ribeiro  
-**Affiliation:** Faculty of Media Arts and Design, Technical University of Porto  
+**Affiliation:** FMAD - UTP  
 **License:** CC BY-SA 4.0 for presentation content; MIT for code

@@ -390,4 +390,4 @@ For questions about assessments:
 ---
 
 _Last Updated: January 2025_
-_Part of the Academic Presentations series by Diogo Ribeiro, ESMAD & Mysense.ai_
+_Part of the Academic Presentations series by Diogo Ribeiro, FMAD - UTP_

@@ -14,6 +14,7 @@ EXPECTED_KEYS: Final[set[str]] = {"name", "orcid", "affiliation"}
 LEGACY_MARKERS: Final[tuple[str, ...]] = (
     "Lead Data Scientist, Mysense.ai",
     "ESMAD - Escola Superior de Média Arte e Design",
+    "Faculty of Media Arts and Design, Technical University of Porto",
 )
 
 

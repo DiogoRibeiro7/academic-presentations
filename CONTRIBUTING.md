@@ -561,7 +561,7 @@ Before submitting a PR, ensure:
 - [ ] All references resolve correctly
 - [ ] Figures display properly
 - [ ] Mathematical notation is correct
-- [ ] Uses ESMAD theme correctly
+- [ ] Uses the FMAD - UTP shared theme correctly
 - [ ] Includes contact slide
 - [ ] No overfull/underfull boxes (major ones)
 
