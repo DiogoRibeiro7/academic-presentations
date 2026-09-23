@@ -33,7 +33,7 @@ This course is built from reusable LaTeX sections (NOT standalone documents):
 
 ### Master Presentation
 
-The `main_presentation.tex` file includes selected sections:
+The canonical `presentation/main.tex` entry point compiles the composite Beamer source `main_presentation.tex`, which includes the selected sections:
 
 ```latex
 \documentclass[aspectratio=169]{beamer}
@@ -92,7 +92,8 @@ The sections in this domain are **SHORTER** versions designed for overview prese
 ```text
 08-data-science-applications-course/
 ├── presentation/
-│   ├── main_presentation.tex      # Master file for composing sections
+│   ├── main.tex                   # Canonical build entry point
+│   ├── main_presentation.tex      # Composite Beamer source
 │   ├── sections/                  # Modular LaTeX sections
 │   │   ├── deep_learning_section.tex
 │   │   ├── time_series_section.tex
@@ -119,12 +120,12 @@ The sections in this domain are **SHORTER** versions designed for overview prese
 
 ```bash
 cd presentation/
-pdflatex main_presentation.tex
+latexmk -pdf main.tex
 ```
 
 ### Compile Custom Selection
 
-Edit `main_presentation.tex` to include only desired sections:
+Edit `main_presentation.tex` to choose which modular sections are included, but build through the canonical `main.tex` entry point:
 
 ```latex
 \input{sections/deep_learning_section.tex}
