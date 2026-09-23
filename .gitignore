@@ -89,6 +89,7 @@ pytestdebug.log
 *.pdfsync
 
 # Generated presentation outputs
+*.pdf
 
 # Intermediate files
 *-converted-to.*
