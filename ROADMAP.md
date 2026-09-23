@@ -94,8 +94,9 @@ The repository-wide presentation migration is complete:
 
 - [x] Preserve genuine alternate sources such as the PCA proof-oriented handout and the Data Science Applications composite Beamer source.
 - [x] Remove obsolete PDF-only `main_presentation.tex` aggregation wrappers that were unreferenced by CI/build workflows.
-- [ ] Decide whether historically tracked PDFs should remain in Git or live only in CI/release artifacts.
-- [ ] Apply the generated-artifact policy consistently across presentations and exercises.
+- [x] Adopt a source-only Git policy for generated PDFs: `.tex` sources remain in Git, compiled PDFs live in CI/release artifacts.
+- [x] Remove historically tracked generated PDFs from presentation, exercise, and assessment directories.
+- [x] Ignore future generated PDFs with `*.pdf` in `.gitignore`.
 
 ### 2. Current documentation cleanup
 
