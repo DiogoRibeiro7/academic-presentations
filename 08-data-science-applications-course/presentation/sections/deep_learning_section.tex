@@ -22,114 +22,75 @@
 % ================================================================
 
 \begin{frame}{From Linear Models to Neural Networks}
-\textbf{The evolution from simple to complex models}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Linear Regression:}
+\textbf{Linear regression:}
 \[
-\hat{y} = w_1 x_1 + w_2 x_2 + \cdots + w_d x_d + b
+  \hat{y} = w_1 x_1 + w_2 x_2 + \cdots + w_d x_d + b
 \]
 
-\textbf{Limitations:}
 \begin{itemize}
-\item Can only learn linear relationships
-\item Decision boundary is a hyperplane
-\item XOR problem unsolvable
+  \item Linear models represent additive linear relationships in the chosen features.
+  \item Non-linear activations let multilayer networks represent non-linear decision surfaces.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{Adding Non-Linearity:}
-
-\textcolor{forest}{\textbf{Key Insight:}} Compose linear transformations with non-linear activation functions!
-
+\textbf{Adding non-linearity:}
 \[
-\hat{y} = \sigma(w_1 x_1 + w_2 x_2 + b)
+  \hat{y} = \sigma(w_1 x_1 + w_2 x_2 + b).
 \]
 
-where $\sigma$ is a non-linear function.
+\begin{alertblock}{Universal approximation}
+Under standard universal-approximation conditions, a sufficiently wide network with an appropriate non-linear activation can approximate continuous functions on compact sets arbitrarily well. This does not imply efficient learning, finite-sample generalization, or practical trainability.
+\end{alertblock}
+\end{frame}
 
-\vspace{0.3cm}
-
-\textbf{Universal Approximation Theorem:}
-
-Under standard universal-approximation conditions, a sufficiently wide network with an appropriate non-linear activation can approximate continuous functions on compact sets arbitrarily well; the theorem does not imply efficient learning, finite-sample generalization, or practical trainability.
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Single Neuron (Perceptron):}
-
+\begin{frame}{From a Single Neuron to an MLP}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Single neuron}
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.8]
-% Inputs
+\begin{tikzpicture}[scale=0.75]
 \node[draw, circle] (x1) at (0,2) {$x_1$};
 \node[draw, circle] (x2) at (0,1) {$x_2$};
 \node[draw, circle] (x3) at (0,0) {$x_3$};
-
-% Neuron
-\node[draw, circle, fill=navyblue!20, minimum size=1.5cm] (n) at (3,1) {$\sigma$};
-
-% Output
-\node[draw, circle] (y) at (6,1) {$\hat{y}$};
-
-% Connections
-\draw[->, thick] (x1) -- node[above] {\tiny $w_1$} (n);
-\draw[->, thick] (x2) -- node[above] {\tiny $w_2$} (n);
-\draw[->, thick] (x3) -- node[above] {\tiny $w_3$} (n);
+\node[draw, circle, fill=navyblue!20, minimum size=1.4cm] (n) at (3,1) {$\sigma$};
+\node[draw, circle] (y) at (5.5,1) {$\hat{y}$};
+\draw[->, thick] (x1) -- node[above] {$w_1$} (n);
+\draw[->, thick] (x2) -- node[above] {$w_2$} (n);
+\draw[->, thick] (x3) -- node[above] {$w_3$} (n);
 \draw[->, thick] (n) -- (y);
-
-% Bias
-\node[draw, circle] (b) at (3,-0.5) {$b$};
-\draw[->, thick] (b) -- (n);
 \end{tikzpicture}
 \end{figure}
+\end{column}
 
-\vspace{0.2cm}
-
-\textbf{Multi-Layer Perceptron (MLP):}
-
+\begin{column}{0.48\textwidth}
+\textbf{Multi-layer perceptron}
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.6]
-% Input layer
+\begin{tikzpicture}[scale=0.75]
 \foreach \i in {1,...,3} {
   \node[draw, circle, fill=forest!20] (x\i) at (0,{3-\i}) {$x_{\i}$};
 }
-
-% Hidden layer
 \foreach \i in {1,...,4} {
   \node[draw, circle, fill=navyblue!20] (h\i) at (2.5,{3.5-\i}) {};
 }
-
-% Output layer
 \node[draw, circle, fill=crimson!20] (y) at (5,1) {$\hat{y}$};
-
-% Connections
 \foreach \i in {1,...,3} {
   \foreach \j in {1,...,4} {
     \draw[->] (x\i) -- (h\j);
   }
 }
-\foreach \i in {1,...,4} {
-  \draw[->] (h\i) -- (y);
-}
-
-% Labels
-\node at (0,-1) {\tiny Input};
-\node at (2.5,-1) {\tiny Hidden};
-\node at (5,-1) {\tiny Output};
+\foreach \i in {1,...,4} { \draw[->] (h\i) -- (y); }
+\node at (0,-1) {Input};
+\node at (2.5,-1) {Hidden};
+\node at (5,-1) {Output};
 \end{tikzpicture}
 \end{figure}
 \end{column}
 \end{columns}
 
-\vspace{0.2cm}
-
-\begin{alertblock}{Deep Learning = Many Layers}
-"Deep" refers to multiple hidden layers. Modern networks can have 100+ layers!
-\end{alertblock}
+\begin{block}{Depth}
+Deep learning composes multiple representation-learning layers; depth is not the same thing as parameter count.
+\end{block}
 \end{frame}
 
 \begin{frame}{Activation Functions}
@@ -227,95 +188,69 @@ Still just linear!
 \end{columns}
 \end{frame}
 
-\begin{frame}{Backpropagation: Training Neural Networks}
-\textbf{The algorithm that makes deep learning possible}
+\begin{frame}{Backpropagation: The Optimization Problem}
+Given training data $\{(x^{(i)},y^{(i)})\}_{i=1}^n$, minimize
+\[
+  \mathcal{L}(W)=\frac{1}{n}\sum_{i=1}^n \operatorname{loss}(\hat y^{(i)},y^{(i)}).
+\]
 
+Gradient-based optimization updates parameters as
+\[
+  W \leftarrow W - \eta\nabla_W\mathcal{L}.
+\]
+
+For a two-layer network
+\[
+  \hat y=f\!\left(W_2\,\sigma(W_1x)\right),
+\]
+backpropagation applies the chain rule efficiently through the computational graph.
+
+\begin{block}{Key distinction}
+Backpropagation computes derivatives. The optimizer decides how those derivatives update parameters.
+\end{block}
+\end{frame}
+
+\begin{frame}{Backpropagation: Forward and Backward Passes}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The Problem:}
+\begin{column}{0.42\textwidth}
+\textbf{Forward pass}
+\begin{enumerate}
+  \item compute layer activations;
+  \item store intermediate quantities;
+  \item evaluate the loss.
+\end{enumerate}
 
-Given training data $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$, find weights $W$ that minimize loss:
-\[
-\mathcal{L}(W) = \frac{1}{n} \sum_{i=1}^n \text{loss}(\hat{y}^{(i)}, y^{(i)})
-\]
-
-\textbf{The Solution: Gradient Descent}
-\[
-W \leftarrow W - \eta \nabla_W \mathcal{L}
-\]
-
-But how to compute $\nabla_W \mathcal{L}$ for deep networks?
-
-\vspace{0.3cm}
-
-\textbf{Backpropagation = Chain Rule}
-
-For a 2-layer network:
-\[
-\hat{y} = f(W_2 \cdot \sigma(W_1 x))
-\]
-
-By chain rule:
-\[
-\frac{\partial \mathcal{L}}{\partial W_1} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial h} \cdot \frac{\partial h}{\partial W_1}
-\]
-
-where $h = \sigma(W_1 x)$ is hidden layer.
+\textbf{Backward pass}
+\begin{enumerate}
+  \item propagate sensitivities from the loss;
+  \item accumulate parameter gradients;
+  \item pass gradients to the optimizer.
+\end{enumerate}
 \end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Forward Pass:}
-\begin{enumerate}
-\item Compute activations layer by layer
-\item Store intermediate values
-\item Compute loss at output
-\end{enumerate}
-
-\textbf{Backward Pass:}
-\begin{enumerate}
-\item Start from loss
-\item Compute gradients backward
-\item Update weights
-\end{enumerate}
-
-\vspace{0.2cm}
-
-\textbf{Example: 1 Hidden Layer}
-
+\begin{column}{0.56\textwidth}
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.7]
-% Forward pass (top)
-\node at (0,3.5) {\tiny Forward};
+\begin{tikzpicture}[scale=0.72]
 \node[draw, rectangle, fill=forest!20] (x) at (0,3) {$x$};
 \node[draw, rectangle, fill=navyblue!20] (h) at (2,3) {$h$};
-\node[draw, rectangle, fill=crimson!20] (y) at (4,3) {$\hat{y}$};
-\node[draw, rectangle, fill=purple!20] (l) at (6,3) {$\mathcal{L}$};
-
-\draw[->, thick] (x) -- node[above] {\tiny $W_1$} (h);
-\draw[->, thick] (h) -- node[above] {\tiny $W_2$} (y);
+\node[draw, rectangle, fill=crimson!20] (y) at (4,3) {$\hat y$};
+\node[draw, rectangle, fill=purple!20] (l) at (6,3) {$\mathcal L$};
+\draw[->, thick] (x) -- node[above] {$W_1$} (h);
+\draw[->, thick] (h) -- node[above] {$W_2$} (y);
 \draw[->, thick] (y) -- (l);
-
-% Backward pass (bottom)
-\node at (0,1.5) {\tiny Backward};
-\draw[<-, thick, crimson] (0,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial W_1}$} (2,1);
-\draw[<-, thick, crimson] (2,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial W_2}$} (4,1);
-\draw[<-, thick, crimson] (4,1) -- node[below] {\tiny $\frac{\partial \mathcal{L}}{\partial \hat{y}}$} (6,1);
+\node at (3,3.7) {Forward};
+\draw[<-, thick, crimson] (0,1) -- node[below] {$\partial\mathcal L/\partial W_1$} (2,1);
+\draw[<-, thick, crimson] (2,1) -- node[below] {$\partial\mathcal L/\partial W_2$} (4,1);
+\draw[<-, thick, crimson] (4,1) -- node[below] {$\partial\mathcal L/\partial\hat y$} (6,1);
+\node at (3,0.3) {Backward};
 \end{tikzpicture}
 \end{figure}
-
-\vspace{0.3cm}
-
-\textbf{Computational Graph:}
-
-Modern frameworks (PyTorch, TensorFlow) build computational graphs automatically and compute gradients via automatic differentiation.
 \end{column}
 \end{columns}
 
-\vspace{0.2cm}
-
-\begin{alertblock}{Key Insight}
-Backprop is just calculus + chain rule + dynamic programming. Frameworks handle it automatically!
+\begin{alertblock}{Automatic differentiation}
+Modern frameworks record the computational graph and evaluate the required derivatives automatically.
 \end{alertblock}
 \end{frame}
 
@@ -771,80 +706,61 @@ Transformers dominate NLP, increasingly used for vision (ViT), and even protein 
 % ================================================================
 
 \begin{frame}{Regularization in Deep Learning}
-\textbf{Preventing overfitting in large models}
-
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The Overfitting Problem:}
+\begin{column}{0.48\textwidth}
+\textbf{Weight decay}
+\[
+  \mathcal{L}_{\text{total}}=\mathcal{L}+\lambda\sum_i w_i^2.
+\]
+Penalizes large weights and changes the optimization objective.
 
-Deep networks have millions of parameters $\to$ can memorize training data!
-
-\vspace{0.3cm}
-
-\textbf{Regularization Techniques:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{L2 Regularization (Weight Decay):}}
-   \[
-   \mathcal{L}_{\text{total}} = \mathcal{L} + \lambda \sum_i w_i^2
-   \]
-   Penalizes large weights
-
-\item \textcolor{navyblue}{\textbf{Dropout:}}
-   \begin{itemize}
-   \item Randomly set neurons to 0 (prob $p$)
-   \item Forces network to be robust
-   \item Ensemble effect
-   \item Typical: $p = 0.5$ for FC, $p = 0.2$ for Conv
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Batch Normalization:}}
-   \begin{itemize}
-   \item Normalize activations per batch
-   \item Stabilizes training
-   \item Allows higher learning rates
-   \item Can have regularizing effects in some training regimes, but its main role is optimization/normalization of intermediate activations
-   \end{itemize}
-
-\item \textcolor{purple}{\textbf{Data Augmentation:}}
-   \begin{itemize}
-   \item Generate variations of training data
-   \item Images: flip, rotate, crop, color jitter
-   \item Text: back-translation, synonym replacement
-   \end{itemize}
-\end{enumerate}
+\vspace{0.5em}
+\textbf{Dropout}
+\begin{itemize}
+  \item randomly masks activations during training;
+  \item changes the effective network seen by each minibatch;
+  \item dropout probability is a tunable hyperparameter.
+\end{itemize}
 \end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Early Stopping:}
+\begin{column}{0.48\textwidth}
+\textbf{Batch normalization}
+\begin{itemize}
+  \item normalizes intermediate activations using minibatch statistics;
+  \item can stabilize optimization and permit different learning-rate regimes;
+  \item may have regularizing effects, but regularization is not its sole role.
+\end{itemize}
 
-Monitor validation loss, stop when it starts increasing.
+\vspace{0.5em}
+\textbf{Data augmentation}
+\begin{itemize}
+  \item generates plausible transformed examples;
+  \item transformations must preserve target semantics.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Early Stopping as Model Selection}
+Early stopping selects a checkpoint using validation performance rather than continuing optimization indefinitely.
 
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.7]
-\draw[->] (0,0) -- (6,0) node[right] {\tiny Epochs};
-\draw[->] (0,0) -- (0,4) node[above] {\tiny Loss};
-
-% Training loss
+\begin{tikzpicture}[scale=0.9]
+\draw[->] (0,0) -- (6,0) node[right] {Epochs};
+\draw[->] (0,0) -- (0,4) node[above] {Loss};
 \draw[thick, forest] plot[smooth] coordinates {(0.5,3.5) (1,2.5) (2,1.5) (3,1) (4,0.7) (5,0.5)};
-\node at (5,0.2) {\tiny \textcolor{forest}{Train}};
-
-% Validation loss
+\node at (5,0.2) {Train};
 \draw[thick, crimson] plot[smooth] coordinates {(0.5,3.5) (1,2.5) (2,1.7) (3,1.3) (4,1.4) (5,1.6)};
-\node at (5,1.8) {\tiny \textcolor{crimson}{Val}};
-
-% Optimal point
+\node at (5,1.9) {Validation};
 \draw[dashed] (3,0) -- (3,1.3);
-\node at (3,-0.3) {\tiny Stop here};
+\node at (3,-0.35) {Selected checkpoint};
 \end{tikzpicture}
 \end{figure}
 
-\vspace{0.3cm}
-
-\textbf{Combining Techniques:}
-\end{column}
-\end{columns}
+\begin{alertblock}{Evaluation rule}
+The validation set used for early stopping is part of model selection. Final performance should still be estimated on untouched evaluation data.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{Knowledge Check: Deep Learning}
