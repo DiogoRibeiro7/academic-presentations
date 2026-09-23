@@ -1,5 +1,8 @@
 # Causal Inference Enhancement Guide
 
+> **Historical planning document (2025).** This guide is retained for provenance and may contain obsolete file names, institutional identity, tooling, version references, or proposed work that has since been completed differently. For the current repository contract, use the root `README.md`, `ROADMAP.md`, and `shared/theme/STYLE_GUIDE.md`.
+
+
 **Last Updated:** January 5, 2025
 **Maintainer:** Diogo Ribeiro
 
