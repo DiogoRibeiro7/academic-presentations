@@ -38,9 +38,9 @@ where $y_t$ is the value at time $t$.
 \textbf{Key Characteristic:}
 \begin{itemize}
 \item \textcolor{crimson}{Temporal ordering matters!}
-\item Observations are \textit{not} independent
+\item Observations may exhibit serial dependence; the dependence structure must be modeled or respected in validation
 \item Past values influence future values
-\item Cannot shuffle observations
+\item Random shuffling is generally inappropriate when it breaks the deployment-time information structure
 \end{itemize}
 
 \vspace{0.3cm}
@@ -104,7 +104,7 @@ Example: Daily stock price of AAPL & Example: House prices in a city \\
 \vspace{0.2cm}
 
 \begin{alertblock}{Why Time Series is Different}
-Standard ML assumptions (i.i.d. data) are \textbf{violated}. Requires specialized methods!
+Many forecasting problems violate independent-sampling assumptions. Validation and modeling must respect temporal ordering, horizon, and the available information set.
 \end{alertblock}
 \end{frame}
 
@@ -448,7 +448,7 @@ forecast = results.forecast(steps=12)
 \end{column}
 
 \begin{column}{0.5\textwidth}
-\textbf{When to Use What:}
+\textbf{Method choice depends on the forecasting problem:}
 
 \begin{table}
 \tiny
@@ -457,17 +457,17 @@ forecast = results.forecast(steps=12)
 \rowcolor{navyblue!20}
 \textbf{Method} & \textbf{Best For} \\
 \hline
-\textbf{ARIMA} & Univariate, stationary, short-term \\
+\textbf{ARIMA} & Linear dependence after suitable differencing/transformation \\
 \hline
 \textbf{Exp Smoothing} & Trends + seasonality, simple \\
 \hline
-\textbf{Prophet} & Business time series, holidays \\
+\textbf{Additive trend/seasonal models} & Structured trend, seasonality, calendar effects \\
 \hline
 \textbf{XGBoost} & Many features, non-linear \\
 \hline
-\textbf{LSTM} & Long sequences, complex patterns \\
+\textbf{RNN/LSTM} & Sequential nonlinear models when data volume and covariates justify them \\
 \hline
-\textbf{Transformer} & Multivariate, attention needed \\
+\textbf{Transformer-based} & Multi-series/covariate settings where the architecture earns its added complexity \\
 \hline
 \end{tabular}
 \end{table}
@@ -525,14 +525,14 @@ forecast = results.forecast(steps=12)
 \begin{enumerate}
 \item \textbf{Temporal ordering matters}
    \begin{itemize}
-   \item Never shuffle time series data
+   \item Preserve the information set that would be available at each forecast origin
    \item Use time-based train/test splits
    \end{itemize}
 
 \item \textbf{Check stationarity}
    \begin{itemize}
-   \item ADF test before modeling
-   \item Difference if needed
+   \item Diagnose trend, seasonality, breaks, and stochastic persistence
+   \item Use unit-root/stationarity tests as evidence within a broader specification analysis
    \end{itemize}
 
 \item \textbf{Understand your data}
@@ -545,8 +545,8 @@ forecast = results.forecast(steps=12)
 \item \textbf{Start simple, add complexity}
    \begin{itemize}
    \item Baseline: naive, moving average
-   \item Then ARIMA, Prophet
-   \item Finally ML/DL if needed
+   \item Then statistical or structured regression/state-space models
+   \item Add ML/DL only when covariates, data volume, nonlinear structure, or cross-series learning justify the complexity
    \end{itemize}
 
 \item \textbf{Validate properly}
