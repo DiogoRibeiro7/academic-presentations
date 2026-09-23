@@ -10,9 +10,7 @@
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
 [![Code License: MIT](https://img.shields.io/badge/Code%20License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A collection of professional academic presentations covering advanced topics in statistics, machine
-learning, deep learning, and data science — built for graduate courses, research seminars,
-professional training, and self-study.
+A source-first collection of academic presentations covering statistics, machine learning, deep learning, causal inference, Bayesian methods, time series, and production data science. The repository is built around a shared FMAD - UTP Beamer system, reproducible LaTeX sources, and CI-validated presentation contracts.
 
 **[📊 Browse slide previews](https://diogoribeiro7.github.io/academic-presentations/)** ·
 [Course catalog](#-course-catalog) ·
@@ -38,14 +36,13 @@ professional training, and self-study.
 
 ### At a glance
 
-|                  |                                                |
-| ---------------- | ---------------------------------------------- |
-| 📚 Presentations | 15+ comprehensive decks, 100+ hours of content |
-| 💻 Code          | 27,000+ lines of production-ready Python & R   |
-| 📖 References    | 140+ curated papers with DOIs                  |
-| 🎨 Theme         | One professional LaTeX theme, fully documented |
-| 📝 Assessments   | Exercises, quizzes, exams, and grading rubrics |
-| 🤖 Build         | Automated PDF compilation via GitHub Actions   |
+|                  |                                                                  |
+| ---------------- | ---------------------------------------------------------------- |
+| 📚 Presentations | 20 active compiled course decks plus additional standalone tracks |
+| 🎨 Theme         | One shared FMAD - UTP Beamer presentation system                 |
+| 📝 Assessments   | Exercise sets, grading rubrics, self-assessment, and assessment specifications |
+| 🤖 Build         | Automated LaTeX validation and PDF generation via GitHub Actions |
+| 📦 Artifacts     | Source is tracked in Git; compiled PDFs are distributed via CI/releases |
 
 ---
 

@@ -107,7 +107,10 @@ The repository-wide presentation migration is complete:
 
 ### 3. Public repository metadata
 
-- [ ] Review the GitHub repository description and topics against the current FMAD - UTP identity.
+- [x] Audit the GitHub repository description and topics against the current FMAD - UTP identity.
+- [x] Refresh the README landing section so it reflects the actual deck count, assessment state, and source-only PDF policy.
+- [ ] Update the GitHub repository description in repository settings. Recommended text:
+  > Academic presentations and teaching materials in statistics, machine learning, Bayesian methods, causal inference, time series, and production data science. Maintained at FMAD - UTP with shared LaTeX/Beamer infrastructure and CI-validated builds.
 - [ ] Keep README, style guide, roadmap, template, and public repository metadata aligned.
 
 ### 4. Accessibility and presentation ergonomics
