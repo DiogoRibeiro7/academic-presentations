@@ -20,310 +20,167 @@
 % PART 1: FOUNDATIONS
 % ================================================================
 
-\begin{frame}[fragile,allowframebreaks]{Why Interpretability Matters}
-\textbf{The black box problem in machine learning}
+\begin{frame}{Why Interpretability Matters}
+\textbf{Accuracy and interpretability are not a single universal trade-off.}
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Accuracy and interpretability are not a single universal trade-off:}
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.8]
-\draw[->] (0,0) -- (6,0) node[right] {\tiny Accuracy};
-\draw[->] (0,0) -- (0,4) node[above] {\tiny Interpretability};
-
-% Models plotted
-\node[draw, circle, fill=forest!40] (lr) at (1,3.5) {\tiny LR};
-\node[draw, circle, fill=navyblue!40] (dt) at (2,3) {\tiny DT};
-\node[draw, circle, fill=purple!40] (rf) at (3.5,1.5) {\tiny RF};
-\node[draw, circle, fill=crimson!40] (nn) at (5,0.5) {\tiny NN};
-
-% Dashed tradeoff line
-\draw[dashed, thick] (0.5,4) -- (5.5,0);
-
-% Labels
-\node at (1,4.2) {\tiny Interpretable};
-\node at (5,4.2) {\tiny "Black Box"};
-\end{tikzpicture}
-\end{figure}
-
-\textbf{Common but oversimplified view:}
 \begin{itemize}
-\item Simple models are often easier to inspect directly
-\item Complex models can be harder to inspect, but may or may not improve task performance
+  \item Simple models are often easier to inspect directly.
+  \item Complex models can be harder to inspect, but may or may not improve task performance.
+  \item Compare interpretable baselines and complex models on the actual task.
+  \item Use post-hoc explanations only for questions they can validly answer.
+  \item Evaluate explanation fidelity and stability rather than assuming transparency.
 \end{itemize}
 
-\vspace{0.2cm}
+\begin{alertblock}{Methodological point}
+Interpretability is a property of the model, explanation method, audience, and question being asked; it is not a single scalar that trades off mechanically against accuracy.
+\end{alertblock}
+\end{frame}
 
-\textbf{Methodological view:}
+\begin{frame}{Why Explanations Are Used}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Model development}
 \begin{itemize}
-\item Compare interpretable baselines and complex models on the actual task
-\item Use post-hoc explanations only for questions they can validly answer
-\item Evaluate explanation fidelity and stability rather than assuming transparency
+  \item debugging and error analysis;
+  \item detecting leakage or unintended shortcuts;
+  \item communicating model behavior to domain experts;
+  \item generating hypotheses for further analysis.
 \end{itemize}
 \end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Why We Need Interpretability:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Trust \& Adoption}}
-   \begin{itemize}
-   \item Doctors won't use unexplainable diagnosis
-   \item Banks must explain loan decisions
-   \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Debugging \& Improvement}}
-   \begin{itemize}
-   \item Identify when model fails
-   \item Find data leakage
-   \item Improve features
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Regulatory Compliance}}
-   \begin{itemize}
-   \item Some decisions require documentation, contestability, human oversight, or other accountability mechanisms
-   \item Fair lending laws
-   \item Medical device approval
-   \end{itemize}
-
-\item \textcolor{purple}{\textbf{Fairness \& Ethics}}
-   \begin{itemize}
-   \item Detect bias
-   \item Ensure equity
-   \item Build responsible AI
-   \end{itemize}
-
-\item \textcolor{gold}{\textbf{Scientific Discovery}}
-   \begin{itemize}
-   \item Understand relationships
-   \item Generate hypotheses
-   \item Learn from model
-   \end{itemize}
-\end{enumerate}
+\begin{column}{0.48\textwidth}
+\textbf{Governance and decisions}
+\begin{itemize}
+  \item documentation and auditability;
+  \item contestability and human oversight;
+  \item analysis of disparities and failure modes;
+  \item communication with affected stakeholders.
+\end{itemize}
 \end{column}
 \end{columns}
-
-\vspace{0.2cm}
 
 \begin{alertblock}{Methodological caution}
 Fairness audits can reveal disparities under specific statistical definitions, but explanation methods alone do not establish causality, fairness, or the appropriate normative standard for a decision system.
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Types of Interpretability}
-\textbf{Taxonomy of explanation methods}
-
+\begin{frame}{Interpretability: Three Useful Axes}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Intrinsic vs. Post-hoc:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|p{2.3cm}|p{2.3cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Intrinsic} & \textbf{Post-hoc} \\
-\hline
-Model is inherently interpretable & Apply to any model after training \\
-\hline
-Linear regression, decision trees & SHAP, LIME \\
-\hline
-Limited complexity & Can explain black boxes \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Model-Specific vs. Model-Agnostic:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|p{2.3cm}|p{2.3cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Model-Specific} & \textbf{Model-Agnostic} \\
-\hline
-Uses model internals & Treats model as black box \\
-\hline
-Attention weights, neuron activations & LIME, PDP \\
-\hline
-Can exploit internals & Works across many model classes \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Global vs. Local:}
-
+\begin{column}{0.48\textwidth}
+\textbf{Intrinsic vs. post-hoc}
 \begin{itemize}
-\item \textbf{Global:} How model works overall
-  \begin{itemize}
-  \item Feature importance
-  \item Partial dependence plots
-  \end{itemize}
+  \item \textbf{Intrinsic}: the model form itself supports direct inspection.
+  \item \textbf{Post-hoc}: an additional method is applied after fitting to summarize behavior.
+\end{itemize}
 
-\item \textbf{Local:} Why this prediction?
-  \begin{itemize}
-  \item LIME, SHAP values
-  \item Counterfactual explanations
-  \end{itemize}
+\textbf{Model-specific vs. model-agnostic}
+\begin{itemize}
+  \item \textbf{Model-specific}: uses internal structure or gradients.
+  \item \textbf{Model-agnostic}: queries predictions without requiring model internals.
 \end{itemize}
 \end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Levels of Interpretability:}
+\begin{column}{0.48\textwidth}
+\textbf{Global vs. local}
+\begin{itemize}
+  \item \textbf{Global}: summarizes behavior across a population or region of feature space.
+  \item \textbf{Local}: explains one prediction or a small neighborhood.
+\end{itemize}
 
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Algorithm Transparency}}
-   \begin{itemize}
-   \item How does the algorithm work?
-   \item Mathematical properties
-   \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Global Model Interpretability}}
-   \begin{itemize}
-   \item What did the model learn overall?
-   \item Feature importances
-   \item Decision rules
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Local Interpretability}}
-   \begin{itemize}
-   \item Why this specific prediction?
-   \item Which features mattered for this instance?
-   \end{itemize}
-\end{enumerate}
-
-\vspace{0.3cm}
-
-\textbf{The Interpretability Toolbox:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Method} & \textbf{Scope} & \textbf{Type} \\
-\hline
-Feature Importance & Global & Model-specific \\
-\hline
-Partial Dependence & Global & Model-agnostic \\
-\hline
-SHAP & Both & Model-agnostic \\
-\hline
-LIME & Local & Model-agnostic \\
-\hline
-Counterfactuals & Local & Model-agnostic \\
-\hline
-Attention Weights & Local & Model-specific (NN) \\
-\hline
-\end{tabular}
-\end{table}
+\textbf{Question first}
+\begin{itemize}
+  \item What behavior is being explained?
+  \item For which population or instance?
+  \item To which audience?
+\end{itemize}
 \end{column}
 \end{columns}
+\end{frame}
+
+\begin{frame}{Interpretability Toolbox}
+\begin{table}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Method} & \textbf{Typical scope} & \textbf{Access} \\
+\midrule
+Permutation importance & Global & Model-agnostic \\
+Partial dependence / ICE & Global / conditional & Model-agnostic \\
+SHAP & Local and aggregated & Model-agnostic / specialized \\
+LIME & Local & Model-agnostic \\
+Counterfactuals & Local / recourse & Model-agnostic \\
+Gradients / activations & Local or diagnostic & Model-specific \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{block}{Levels of analysis}
+Algorithm transparency, global model behavior, and local prediction explanations answer different questions. One method rarely covers all three well.
+\end{block}
 \end{frame}
 
 % ================================================================
 % PART 2: MODEL-SPECIFIC INTERPRETABILITY
 % ================================================================
 
-\begin{frame}[fragile,allowframebreaks]{Intrinsically Interpretable Models}
-\textbf{Models we can directly understand}
+\begin{frame}{Intrinsically Interpretable Models: Regression}
+\textbf{Linear regression}
+\[
+  \hat{y}=\beta_0+\beta_1x_1+\cdots+\beta_px_p.
+\]
 
+\begin{itemize}
+  \item Coefficients summarize model-conditional associations on the response scale.
+  \item Sign and magnitude depend on units, coding, interactions, and the other variables included.
+  \item A coefficient is not automatically a causal effect.
+\end{itemize}
+
+\textbf{Logistic regression}
+\[
+  \log\left(\frac{p}{1-p}\right)=\beta_0+\beta_1x_1+\cdots.
+\]
+
+\begin{itemize}
+  \item $\exp(\beta_j)$ is an odds ratio under the specified model.
+  \item Probability-scale effects vary with the covariate pattern and baseline risk.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Intrinsically Interpretable Models: Trees and Rules}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Linear Regression:}
-
-\[
-\hat{y} = \beta_0 + \beta_1 x_1 + \cdots + \beta_p x_p
-\]
-
-\textbf{Interpretation:}
-\begin{itemize}
-\item $\beta_j$: Change in $y$ for 1-unit change in $x_j$
-\item Sign: positive/negative relationship
-\item Magnitude: strength of effect
-\end{itemize}
-
-\textbf{Caveats:}
-\begin{itemize}
-\item Assumes linearity
-\item Correlation $\neq$ causation
-\item Multicollinearity issues
-\end{itemize}
-
-\vspace{0.3cm}
-
-\textbf{Logistic Regression:}
-
-\[
-\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x_1 + \cdots
-\]
-
-\textbf{Interpretation:}
-\begin{itemize}
-\item $\exp(\beta_j)$: Odds ratio
-\item $\beta_j > 0$: Increases probability
-\end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Decision Trees:}
-
+\begin{column}{0.52\textwidth}
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.6]
-% Root
+\begin{tikzpicture}[scale=0.72]
 \node[draw, rectangle, fill=navyblue!20] (root) at (3,4) {Age $\leq 30$?};
-
-% Level 1
 \node[draw, rectangle, fill=forest!20] (l1) at (1,2.5) {Income $\leq$ 50K?};
 \node[draw, rectangle, fill=forest!20] (r1) at (5,2.5) {Credit $\geq$ 700?};
-
-% Leaves
 \node[draw, circle, fill=crimson!20] (ll) at (0,1) {No};
 \node[draw, circle, fill=green!40] (lr) at (2,1) {Yes};
 \node[draw, circle, fill=green!40] (rl) at (4,1) {Yes};
 \node[draw, circle, fill=crimson!20] (rr) at (6,1) {No};
-
-% Edges
-\draw[->, thick] (root) -- node[left] {\tiny Yes} (l1);
-\draw[->, thick] (root) -- node[right] {\tiny No} (r1);
-\draw[->, thick] (l1) -- node[left] {\tiny Y} (ll);
-\draw[->, thick] (l1) -- node[right] {\tiny N} (lr);
-\draw[->, thick] (r1) -- node[left] {\tiny Y} (rl);
-\draw[->, thick] (r1) -- node[right] {\tiny N} (rr);
+\draw[->, thick] (root) -- node[left] {Yes} (l1);
+\draw[->, thick] (root) -- node[right] {No} (r1);
+\draw[->, thick] (l1) -- node[left] {Y} (ll);
+\draw[->, thick] (l1) -- node[right] {N} (lr);
+\draw[->, thick] (r1) -- node[left] {Y} (rl);
+\draw[->, thick] (r1) -- node[right] {N} (rr);
 \end{tikzpicture}
 \end{figure}
+\end{column}
 
-\textbf{Interpretation:}
+\begin{column}{0.44\textwidth}
 \begin{itemize}
-\item Clear if-then rules
-\item Easy to visualize
-\item Mimics human decision-making
+  \item Small trees can expose decision rules directly.
+  \item Deep or unstable trees quickly lose that advantage.
+  \item Rule lists and scorecards can be useful when the operational decision process itself must remain inspectable.
 \end{itemize}
-
-\textbf{Limitations:}
-\begin{itemize}
-\item High variance (unstable)
-\item Can be very deep (not interpretable)
-\end{itemize}
-
-\vspace{0.2cm}
-
-\textbf{Rule-Based Models:}
-
-Extract rules from tree ensembles:
-\begin{verbatim}
-IF age > 30 AND income > 50K
-   THEN approve_loan (95% confidence)
-\end{verbatim}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{Interpretability is scale-dependent}
+A model that is transparent at five rules may be difficult to interpret at hundreds of rules.
+\end{alertblock}
 \end{frame}
 
 % ================================================================
