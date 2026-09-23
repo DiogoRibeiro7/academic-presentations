@@ -856,181 +856,77 @@ print("RDD analysis complete")
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Difference-in-Differences (DID)}
-\textbf{Idea:} Compare changes over time between treatment and control groups.
+\begin{frame}{Difference-in-Differences: Identification}
+Compare changes over time in a treated group with changes in a comparison group:
+\[
+  \hat\tau_{DID}
+  = (\bar Y_{T,post}-\bar Y_{T,pre})
+  -(\bar Y_{C,post}-\bar Y_{C,pre}).
+\]
 
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\textbf{Setup:}
 \begin{itemize}
-\item Groups: Treatment ($i=1$) and Control ($i=0$)
-\item Time: Before ($t=0$) and After ($t=1$)
-\item Outcome: $Y_{it}$
+  \item The key assumption is counterfactual: without treatment, treated and comparison groups would have followed the same average trend.
+  \item Pre-treatment trends can reveal obvious incompatibilities, but they cannot prove the unobserved post-treatment counterfactual.
+  \item Anticipation, spillovers, composition changes, or time-varying confounding can invalidate a simple DID interpretation.
 \end{itemize}
 
-\textbf{DID Estimator:}
-\begin{align}
-\hat{\tau}_{DID} &= (Y_{11} - Y_{10}) - (Y_{01} - Y_{00})\\
-&= \Delta Y_{\text{treatment}} - \Delta Y_{\text{control}}
-\end{align}
-
-\textbf{Key Assumption:} Parallel trends - groups would have followed similar trends without treatment.
-
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.linear_model import LinearRegression
-
-# Simulate DID data
-np.random.seed(42)
-
-# Create panel data
-n_units = 100
-n_periods = 10
-treatment_period = 6
-
-# Unit and time effects
-unit_effects = np.random.randn(n_units)
-time_effects = np.random.randn(n_periods)
-
-# Treatment assignment (some units treated after period 6)
-treated_units = np.random.choice(n_units, n_units//2, replace=False)
-
-data = []
-for unit in range(n_units):
-    for period in range(n_periods):
-        # Treatment indicator
-        treated = unit in treated_units
-        post = period >= treatment_period
-        treat = treated and post
-        
-        # Outcome with parallel trends assumption
-        y = (2 + unit_effects[unit] + time_effects[period] + 
-             1.5 * treat + np.random.randn() * 0.5)
-        
-        data.append({
-            'unit': unit,
-            'period': period,
-            'treated': treated,
-            'post': post,
-            'treat': treat,
-            'y': y
-        })
-
-df = pd.DataFrame(data)
-
-# Calculate group means for each period
-group_means = df.groupby(['period', 'treated'])['y'].mean().unstack()
-
-# DID regression
-# Y_it = alpha + beta*Treated_i + gamma*Post_t + delta*(Treated_i * Post_t) + epsilon_it
-X = df[['treated', 'post', 'treat']].astype(int)
-y = df['y']
-
-did_model = LinearRegression().fit(X, y)
-did_estimate = did_model.coef_[2]  # Interaction coefficient
-
-print(f"True treatment effect: 1.5")
-print(f"DID estimate: {did_estimate:.3f}")
-
-# Manual calculation
-pre_treatment = group_means.loc[:treatment_period-1, True].mean()
-post_treatment = group_means.loc[treatment_period:, True].mean()
-pre_control = group_means.loc[:treatment_period-1, False].mean()
-post_control = group_means.loc[treatment_period:, False].mean()
-
-manual_did = (post_treatment - pre_treatment) - (post_control - pre_control)
-print(f"Manual DID: {manual_did:.3f}")
-
-# Plot parallel trends
-plt.figure(figsize=(10, 6))
-plt.plot(group_means.index, group_means[False], 'o-', 
-         label='Control Group', linewidth=2)
-plt.plot(group_means.index, group_means[True], 's-', 
-         label='Treatment Group', linewidth=2)
-plt.axvline(treatment_period-0.5, color='red', linestyle='--', 
-           alpha=0.7, label='Treatment Start')
-
-plt.xlabel('Time Period')
-plt.ylabel('Outcome')
-plt.title('Difference-in-Differences: Parallel Trends')
-plt.legend()
-plt.grid(True, alpha=0.3)
-
-# Add DID visualization
-pre_diff = group_means.loc[treatment_period-1, True] - group_means.loc[treatment_period-1, False]
-post_diff = group_means.loc[treatment_period, True] - group_means.loc[treatment_period, False]
-plt.annotate(f'DID = {post_diff - pre_diff:.2f}', 
-             xy=(treatment_period+1, group_means.loc[treatment_period+1, True]),
-             xytext=(treatment_period+2, group_means.loc[treatment_period+1, True]+0.5),
-             arrowprops=dict(arrowstyle='->', color='red'))
-
-print("DID analysis complete")
-\end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.8]
-% DID illustration
-\draw[->] (0,0) -- (4,0) node[right] {Time};
-\draw[->] (0,0) -- (0,3) node[above] {Outcome};
-
-% Before period
-\node at (1,-0.3) {Before};
-\node at (3,-0.3) {After};
-\draw[dashed] (2,0) -- (2,3);
-
-% Control group
-\draw[thick, blue] (1,1) -- (3,1.2);
-\node[left] at (1,1) {\color{blue}Control};
-
-% Treatment group (counterfactual)
-\draw[thick, dashed, red] (1,1.5) -- (3,1.7);
-\node[left] at (1,1.5) {\color{red}Treatment};
-\node[right] at (3,1.7) {\color{red}\tiny Counterfactual};
-
-% Treatment group (actual)
-\draw[thick, red] (2,1.6) -- (3,2.2);
-\node[right] at (3,2.2) {\color{red}Actual};
-
-% DID arrows
-\draw[<->, thick, green] (3.2,1.2) -- (3.2,1.7);
-\node[right] at (3.3,1.45) {\color{green}\tiny Control};
-\node[right] at (3.3,1.25) {\color{green}\tiny change};
-
-\draw[<->, thick, purple] (3.5,1.6) -- (3.5,2.2);
-\node[right] at (3.6,1.9) {\color{purple}\tiny Treatment};
-\node[right] at (3.6,1.7) {\color{purple}\tiny change};
-
-\draw[<->, thick, gold] (2.8,1.7) -- (2.8,2.2);
-\node[right] at (2.9,1.95) {\color{gold}\tiny DID};
-\end{tikzpicture}
-\end{figure}
-
-\textbf{DID Applications:}
-\begin{itemize}
-\item \textbf{Policy evaluation}: Minimum wage effects
-\item \textbf{Program evaluation}: Job training programs
-\item \textbf{Natural experiments}: Policy changes
-\item \textbf{Business}: Marketing campaign effects
-\end{itemize}
-
-\textbf{Extensions:}
-\begin{itemize}
-\item \textbf{Multiple periods}: Event study designs
-\item \textbf{Multiple groups}: Staggered adoption
-\item \textbf{Continuous treatment}: Dose-response DID
-\item \textbf{Synthetic control}: Data-driven counterfactuals
-\end{itemize}
-
-\begin{alertblock}{Parallel Trends}
-Key assumption: Treatment and control groups would have evolved similarly without intervention. Test with pre-treatment data!
+\begin{alertblock}{Parallel trends}
+State the outcome scale and comparison group explicitly. Treat pre-trend analysis as diagnostic evidence, not a statistical proof of the identifying assumption.
 \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Difference-in-Differences: Regression Form}
+For a common treatment date, unit and time effects absorb time-invariant unit heterogeneity and common shocks:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+import statsmodels.formula.api as smf
+
+df["treated_post"] = (
+    df["treated"].astype(int) * df["post"].astype(int)
+)
+
+fit = smf.ols(
+    "y ~ C(unit) + C(period) + treated_post",
+    data=df,
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": df["unit"]},
+)
+
+tau_hat = fit.params["treated_post"]
+\end{lstlisting}
+
+\begin{block}{Inference}
+Serial dependence and grouped treatment assignment often require clustered or design-appropriate uncertainty estimates; independent-observation standard errors can be misleading.
+\end{block}
+\end{frame}
+
+\begin{frame}{Difference-in-Differences: Diagnostics and Extensions}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Diagnostics}
+\begin{itemize}
+  \item inspect pre-treatment outcome paths;
+  \item report event-study estimates with uncertainty;
+  \item check sample composition and treatment timing;
+  \item vary comparison groups and time windows.
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Extensions}
+\begin{itemize}
+  \item multiple pre/post periods;
+  \item event-study estimands;
+  \item staggered treatment adoption;
+  \item synthetic-control or matching-based comparisons.
+\end{itemize}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{Staggered adoption}
+With heterogeneous effects and staggered timing, a naive two-way fixed-effects coefficient can combine difficult comparisons. Use estimators designed for the target staggered-adoption estimand.
+\end{alertblock}
 \end{frame}
 
 \section{Modern Causal Machine Learning}
