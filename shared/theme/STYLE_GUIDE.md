@@ -15,7 +15,7 @@ A topic may keep additional named standalone entry points only when they are gen
 
 The shared shell lives in `shared/theme/esmad_beamer_theme.sty`. Standalone Beamer sources must load that package. Deck-local packages, notation, TikZ libraries, R/SQL/Python listing definitions, and scientific figures remain local when the subject requires them.
 
-Do not use `main_presentation.tex` article/PDF wrappers as presentation entry points. Those files are legacy aggregation helpers. In this repository, `main.tex` means the source entry point that builds the primary Beamer deck.
+Legacy article/PDF aggregation wrappers have been removed. In this repository, `main.tex` is the canonical presentation entry point. A file named `main_presentation.tex` should exist only when it is a genuine Beamer source, as in the Data Science Applications composite course.
 
 ## Canonical Beamer Model
 
