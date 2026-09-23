@@ -995,157 +995,61 @@ DML removes confounding bias through orthogonal moment conditions, making estima
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Causal Forests: Heterogeneous Treatment Effects}
-\textbf{Goal:} Estimate treatment effects that vary across individuals.
+\begin{frame}{Heterogeneous Treatment Effects}
+\textbf{Goal:} Estimate how the treatment effect varies with covariates:
+\[
+  \tau(x)=\mathbb{E}[Y(1)-Y(0)\mid X=x].
+\]
 
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+\begin{itemize}
+  \item Heterogeneity can matter for targeting, policy design, and understanding who benefits or is harmed.
+  \item Estimating CATEs is harder than estimating an average effect because local information is limited and model flexibility can amplify noise.
+  \item Identification still requires the same causal assumptions used for the average effect, including overlap and a defensible adjustment set.
+\end{itemize}
 
-# Simulate heterogeneous treatment effect data
-np.random.seed(42)
-n = 2000
+\begin{block}{Common meta-learners}
+S-learner, T-learner, X-learner, and R-learner combine standard predictive models in different ways to estimate conditional treatment effects.
+\end{block}
+\end{frame}
 
-# Covariates
-X1 = np.random.randn(n)
-X2 = np.random.randn(n)
-X3 = np.random.choice([0, 1], n)
+\begin{frame}[fragile]{T-Learner with Random Forests}
+Fit separate outcome models in the treated and control groups:
 
-X = np.column_stack([X1, X2, X3])
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+features = ["X1", "X2", "X3"]
+X = df[features]
+T = df["T"].to_numpy()
+Y = df["Y"].to_numpy()
 
-# Heterogeneous treatment effect
-# Effect depends on X1: strong for X1 > 0, weak for X1 <= 0
-tau_true = 2 * (X1 > 0) + 0.5 * (X1 <= 0)
+m1 = RandomForestRegressor(
+    n_estimators=200, random_state=42
+)
+m0 = RandomForestRegressor(
+    n_estimators=200, random_state=42
+)
 
-# Treatment assignment (confounded)
-propensity = 1 / (1 + np.exp(-0.5 * X1 - 0.3 * X2))
-T = np.random.binomial(1, propensity, n)
+m1.fit(X[T == 1], Y[T == 1])
+m0.fit(X[T == 0], Y[T == 0])
 
-# Outcome
-Y0 = 1 + X1 + 0.5 * X2 + 0.3 * X3 + np.random.randn(n) * 0.5
-Y = Y0 + T * tau_true
-
-df = pd.DataFrame({
-    'Y': Y, 'T': T, 'X1': X1, 'X2': X2, 'X3': X3,
-    'tau_true': tau_true
-})
-
-# Simple approach: separate models for treated/control
-treated_data = df[df['T'] == 1]
-control_data = df[df['T'] == 0]
-
-# Train models
-rf_treated = RandomForestRegressor(n_estimators=100, random_state=42)
-rf_control = RandomForestRegressor(n_estimators=100, random_state=42)
-
-X_features = ['X1', 'X2', 'X3']
-rf_treated.fit(treated_data[X_features], treated_data['Y'])
-rf_control.fit(control_data[X_features], control_data['Y'])
-
-# Predict treatment effects
-df['mu1_hat'] = rf_treated.predict(df[X_features])
-df['mu0_hat'] = rf_control.predict(df[X_features])
-df['tau_hat_simple'] = df['mu1_hat'] - df['mu0_hat']
-
-# Calculate performance
-mse_simple = np.mean((df['tau_hat_simple'] - df['tau_true'])**2)
-print(f"Simple approach MSE: {mse_simple:.3f}")
-
-# T-learner approach (improved)
-def t_learner(X, T, Y, test_X):
-    """T-learner for heterogeneous treatment effects"""
-    # Separate models for treatment groups
-    treated_idx = T == 1
-    control_idx = T == 0
-    
-    # Train models
-    model_1 = RandomForestRegressor(n_estimators=100, random_state=42)
-    model_0 = RandomForestRegressor(n_estimators=100, random_state=42)
-    
-    model_1.fit(X[treated_idx], Y[treated_idx])
-    model_0.fit(X[control_idx], Y[control_idx])
-    
-    # Predict potential outcomes
-    mu1 = model_1.predict(test_X)
-    mu0 = model_0.predict(test_X)
-    
-    return mu1 - mu0
-
-# Apply T-learner
-tau_hat_t = t_learner(X, T, Y, X)
-mse_t = np.mean((tau_hat_t - tau_true)**2)
-print(f"T-learner MSE: {mse_t:.3f}")
-
-# Visualize results
-fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-
-# True effects vs X1
-axes[0].scatter(X1, tau_true, alpha=0.6, c='blue', s=20)
-axes[0].set_xlabel('X1')
-axes[0].set_ylabel('True Treatment Effect')
-axes[0].set_title('True Heterogeneous Effects')
-
-# Estimated vs true
-axes[1].scatter(tau_true, tau_hat_t, alpha=0.6, s=20)
-axes[1].plot([0, 3], [0, 3], 'r--', label='Perfect prediction')
-axes[1].set_xlabel('True Effect')
-axes[1].set_ylabel('Estimated Effect')
-axes[1].set_title('T-learner: Estimated vs True')
-axes[1].legend()
-
-# Effects by group
-high_x1 = X1 > 0
-axes[2].boxplot([tau_hat_t[~high_x1], tau_hat_t[high_x1]], 
-                labels=['X1 <= 0', 'X1 > 0'])
-axes[2].set_ylabel('Estimated Treatment Effect')
-axes[2].set_title('Treatment Effects by X1 Group')
-
-plt.tight_layout()
-print("Heterogeneous treatment effect analysis complete")
+tau_hat = m1.predict(X) - m0.predict(X)
 \end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{Why Heterogeneity Matters:}
-\begin{itemize}
-\item \textbf{Personalization}: Tailor treatments to individuals
-\item \textbf{Resource allocation}: Treat who benefits most
-\item \textbf{Policy design}: Target interventions effectively
-\item \textbf{Understanding mechanisms}: Why treatments work
-\end{itemize}
 
-\vspace{0.3cm}
-\textbf{Meta-Learners:}
-\begin{itemize}
-\item \textbf{T-learner}: Separate models for each group
-\item \textbf{S-learner}: Single model with treatment indicator
-\item \textbf{X-learner}: Two-stage approach with propensity
-\item \textbf{R-learner}: Robinson transformation
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Causal Forest Advantages:}
-\begin{itemize}
-\item \textcolor{forest}{Honest estimation}: Separate samples for splitting/estimation
-\item \textcolor{forest}{Adaptive}: Finds relevant heterogeneity
-\item \textcolor{forest}{Uncertainty}: Confidence intervals for effects
-\item \textcolor{forest}{Non-parametric}: Flexible functional forms
-\end{itemize}
-
-\begin{alertblock}{Business Applications}
-\begin{itemize}
-\item Personalized marketing campaigns
-\item Medical treatment assignment
-\item Pricing optimization
-\item A/B testing with segments
-\end{itemize}
+\begin{alertblock}{What this is}
+This is a T-learner using random forests. It is not itself a causal forest.
 \end{alertblock}
-\end{column}
-\end{columns}
+\end{frame}
+
+\begin{frame}{Causal Forests: What Changes?}
+\begin{itemize}
+  \item Causal forests modify tree splitting and estimation to target treatment-effect heterogeneity rather than outcome prediction alone.
+  \item Honest variants separate data used to choose splits from data used to estimate leaf effects, reducing adaptive bias.
+  \item Modern implementations can provide asymptotically motivated uncertainty estimates under their assumptions.
+  \item Flexible CATE estimates still need overlap diagnostics, out-of-sample evaluation strategies, and caution about subgroup interpretation.
+\end{itemize}
+
+\begin{block}{Interpretation}
+A discovered high-effect subgroup is a statistical estimate, not automatically a treatment rule. Policy use also depends on uncertainty, costs, constraints, and whether the subgroup definition is stable.
+\end{block}
 \end{frame}
 
 \section{Practical Applications and Case Studies}
