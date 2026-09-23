@@ -628,142 +628,79 @@ IV estimates effect for "compliers" - those whose treatment status is affected b
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Regression Discontinuity Design}
-\textbf{Idea:} Exploit arbitrary cutoff rules for treatment assignment.
-
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\textbf{Setup:}
-\begin{itemize}
-\item Running variable: $X$ (e.g., test score, age, income)
-\item Cutoff: $c$ (treatment threshold)
-\item Treatment: $T = \mathbb{I}[X \geq c]$
-\item Outcome: $Y$
-\end{itemize}
-
-\textbf{Key Assumption:} All other factors vary smoothly around cutoff.
-
-\textbf{Identification:}
-\[\tau = \lim_{x \downarrow c} \E[Y|X = x] - \lim_{x \uparrow c} \E[Y|X = x]\]
-
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-import pandas as pd
-
-# Simulate RDD data
-np.random.seed(42)
-n = 1000
-cutoff = 0
-
-# Running variable (centered at cutoff)
-X = np.random.uniform(-2, 2, n)
-
-# Treatment assignment
-T = (X >= cutoff).astype(int)
-
-# Outcome with discontinuity at cutoff
-# True treatment effect = 0.5
-tau_true = 0.5
-Y = 2 + 1.5 * X + tau_true * T + np.random.randn(n) * 0.3
-
-df = pd.DataFrame({'X': X, 'T': T, 'Y': Y})
-
-# Estimate RDD effect
-# Using local linear regression around cutoff
-bandwidth = 0.5
-local_data = df[abs(df['X']) <= bandwidth].copy()
-
-# Separate regressions on each side
-left_data = local_data[local_data['X'] < cutoff]
-right_data = local_data[local_data['X'] >= cutoff]
-
-# Fit local linear models
-if len(left_data) > 5 and len(right_data) > 5:
-    left_model = LinearRegression().fit(
-        left_data[['X']], left_data['Y']
-    )
-    right_model = LinearRegression().fit(
-        right_data[['X']], right_data['Y']
-    )
-    
-    # Estimate discontinuity
-    left_pred = left_model.predict([[cutoff]])[0]
-    right_pred = right_model.predict([[cutoff]])[0]
-    rdd_estimate = right_pred - left_pred
-    
-    print(f"True treatment effect: {tau_true}")
-    print(f"RDD estimate: {rdd_estimate:.3f}")
-    
-    # Plot results
-    plt.figure(figsize=(10, 6))
-    
-    # Scatter plot
-    colors = ['red' if t == 0 else 'blue' for t in df['T']]
-    plt.scatter(df['X'], df['Y'], c=colors, alpha=0.5, s=20)
-    
-    # Fitted lines
-    x_left = np.linspace(-bandwidth, cutoff, 100)
-    x_right = np.linspace(cutoff, bandwidth, 100)
-    
-    y_left = left_model.predict(x_left.reshape(-1, 1))
-    y_right = right_model.predict(x_right.reshape(-1, 1))
-    
-    plt.plot(x_left, y_left, 'red', linewidth=2, label='Control')
-    plt.plot(x_right, y_right, 'blue', linewidth=2, label='Treatment')
-    
-    # Discontinuity
-    plt.axvline(cutoff, color='black', linestyle='--', alpha=0.7)
-    plt.plot([cutoff, cutoff], [left_pred, right_pred], 
-             'green', linewidth=3, label=f'RDD Effect: {rdd_estimate:.3f}')
-    
-    plt.xlabel('Running Variable (X)')
-    plt.ylabel('Outcome (Y)')
-    plt.title('Regression Discontinuity Design')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-print("RDD analysis complete")
-\end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{Real-World Examples:}
+\begin{frame}{Regression Discontinuity: Identification}
+\textbf{Idea:} Treatment assignment changes discontinuously at a known cutoff of a running variable.
 
 \begin{itemize}
-\item \textbf{Education}: Grade cutoffs for remedial programs
-\item \textbf{Health}: Age thresholds for medical programs
-\item \textbf{Policy}: Income cutoffs for welfare benefits
-\item \textbf{Finance}: Credit score cutoffs for loan approval
+  \item Running variable: $X$; cutoff: $c$.
+  \item Sharp design: $T=\mathbb{I}[X\ge c]$.
+  \item Target: the local treatment effect at the cutoff.
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{RDD Advantages:}
-\begin{itemize}
-\item \textcolor{forest}{Credible identification}: Local randomization
-\item \textcolor{forest}{Intuitive}: Visual inspection possible
-\item \textcolor{forest}{Testable assumptions}: Continuity of covariates
-\item \textcolor{forest}{No confounders needed}: Local comparison
-\end{itemize}
+\[
+  \tau_{RDD}
+  = \lim_{x\downarrow c}\mathbb{E}[Y\mid X=x]
+  - \lim_{x\uparrow c}\mathbb{E}[Y\mid X=x].
+\]
 
-\vspace{0.3cm}
-\textbf{RDD Limitations:}
-\begin{itemize}
-\item \textcolor{crimson}{Local effects only}: Around cutoff
-\item \textcolor{crimson}{Manipulation}: Gaming the cutoff
-\item \textcolor{crimson}{Bandwidth choice}: Affects estimates
-\item \textcolor{crimson}{Power}: Need large samples
-\end{itemize}
-
-\begin{alertblock}{Validation Tests}
-\begin{itemize}
-\item Density test: No manipulation around cutoff
-\item Covariate continuity: Other variables smooth
-\item Placebo cutoffs: No effects at false cutoffs
-\end{itemize}
+\begin{alertblock}{Identification assumption}
+In the continuity-based interpretation, the untreated and treated potential-outcome regression functions are continuous at the cutoff. Units just above and below the threshold need not be literally randomized.
 \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Regression Discontinuity: Local Linear Estimation}
+Estimate separate local regressions on either side of the cutoff:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+bandwidth = 0.5
+local = df[np.abs(df["X"] - cutoff) <= bandwidth]
+
+left = local[local["X"] < cutoff]
+right = local[local["X"] >= cutoff]
+
+left_fit = LinearRegression().fit(
+    left[["X"]], left["Y"]
+)
+right_fit = LinearRegression().fit(
+    right[["X"]], right["Y"]
+)
+
+mu_left = left_fit.predict([[cutoff]])[0]
+mu_right = right_fit.predict([[cutoff]])[0]
+tau_hat = mu_right - mu_left
+\end{lstlisting}
+
+\begin{block}{Estimation choice}
+Bandwidth and polynomial order control a bias-variance trade-off. Modern RD practice usually relies on dedicated local-polynomial estimators and robust bias-corrected inference rather than arbitrary hand-picked bandwidths.
+\end{block}
+\end{frame}
+
+\begin{frame}{Regression Discontinuity: Diagnostics and Scope}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Diagnostics}
+\begin{itemize}
+  \item inspect the running-variable density near the cutoff;
+  \item check continuity of pre-treatment covariates;
+  \item assess sensitivity to bandwidth and polynomial specification;
+  \item use placebo cutoffs or outcomes where substantively appropriate.
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Scope and limitations}
+\begin{itemize}
+  \item identifies a local effect near the cutoff;
+  \item manipulation of the running variable can threaten identification;
+  \item precision may be weak when little data lie near the threshold;
+  \item external validity away from the cutoff requires additional assumptions.
+\end{itemize}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{Diagnostics are not proofs}
+Smooth covariates and a continuous density support the design, but they do not establish the continuity assumptions for unobserved potential outcomes.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{Difference-in-Differences: Identification}
