@@ -1,5 +1,8 @@
 # Capstone Projects Enhancement Guide
 
+> **Historical planning document (2025).** This guide is retained for provenance and may contain obsolete file names, institutional identity, tooling, version references, or proposed work that has since been completed differently. For the current repository contract, use the root `README.md`, `ROADMAP.md`, and `shared/theme/STYLE_GUIDE.md`.
+
+
 ## Overview
 
 This enhancement module provides **comprehensive materials** for semester-long capstone projects in data science courses. The module includes presentation slides, prerequisites materials, and competency tracking frameworks.
