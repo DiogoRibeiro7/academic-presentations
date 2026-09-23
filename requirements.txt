@@ -142,7 +142,7 @@ pyyaml>=6.0.1  # YAML parsing
 
 # Visualization extras
 graphviz>=0.20.1  # Graph visualization
-networkx>=3.1  # Network analysis
+networkx>=3.4.2  # Network analysis
 pillow>=10.0.0  # Image processing
 
 # ============================================================================
