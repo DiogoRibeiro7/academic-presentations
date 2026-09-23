@@ -25,7 +25,7 @@
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
-\textbf{The Accuracy-Interpretability Tradeoff:}
+\textbf{Accuracy and interpretability are not a single universal trade-off:}
 
 \begin{figure}
 \centering
@@ -48,19 +48,19 @@
 \end{tikzpicture}
 \end{figure}
 
-\textbf{Traditional View:}
+\textbf{Common but oversimplified view:}
 \begin{itemize}
-\item Simple models = interpretable but less accurate
-\item Complex models = accurate but black box
+\item Simple models are often easier to inspect directly
+\item Complex models can be harder to inspect, but may or may not improve task performance
 \end{itemize}
 
 \vspace{0.2cm}
 
-\textbf{Modern View:}
+\textbf{Methodological view:}
 \begin{itemize}
-\item Use complex models for accuracy
-\item Add interpretability methods post-hoc
-\item Best of both worlds!
+\item Compare interpretable baselines and complex models on the actual task
+\item Use post-hoc explanations only for questions they can validly answer
+\item Evaluate explanation fidelity and stability rather than assuming transparency
 \end{itemize}
 \end{column}
 
@@ -83,7 +83,7 @@
 
 \item \textcolor{crimson}{\textbf{Regulatory Compliance}}
    \begin{itemize}
-   \item GDPR "right to explanation"
+   \item Some decisions require documentation, contestability, human oversight, or other accountability mechanisms
    \item Fair lending laws
    \item Medical device approval
    \end{itemize}
@@ -107,8 +107,8 @@
 
 \vspace{0.2cm}
 
-\begin{alertblock}{Real-World Example}
-COMPAS recidivism algorithm: Used to predict re-offense. Found to be biased against Black defendants. Interpretability revealed the problem, led to reform.
+\begin{alertblock}{Methodological caution}
+Fairness audits can reveal disparities under specific statistical definitions, but explanation methods alone do not establish causality, fairness, or the appropriate normative standard for a decision system.
 \end{alertblock}
 \end{frame}
 
@@ -150,7 +150,7 @@ Uses model internals & Treats model as black box \\
 \hline
 Attention weights, neuron activations & LIME, PDP \\
 \hline
-More accurate & Works for any model \\
+Can exploit internals & Works across many model classes \\
 \hline
 \end{tabular}
 \end{table}
@@ -711,7 +711,7 @@ cf.visualize_as_dataframe()
 \pause
 
 \begin{block}{Explanation}
-\textcolor{forest}{\textbf{Answer: B}} - SHAP is based on game-theoretic Shapley values with mathematical guarantees (local accuracy, consistency). LIME approximates the model locally with a simpler model, which is fast but doesn't have the same theoretical properties. Both are model-agnostic, but SHAP provides more consistent explanations.
+\textcolor{forest}{\textbf{Answer: B}} - SHAP methods are tied to Shapley-value axioms under a specified value function/background distribution, while LIME fits a local surrogate under a chosen perturbation and weighting scheme. Neither label alone guarantees faithful, stable, or causal explanations.
 \end{block}
 
 \pause
@@ -819,7 +819,7 @@ cf.visualize_as_dataframe()
 \vspace{0.2cm}
 
 \begin{alertblock}{Remember}
-Interpretability is not optional - it's essential for trustworthy AI!
+Interpretability is one component of model governance. Reliability, robustness, data quality, causal validity, fairness, privacy, and human decision processes require separate evaluation.
 \end{alertblock}
 \end{column}
 \end{columns}

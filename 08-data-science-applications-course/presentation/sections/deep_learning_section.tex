@@ -54,7 +54,7 @@ where $\sigma$ is a non-linear function.
 
 \textbf{Universal Approximation Theorem:}
 
-A neural network with one hidden layer can approximate \textit{any} continuous function (given enough neurons).
+Under standard universal-approximation conditions, a sufficiently wide network with an appropriate non-linear activation can approximate continuous functions on compact sets arbitrarily well; the theorem does not imply efficient learning, finite-sample generalization, or practical trainability.
 \end{column}
 
 \begin{column}{0.5\textwidth}
@@ -803,7 +803,7 @@ Deep networks have millions of parameters $\to$ can memorize training data!
    \item Normalize activations per batch
    \item Stabilizes training
    \item Allows higher learning rates
-   \item Acts as regularizer
+   \item Can have regularizing effects in some training regimes, but its main role is optimization/normalization of intermediate activations
    \end{itemize}
 
 \item \textcolor{purple}{\textbf{Data Augmentation:}}
@@ -897,7 +897,7 @@ Monitor validation loss, stop when it starts increasing.
 \begin{itemize}
 \item \textbf{Images:} CNNs (ResNet, EfficientNet) or Vision Transformers
 \item \textbf{Sequences:} Transformers (BERT, GPT) or LSTMs for small data
-\item \textbf{Tabular:} Often better with XGBoost/LightGBM
+\item \textbf{Tabular:} Tree ensembles are strong baselines; neural models should justify added complexity empirically
 \item \textbf{Time series:} LSTMs, Transformers, or specialized (N-BEATS)
 \end{itemize}
 
@@ -909,7 +909,7 @@ Monitor validation loss, stop when it starts increasing.
 \item Start simple, add complexity
 \item Use pre-trained models when possible
 \item Normalize inputs (mean=0, std=1)
-\item Use Adam optimizer as default
+\item Treat optimizer and learning-rate schedule as experimental choices; compare plausible baselines under matched budgets
 \item Monitor train AND validation loss
 \item Use early stopping
 \item Batch normalization for stability
