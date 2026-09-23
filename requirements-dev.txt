@@ -26,7 +26,7 @@ safety>=2.3.0  # Check for known security vulnerabilities
 # ============================================================================
 pytest>=7.4.0
 pytest-cov>=4.1.0
-pytest-xdist>=3.3.0
+pytest-xdist>=3.8.0
 pytest-mock>=3.11.0
 pytest-timeout>=2.1.0
 pytest-benchmark>=4.0.0

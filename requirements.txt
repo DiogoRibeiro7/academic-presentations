@@ -114,7 +114,7 @@ bandit>=1.7.5  # Security linting
 # Testing
 pytest>=7.4.0
 pytest-cov>=4.1.0
-pytest-xdist>=3.3.0  # Parallel testing
+pytest-xdist>=3.8.0  # Parallel testing
 hypothesis>=6.82.0  # Property-based testing
 
 # Documentation
