@@ -103,15 +103,14 @@ The repository-wide presentation migration is complete:
 - [x] Correct current-facing README/build/assessment documentation that contradicted the source-only PDF and canonical-entry-point policies.
 - [x] Clearly label 2025 enhancement guides as historical planning documents rather than current repository instructions.
 - [x] Keep genuine migration/changelog history intact and separate from current-state documentation.
-- [ ] Review remaining historical/generated summary documents for redundant or misleading current-state claims.
+- [x] Review remaining historical/generated summary documents; they are correctly isolated under `docs/history/` and labeled as provenance.
 
 ### 3. Public repository metadata
 
 - [x] Audit the GitHub repository description and topics against the current FMAD - UTP identity.
 - [x] Refresh the README landing section so it reflects the actual deck count, assessment state, and source-only PDF policy.
-- [ ] Update the GitHub repository description in repository settings. Recommended text:
-  > Academic presentations and teaching materials in statistics, machine learning, Bayesian methods, causal inference, time series, and production data science. Maintained at FMAD - UTP with shared LaTeX/Beamer infrastructure and CI-validated builds.
-- [ ] Keep README, style guide, roadmap, template, and public repository metadata aligned.
+- [x] Update the GitHub repository description to the current FMAD - UTP wording.
+- [x] Keep README, style guide, roadmap, template, and public repository metadata aligned.
 
 ### 4. Accessibility and presentation ergonomics
 
