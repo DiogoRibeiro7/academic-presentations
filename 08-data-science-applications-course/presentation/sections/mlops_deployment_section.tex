@@ -22,7 +22,7 @@
 % ================================================================
 
 \begin{frame}[fragile,allowframebreaks]{The ML Production Gap}
-\textbf{Why 87\% of ML projects never make it to production}
+\textbf{Why production ML is a systems problem}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
@@ -91,9 +91,9 @@ Reproduce once & Reproduce always \\
 \begin{itemize}
 \item \textbf{Automation}: Reduce manual work
 \item \textbf{Reproducibility}: Same inputs $\to$ same outputs
-\item \textbf{Reliability}: Systems that don't fail
+\item \textbf{Reliability}: Defined service objectives, graceful degradation, and recoverable failure modes
 \item \textbf{Scalability}: Handle growing load
-\item \textbf{Governance}: Track everything
+\item \textbf{Governance}: Trace decisions, versions, approvals, and accountability-relevant artifacts
 \item \textbf{Collaboration}: Enable team work
 \end{itemize}
 
@@ -112,7 +112,7 @@ Reproduce once & Reproduce always \\
 \vspace{0.2cm}
 
 \begin{alertblock}{Key Insight}
-Only 13\% of ML projects reach production. MLOps bridges the gap!
+Deployment success depends on data contracts, reproducibility, monitoring, rollback, operational ownership, and evidence that the model remains fit for its intended use.
 \end{alertblock}
 \end{frame}
 
@@ -834,7 +834,7 @@ jobs:
 \pause
 
 \begin{block}{Explanation}
-\textcolor{forest}{\textbf{Answer: C}} - Large accuracy drop in production usually indicates data drift. The model was trained on one distribution but is seeing different data in production. Could be covariate shift (features changed), concept drift (relationships changed), or data quality issues. Monitor input distributions and retrain with recent data.
+\textcolor{forest}{\textbf{Best answer: investigate distribution shift, data quality, label/metric changes, and training-serving skew.}} A production performance drop is evidence of a changed evaluation problem, not a diagnosis by itself. Input drift may be present without harming performance, while concept/label changes can matter even when marginal feature distributions look stable.
 \end{block}
 
 \pause
@@ -853,7 +853,7 @@ jobs:
 \pause
 
 \begin{block}{Explanation}
-\textcolor{forest}{\textbf{Answer: B}} - Fraud detection must happen in real-time (during transaction). Batch won't work. Need optimized REST API with: (1) Fast model (XGBoost/LightGBM, not deep learning), (2) Feature caching, (3) Load balancing, (4) Sub-100ms SLA. Edge deployment could work but adds complexity. Streaming with 1-hour window is too slow.
+\textcolor{forest}{\textbf{Best answer: choose an online serving path that can meet the decision deadline.}} The model family is not determined by the latency target alone; preprocessing cost, feature freshness, hardware, batching, caching, and system architecture all contribute to end-to-end latency.
 \end{block}
 \end{frame}
 
