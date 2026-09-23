@@ -28,6 +28,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item distinguish causality, stationarity, and invertibility in ARMA representations and state their root conditions precisely;
+    \item use ACF/PACF patterns as candidate-identification heuristics while recognizing finite-sample uncertainty and model non-uniqueness;
+    \item compare candidate ARMA models using likelihood/information criteria, residual diagnostics, and out-of-sample forecasting evidence.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Outline}
   \tableofcontents
 \end{frame}
@@ -108,7 +117,7 @@
   \end{itemize}
 
   \vspace{0.3cm}
-  ARMA models are finite-order approximations of this infinite linear representation.
+  ARMA models provide parsimonious rational linear filters that can approximate a wide class of stationary linear dependence structures.
 \end{frame}
 
 %==================================================
@@ -149,29 +158,18 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Stationarity Condition for AR(p)}
+\begin{frame}{Causal Stationary Representation for AR(p)}
   \begin{itemize}
-    \item A fundamental result:
-      \begin{itemize}
-        \item An AR(p) process has a unique weakly stationary solution if and only if all roots of
-          \[
-            \phi(z) = 1 - \phi_1 z - \dots - \phi_p z^p = 0
-          \]
-          lie \textbf{outside} the unit circle, i.e.\ $|z| > 1$.
-      \end{itemize}
-    \item If this holds:
-      \[
-        X_t = \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-j},
-      \]
-      for some absolutely summable sequence $\{\psi_j\}$.
-    \item If the condition fails:
-      \begin{itemize}
-        \item The process is non-stationary.
-        \item Variance typically grows without bound or is undefined.
-      \end{itemize}
+    \item For the standard causal AR(p) model, the roots of
+      \[\phi(z)=1-\phi_1 z-\cdots-\phi_p z^p\]
+      must lie outside the unit circle.
+    \item Under this condition,
+      \[X_t=\sum_{j=0}^{\infty}\psi_j\varepsilon_{t-j},\]
+      with absolutely summable coefficients, so $X_t$ depends only on current and past innovations.
+    \item This root condition is the usual stability/causality condition used for ARMA modeling and forecasting.
+    \item If the condition fails, the standard causal representation is unavailable. One should not summarize every such case simply as “variance explodes”; noncausal stationary solutions are a separate theoretical possibility.
   \end{itemize}
 \end{frame}
-
 \begin{frame}{Example: AR(1) Model}
   \textbf{AR(1):}
   \[
@@ -180,7 +178,7 @@
 
   \vspace{0.3cm}
   \begin{itemize}
-    \item Stationarity condition: $|\phi| < 1$.
+    \item Causal stationary AR(1) condition: $|\phi| < 1$.
     \item Mean:
       \[
         E[X_t] = 0 \quad \text{(assuming zero mean innovations)}.
@@ -221,7 +219,7 @@
   \end{itemize}
 
   \vspace{0.2cm}
-  This pattern is often used for \textbf{model identification}.
+  This population pattern is useful for proposing candidate orders, but finite-sample ACF/PACF estimates are noisy and should not be treated as unique model identification.
 \end{frame}
 
 %==================================================
@@ -287,7 +285,7 @@
             \varepsilon_t = \sum_{j=0}^{\infty} \pi_j X_{t-j},
           \]
           if the MA polynomial has roots outside the unit circle.
-        \item Invertibility ensures a unique representation in terms of $X_t$.
+        \item Invertibility selects a recoverable innovation representation in which current innovations can be expressed from present and past observations; it also removes observationally equivalent MA parameterizations.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -318,7 +316,7 @@
   \end{itemize}
 
   \vspace{0.2cm}
-  The ACF cuts off after lag 1, which is a clear signature of an MA(1) structure.
+  In the population, an MA(1) has zero autocorrelation beyond lag 1. In finite samples, an apparent cutoff is only a heuristic clue because sampling variability can obscure or mimic this pattern.
 \end{frame}
 
 %==================================================
@@ -345,56 +343,25 @@
   This combines autoregressive and moving average parts.
 \end{frame}
 
-\begin{frame}{Stationarity and Invertibility in ARMA(p,q)}
+\begin{frame}{Causality and Invertibility in ARMA(p,q)}
   \begin{itemize}
-    \item \textbf{Stationarity:}
-      \begin{itemize}
-        \item AR part must satisfy: all roots of
-          \[
-            \phi(z) = 1 - \phi_1 z - \dots - \phi_p z^p = 0
-          \]
-          lie outside the unit circle ($|z| > 1$).
-      \end{itemize}
-    \item \textbf{Invertibility:}
-      \begin{itemize}
-        \item MA part must satisfy: all roots of
-          \[
-            \theta(z) = 1 + \theta_1 z + \dots + \theta_q z^q = 0
-          \]
-          lie outside the unit circle.
-        \item This ensures a unique representation in terms of the innovations.
-      \end{itemize}
-    \item Under these conditions:
-      \[
-        X_t = \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-j},
-      \]
-      with $\{\psi_j\}$ absolutely summable.
+    \item \textbf{Causality / stable AR representation}: roots of $\phi(z)$ lie outside the unit circle, giving an absolutely summable MA($\infty$) representation in past innovations.
+    \item \textbf{Invertibility}: roots of $\theta(z)$ lie outside the unit circle, allowing innovations to be recovered from present and past observations.
+    \item \textbf{Identifiability}: if $\phi$ and $\theta$ share common factors, the representation is not minimal and can be reduced.
+    \item These restrictions are representation conditions used to obtain a stable, interpretable, and identifiable ARMA parameterization; they are conceptually distinct even though both are expressed as root conditions.
   \end{itemize}
 \end{frame}
-
-\begin{frame}{ACF and PACF Patterns in ARMA}
+\begin{frame}{ACF/PACF Patterns: Useful but Not Unique Identifiers}
   \begin{itemize}
-    \item \textbf{AR(p):}
-      \begin{itemize}
-        \item ACF: decays slowly.
-        \item PACF: cut-off after lag $p$.
-      \end{itemize}
-    \item \textbf{MA(q):}
-      \begin{itemize}
-        \item ACF: cut-off after lag $q$.
-        \item PACF: decays slowly.
-      \end{itemize}
-    \item \textbf{ARMA(p,q):}
-      \begin{itemize}
-        \item Both ACF and PACF decay.
-        \item No sharp cut-off in either.
-      \end{itemize}
+    \item For an ideal population AR(p), the PACF is zero beyond lag $p$ while the ACF generally decays.
+    \item For an ideal population MA(q), the ACF is zero beyond lag $q$ while the PACF generally decays.
+    \item For a generic minimal ARMA(p,q), both ACF and PACF usually tail off rather than showing a sharp cutoff.
+    \item In finite samples, confidence bands, parameter values near cancellation, short series, seasonality, and model misspecification can blur these textbook patterns.
   \end{itemize}
-
-  \vspace{0.2cm}
-  These heuristics guide the order selection but are not foolproof.
+  \begin{alertblock}{Identification workflow}
+    Use ACF/PACF to propose candidate orders, then compare fitted models through likelihood criteria, residual diagnostics, parameter stability, and forecasting performance.
+  \end{alertblock}
 \end{frame}
-
 \begin{frame}{Interpretation of ARMA Components}
   \begin{itemize}
     \item \textbf{AR part:}
@@ -453,7 +420,7 @@
       \[
         \text{BIC} = -2\ell + k \log T.
       \]
-    \item Lower values indicate a better trade-off between fit and complexity.
+    \item Within a common likelihood/data setup, lower values rank candidate models according to the criterion's own penalty and asymptotic motivation; AIC and BIC need not select the same order.
   \end{itemize}
 
   \vspace{0.2cm}
@@ -462,11 +429,11 @@
 
 \begin{frame}{Estimation Methods}
   \begin{itemize}
-    \item \textbf{Maximum Likelihood (ML):}
+    \item \textbf{Gaussian maximum likelihood / exact or conditional likelihood:}
       \begin{itemize}
-        \item Assume Gaussian innovations.
-        \item Numerically maximize the likelihood function.
-        \item Provides parameter estimates and approximate standard errors.
+        \item Gaussian likelihood is common and gives full likelihood-based inference under Gaussian innovations.
+        \item Quasi-maximum-likelihood interpretations may remain useful under weaker distributional assumptions, but standard-error formulas then need appropriate justification.
+        \item Numerical optimization and treatment of initial conditions matter in finite samples.
       \end{itemize}
     \item \textbf{Conditional least squares:}
       \begin{itemize}
@@ -491,14 +458,13 @@
     \item Check:
       \begin{itemize}
         \item Residual series plot: look for structure or regime changes.
-        \item ACF/PACF of residuals: should resemble white noise.
+        \item Residual dependence: ACF and portmanteau diagnostics should show no material remaining linear autocorrelation relative to the fitted model.
         \item Portmanteau tests (Ljung--Box, Box--Pierce).
         \item Normal Q-Q plot (if Gaussian assumption is important).
       \end{itemize}
     \item If residuals show remaining dependence:
       \begin{itemize}
-        \item Increase model order, or
-        \item Change model structure.
+        \item reconsider model order, transformations, seasonality, exogenous structure, or variance dynamics rather than automatically increasing $p$ or $q$.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -528,7 +494,7 @@
       \end{itemize}
     \item \textbf{Compare and refine.}
       \begin{itemize}
-        \item Use AIC/BIC and residual diagnostics.
+        \item Use likelihood criteria and residual diagnostics, then evaluate forecast performance on time-ordered hold-out or rolling-origin data when forecasting is the objective.
       \end{itemize}
     \item \textbf{Forecast and evaluate.}
       \begin{itemize}
@@ -551,8 +517,8 @@
     \item Propose ARMA(2,0) or AR(2).
     \item Fit AR(2), check residuals:
       \begin{itemize}
-        \item If residual ACF is near zero, model may be adequate.
-        \item If residual ACF shows a spike at lag 1, consider ARMA(2,1).
+        \item If residual dependence is small and diagnostics are satisfactory, the AR(2) remains a plausible candidate.
+        \item If residual structure remains, consider alternative ARMA orders or a different model class; one residual spike does not uniquely determine the next specification.
       \end{itemize}
     \item Compare AIC/BIC for AR(2) vs ARMA(2,1).
     \item Choose final model and compute forecasts.
@@ -561,64 +527,31 @@
 
 %==================================================
 \section{Summary and Outlook}
-%==================================================
 
-\begin{frame}{Summary}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item Linear time series models represent $X_t$ as a filtered version of white noise.
-    \item AR(p) models use past values of $X_t$.
-    \item MA(q) models use past innovations.
-    \item ARMA(p,q) models combine both to capture richer dynamics.
-    \item Stationarity and invertibility are expressed through root conditions on $\phi(z)$ and $\theta(z)$.
-    \item ACF and PACF provide useful patterns for order identification.
+    \item ARMA models are linear stochastic models whose usefulness depends on a stable representation, an identifiable innovation process, and a specification appropriate to the data.
+    \item Causality and invertibility are different representation conditions: the AR roots control dependence on past innovations, while the MA roots control recoverability of innovations from observed data.
+    \item Textbook ACF/PACF cutoffs are population properties. In finite samples they are noisy heuristics for candidate generation, not unique model-identification rules.
+    \item AIC, BIC, residual diagnostics, and forecasting loss answer different questions. Model selection should combine them according to the intended inferential or predictive objective.
+    \item White residuals are a necessary diagnostic target for the fitted linear dependence structure, but they do not establish that the model captures nonlinearity, conditional heteroscedasticity, breaks, or tail behavior.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{What Comes Next?}
-  \begin{itemize}
-    \item Non-stationary series:
-      \begin{itemize}
-        \item ARIMA models (integrated ARMA).
-        \item Seasonal ARIMA (SARIMA).
-      \end{itemize}
-    \item Conditional heteroscedasticity:
-      \begin{itemize}
-        \item ARCH, GARCH and related models.
-      \end{itemize}
-    \item Multivariate extensions:
-      \begin{itemize}
-        \item Vector autoregressions (VAR).
-        \item VARMA models.
-      \end{itemize}
-    \item State-space formulations and Kalman filtering.
-  \end{itemize}
-
-  \vspace{0.2cm}
-  ARMA forms the core building block for many of these generalizations.
-\end{frame}
-
-%==================================================
-\section*{References}
-%==================================================
-
-\begin{frame}{Further Reading}
+\begin{frame}{Selected References}
   \small
   \begin{itemize}
-    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2016).
-          \emph{Time Series Analysis: Forecasting and Control}. Wiley.
-    \item Hamilton, J. D. (1994).
-          \emph{Time Series Analysis}. Princeton University Press.
-    \item Brockwell, P. J., \& Davis, R. A. (2016).
-          \emph{Introduction to Time Series and Forecasting}. Springer.
-    \item Shumway, R. H., \& Stoffer, D. S. (2017).
-          \emph{Time Series Analysis and Its Applications}. Springer.
-    \item Tsay, R. S. (2010).
-          \emph{Analysis of Financial Time Series}. Wiley.
+    \item G. E. P. Box, G. M. Jenkins, G. C. Reinsel, and G. M. Ljung (2015). \textit{Time Series Analysis: Forecasting and Control}, 5th ed. Wiley.
+    \item P. J. Brockwell and R. A. Davis (2016). \textit{Introduction to Time Series and Forecasting}, 3rd ed. Springer.
+    \item J. D. Hamilton (1994). \textit{Time Series Analysis}. Princeton University Press.
+    \item R. H. Shumway and D. S. Stoffer (2017). \textit{Time Series Analysis and Its Applications}, 4th ed. Springer.
   \end{itemize}
 \end{frame}
 
-%==================================================
+\contactslide
+
 \appendix
+
 %==================================================
 
 \section{Appendix: Technical Notes}
@@ -655,11 +588,6 @@
 
   \vspace{0.3cm}
   ARMA spectra have a similar form with rational functions of $e^{-i\lambda}$.
-\end{frame}
-
-\begin{frame}{Thank You}
-  \centering
-  Questions or discussion?
 \end{frame}
 
 \end{document}

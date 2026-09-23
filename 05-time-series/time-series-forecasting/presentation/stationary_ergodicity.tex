@@ -28,6 +28,15 @@
   \titlepage
 \end{frame}
 
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
+  \begin{itemize}
+    \item distinguish strict stationarity, weak stationarity, and ergodicity as different probabilistic properties;
+    \item explain why time averages can estimate ensemble quantities only under additional assumptions beyond moment stationarity;
+    \item interpret unit-root/stationarity diagnostics as model-dependent evidence rather than mechanical decisions about differencing or transformation.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Outline}
   \tableofcontents
 \end{frame}
@@ -54,7 +63,7 @@
   \end{itemize}
 
   \vspace{0.3cm}
-  Stationarity and ergodicity tell us when the past is informative about the future and about the underlying process.
+  Stationarity describes invariance under time shifts; ergodic or mixing conditions connect one observed path to long-run population quantities.
 \end{frame}
 
 \begin{frame}{Typical Time Series Questions}
@@ -128,7 +137,7 @@
   \end{itemize}
 
   \vspace{0.2cm}
-  Answering this rigorously requires both stationarity and ergodicity.
+  Answering this rigorously requires assumptions tailored to the statistic of interest: stationarity may define the target moments, while ergodic, mixing, or other law-of-large-numbers conditions justify estimating them from one long path.
 \end{frame}
 
 %==================================================
@@ -327,171 +336,93 @@
   Time averages are legitimate estimators of expectations if the underlying dynamical system is ergodic.
 \end{frame}
 
-\begin{frame}{Stationarity vs Ergodicity}
+\begin{frame}{Stationarity and Ergodicity Are Different Assumptions}
   \begin{itemize}
-    \item Stationarity:
-      \begin{itemize}
-        \item Distributions do not change with time shifts.
-        \item Structural property of the process.
-      \end{itemize}
-    \item Ergodicity:
-      \begin{itemize}
-        \item Time averages equal ensemble averages.
-        \item Relates individual realizations to the overall distribution.
-      \end{itemize}
-  \end{itemize}
-
-  \vspace{0.3cm}
-  Relationship:
-  \begin{itemize}
-    \item Ergodicity \emph{implies} stationarity (in appropriate formulations).
-    \item Stationarity alone does not guarantee ergodicity.
+    \item \textbf{Stationarity} concerns invariance of the process distribution, or of selected moments, under time shifts.
+    \item \textbf{Ergodicity} concerns whether time averages of suitable functions converge to population averages along a stationary process.
+    \item In time-series theory, ergodicity is normally formulated for a stationary process (or stationary measure-preserving shift). It is therefore an additional property, not a replacement for stationarity.
+    \item A stationary process can be non-ergodic: for example, a mixture of stationary regimes in which each realization remains permanently in one latent regime.
   \end{itemize}
 \end{frame}
-
-\begin{frame}{Examples: When Is a Process Ergodic?}
+\begin{frame}{Examples and Conditions for Ergodicity}
   \begin{itemize}
-    \item Many ARMA processes with $|\phi_i|<1$ and i.i.d.\ innovations are stationary and ergodic.
-    \item Gaussian stationary processes often satisfy ergodic properties under mild conditions.
-    \item A process that is a mixture of two stationary regimes but never switches between them can be stationary and non-ergodic.
+    \item Causal ARMA processes driven by i.i.d. innovations are stationary and ergodic under the usual stable-root conditions.
+    \item For stationary Gaussian processes, ergodicity is not automatic; it is characterized by the absence of atoms in the spectral measure.
+    \item Stronger assumptions such as mixing are often used when one needs central limit theorems, standard-error formulas, or consistency of more complicated statistics.
+    \item A stationary mixture of noncommunicating regimes provides a standard example of stationarity without ergodicity.
   \end{itemize}
-
-  \vspace{0.3cm}
-  Informally, ergodicity fails when different realizations live in different ``parts'' of the state space and never explore the whole distribution.
+  \begin{alertblock}{Statistical implication}
+    Mean ergodicity can justify a sample average, but consistency of variances, autocovariances, quantiles, or nonlinear estimators may require additional moment and dependence conditions.
+  \end{alertblock}
 \end{frame}
 
 %==================================================
 \section{Practical Diagnostics}
+
 %==================================================
 
-\begin{frame}{Checking Stationarity in Practice}
+\begin{frame}{Diagnosing Temporal Stability in Practice}
   \begin{itemize}
-    \item \textbf{Visual inspection:}
-      \begin{itemize}
-        \item Plot the series, rolling mean, and rolling variance.
-        \item Look for structural breaks, changing variance, trends, seasonality.
-      \end{itemize}
-    \item \textbf{Unit root and stationarity tests:}
-      \begin{itemize}
-        \item Augmented Dickey-Fuller (ADF): null = unit root (non-stationary).
-        \item KPSS: null = stationary.
-        \item Phillips-Perron, DF-GLS, others.
-      \end{itemize}
-    \item \textbf{ACF and PACF:}
-      \begin{itemize}
-        \item Slowly decaying ACF suggests non-stationarity.
-        \item Sudden drops suggest stationarity (for ARMA-type processes).
-      \end{itemize}
+    \item \textbf{Visual and structural checks}: inspect trend, seasonality, breaks, changing variance, and changes in dependence rather than reducing the question to one test statistic.
+    \item \textbf{ADF / DF-type tests}: test a unit-root null within a chosen autoregressive specification; conclusions depend on deterministic terms, lag selection, sample size, and breaks.
+    \item \textbf{KPSS}: tests level- or trend-stationarity as the null, again under a specified deterministic structure.
+    \item \textbf{ACF/PACF}: useful descriptive diagnostics for persistence and candidate linear models, but a slowly decaying ACF is not a proof of a unit root and a sharp-looking cutoff is not a general stationarity test.
+  \end{itemize}
+  \begin{alertblock}{Do not treat tests as an oracle}
+    Near-unit-root processes, structural breaks, seasonal roots, and short samples can make apparently conflicting test results entirely plausible.
+  \end{alertblock}
+\end{frame}
+\begin{frame}{Modeling Nonstationarity}
+  \begin{itemize}
+    \item \textbf{Deterministic trend}: model or remove a deterministic component when substantively justified.
+    \item \textbf{Stochastic trend / unit root}: differencing can be appropriate, but overdifferencing can create unnecessary moving-average structure and inflate forecast variance.
+    \item \textbf{Seasonality}: use deterministic seasonal terms, seasonal differencing, or explicit seasonal state components according to the mechanism.
+    \item \textbf{Changing scale}: log or Box--Cox transformations may stabilize scale-dependent variance, but they also change the interpretation of errors and forecasts.
+    \item \textbf{Structural breaks or regime changes}: transforming the series is not a substitute for modeling the break or allowing parameters to change.
   \end{itemize}
 \end{frame}
-
-\begin{frame}{Transformations to Achieve Stationarity}
+\begin{frame}{Ergodicity in Applied Modeling}
   \begin{itemize}
-    \item \textbf{Detrending:}
-      \begin{itemize}
-        \item Remove deterministic trends (linear or nonlinear).
-        \item Work with residuals rather than raw series.
-      \end{itemize}
-    \item \textbf{Differencing:}
-      \[
-        \nabla X_t = X_t - X_{t-1},
-        \quad
-        \nabla^d X_t = (1 - B)^d X_t.
-      \]
-    \item \textbf{Variance-stabilizing transforms:}
-      \begin{itemize}
-        \item Log-transform for strictly positive series.
-        \item Box-Cox transformations.
-      \end{itemize}
-    \item \textbf{Seasonal adjustment:}
-      \begin{itemize}
-        \item Seasonal differencing.
-        \item Removing deterministic seasonal components.
-      \end{itemize}
+    \item Ergodicity is usually justified through the assumed stochastic model rather than by a standalone empirical test.
+    \item If the fitted model is stationary and ergodic and the relevant moments exist, time averages can consistently estimate corresponding population expectations.
+    \item Consistency of sample autocovariances or other nonlinear summaries may require additional dependence and moment conditions.
+    \item Structural breaks, persistent regime changes, and model misspecification can invalidate the theoretical argument even when a short sample looks visually stable.
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Ergodicity: Practical View}
-  \begin{itemize}
-    \item Directly testing ergodicity is difficult and rare in applied work.
-    \item Common approach:
-      \begin{itemize}
-        \item Assume a model (e.g.\ ARMA, GARCH).
-        \item Use known theoretical conditions for ergodicity of that model.
-      \end{itemize}
-    \item If the model implies ergodicity, then:
-      \begin{itemize}
-        \item Sample mean is a consistent estimator of the true mean.
-        \item Empirical ACF estimates the theoretical ACF.
-      \end{itemize}
-  \end{itemize}
-
-  \vspace{0.3cm}
-  It is still important to check for structural breaks, regime changes, and non-stationarities that may violate the assumptions.
 \end{frame}
 
 %==================================================
 \section{Summary and Key Messages}
-%==================================================
 
-\begin{frame}{Summary}
+\begin{frame}{Synthesis}
   \begin{itemize}
-    \item A time series is one realization of an underlying stochastic process.
-    \item \textbf{Stationarity} is about invariance of distributions (or moments) under time shifts.
-      \begin{itemize}
-        \item Strict vs weak stationarity.
-        \item Many models require at least weak stationarity.
-      \end{itemize}
-    \item \textbf{Ergodicity} links time averages to ensemble averages.
-      \begin{itemize}
-        \item Justifies using long-run sample averages as estimators of the true moments.
-      \end{itemize}
-    \item In applications:
-      \begin{itemize}
-        \item Always diagnose non-stationarity.
-        \item Use transformations or differencing if needed.
-        \item Choose models with theoretical guarantees of stationarity and ergodicity when possible.
-      \end{itemize}
+    \item Strict and weak stationarity are invariance assumptions; ergodicity is a separate property connecting a single long trajectory to population quantities.
+    \item Stationarity alone does not justify treating time averages as population expectations, and mean ergodicity alone does not automatically justify every higher-order estimator.
+    \item Unit-root and stationarity tests are conditional on a specification and can have low power or be distorted by structural breaks and near-unit-root behavior.
+    \item Differencing, detrending, seasonal adjustment, and variance-stabilizing transforms solve different modeling problems and should not be used interchangeably.
+    \item The relevant assumption is the one required by the model and estimand: forecast validity, parameter inference, spectral analysis, and long-run averages need different forms of temporal stability.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Takeaways for Practice}
-  \begin{itemize}
-    \item Never blindly assume stationarity; check data and context.
-    \item Think about the mechanism: can it reasonably be stable over the sample?
-    \item Use appropriate tests, but interpret them with care.
-    \item When modelling, ensure that estimated parameters fall in the stationary region.
-    \item Remember that all inference from one time series path implicitly relies on ergodic-type arguments.
-  \end{itemize}
-\end{frame}
-
-%==================================================
-\section*{References}
-%==================================================
-
-\begin{frame}{Further Reading}
+\begin{frame}{Selected References}
   \small
   \begin{itemize}
-    \item Hamilton, J. D. (1994). \emph{Time Series Analysis}. Princeton University Press.
-    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2016). 
-          \emph{Time Series Analysis: Forecasting and Control}. Wiley.
-    \item Shumway, R. H., \& Stoffer, D. S. (2017).
-          \emph{Time Series Analysis and Its Applications}. Springer.
-    \item Brockwell, P. J., \& Davis, R. A. (2016).
-          \emph{Introduction to Time Series and Forecasting}. Springer.
-    \item Peters, O. (2019).
-          ``The Ergodicity Problem in Economics.'' \emph{Nature Physics}, 15, 1216--1221.
+    \item J. D. Hamilton (1994). \textit{Time Series Analysis}. Princeton University Press.
+    \item P. J. Brockwell and R. A. Davis (2016). \textit{Introduction to Time Series and Forecasting}, 3rd ed. Springer.
+    \item R. H. Shumway and D. S. Stoffer (2017). \textit{Time Series Analysis and Its Applications}, 4th ed. Springer.
+    \item P. Walters (1982). \textit{An Introduction to Ergodic Theory}. Springer.
   \end{itemize}
 \end{frame}
 
-%==================================================
+\contactslide
+
 \appendix
+
 %==================================================
 
 \section{Appendix: Technical Notes}
 
 \begin{frame}{Spectral View (Optional)}
-  For a weakly stationary process with ACVF $\gamma(h)$, the spectral density is
+  A weakly stationary process has a spectral measure. When the autocovariance sequence is absolutely summable, that measure has a continuous density
   \[
     f(\lambda) = \frac{1}{2\pi} \sum_{h=-\infty}^{\infty} \gamma(h) e^{-i \lambda h},
     \quad \lambda \in [-\pi, \pi].
@@ -499,12 +430,9 @@
 
   \vspace{0.3cm}
   \begin{itemize}
-    \item Encodes how variance is distributed over frequencies.
-    \item For ARMA processes, $f(\lambda)$ has a closed-form expression in terms of the AR and MA polynomials.
+    \item The spectrum describes how second-order variation is distributed over frequencies.
+    \item Causal ARMA processes satisfy the regularity needed for the familiar rational spectral density.
   \end{itemize}
-
-  \vspace{0.2cm}
-  Stationarity is required for the spectral representation to make sense.
 \end{frame}
 
 \begin{frame}{Conditions for Stationary AR(1)}
@@ -516,22 +444,17 @@
   \vspace{0.3cm}
   \textbf{Key facts:}
   \begin{itemize}
-    \item If $|\phi| < 1$, there exists a unique strictly stationary solution:
+    \item If $|\phi| < 1$, there exists the standard causal strictly stationary solution
       \[
         X_t = \sum_{j=0}^{\infty} \phi^j \varepsilon_{t-j}.
       \]
-    \item Then:
+    \item For that causal solution:
       \[
         E[X_t] = 0, \quad
         \mathrm{Var}(X_t) = \frac{\sigma_\varepsilon^2}{1 - \phi^2}.
       \]
-    \item If $|\phi| \ge 1$, variance is infinite or explodes, and no weakly stationary solution exists.
+    \item At $|\phi|=1$, the usual finite-variance stationary solution fails. For $|\phi|>1$, a noncausal stationary solution can be constructed using future innovations, but it is not the forecasting representation normally intended by an AR model.
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Thank You}
-  \centering
-  Questions or discussion?
 \end{frame}
 
 \end{document}
