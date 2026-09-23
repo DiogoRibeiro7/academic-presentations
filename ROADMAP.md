@@ -100,9 +100,10 @@ The repository-wide presentation migration is complete:
 
 ### 2. Current documentation cleanup
 
-- [ ] Review historical/generated summary documents that may no longer describe the repository accurately.
-- [ ] Keep genuine migration/changelog history intact, but clearly separate it from current-state documentation.
-- [ ] Review enhancement guides for stale institutional or tooling assumptions.
+- [x] Correct current-facing README/build/assessment documentation that contradicted the source-only PDF and canonical-entry-point policies.
+- [x] Clearly label 2025 enhancement guides as historical planning documents rather than current repository instructions.
+- [x] Keep genuine migration/changelog history intact and separate from current-state documentation.
+- [ ] Review remaining historical/generated summary documents for redundant or misleading current-state claims.
 
 ### 3. Public repository metadata
 
