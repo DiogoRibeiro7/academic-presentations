@@ -44,7 +44,7 @@ SYNTHESIS_RE: Final[re.Pattern[str]] = re.compile(
 REFERENCES_RE: Final[re.Pattern[str]] = re.compile(
     r"\\begin\{frame\}\{(?:Selected (?:Cross-Cutting )?References|References|Further Reading)"
 )
-CONTACT_TOKEN: Final[str] = r"\\contactslide"
+CONTACT_TOKEN: Final[str] = r"\contactslide"
 
 STALE_ACTIVE_IDENTITY: Final[tuple[str, ...]] = (
     "Mysense.ai",
@@ -108,7 +108,7 @@ def _assert_content_contract(path: Path) -> None:
         problems.append("missing references slide")
     if CONTACT_TOKEN not in content:
         problems.append("missing shared contact slide")
-    if r"\\acknowledgmentsslide" in content:
+    if r"\acknowledgmentsslide" in content:
         problems.append("contains local acknowledgement slide")
 
     stale_hits: list[str] = [
