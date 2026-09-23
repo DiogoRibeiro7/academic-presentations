@@ -36,20 +36,25 @@
 \input{sections/explainable_ai_section.tex}
 \input{sections/time_series_section.tex}
 
-\begin{frame}{Integrated Takeaways}
-  \begin{enumerate}
-    \item Model quality is necessary but insufficient: production success depends on deployment and monitoring discipline.
-    \item Explainability is part of product quality, not a post-launch add-on.
-    \item Forecasting and sequential decision systems require explicit handling of temporal structure and drift.
-    \item Strong teams combine statistical rigor, engineering practices, and domain context.
-  \end{enumerate}
+\begin{frame}{Integrated Synthesis}
+  \begin{itemize}
+    \item Production data science is a coupled statistical-and-systems problem: model error, data quality, serving behavior, monitoring, and decision rules interact.
+    \item More complex models are justified only when they improve the target objective under the actual latency, reliability, governance, and maintenance constraints.
+    \item Explanations are evidence about model behavior under a chosen method; they do not automatically establish causality, fairness, or model adequacy.
+    \item Time-dependent systems require evaluation at realistic forecast origins or decision times, with explicit treatment of drift, delayed labels, and changing information sets.
+    \item Deployment decisions should combine predictive evidence, uncertainty, operational failure modes, rollback/recovery paths, and domain-specific consequences.
+  \end{itemize}
 \end{frame}
 
-\acknowledgmentsslide{
-  \item ESMAD for institutional support
-  \item Industry collaborators for practical case studies
-  \item Students for iterative feedback on teaching materials
-}
+\begin{frame}{Selected Cross-Cutting References}
+  \small
+  \begin{itemize}
+    \item I. Goodfellow, Y. Bengio, and A. Courville (2016). \textit{Deep Learning}. MIT Press.
+    \item C. Rudin (2019). "Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead." \textit{Nature Machine Intelligence}, 1, 206--215.
+    \item R. J. Hyndman and G. Athanasopoulos (2021). \textit{Forecasting: Principles and Practice}, 3rd ed.
+    \item C. Huyen (2022). \textit{Designing Machine Learning Systems}. O'Reilly.
+  \end{itemize}
+\end{frame}
 
 \contactslide
 
