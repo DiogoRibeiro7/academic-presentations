@@ -422,7 +422,7 @@
 \section{Appendix: Technical Notes}
 
 \begin{frame}{Spectral View (Optional)}
-  For a weakly stationary process with ACVF $\gamma(h)$, the spectral density is
+  A weakly stationary process has a spectral measure. When the autocovariance sequence is absolutely summable, that measure has a continuous density
   \[
     f(\lambda) = \frac{1}{2\pi} \sum_{h=-\infty}^{\infty} \gamma(h) e^{-i \lambda h},
     \quad \lambda \in [-\pi, \pi].
@@ -430,12 +430,9 @@
 
   \vspace{0.3cm}
   \begin{itemize}
-    \item Encodes how variance is distributed over frequencies.
-    \item For ARMA processes, $f(\lambda)$ has a closed-form expression in terms of the AR and MA polynomials.
+    \item The spectrum describes how second-order variation is distributed over frequencies.
+    \item Causal ARMA processes satisfy the regularity needed for the familiar rational spectral density.
   \end{itemize}
-
-  \vspace{0.2cm}
-  Stationarity is required for the spectral representation to make sense.
 \end{frame}
 
 \begin{frame}{Conditions for Stationary AR(1)}
@@ -447,16 +444,16 @@
   \vspace{0.3cm}
   \textbf{Key facts:}
   \begin{itemize}
-    \item If $|\phi| < 1$, there exists a unique strictly stationary solution:
+    \item If $|\phi| < 1$, there exists the standard causal strictly stationary solution
       \[
         X_t = \sum_{j=0}^{\infty} \phi^j \varepsilon_{t-j}.
       \]
-    \item Then:
+    \item For that causal solution:
       \[
         E[X_t] = 0, \quad
         \mathrm{Var}(X_t) = \frac{\sigma_\varepsilon^2}{1 - \phi^2}.
       \]
-    \item If $|\phi| \ge 1$, variance is infinite or explodes, and no weakly stationary solution exists.
+    \item At $|\phi|=1$, the usual finite-variance stationary solution fails. For $|\phi|>1$, a noncausal stationary solution can be constructed using future innovations, but it is not the forecasting representation normally intended by an AR model.
   \end{itemize}
 \end{frame}
 
