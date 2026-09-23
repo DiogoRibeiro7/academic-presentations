@@ -37,6 +37,28 @@ ADDITIONAL_STANDALONE_TRACKS: Final[tuple[Path, ...]] = (
 INPUT_RE: Final[re.Pattern[str]] = re.compile(r"\\input\{([^}]+)\}")
 SHARED_THEME_TOKEN: Final[str] = "esmad_beamer_theme"
 
+LEARNING_RE: Final[re.Pattern[str]] = re.compile(r"Learning (?:Goals|Objectives|Outcomes)")
+SYNTHESIS_RE: Final[re.Pattern[str]] = re.compile(
+    r"\\begin\{frame\}\{(?:Synthesis|Integrated Synthesis)"
+)
+REFERENCES_RE: Final[re.Pattern[str]] = re.compile(
+    r"\\begin\{frame\}\{(?:Selected (?:Cross-Cutting )?References|References|Further Reading)"
+)
+CONTACT_TOKEN: Final[str] = r"\contactslide"
+
+STALE_ACTIVE_IDENTITY: Final[tuple[str, ...]] = (
+    "Mysense.ai",
+    "MySense.ai",
+    "Faculty of Media Arts and Design, Technical University of Porto",
+    "ESMAD - Escola Superior de Média Arte e Design",
+)
+
+DISALLOWED_CLOSING_PATTERNS: Final[tuple[re.Pattern[str], ...]] = (
+    re.compile(r"\\begin\{frame\}(?:\[plain\])?\{?Thank [Yy]ou"),
+    re.compile(r"\\Huge Thank [Yy]ou"),
+    re.compile(r"Thank you!"),
+)
+
 
 def _read(path: Path) -> str:
     """Read one UTF-8 repository file."""
@@ -71,6 +93,39 @@ def _assert_shared_theme(path: Path) -> None:
         raise ValueError(f"{path} does not inherit the shared Beamer theme")
 
 
+
+def _assert_content_contract(path: Path) -> None:
+    """Require one active deck to follow the academic content contract."""
+
+    content: str = _read(path)
+    problems: list[str] = []
+
+    if not LEARNING_RE.search(content):
+        problems.append("missing learning goals/objectives/outcomes")
+    if not SYNTHESIS_RE.search(content):
+        problems.append("missing synthesis slide")
+    if not REFERENCES_RE.search(content):
+        problems.append("missing references slide")
+    if CONTACT_TOKEN not in content:
+        problems.append("missing shared contact slide")
+    if r"\acknowledgmentsslide" in content:
+        problems.append("contains local acknowledgement slide")
+
+    stale_hits: list[str] = [
+        token for token in STALE_ACTIVE_IDENTITY if token in content
+    ]
+    if stale_hits:
+        problems.append(
+            "contains stale active identity: " + ", ".join(stale_hits)
+        )
+
+    if any(pattern.search(content) for pattern in DISALLOWED_CLOSING_PATTERNS):
+        problems.append("contains standalone thank-you filler")
+
+    if problems:
+        raise ValueError(f"{path}: " + "; ".join(problems))
+
+
 def main() -> int:
     """Validate the repository presentation contract."""
 
@@ -80,12 +135,14 @@ def main() -> int:
         try:
             source_path: Path = _resolve_primary_source(main_path)
             _assert_shared_theme(source_path)
+            _assert_content_contract(source_path)
         except (FileNotFoundError, ValueError) as exc:
             errors.append(str(exc))
 
     for source_path in ADDITIONAL_STANDALONE_TRACKS:
         try:
             _assert_shared_theme(source_path)
+            _assert_content_contract(source_path)
         except (FileNotFoundError, ValueError) as exc:
             errors.append(str(exc))
 
@@ -98,7 +155,8 @@ def main() -> int:
     print(
         "Presentation contract valid: "
         f"{len(PRIMARY_ENTRY_POINTS)} primary main.tex entry points and "
-        f"{len(ADDITIONAL_STANDALONE_TRACKS)} additional standalone tracks."
+        f"{len(ADDITIONAL_STANDALONE_TRACKS)} additional standalone tracks; "
+        "all active decks satisfy the academic content contract."
     )
     return 0
 

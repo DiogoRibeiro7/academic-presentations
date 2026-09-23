@@ -75,74 +75,49 @@ Existing decks that consume the shared theme now inherit the canonical visual mo
 - [x] Trigger the LaTeX workflow when its own workflow file changes.
 - [x] Verify the complete 21-presentation matrix successfully on an exact pull-request head.
 
-## In Progress
+## Current State
 
-### Shared presentation template
+The repository-wide presentation migration is complete:
 
-- [ ] Merge the standardized shared template after exact-head CI and review.
-
-The template update removes stale ESMAD/MySense current metadata, describes the canonical red model, and keeps the existing mathematical and helper demonstrations intact.
-
-### Remaining long standalone decks
-
-These three files still require direct shell migration:
-
-- [ ] `00-programming-fundamentals/r-programming/presentation/R_programming.tex`
-- [ ] `04-causal-inference/ab-testing/presentation/a_b_testing_interview.tex`
-- [ ] `04-causal-inference/causal-inference-fundamentals/presentation/causal_inference_beamer.tex`
-
-They are intentionally deferred because previous full-file rewrites produced unacceptable teaching-content churn. Their migration must preserve the complete existing lecture body and modify only presentation shell, listing style where appropriate, and active identity metadata.
+- [x] All 20 active compiled course decks expose the canonical presentation structure.
+- [x] All 4 genuine additional standalone tracks inherit the shared shell.
+- [x] The complete presentation matrix compiles on CI.
+- [x] Current affiliation is **FMAD - UTP** across active presentation sources.
+- [x] MySense.ai is absent from current presentation metadata.
+- [x] Every active compiled deck has learning goals/objectives, a synthesis, references, and the shared contact slide.
+- [x] Standalone acknowledgement and “Thank you” filler slides have been removed from active compiled decks.
+- [x] The academic content contract is enforced by `scripts/validate_presentation_contract.py`.
 
 ## Next
 
-### 1. Finish visual-shell consistency
+### 1. Repository structure and generated artifacts
 
-- [ ] Migrate R Programming with its existing R-specific listing definitions preserved.
-- [ ] Migrate A/B Testing without changing its broader experimentation, causal inference, modeling, drift, MLOps, SQL, survival, or visualization content.
-- [ ] Migrate Causal Inference without changing its teaching body.
-- [ ] Run the full 21-presentation matrix after each migration slice.
-- [ ] Audit final source diffs for unexpected content churn before merge.
+- [ ] Audit duplicate or obsolete non-compiled presentation sources before deleting anything.
+- [ ] Decide whether historically tracked PDFs should remain in Git or live only in CI/release artifacts.
+- [ ] Apply the generated-artifact policy consistently across presentations and exercises.
 
-### 2. Remove stale active identity from source files
+### 2. Current documentation cleanup
 
-The shared theme already prevents stale affiliation from rendering in many decks, but copied source metadata should also become honest and consistent.
+- [ ] Review historical/generated summary documents that may no longer describe the repository accurately.
+- [ ] Keep genuine migration/changelog history intact, but clearly separate it from current-state documentation.
+- [ ] Review enhancement guides for stale institutional or tooling assumptions.
 
-- [ ] Replace active `ESMAD - Escola Superior de Média Arte e Design` affiliation strings with `FMAD - UTP` where they describe Diogo's current affiliation.
-- [ ] Remove active `Lead Data Scientist, Mysense.ai` / MySense.ai metadata from presentation sources, templates, and current documentation.
-- [ ] Preserve genuine historical references in changelog/history material.
-- [ ] Keep technical compatibility names such as `esmad_beamer_theme.sty`, legacy color aliases, and the active `dfr@esmad.ipp.pt` email where renaming would add risk without user value.
+### 3. Public repository metadata
 
-### 3. Clean current documentation
+- [ ] Review the GitHub repository description and topics against the current FMAD - UTP identity.
+- [ ] Keep README, style guide, roadmap, template, and public repository metadata aligned.
 
-Priority files identified during the audit include:
+### 4. Accessibility and presentation ergonomics
 
-- [ ] `COMPLETION_SUMMARY.md`
-- [ ] `assessments/README.md`
-- [ ] `docs/enhancement-guides/INDUSTRY_FOCUS_ENHANCEMENT_GUIDE.md`
-- [ ] other current documentation that still presents old ESMAD/MySense identity as active.
+- [ ] Audit dense slides, minimum font sizes, contrast, table readability, and figure legibility.
+- [ ] Review alt-text or textual equivalents where figures carry essential information.
+- [ ] Identify decks that should be split for teaching duration rather than compressed further.
 
-The `CHANGELOG.md` should remain historical. Only statements that claim to describe the current repository state should be corrected there.
+### 5. Citation and source hygiene
 
-### 4. Establish a consistent repository contract
-
-- [ ] Define the expected directory layout for each presentation topic.
-- [ ] Distinguish source files, figures, references, exercises, and generated artifacts consistently.
-- [ ] Audit duplicate or obsolete presentation sources before deleting anything.
-- [ ] Remove stale implementation-summary/generated report files that no longer describe the repository accurately.
-
-### 5. Generated artifact policy
-
-PDFs are currently ignored by `.gitignore` but some generated PDFs remain tracked historically.
-
-- [ ] Decide whether generated PDFs belong in Git history or only in CI/release artifacts.
-- [ ] Apply that policy consistently across presentation and exercise directories.
-- [ ] Avoid mixing source-cleanup changes with mass binary deletion in the same PR.
-
-### 6. Public repository metadata
-
-- [ ] Update the GitHub repository description, which still references the former ESMAD/MySense identity.
-- [ ] Review repository topics and public-facing metadata for current terminology.
-- [ ] Ensure README, style guide, roadmap, template, and GitHub repository description tell the same story.
+- [ ] Audit bibliography coverage and citation consistency across all active decks.
+- [ ] Prefer stable primary/academic references over tool documentation when a scientific claim is being supported.
+- [ ] Check that current software/version claims are either evergreen or maintained deliberately.
 
 ## Later Improvements
 
@@ -168,13 +143,12 @@ The cleanup should **not**:
 
 ## Definition of Done
 
-The repository cleanup is complete when:
+The presentation-standardization phase is complete when:
 
-1. all 21 standalone Beamer entry points compile in CI;
-2. every active presentation uses or inherits the same canonical Madrid/red visual shell;
-3. current author identity is consistent across active presentation sources and documentation;
-4. no active material presents MySense.ai as a current affiliation;
-5. the old ESMAD display name is used only where historically or technically necessary;
-6. the shared template creates a compliant presentation by default;
-7. repository structure and generated-artifact policy are documented and consistently applied;
-8. final changes are reviewable without unexplained teaching-content churn.
+1. all supported standalone Beamer entry points compile in CI;
+2. every active presentation inherits the canonical Madrid/red shell;
+3. current author identity is consistent across active presentation sources;
+4. every active compiled deck satisfies the academic content contract;
+5. the shared template creates a compliant presentation by default.
+
+The broader repository-cleanup phase remains open until generated-artifact policy, obsolete-source review, current documentation, public repository metadata, accessibility, and citation hygiene are also complete.

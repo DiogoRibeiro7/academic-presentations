@@ -293,6 +293,20 @@ pdflatex presentation.tex
 
 The repository CI is the authoritative regression check for supported standalone presentation entry points.
 
+## Academic Content Contract
+
+Every active compiled deck should contain:
+
+- explicit learning goals, objectives, or outcomes near the beginning;
+- a substantive synthesis near the end rather than a generic recap;
+- a selected references or further-reading frame;
+- the shared `\contactslide`;
+- no local acknowledgement slide used for branding;
+- no standalone “Thank you” filler slide;
+- no stale current affiliation or employer metadata.
+
+These checks are structural. They deliberately do not attempt to score prose quality or scientific correctness automatically. CI should protect the conventions that can be tested objectively; academic review remains responsible for assumptions, derivations, citations, examples, and claims.
+
 ## Source of Truth
 
 For visual consistency, use this guide together with:
