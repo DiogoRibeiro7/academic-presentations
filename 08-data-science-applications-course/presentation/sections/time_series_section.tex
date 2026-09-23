@@ -112,89 +112,68 @@ Many forecasting problems violate independent-sampling assumptions. Validation a
 % focusing on key slides. The full presentation would be ~50 slides.
 
 \begin{frame}{Time Series Components}
-\textbf{Decomposing time series into interpretable parts}
+\textbf{Decomposition is a descriptive modeling device, not a universal data-generating law.}
 
+\textbf{Additive form:}
+\[
+  y_t = T_t + S_t + C_t + I_t.
+\]
+
+\begin{itemize}
+  \item $T_t$: long-run trend or smooth level;
+  \item $S_t$: recurring seasonal structure;
+  \item $C_t$: longer, non-periodic cycles;
+  \item $I_t$: remainder not explained by the chosen decomposition.
+\end{itemize}
+
+\textbf{Multiplicative form:}
+\[
+  y_t = T_t \times S_t \times C_t \times I_t,
+\]
+which can be useful when seasonal amplitude scales with the series level.
+\end{frame}
+
+\begin{frame}{Decomposition in Practice}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Additive Decomposition:}
-\[
-y_t = T_t + S_t + C_t + I_t
-\]
-
-where:
-\begin{itemize}
-\item $T_t$: \textcolor{forest}{\textbf{Trend}} - Long-term direction
-\item $S_t$: \textcolor{navyblue}{\textbf{Seasonal}} - Regular pattern
-\item $C_t$: \textcolor{crimson}{\textbf{Cyclical}} - Non-periodic fluctuations
-\item $I_t$: \textcolor{purple}{\textbf{Irregular}} - Random noise
-\end{itemize}
-
-\vspace{0.3cm}
-
-\textbf{Multiplicative Decomposition:}
-\[
-y_t = T_t \times S_t \times C_t \times I_t
-\]
-
-Use when seasonal variation increases with level.
-
-\vspace{0.3cm}
-
-\textbf{When to Use Each:}
-\begin{itemize}
-\item \textbf{Additive:} Seasonal variation constant
-\item \textbf{Multiplicative:} Seasonal variation grows with trend
-\end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Example: Airline Passengers}
-
+\begin{column}{0.55\textwidth}
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.7]
-% Original series
+\begin{tikzpicture}[scale=0.72]
 \begin{scope}
-\draw[->] (0,0) -- (6,0) node[right] {\tiny Time};
-\draw[->] (0,0) -- (0,2) node[above] {\tiny $y_t$};
+\draw[->] (0,0) -- (6,0) node[right] {Time};
+\draw[->] (0,0) -- (0,2) node[above] {$y_t$};
 \draw[thick, navyblue] plot[smooth] coordinates {(0,0.5) (1,0.8) (2,0.6) (3,1.2) (4,1.0) (5,1.5)};
-\node at (3,2.3) {\tiny Original};
+\node at (3,2.3) {Observed};
 \end{scope}
 
-% Trend
 \begin{scope}[yshift=-2.5cm]
 \draw[->] (0,0) -- (6,0);
 \draw[->] (0,0) -- (0,1.5);
 \draw[thick, forest] (0,0.3) -- (5,1.2);
-\node at (3,1.8) {\tiny Trend};
+\node at (3,1.8) {Trend};
 \end{scope}
 
-% Seasonal
 \begin{scope}[yshift=-4.5cm]
 \draw[->] (0,0) -- (6,0);
 \draw[->] (0,0) -- (0,1);
 \draw[thick, crimson] plot[smooth] coordinates {(0,0.5) (0.8,0.7) (1.6,0.5) (2.4,0.7) (3.2,0.5) (4,0.7) (4.8,0.5)};
-\node at (3,1.3) {\tiny Seasonal};
-\end{scope}
-
-% Residual
-\begin{scope}[yshift=-6cm]
-\draw[->] (0,0) -- (6,0);
-\draw[->] (0,0) -- (0,0.8);
-\draw[thick, purple] plot[smooth] coordinates {(0,0.4) (1,0.3) (2,0.5) (3,0.2) (4,0.6) (5,0.3)};
-\node at (3,1) {\tiny Residual};
+\node at (3,1.3) {Seasonal};
 \end{scope}
 \end{tikzpicture}
 \end{figure}
+\end{column}
 
-\vspace{0.2cm}
-
-\textbf{Decomposition Methods:}
+\begin{column}{0.4\textwidth}
+\textbf{Common approaches}
 \begin{itemize}
-\item \textbf{Classical:} Moving averages
-\item \textbf{STL:} LOESS-based (more robust)
-\item \textbf{X-13-ARIMA-SEATS:} Official US Census method
+  \item classical moving-average decomposition;
+  \item STL for flexible seasonal/trend decomposition;
+  \item model-based seasonal adjustment such as X-13-ARIMA-SEATS.
 \end{itemize}
+
+\begin{alertblock}{Interpretation}
+The remainder depends on the decomposition method and tuning choices; it should not automatically be treated as white noise.
+\end{alertblock}
 \end{column}
 \end{columns}
 \end{frame}
@@ -408,102 +387,39 @@ forecast = results.forecast(steps=12)
 
 % Due to length constraints, including key additional sections in summary form:
 
-\begin{frame}{Modern ML Methods for Time Series}
-\textbf{Beyond classical statistical approaches}
+\begin{frame}{Modern Forecasting Model Families}
+\begin{itemize}
+  \item \textbf{Feature-based ML}: lagged values, rolling summaries, calendar variables, and exogenous covariates fed to tree ensembles or other supervised learners.
+  \item \textbf{Structured additive models}: explicit trend, seasonality, holidays, and regressors.
+  \item \textbf{State-space models}: latent-state dynamics with recursive filtering and smoothing.
+  \item \textbf{Neural sequence models}: RNN/LSTM/GRU, N-BEATS, and Transformer-based architectures.
+\end{itemize}
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Machine Learning Approaches:}
+\begin{alertblock}{Model-family choice}
+Choose the family around forecast horizon, number of related series, covariate availability, data volume, update frequency, uncertainty requirements, and deployment cost.
+\end{alertblock}
+\end{frame}
 
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Feature Engineering + ML}}
-   \begin{itemize}
-   \item Lag features: $y_{t-1}, y_{t-2}, \ldots$
-   \item Rolling statistics: mean, std
-   \item Time features: day of week, month
-   \item Train XGBoost, Random Forest
-   \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Prophet (Facebook)}}
-   \begin{itemize}
-   \item Additive model with trend + seasonality
-   \item Handles missing data, outliers
-   \item Easy to use, interpretable
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Neural Networks}}
-   \begin{itemize}
-   \item LSTM: Long Short-Term Memory
-   \item GRU: Gated Recurrent Unit
-   \item Transformer models
-   \item N-BEATS: Pure deep learning
-   \end{itemize}
-
-\item \textcolor{purple}{\textbf{State Space Models}}
-   \begin{itemize}
-   \item Kalman filters
-   \item Dynamic linear models
-   \end{itemize}
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Method choice depends on the forecasting problem:}
-
+\begin{frame}{Selecting a Forecasting Method}
 \begin{table}
-\tiny
-\begin{tabular}{|l|p{3.5cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Method} & \textbf{Best For} \\
-\hline
-\textbf{ARIMA} & Linear dependence after suitable differencing/transformation \\
-\hline
-\textbf{Exp Smoothing} & Trends + seasonality, simple \\
-\hline
-\textbf{Additive trend/seasonal models} & Structured trend, seasonality, calendar effects \\
-\hline
-\textbf{XGBoost} & Many features, non-linear \\
-\hline
-\textbf{RNN/LSTM} & Sequential nonlinear models when data volume and covariates justify them \\
-\hline
-\textbf{Transformer-based} & Multi-series/covariate settings where the architecture earns its added complexity \\
-\hline
+\small
+\begin{tabular}{p{0.29\textwidth}p{0.63\textwidth}}
+\toprule
+\textbf{Method family} & \textbf{Useful when} \\
+\midrule
+ARIMA-type & Linear serial dependence after suitable differencing or transformation \\
+Exponential smoothing & Level/trend/seasonality dominate and a strong statistical baseline is needed \\
+State-space & Latent dynamics, missing observations, or explicit state uncertainty matter \\
+Tree-based ML & Many engineered covariates and nonlinear interactions are available \\
+RNN/LSTM & Sequential nonlinear structure is supported by sufficient data \\
+Transformer-based & Multi-series/covariate settings justify the additional model capacity and compute \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-\vspace{0.3cm}
-
-\textbf{Example: LSTM Architecture}
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.6]
-% Input sequence
-\foreach \i in {1,...,5} {
-  \node[draw, circle, fill=navyblue!20] (x\i) at (\i,0) {$x_{\i}$};
-}
-
-% LSTM cells
-\foreach \i in {1,...,5} {
-  \node[draw, rectangle, fill=forest!20, minimum width=0.8cm, minimum height=0.8cm] (h\i) at (\i,2) {LSTM};
-}
-
-% Output
-\node[draw, circle, fill=crimson!20] (y) at (5,4) {$\hat{y}_{t+1}$};
-
-% Connections
-\foreach \i in {1,...,5} {
-  \draw[->] (x\i) -- (h\i);
-}
-\foreach \i in {1,...,4} {
-  \draw[->] (h\i) -- (h\the\numexpr\i+1);
-}
-\draw[->] (h5) -- (y);
-\end{tikzpicture}
-\end{figure}
-\end{column}
-\end{columns}
+\begin{block}{Evaluation rule}
+Compare against simple baselines under the same forecast origins, horizons, and loss functions. Architectural complexity is useful only if it improves the actual forecasting objective.
+\end{block}
 \end{frame}
 
 % Additional essential content would include:
