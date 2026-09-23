@@ -619,12 +619,10 @@ latexmk -pdf rl_beamer.tex
 
 **Build artifact policy:**
 
-- Compiled PDFs are tracked in git, so any deck can be read straight from GitHub without
-  downloading a release or compiling it yourself.
-- LaTeX auxiliary files (`.aux`, `.log`, `.fls`, `.fdb_latexmk`, `.nav`, `.snm`, `.out`) are
-  generated noise and are ignored.
-- CI additionally attaches freshly compiled PDFs to each release, so the release assets always
-  reflect the latest source even if a tracked PDF is a commit behind.
+- Git stores LaTeX and other source files; compiled PDFs are not tracked.
+- LaTeX auxiliary files (`.aux`, `.log`, `.fls`, `.fdb_latexmk`, `.nav`, `.snm`, `.out`) and generated PDFs are ignored.
+- GitHub Actions compiles the supported presentation/exercise matrix, and release artifacts are the distribution channel for generated PDFs.
+- If a document is not yet part of the CI matrix, compile it locally from its source rather than committing the resulting PDF.
 
 </details>
 

@@ -4,39 +4,25 @@
 
 ## 📚 Overview
 
-This directory contains assessment materials designed to evaluate student understanding of the topics covered in the academic presentations. The materials include quizzes, exams, grading rubrics, and self-assessment tools.
+This directory contains implemented assessment materials together with planning/specification documents for future quizzes and exams. At present, the repository includes grading rubrics and selected self-assessment checklists; the quiz and exam subdirectories document intended formats and content rather than claiming generated assessment files that are not present.
 
 ## 📂 Directory Structure
 
 ```text
 assessments/
-├── README.md                          # This file
-├── quizzes/                          # Topic-specific quizzes
-│   ├── README.md
-│   ├── deep_learning_quiz.pdf
-│   ├── reinforcement_learning_quiz.pdf
-│   ├── explainable_ai_quiz.pdf
-│   ├── time_series_quiz.pdf
-│   ├── optimization_quiz.pdf
-│   └── ... (other quizzes)
-├── exams/                            # Midterm and final exams
-│   ├── README.md
-│   ├── midterm_exam_template.tex
-│   ├── final_exam_template.tex
-│   └── sample_exams/
-├── rubrics/                          # Grading criteria
+├── README.md
+├── quizzes/
+│   └── README.md                 # Quiz design/specification document
+├── exams/
+│   └── README.md                 # Exam design/specification document
+├── rubrics/
 │   ├── README.md
 │   ├── presentation_rubric.md
-│   ├── project_rubric.md
-│   ├── problem_set_rubric.md
-│   └── code_quality_rubric.md
-└── self_assessment/                  # Student checklists
+│   └── project_rubric.md
+└── self_assessment/
     ├── README.md
     ├── deep_learning_checklist.md
-    ├── reinforcement_learning_checklist.md
-    ├── explainable_ai_checklist.md
-    ├── time_series_checklist.md
-    └── optimization_checklist.md
+    └── time_series_checklist.md
 ```
 
 ## 🎯 Assessment Philosophy
@@ -221,14 +207,13 @@ Self-assessment checklists help students:
 1. **Quizzes:**
 
    - Use as-is or customize for your course
-   - Available in PDF and LaTeX source
-   - Include answer keys (separate files)
+   - The quiz README currently acts as a design/specification document; individual quiz source files have not yet been added.
+   - When implemented, LaTeX source belongs in Git and generated PDFs belong in CI/release artifacts.
 
 2. **Exams:**
 
-   - Templates provided for customization
-   - Adjust difficulty and length as needed
-   - Sample exams provided as examples
+   - The exam README currently documents proposed structures and conventions; exam source/templates are not yet present in this directory.
+   - When implemented, keep editable source in Git and generate PDFs through the build/release workflow.
 
 3. **Rubrics:**
 

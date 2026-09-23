@@ -30,6 +30,10 @@ Our exams are designed to:
    - Reward understanding and reasoning
    - Allow demonstration of mastery
 
+## Current Status
+
+This directory currently contains this specification README only. The exam templates and sample exam files described below are planned materials, not files presently tracked in the repository. When implemented, editable source should be committed and generated PDFs should remain build/release artifacts.
+
 ## 📋 Exam Structure
 
 ### Midterm Exam

@@ -29,59 +29,63 @@ This directory contains quizzes designed to assess student understanding of core
    - Common misconceptions addressed
    - References to relevant materials
 
+## Current Status
+
+This file is currently a **quiz design/specification document**. The individual `.tex` quiz files listed below have not yet been added to the repository, and no generated quiz PDFs are tracked in Git. Treat the entries as planned assessment specifications until source files are implemented.
+
 ## 📋 Available Quizzes
 
 ### Deep Learning Quiz
-- **File:** `deep_learning_quiz.tex` / `.pdf`
+- **Planned source:** `deep_learning_quiz.tex`
 - **Topics:** Neural networks, backpropagation, CNN, RNN, Transformers
 - **Questions:** 20 (15 MC, 5 short answer)
 - **Duration:** 45 minutes
 - **Difficulty:** Intermediate to Advanced
 
 ### Reinforcement Learning Quiz
-- **File:** `reinforcement_learning_quiz.tex` / `.pdf`
+- **Planned source:** `reinforcement_learning_quiz.tex`
 - **Topics:** MDPs, Bellman equations, Q-learning, policy gradients
 - **Questions:** 18 (12 MC, 6 short answer)
 - **Duration:** 40 minutes
 - **Difficulty:** Advanced
 
 ### Explainable AI Quiz
-- **File:** `explainable_ai_quiz.tex` / `.pdf`
+- **Planned source:** `explainable_ai_quiz.tex`
 - **Topics:** SHAP, LIME, fairness, interpretability methods
 - **Questions:** 15 (10 MC, 5 short answer)
 - **Duration:** 35 minutes
 - **Difficulty:** Intermediate
 
 ### Time Series Quiz
-- **File:** `time_series_quiz.tex` / `.pdf`
+- **Planned source:** `time_series_quiz.tex`
 - **Topics:** Stationarity, ARIMA, VAR, forecasting
 - **Questions:** 18 (12 MC, 6 short answer)
 - **Duration:** 40 minutes
 - **Difficulty:** Intermediate
 
 ### Optimization Quiz
-- **File:** `optimization_quiz.tex` / `.pdf`
+- **Planned source:** `optimization_quiz.tex`
 - **Topics:** Convexity, gradient descent, KKT conditions
 - **Questions:** 16 (10 MC, 6 short answer)
 - **Duration:** 40 minutes
 - **Difficulty:** Advanced
 
 ### MCMC Methods Quiz
-- **File:** `mcmc_quiz.tex` / `.pdf`
+- **Planned source:** `mcmc_quiz.tex`
 - **Topics:** Bayesian inference, M-H, HMC, diagnostics
 - **Questions:** 15 (10 MC, 5 short answer)
 - **Duration:** 35 minutes
 - **Difficulty:** Advanced
 
 ### Bayesian ML Quiz
-- **File:** `bayesian_ml_quiz.tex` / `.pdf`
+- **Planned source:** `bayesian_ml_quiz.tex`
 - **Topics:** Priors, posteriors, Gaussian processes, VI
 - **Questions:** 16 (11 MC, 5 short answer)
 - **Duration:** 35 minutes
 - **Difficulty:** Advanced
 
 ### Causal Inference Quiz
-- **File:** `causal_inference_quiz.tex` / `.pdf`
+- **Planned source:** `causal_inference_quiz.tex`
 - **Topics:** DAGs, IV, RDD, DiD, propensity scores
 - **Questions:** 18 (12 MC, 6 short answer)
 - **Duration:** 40 minutes
