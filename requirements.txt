@@ -34,7 +34,7 @@ statsmodels>=0.14.0
 pmdarima>=2.0.3
 prophet>=1.1.4
 arch>=6.2.0  # GARCH models
-pykalman>=0.9.5
+pykalman>=0.11.2
 
 # Modern time series libraries
 darts>=0.25.0
