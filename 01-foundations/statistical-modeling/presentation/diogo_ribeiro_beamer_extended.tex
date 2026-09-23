@@ -55,37 +55,28 @@
 % ===============================================================
 \section{Welcome \& Context}
 
-\begin{frame}{Welcome}
-\begin{itemize}
-  \item What you'll get today:
+\begin{frame}{Learning Goals}
+  By the end of this session, you should be able to:
   \begin{itemize}
-    \item Practical modeling workflow for explanatory analysis.
-    \item How to pick models for different outcome scales.
-    \item Diagnostics, validation, and communication.
+    \item choose regression-family models according to outcome scale, sampling design, and the scientific question rather than by habit;
+    \item interpret coefficients and uncertainty conditionally on the fitted model while separating association from causal identification;
+    \item diagnose misspecification, influential observations, dependence, overdispersion, and proportionality assumptions before communicating substantive conclusions.
   \end{itemize}
-  \item Materials: code snippets in R and Python.
-\end{itemize}
 \end{frame}
 
-\begin{frame}{About Me}
-\begin{itemize}
-  \item \textbf{Diogo Ribeiro} --- Mathematician \& Data Scientist.
-  \item FMAD - UTP.
-  \item Focus: time series, streaming analytics, and interpretable models.
-  \item Motto: lean models, clean code, reproducible pipelines.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Explanatory vs Predictive}
-\begin{block}{Explanatory}
-  Emphasizes understanding relationships and effects. Inference-oriented.
-\end{block}
-\begin{block}{Predictive}
-  Emphasizes generalization error on unseen data. Forecast-oriented.
-\end{block}
-\begin{alertblock}{Key Point}
-  Pick metrics, validation, and modeling choices aligned with your goal.
-\end{alertblock}
+\begin{frame}{Explanatory, Predictive, and Causal Questions}
+  \begin{block}{Explanatory / associational}
+    Estimate and describe model-conditional relationships, with uncertainty, under an explicit statistical specification.
+  \end{block}
+  \begin{block}{Predictive}
+    Minimize an out-of-sample loss for future observations drawn from a defined deployment population.
+  \end{block}
+  \begin{block}{Causal}
+    Estimate the effect of a well-defined intervention or treatment contrast under an identification strategy that goes beyond regression adjustment alone.
+  \end{block}
+  \begin{alertblock}{Key point}
+    The same regression equation can support different tasks, but the interpretation, validation design, and required assumptions change with the question.
+  \end{alertblock}
 \end{frame}
 
 % ===============================================================
@@ -140,19 +131,20 @@ df["y"].mean(skipna=True)
 % ===============================================================
 \section{Inference Basics}
 
-\begin{frame}{Samples, Populations, \& SEs}
+\begin{frame}{Samples, Populations, and Standard Errors}
 \begin{itemize}
-  \item Sample $\to$ estimate parameters.
-  \item Standard errors quantify sampling variability.
-  \item Confidence intervals communicate uncertainty.
+  \item A parameter or estimand is defined relative to a population/model; the sample supplies information about it.
+  \item Standard errors quantify estimator variability under the assumed sampling/design and variance model.
+  \item A frequentist confidence interval is a procedure with repeated-sampling coverage under its assumptions; it is not a posterior probability statement about the realized interval.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Hypothesis Testing Basics}
 \begin{itemize}
-  \item Null vs alternative hypotheses.
-  \item p-values, effect sizes, and power.
-  \item Multiple testing: control FWER/FDR.
+  \item Define the null, alternative, test statistic, and sampling model before interpreting a test.
+  \item A p-value is the probability, under the null model, of a result at least as incompatible with that null as the observed statistic.
+  \item Statistical significance does not measure effect size, practical importance, or the probability that the null is true.
+  \item Multiplicity procedures control different error criteria such as FWER or FDR under their stated dependence assumptions.
 \end{itemize}
 \end{frame}
 
@@ -162,16 +154,20 @@ df["y"].mean(skipna=True)
 \begin{frame}{Simple Linear Regression}
 $y = \beta_0 + \beta_1 x + \varepsilon$
 \begin{itemize}
-  \item Interpret $\beta_1$: expected change in $y$ per unit $x$.
-  \item Assumptions: linearity, independence, homoscedasticity, normality.
+  \item Under the linear conditional-mean model, $\beta_1$ is the change in $\mathbb{E}[Y\mid X=x]$ associated with a one-unit change in $x$.
+  \item Independence or an appropriate dependence model matters for conventional standard errors; homoscedasticity is not required if heteroscedasticity-robust inference is used appropriately.
+  \item Normal errors are not required for OLS point estimates. They support exact finite-sample Gaussian inference in the classical model; large-sample inference can rely on different conditions.
+  \item A regression slope is not a causal effect without an identification argument.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Multiple Linear Regression}
 $y = \alpha + \sum_k \beta_k x_k + \varepsilon$
 \begin{itemize}
-  \item Interpret coefficients ceteris paribus.
-  \item Address collinearity (VIF), feature selection, interactions.
+  \item Each coefficient is a model-conditional partial association holding the included covariates fixed; causal language requires additional assumptions about confounding, selection, and treatment definition.
+  \item Collinearity affects precision and numerical stability, not bias by itself. VIF is a diagnostic, not an automatic variable-deletion rule.
+  \item Interactions and nonlinear terms should follow the scientific question and functional-form checks.
+  \item Data-driven feature selection changes the inferential problem; naive standard errors and p-values after extensive selection can be anti-conservative.
 \end{itemize}
 \end{frame}
 
@@ -188,9 +184,10 @@ confint(m)
 
 \begin{frame}{Diagnostics: Linear Models}
 \begin{itemize}
-  \item Residual plots and Q-Q plots.
-  \item Leverage and Cook’s distance.
-  \item Transformations or robust regression when assumptions fail.
+  \item Residual-versus-fitted and component/residual plots probe functional form and variance structure.
+  \item Q-Q plots are relevant when distributional assumptions matter for the intended inference; they are not a generic pass/fail test for using OLS.
+  \item Leverage, Cook's distance, DFFITS, and DFBETAS identify influential observations relative to the fitted model; influence is a reason to investigate, not automatically delete data.
+  \item Robust standard errors, robust regression, transformations, or a different mean/variance model address different failure modes.
 \end{itemize}
 \end{frame}
 
@@ -218,9 +215,9 @@ cbind(est, OR = exp(est[, "Estimate"]))
 
 \begin{frame}{Model Assessment}
 \begin{itemize}
-  \item ROC, PR, and calibration.
-  \item Pseudo-$R^2$ (McFadden, Cox–Snell, Nagelkerke).
-  \item Train/test splits or cross-validation.
+  \item For prediction: assess calibration, proper scoring rules, discrimination, and out-of-sample performance under a representative validation design.
+  \item For explanatory inference: inspect functional form, influential observations, separation, uncertainty, and whether the coefficient interpretation matches the sampling/design assumptions.
+  \item Pseudo-$R^2$ measures are criterion-specific summaries and should not be interpreted as variance explained in the ordinary least-squares sense.
 \end{itemize}
 \end{frame}
 
@@ -259,11 +256,11 @@ summary(mod)
 % ===============================================================
 \section{Count Models \& Overdispersion}
 
-\begin{frame}{Poisson and Negative Binomial}
+\begin{frame}{Poisson and Negative Binomial Models}
 \begin{itemize}
-  \item Poisson: $\mathbb{E}[y]=\mathbb{V}[y]=\mu$.
-  \item Overdispersion $\Rightarrow$ consider Negative Binomial.
-  \item Offsets for exposure/time at risk.
+  \item In the canonical Poisson model, the conditional mean and variance are both $\mu(x)$.
+  \item Extra-Poisson variation can arise from heterogeneity, dependence, omitted structure, excess zeros, or a genuinely overdispersed count process; negative binomial is one possible model, not an automatic remedy.
+  \item Offsets encode known exposure on the log scale and change the estimand from counts to rates conditional on exposure.
 \end{itemize}
 \end{frame}
 
@@ -330,9 +327,9 @@ summary(cox)
 
 \begin{frame}{Robust Regression}
 \begin{itemize}
-  \item M-estimators (Huber, Tukey).
-  \item Resistant to outliers in $y$.
-  \item Compare with OLS: coefficient stability.
+  \item M-estimators such as Huber-type procedures reduce sensitivity to large residuals under a chosen loss function.
+  \item Robustness to vertical outliers does not automatically protect against high-leverage contamination in predictor space.
+  \item Compare estimands and fitted relationships, not only coefficient numerical stability, because robust and least-squares procedures can target different population quantities under misspecification.
 \end{itemize}
 \end{frame}
 
@@ -343,11 +340,12 @@ summary(cox)
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Model Uncertainty}
+\begin{frame}{Model and Selection Uncertainty}
 \begin{itemize}
-  \item Competing models \& information criteria (AIC/BIC).
-  \item Sensitivity analysis.
-  \item Pre-registration for confirmatory studies.
+  \item AIC and BIC compare candidate models under different objectives and asymptotic motivations; neither proves that the selected model is correctly specified.
+  \item Sensitivity analyses should vary plausible functional forms, variance structures, dependence assumptions, missing-data handling, and influential observations.
+  \item Repeated model search can make conventional post-selection confidence intervals and p-values too optimistic.
+  \item Pre-specification is valuable for confirmatory analysis; exploratory modeling should be labeled as exploratory and validated independently when possible.
 \end{itemize}
 \end{frame}
 
@@ -458,17 +456,16 @@ summary(cox)
 \end{frame}
 
 % ------------- Closing -------------
-\begin{frame}{Key Takeaways}
-\begin{itemize}
-  \item Match model to outcome and study goal.
-  \item Diagnose and validate before concluding.
-  \item Communicate effects with uncertainty and clarity.
-\end{itemize}
+\begin{frame}{Synthesis}
+  \begin{itemize}
+    \item Model choice begins with the outcome, estimand, sampling/design structure, and scientific question; it does not begin with a preferred algorithm.
+    \item Regression coefficients are conditional model summaries. Association, prediction, and causal effect estimation require different assumptions even when they use similar equations.
+    \item Standard errors, confidence intervals, and p-values inherit the assumptions of the variance/dependence model and any model-selection procedure used before inference.
+    \item Diagnostics identify tension between the data and the fitted specification; they do not certify truth, and influential observations should be investigated rather than mechanically removed.
+    \item Communicate estimates together with uncertainty, assumptions, sensitivity, and scope so the audience can distinguish what the data support from what the model imposes.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \centering \Large Thank you! \\\vspace{6pt}
-  \normalsize Slides: \textbf{Diogo Ribeiro}
-\end{frame}
+\contactslide
 
 \end{document}
