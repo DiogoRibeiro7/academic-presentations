@@ -505,127 +505,68 @@ Most business/policy questions can't be answered with RCTs. We need methods for 
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Instrumental Variables: Finding Natural Experiments}
-\textbf{Idea:} Use a variable that affects treatment but not outcome directly.
+\begin{frame}{Instrumental Variables: Identification}
+An instrument $Z$ can identify variation in treatment $X$ that is not driven by the unobserved causes of outcome $Y$.
 
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{definition}[Instrumental Variable]
-$Z$ is an instrument for $X \rightarrow Y$ if:
 \begin{enumerate}
-\item \textbf{Relevance}: $Z$ affects $X$ (strong first stage)
-\item \textbf{Exclusion}: $Z$ affects $Y$ only through $X$
-\item \textbf{Independence}: $Z$ is as-good-as-randomly assigned
+  \item \textbf{Relevance}: $Z$ changes the distribution of $X$.
+  \item \textbf{Independence}: $Z$ is independent of the potential outcomes/treatment types under the design.
+  \item \textbf{Exclusion}: $Z$ affects $Y$ only through its effect on $X$.
 \end{enumerate}
-\end{definition}
 
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-import numpy as np
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from scipy import stats
-import statsmodels.api as sm
-from statsmodels.sandbox.regression.gmm import IV2SLS
-
-# Simulate data with endogeneity
-np.random.seed(42)
-n = 1000
-
-# Unobserved confounder
-U = np.random.randn(n)
-
-# Instrument (randomly assigned)
-Z = np.random.binomial(1, 0.5, n)
-
-# Treatment (affected by instrument and confounder)
-X = 0.5 * Z + 0.3 * U + np.random.randn(n) * 0.2
-
-# Outcome (affected by treatment and confounder)
-Y = 1.0 * X + 0.4 * U + np.random.randn(n) * 0.3
-
-df = pd.DataFrame({'Y': Y, 'X': X, 'Z': Z, 'U': U})
-
-print("True causal effect: 1.0")
-
-# Naive OLS (biased due to confounding)
-ols = LinearRegression().fit(df[['X']], df['Y'])
-ols_coef = ols.coef_[0]
-print(f"OLS estimate: {ols_coef:.3f}")
-
-# Two-Stage Least Squares (2SLS)
-# First stage: X ~ Z
-first_stage = LinearRegression().fit(df[['Z']], df['X'])
-X_hat = first_stage.predict(df[['Z']])
-
-# Check first-stage strength
-f_stat = (first_stage.score(df[['Z']], df['X']) * (n-2)) / (1 - first_stage.score(df[['Z']], df['X']))
-print(f"First-stage F-statistic: {f_stat:.2f}")
-
-# Second stage: Y ~ X_hat
-second_stage = LinearRegression().fit(X_hat.reshape(-1, 1), df['Y'])
-iv_coef = second_stage.coef_[0]
-print(f"IV estimate: {iv_coef:.3f}")
-
-# Using statsmodels for proper inference
-iv_model = IV2SLS(df['Y'], df[['X']], df[['Z']], df[['Z']]).fit()
-print(f"IV (statsmodels): {iv_model.params[0]:.3f} ({iv_model.pvalues[0]:.3f})")
-
-# Reduced form (effect of Z on Y)
-reduced_form = LinearRegression().fit(df[['Z']], df['Y'])
-rf_coef = reduced_form.coef_[0]
-
-# Manual IV calculation: reduced form / first stage
-manual_iv = rf_coef / first_stage.coef_[0]
-print(f"Manual IV calculation: {manual_iv:.3f}")
-\end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.8]
-\node[draw, circle, fill=purple!20] (Z) at (0,2) {Z};
-\node[draw, circle, fill=crimson!20] (X) at (2,2) {X};
-\node[draw, circle, fill=forest!20] (Y) at (4,2) {Y};
-\node[draw, circle, fill=gold!20] (U) at (3,0.5) {U};
-
-% Valid arrows
-\draw[->, thick] (Z) -- (X);
-\draw[->, thick] (X) -- (Y);
-\draw[->, thick] (U) -- (X);
-\draw[->, thick] (U) -- (Y);
-
-% Invalid arrow (exclusion restriction)
-\draw[->, thick, dashed, crimson] (Z) to[bend left] (Y);
-\node[above] at (2,3) {\color{crimson}\small Exclusion};
-\node[above] at (2,2.7) {\color{crimson}\small (must be zero)};
-
-\node[below] at (0,1.5) {\small Instrument};
-\node[below] at (2,1.5) {\small Treatment};
-\node[below] at (4,1.5) {\small Outcome};
-\node[below] at (3,0) {\small Confounder};
-\end{tikzpicture}
-\end{figure}
-
-\textbf{Famous Instruments:}
-\begin{itemize}
-\item \textbf{Angrist (1990)}: Draft lottery $\rightarrow$ military service $\rightarrow$ earnings
-\item \textbf{Card (1995)}: Distance to college $\rightarrow$ education $\rightarrow$ wages
-\item \textbf{McCrary (2002)}: Rainfall $\rightarrow$ voter turnout $\rightarrow$ election outcomes
-\end{itemize}
-
-\textbf{IV Limitations:}
-\begin{itemize}
-\item Hard to find valid instruments
-\item Weak instruments bias
-\item Local Average Treatment Effect (LATE)
-\item Exclusion restriction untestable
-\end{itemize}
-
-\begin{alertblock}{LATE Interpretation}
-IV estimates effect for "compliers" - those whose treatment status is affected by the instrument.
+\begin{alertblock}{Interpretation}
+Instrument validity is primarily a design/substantive argument. A strong first stage is observable; independence and exclusion are not generally established by the outcome data alone.
 \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Instrumental Variables: Two-Stage Least Squares}
+For a linear constant-effect model with one instrument, 2SLS uses instrument-induced treatment variation:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+import statsmodels.api as sm
+from linearmodels.iv import IV2SLS
+
+data = df.copy()
+
+iv = IV2SLS.from_formula(
+    "Y ~ 1 + [X ~ Z]",
+    data=data,
+).fit(cov_type="robust")
+
+print(iv.params)
+print(iv.first_stage)
+\end{lstlisting}
+
+\begin{block}{Why use an IV estimator directly?}
+Regressing $Y$ on fitted $\hat X$ with ordinary OLS can recover the point estimate in simple cases, but naive second-stage standard errors are wrong because $\hat X$ is estimated. Dedicated IV routines handle the covariance calculation and diagnostics.
+\end{block}
+\end{frame}
+
+\begin{frame}{Instrumental Variables: Diagnostics and Scope}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{Diagnostics}
+\begin{itemize}
+  \item inspect first-stage strength;
+  \item report weak-instrument-robust inference where needed;
+  \item assess sensitivity to alternative instrument sets/specifications;
+  \item justify exclusion and independence substantively.
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Scope}
+\begin{itemize}
+  \item weak instruments can create severe finite-sample problems;
+  \item IV estimands can differ from population-average effects;
+  \item with binary treatment/instrument, monotonicity plus standard IV assumptions yields a LATE for compliers.
+\end{itemize}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{LATE}
+The complier interpretation is not automatic for every IV model; it relies on the binary-instrument potential-outcomes framework and assumptions such as monotonicity.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{Regression Discontinuity: Identification}
