@@ -21,207 +21,112 @@
 % PART 1: MLOPS FUNDAMENTALS
 % ================================================================
 
-\begin{frame}[fragile,allowframebreaks]{The ML Production Gap}
-\textbf{Why production ML is a systems problem}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Research vs. Production:}
-
+\begin{frame}{From Notebook to Production}
 \begin{table}
-\tiny
-\begin{tabular}{|p{2.2cm}|p{2.2cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Research/Notebook} & \textbf{Production} \\
-\hline
-Static dataset & Live, changing data \\
-\hline
-Batch processing & Real-time inference \\
-\hline
-Single model version & Multiple versions \\
-\hline
-Local machine & Distributed systems \\
-\hline
-Manual execution & Automated pipelines \\
-\hline
-No monitoring & 24/7 monitoring \\
-\hline
-Reproduce once & Reproduce always \\
-\hline
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Development focus} & \textbf{Production concern} \\
+\midrule
+Static datasets & Live, changing data \\
+Manual runs & Automated, repeatable pipelines \\
+One local model & Versioned model/data/config artifacts \\
+Offline evaluation & Online service and business behavior \\
+Single-machine assumptions & Capacity, latency, and failure handling \\
+Limited monitoring & Observability and incident response \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-\vspace{0.3cm}
-
-\textbf{Challenges in Production:}
-
-\begin{enumerate}
-\item \textcolor{crimson}{Data drift}: Input distribution changes
-\item \textcolor{crimson}{Concept drift}: Relationship changes
-\item \textcolor{crimson}{Scale}: 1 prediction vs. 1M/sec
-\item \textcolor{crimson}{Latency}: Real-time requirements
-\item \textcolor{crimson}{Reliability}: 99.9\% uptime needed
-\item \textcolor{crimson}{Versioning}: Track code, data, models
-\item \textcolor{crimson}{Monitoring}: Detect issues early
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{What is MLOps?}
-
-\textbf{ML + DevOps + Data Engineering}
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.7]
-\node[draw, circle, fill=forest!20, minimum size=1.8cm] (ml) at (0,1.5) {ML};
-\node[draw, circle, fill=navyblue!20, minimum size=1.8cm] (dev) at (2,1.5) {DevOps};
-\node[draw, circle, fill=crimson!20, minimum size=1.8cm] (data) at (1,0) {Data Eng};
-
-% Intersection
-\node[draw, circle, fill=purple!40, minimum size=0.8cm] (center) at (1,0.9) {\tiny MLOps};
-\end{tikzpicture}
-\end{figure}
-
-\vspace{0.2cm}
-
-\textbf{MLOps Goals:}
-
-\begin{itemize}
-\item \textbf{Automation}: Reduce manual work
-\item \textbf{Reproducibility}: Same inputs $\to$ same outputs
-\item \textbf{Reliability}: Defined service objectives, graceful degradation, and recoverable failure modes
-\item \textbf{Scalability}: Handle growing load
-\item \textbf{Governance}: Trace decisions, versions, approvals, and accountability-relevant artifacts
-\item \textbf{Collaboration}: Enable team work
-\end{itemize}
-
-\vspace{0.2cm}
-
-\textbf{MLOps = Practices + Tools + Culture}
-
-\begin{itemize}
-\item Not just technology
-\item Organizational mindset
-\item Cross-functional teams
-\end{itemize}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Key Insight}
-Deployment success depends on data contracts, reproducibility, monitoring, rollback, operational ownership, and evidence that the model remains fit for its intended use.
+\begin{alertblock}{Production gap}
+A model that performs well in development still needs reliable data contracts, serving behavior, monitoring, rollback, and operational ownership.
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{The ML Lifecycle}
-\textbf{From data to deployment and back}
-
+\begin{frame}{MLOps as an Operating Discipline}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Traditional Software:}
+\begin{column}{0.48\textwidth}
+\textbf{Core concerns}
+\begin{itemize}
+  \item automation and repeatability;
+  \item reproducibility across code, data, configuration, and environment;
+  \item reliability and graceful failure;
+  \item capacity and latency;
+  \item traceability and governance;
+  \item collaboration across data, ML, and platform teams.
+\end{itemize}
+\end{column}
 
+\begin{column}{0.48\textwidth}
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=0.85]
+\node[draw, circle, fill=forest!20, minimum size=1.8cm] (ml) at (0,1.5) {ML};
+\node[draw, circle, fill=navyblue!20, minimum size=1.8cm] (dev) at (2.3,1.5) {DevOps};
+\node[draw, circle, fill=crimson!20, minimum size=1.8cm] (data) at (1.15,0) {Data Eng};
+\node[draw, circle, fill=purple!40, minimum size=1.0cm] (center) at (1.15,0.9) {MLOps};
+\end{tikzpicture}
+\end{figure}
+\end{column}
+\end{columns}
+
+\begin{block}{Not just tooling}
+MLOps is the set of engineering practices and organizational controls used to operate model-based systems over time.
+\end{block}
+\end{frame}
+
+\begin{frame}{The ML Lifecycle: Build}
+\textbf{Model artifacts depend on more than code:}
 \[
-\text{Code} \to \text{Build} \to \text{Deploy}
+\text{Code} + \text{Data} + \text{Configuration} + \text{Environment}
+\longrightarrow \text{Model artifact}.
 \]
-
-\vspace{0.2cm}
-
-\textbf{Machine Learning:}
-
-\[
-\text{Code} + \text{Data} + \text{Config} \to \text{Model} \to \text{Deploy}
-\]
-
-More complex! Models are artifacts built from code AND data.
-
-\vspace{0.3cm}
-
-\textbf{Complete ML Lifecycle:}
 
 \begin{enumerate}
-\item \textcolor{forest}{\textbf{Data Collection}}
-   \begin{itemize}
-   \item Gather raw data
-   \item Set up pipelines
-   \end{itemize}
+  \item \textbf{Data collection}: acquire and validate source data.
+  \item \textbf{Data preparation}: clean, transform, and construct features.
+  \item \textbf{Training}: fit candidate models under tracked configurations.
+  \item \textbf{Evaluation}: compare against baselines and release criteria.
+\end{enumerate}
 
-\item \textcolor{navyblue}{\textbf{Data Preparation}}
-   \begin{itemize}
-   \item Clean, validate, transform
-   \item Feature engineering
-   \end{itemize}
+\begin{alertblock}{Reproducibility unit}
+To reproduce a model, record the source code, data/version identifiers, configuration, environment, and randomization state—not only the serialized model file.
+\end{alertblock}
+\end{frame}
 
-\item \textcolor{crimson}{\textbf{Model Training}}
-   \begin{itemize}
-   \item Experiment, tune
-   \item Select best model
-   \end{itemize}
-
-\item \textcolor{purple}{\textbf{Model Evaluation}}
-   \begin{itemize}
-   \item Validate performance
-   \item Check for bias
-   \end{itemize}
+\begin{frame}{The ML Lifecycle: Operate}
+\begin{columns}
+\begin{column}{0.46\textwidth}
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item \textbf{Deploy}: expose predictions or decisions through the required interface.
+  \item \textbf{Monitor}: observe system health, inputs, outputs, labels, and business outcomes.
+  \item \textbf{Update}: retrain, recalibrate, roll back, or retire when evidence justifies a change.
 \end{enumerate}
 \end{column}
 
 \begin{column}{0.5\textwidth}
-\begin{enumerate}
-\setcounter{enumi}{4}
-\item \textcolor{gold}{\textbf{Model Deployment}}
-   \begin{itemize}
-   \item Serve predictions
-   \item A/B testing
-   \end{itemize}
-
-\item \textcolor{orange}{\textbf{Monitoring}}
-   \begin{itemize}
-   \item Track performance
-   \item Detect drift
-   \end{itemize}
-
-\item \textcolor{teal}{\textbf{Retraining}}
-   \begin{itemize}
-   \item Update with new data
-   \item Close the loop
-   \end{itemize}
-\end{enumerate}
-
-\vspace{0.2cm}
-
-\textbf{It's a Cycle, Not Linear!}
-
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.6]
-\node[draw, circle, fill=forest!20] (data) at (0,2) {\tiny Data};
-\node[draw, circle, fill=navyblue!20] (train) at (2,2) {\tiny Train};
-\node[draw, circle, fill=crimson!20] (deploy) at (4,2) {\tiny Deploy};
-\node[draw, circle, fill=purple!20] (monitor) at (4,0) {\tiny Monitor};
-\node[draw, circle, fill=gold!20] (retrain) at (0,0) {\tiny Retrain};
-
+\begin{tikzpicture}[scale=0.78]
+\node[draw, circle, fill=forest!20] (data) at (0,2) {Data};
+\node[draw, circle, fill=navyblue!20] (train) at (2.2,2) {Train};
+\node[draw, circle, fill=crimson!20] (deploy) at (4.4,2) {Deploy};
+\node[draw, circle, fill=purple!20] (monitor) at (4.4,0) {Monitor};
+\node[draw, circle, fill=gold!20] (update) at (0,0) {Update};
 \draw[->, thick] (data) -- (train);
 \draw[->, thick] (train) -- (deploy);
 \draw[->, thick] (deploy) -- (monitor);
-\draw[->, thick] (monitor) -- (retrain);
-\draw[->, thick] (retrain) -- (data);
+\draw[->, thick] (monitor) -- (update);
+\draw[->, thick] (update) -- (data);
 \end{tikzpicture}
 \end{figure}
-
-\vspace{0.2cm}
-
-\textbf{Continuous Loop:}
-\begin{itemize}
-\item Models degrade over time
-\item New data becomes available
-\item Requirements change
-\item Must continuously improve
-\end{itemize}
 \end{column}
 \end{columns}
+
+\begin{block}{Feedback loop}
+New data, changing requirements, delayed labels, incidents, and measured performance can all trigger review. Continuous retraining is not automatically the correct response.
+\end{block}
 \end{frame}
 
 % ================================================================
