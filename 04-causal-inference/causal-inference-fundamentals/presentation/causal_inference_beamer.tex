@@ -372,150 +372,60 @@ Controlling for the "right" variables enables causal identification from observa
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Building and Analyzing DAGs in Python}
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+\begin{frame}{DAGs: What the Graph Encodes}
+\begin{itemize}
+  \item Nodes represent variables; directed edges encode assumed direct causal relationships.
+  \item A DAG is a formal statement of assumptions, not a pattern learned automatically from observational correlations.
+  \item For the effect of Education on Income, plausible common causes such as Family Background, Ability, and Location can open backdoor paths.
+  \item Post-treatment variables such as Experience may mediate part of the effect and should not be adjusted for when estimating the total effect.
+\end{itemize}
+
+\begin{alertblock}{Adjustment principle}
+Choose covariates that block noncausal backdoor paths without conditioning on descendants of treatment or colliders that would create new biasing paths.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{DAGs in Python: Represent the Assumptions}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
 import networkx as nx
-import matplotlib.pyplot as plt
-from itertools import combinations
-import pandas as pd
-import numpy as np
 
-# Create a DAG for education -> income example
-def create_education_dag():
-    """Create DAG for education's effect on income"""
-    G = nx.DiGraph()
-    
-    # Add nodes
-    nodes = ['Education', 'Income', 'Family_Background', 
-             'Ability', 'Experience', 'Location']
-    G.add_nodes_from(nodes)
-    
-    # Add edges (causal relationships)
-    edges = [
-        ('Family_Background', 'Education'),
-        ('Family_Background', 'Income'),
-        ('Ability', 'Education'),
-        ('Ability', 'Income'),
-        ('Education', 'Income'),
-        ('Education', 'Experience'),
-        ('Experience', 'Income'),
-        ('Location', 'Education'),
-        ('Location', 'Income')
-    ]
-    G.add_edges_from(edges)
-    
-    return G
+G = nx.DiGraph()
+G.add_edges_from([
+    ("Family_Background", "Education"),
+    ("Family_Background", "Income"),
+    ("Ability", "Education"),
+    ("Ability", "Income"),
+    ("Location", "Education"),
+    ("Location", "Income"),
+    ("Education", "Experience"),
+    ("Experience", "Income"),
+    ("Education", "Income"),
+])
 
-# Visualize DAG
-def plot_dag(G, title="Causal DAG"):
-    pos = nx.spring_layout(G, seed=42)
-    plt.figure(figsize=(10, 6))
-    nx.draw(G, pos, with_labels=True, node_color='lightblue',
-            node_size=2000, font_size=8, font_weight='bold',
-            arrows=True, arrowsize=20, edge_color='gray')
-    plt.title(title)
-    plt.axis('off')
-    return pos
-
-# Find all paths between two nodes
-def find_all_paths(G, source, target, path=[]):
-    """Find all directed paths from source to target"""
-    path = path + [source]
-    if source == target:
-        return [path]
-    if source not in G:
-        return []
-    paths = []
-    for node in G[source]:
-        if node not in path:  # avoid cycles
-            newpaths = find_all_paths(G, node, target, path)
-            paths.extend(newpaths)
-    return paths
-
-# Check backdoor criterion
-def check_backdoor_criterion(G, treatment, outcome, adjustment_set):
-    """Simplified check for backdoor criterion"""
-    # This is a simplified implementation
-    # Real implementation would use proper d-separation algorithms
-    
-    print(f"Checking backdoor criterion for {treatment} -> {outcome}")
-    print(f"Adjustment set: {adjustment_set}")
-    
-    # Find all paths from treatment to outcome
-    all_paths = find_all_paths(G.to_undirected(), treatment, outcome)
-    backdoor_paths = []
-    
-    for path in all_paths:
-        # Check if path starts with arrow into treatment (backdoor)
-        if len(path) > 2 and G.has_edge(path[1], path[0]):
-            backdoor_paths.append(path)
-    
-    print(f"Backdoor paths found: {len(backdoor_paths)}")
-    for i, path in enumerate(backdoor_paths):
-        print(f"  Path {i+1}: {' -> '.join(path)}")
-    
-    return len(backdoor_paths) == 0 or adjustment_set
-
-# Example usage
-G = create_education_dag()
-plot_dag(G, "Education -> Income Causal DAG")
-
-# Check different adjustment sets
-adjustment_sets = [
-    ['Family_Background', 'Ability'],
-    ['Family_Background'],
-    ['Experience']  # This would be wrong (post-treatment)
-]
-
-for adj_set in adjustment_sets:
-    print("\n" + "="*50)
-    valid = check_backdoor_criterion(G, 'Education', 'Income', adj_set)
-    print(f"Adjustment set {adj_set}: {'Valid' if valid else 'Invalid'}")
+assert nx.is_directed_acyclic_graph(G)
 \end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{DAG Analysis Steps:}
 
+\begin{block}{What this code does}
+NetworkX is useful for representing and visualizing the assumed graph. A hand-written path checker is not a substitute for a correct d-separation or adjustment-set algorithm.
+\end{block}
+\end{frame}
+
+\begin{frame}{DAGs: From Graph to Adjustment Set}
 \begin{enumerate}
-\item \textbf{Draw the DAG}:
-   \begin{itemize}
-   \item Use domain knowledge
-   \item Include all relevant variables
-   \item Be explicit about assumptions
-   \end{itemize}
-
-\item \textbf{Identify confounders}:
-   \begin{itemize}
-   \item Find backdoor paths
-   \item Apply backdoor criterion
-   \item Check for colliders
-   \end{itemize}
-
-\item \textbf{Choose adjustment set}:
-   \begin{itemize}
-   \item Block all backdoor paths
-   \item Don't condition on mediators
-   \item Avoid post-treatment variables
-   \end{itemize}
+  \item Draw the causal graph from substantive knowledge and design information.
+  \item Identify all backdoor paths from treatment to outcome.
+  \item Find a sufficient adjustment set that blocks those paths.
+  \item Check that the set does not include treatment descendants or open collider paths.
+  \item Perform sensitivity analysis because unmeasured variables are absent from the observed graph by construction.
 \end{enumerate}
 
-\vspace{0.3cm}
-\begin{block}{Python Tools}
-\begin{itemize}
-\item \textbf{NetworkX}: DAG creation and analysis
-\item \textbf{DoWhy}: Causal inference library
-\item \textbf{CausalML}: ML methods for causal inference
-\item \textbf{Pyro}: Probabilistic programming
-\end{itemize}
+\begin{block}{Example}
+For the graph shown here, Family Background, Ability, and Location are candidate pre-treatment common causes. Experience is downstream of Education and is inappropriate when the target is the total effect.
 \end{block}
 
 \begin{alertblock}{Remember}
-DAGs encode \emph{assumptions}, not facts. They should be based on domain knowledge and be testable where possible.
+DAGs make identification assumptions explicit. They do not validate those assumptions by themselves.
 \end{alertblock}
-\end{column}
-\end{columns}
 \end{frame}
 
 \section{Identification Strategies}
