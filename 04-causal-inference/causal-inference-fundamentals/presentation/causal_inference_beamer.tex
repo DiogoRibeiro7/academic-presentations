@@ -977,81 +977,32 @@ Difference & -1.9pp & -2.5pp \\
 
 \section{Limitations and Best Practices}
 
-\begin{frame}{Common Pitfalls and How to Avoid Them}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Common Mistakes:}
+\begin{frame}{Common Causal-Inference Failure Modes}
+\begin{itemize}
+  \item \textbf{Association interpreted causally}: regression coefficients are given causal meaning without an identification argument.
+  \item \textbf{Bad adjustment}: important common causes are omitted, mediators are controlled when targeting total effects, or colliders are conditioned on.
+  \item \textbf{Weak or invalid instruments}: first-stage weakness, exclusion violations, or incorrect interpretation of the IV estimand.
+  \item \textbf{Design assumptions ignored}: non-parallel trends, manipulation near an RD cutoff, or inadequate overlap/hidden confounding in observational adjustment.
+\end{itemize}
 
-\begin{enumerate}
-\item \textbf{Confusing correlation with causation}
-   \begin{itemize}
-   \item Over-interpreting regression coefficients
-   \item Ignoring selection bias
-   \item Not considering confounders
-   \end{itemize}
-
-\item \textbf{Wrong DAG specification}
-   \begin{itemize}
-   \item Missing important confounders
-   \item Including mediators in controls
-   \item Conditioning on colliders
-   \end{itemize}
-
-\item \textbf{Weak instruments}
-   \begin{itemize}
-   \item First stage F < 10
-   \item Ignoring LATE interpretation
-   \item Assuming exclusion restriction
-   \end{itemize}
-
-\item \textbf{Violated assumptions}
-   \begin{itemize}
-   \item Non-parallel trends in DID
-   \item Manipulation around RDD cutoff
-   \item Unobserved confounding in matching
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Best Practices:}
-
-\begin{enumerate}
-\item \textbf{Start with theory and DAGs}
-   \begin{itemize}
-   \item Draw causal assumptions explicitly
-   \item Use domain knowledge
-   \item Test implications where possible
-   \end{itemize}
-
-\item \textbf{Multiple identification strategies}
-   \begin{itemize}
-   \item Triangulate with different methods
-   \item Check robustness across approaches
-   \item Report sensitivity analyses
-   \end{itemize}
-
-\item \textbf{Validate assumptions}
-   \begin{itemize}
-   \item Pre-trend tests for DID
-   \item Density tests for RDD
-   \item Balance tests for matching
-   \item Placebo and falsification tests
-   \end{itemize}
-
-\item \textbf{Report honestly}
-   \begin{itemize}
-   \item Acknowledge limitations
-   \item Discuss threats to identification
-   \item Provide confidence intervals
-   \item Consider practical significance
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\end{columns}
-
-\begin{alertblock}{The Credibility Revolution}
-Modern causal inference emphasizes \textbf{design-based identification} over model-based approaches. Focus on research design, not just statistical techniques.
+\begin{alertblock}{Core lesson}
+A sophisticated estimator cannot repair a design that does not identify the target causal effect.
 \end{alertblock}
+\end{frame}
+
+\begin{frame}{Credibility Checklist for Causal Claims}
+\begin{itemize}
+  \item state the estimand and causal assumptions explicitly;
+  \item use DAGs/design knowledge to justify adjustment or assignment mechanisms;
+  \item inspect diagnostics relevant to the design, while recognizing they cannot prove untestable assumptions;
+  \item report sensitivity analyses and alternative specifications where meaningful;
+  \item distinguish statistical uncertainty from identification uncertainty;
+  \item discuss external validity and practical significance separately from internal identification.
+\end{itemize}
+
+\begin{block}{Triangulation}
+Agreement across designs with different identifying assumptions can strengthen an argument, but multiple biased estimators do not become causal merely because they agree.
+\end{block}
 \end{frame}
 
 \begin{frame}{When Causal Inference Is and Isn't Possible}
