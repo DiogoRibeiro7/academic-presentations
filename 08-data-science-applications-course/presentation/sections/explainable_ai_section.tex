@@ -467,95 +467,33 @@ cf.visualize_as_dataframe()
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Summary \& Best Practices}
-\textbf{Building interpretable ML systems}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The Interpretability Workflow:}
-
+\begin{frame}{Interpretability Workflow}
 \begin{enumerate}
-\item \textbf{Model Selection:}
-   \begin{itemize}
-   \item Start with interpretable baselines
-   \item Document accuracy-interpretability tradeoff
-   \item Justify complexity if needed
-   \end{itemize}
-
-\item \textbf{Global Understanding:}
-   \begin{itemize}
-   \item Permutation importance
-   \item Partial dependence plots
-   \item SHAP summary plots
-   \end{itemize}
-
-\item \textbf{Local Explanations:}
-   \begin{itemize}
-   \item SHAP force plots for key predictions
-   \item LIME for individual cases
-   \item Counterfactuals for recourse
-   \end{itemize}
-
-\item \textbf{Validation:}
-   \begin{itemize}
-   \item Check explanations make sense
-   \item Verify with domain experts
-   \item Test on edge cases
-   \end{itemize}
-
-\item \textbf{Communication:}
-   \begin{itemize}
-   \item Tailor to audience
-   \item Visualize clearly
-   \item Provide actionable insights
-   \end{itemize}
+  \item start with an explicit explanation question and audience;
+  \item compare interpretable baselines before adding complexity;
+  \item choose global or local methods that match the question;
+  \item test explanation fidelity, stability, and sensitivity;
+  \item communicate assumptions and limits alongside the visualization.
 \end{enumerate}
-\end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Common Mistakes:}
-
-\begin{itemize}
-\item[$\times$] Trusting explanations blindly
-\item[$\times$] Using only one method
-\item[$\times$] Ignoring feature correlations
-\item[$\times$] Not validating with experts
-\item[$\times$] Over-interpreting complex models
-\end{itemize}
-
-\vspace{0.3cm}
-
-\textbf{Tools \& Resources:}
-
-\begin{itemize}
-\item \textbf{Python Libraries:}
-  \begin{itemize}
-  \item SHAP, LIME, ELI5
-  \item InterpretML (Microsoft)
-  \item AIX360 (IBM)
-  \item Captum (PyTorch)
-  \end{itemize}
-
-\item \textbf{Books:}
-  \begin{itemize}
-  \item "Interpretable Machine Learning" (Molnar)
-  \item "Explanatory Model Analysis" (Biecek \& Burzykowski)
-  \end{itemize}
-
-\item \textbf{Papers:}
-  \begin{itemize}
-  \item "A Unified Approach to Interpreting Model Predictions" (SHAP)
-  \item "Why Should I Trust You?" (LIME)
-  \end{itemize}
-\end{itemize}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Remember}
-Interpretability is one component of model governance. Reliability, robustness, data quality, causal validity, fairness, privacy, and human decision processes require separate evaluation.
+\begin{alertblock}{Validation}
+An explanation that looks plausible is not automatically faithful. Validate the method against known model behavior, perturbations, or domain constraints where possible.
 \end{alertblock}
-\end{column}
-\end{columns}
+\end{frame}
+
+\begin{frame}{Interpretability: Common Failure Modes}
+\begin{itemize}
+  \item treating feature attribution as causal attribution;
+  \item ignoring dependence among predictors;
+  \item trusting one explanation method as definitive;
+  \item using global summaries to justify individual decisions;
+  \item presenting explanations without uncertainty or stability checks;
+  \item confusing interpretability with fairness, robustness, or safety.
+\end{itemize}
+
+\begin{block}{Resources}
+Useful references include Molnar's \textit{Interpretable Machine Learning}, Biecek and Burzykowski's \textit{Explanatory Model Analysis}, and the original LIME/SHAP papers.
+\end{block}
 \end{frame}
 
 % ================================================================
