@@ -20,92 +20,36 @@
 % PART 1: FUNDAMENTALS
 % ================================================================
 
-\begin{frame}{What is Time Series Data?}
-\textbf{Data ordered by time with temporal dependencies}
+\begin{frame}{What Makes Time Series Different?}
+A time series is an ordered sequence $\{y_t\}_{t=1}^T$ observed over time.
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Definition:}
-
-A time series is a sequence of observations:
-\[
-\{y_t : t = 1, 2, \ldots, T\}
-\]
-where $y_t$ is the value at time $t$.
-
-\vspace{0.3cm}
-
-\textbf{Key Characteristic:}
 \begin{itemize}
-\item \textcolor{crimson}{Temporal ordering matters!}
-\item Observations may exhibit serial dependence; the dependence structure must be modeled or respected in validation
-\item Past values influence future values
-\item Random shuffling is generally inappropriate when it breaks the deployment-time information structure
+  \item ordering determines which information was available at each decision or forecast origin;
+  \item observations may be serially dependent, seasonally structured, or subject to evolving regimes;
+  \item random train/test shuffling is inappropriate when it leaks future information into training;
+  \item not every time series is strongly autocorrelated, and not every cross-sectional dataset is independent.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{Examples:}
-\begin{itemize}
-\item Stock prices (daily)
-\item Temperature readings (hourly)
-\item Sales data (monthly)
-\item Heart rate (per second)
-\item Website traffic (minute-by-minute)
-\end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Time Series vs. Cross-Sectional:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|p{2.5cm}|p{2.5cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Time Series} & \textbf{Cross-Sectional} \\
-\hline
-Ordered by time & No time ordering \\
-\hline
-Temporal dependence & Independent obs \\
-\hline
-Cannot shuffle & Can shuffle \\
-\hline
-Train-test split: by time & Random split OK \\
-\hline
-Example: Daily stock price of AAPL & Example: House prices in a city \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Types of Time Series:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Univariate:}} Single variable over time
-   \begin{itemize}
-   \item Daily temperature
-   \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Multivariate:}} Multiple variables over time
-   \begin{itemize}
-   \item Temperature, humidity, pressure
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Panel:}} Multiple entities over time
-   \begin{itemize}
-   \item Stock prices for 500 companies
-   \end{itemize}
-\end{enumerate}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Why Time Series is Different}
-Many forecasting problems violate independent-sampling assumptions. Validation and modeling must respect temporal ordering, horizon, and the available information set.
+\begin{alertblock}{Validation principle}
+Reproduce the deployment information set: preserve time ordering, forecast horizon, feature availability, and retraining schedule.
 \end{alertblock}
+\end{frame}
+
+\begin{frame}{Common Time-Series Structures}
+\begin{itemize}
+  \item \textbf{Univariate}: one measured process over time.
+  \item \textbf{Multivariate}: several jointly observed variables over time.
+  \item \textbf{Panel / multiple series}: many entities each observed repeatedly.
+  \item \textbf{Irregular or event time}: observations arrive at non-uniform timestamps.
+\end{itemize}
+
+\textbf{Examples}
+\begin{itemize}
+  \item hourly temperature or heart-rate traces;
+  \item monthly product demand;
+  \item web traffic at minute resolution;
+  \item many stores, assets, or patients followed over time.
+\end{itemize}
 \end{frame}
 
 % Due to space constraints, I'll create a comprehensive but streamlined version
@@ -262,86 +206,42 @@ Always check stationarity before modeling. Transform if necessary!
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{ARIMA Models}
-\textbf{AutoRegressive Integrated Moving Average}
+\begin{frame}{ARIMA: Model Structure}
+ARIMA$(p,d,q)$ models a differenced series using autoregressive and moving-average terms.
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{ARIMA(p, d, q) Components:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{AR(p):}} AutoRegressive
-   \[
-   y_t = \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} + \epsilon_t
-   \]
-   Uses past values
-
-\item \textcolor{navyblue}{\textbf{I(d):}} Integrated (Differencing)
-   \[
-   \Delta^d y_t
-   \]
-   Makes stationary
-
-\item \textcolor{crimson}{\textbf{MA(q):}} Moving Average
-   \[
-   y_t = \epsilon_t + \theta_1 \epsilon_{t-1} + \cdots + \theta_q \epsilon_{t-q}
-   \]
-   Uses past errors
-\end{enumerate}
-
-\vspace{0.3cm}
-
-\textbf{Full ARIMA(p,d,q):}
-\[
-\Delta^d y_t = \phi_1 \Delta^d y_{t-1} + \cdots + \epsilon_t + \theta_1 \epsilon_{t-1}
-\]
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Model Selection:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|p{4cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Tool} & \textbf{Purpose} \\
-\hline
-\textbf{ACF} & Autocorrelation function - identifies MA(q) \\
-\hline
-\textbf{PACF} & Partial autocorrelation - identifies AR(p) \\
-\hline
-\textbf{AIC/BIC} & Information criteria - compare models \\
-\hline
-\textbf{Auto-ARIMA} & Automated search over (p,d,q) space \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Seasonal ARIMA:}
-
-SARIMA(p,d,q)(P,D,Q)$_s$
-
-Adds seasonal components with period $s$:
 \begin{itemize}
-\item $(P,D,Q)$: Seasonal AR, I, MA
-\item $s$: Seasonal period (12 for monthly)
+  \item $p$: autoregressive order;
+  \item $d$: differencing order;
+  \item $q$: moving-average order.
 \end{itemize}
 
-\vspace{0.3cm}
+\[
+  \phi(B)(1-B)^d y_t = \theta(B)\varepsilon_t.
+\]
 
-\textbf{Python Implementation:}
+\begin{alertblock}{Differencing}
+Differencing is appropriate for certain stochastic trends; it does not mechanically ``make a series stationary'' in every nonstationary setting.
+\end{alertblock}
+\end{frame}
 
-{\small\ttfamily
-from statsmodels.tsa.arima.model import ARIMA\\
-model = ARIMA(data, order=(1,1,1))\\
-results = model.fit()\\
-forecast = results.forecast(steps=12)
-}
-\end{column}
-\end{columns}
+\begin{frame}[fragile]{ARIMA: Identification and Evaluation}
+\begin{itemize}
+  \item ACF/PACF patterns are useful for proposing candidate orders, not uniquely identifying a finite-sample model.
+  \item AIC/BIC compare fitted candidate models under their respective criteria.
+  \item Automated order search is a convenience, not a substitute for residual diagnostics and forecast validation.
+  \item Seasonal ARIMA adds seasonal AR, differencing, and MA components at period $s$.
+\end{itemize}
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+from statsmodels.tsa.arima.model import ARIMA
+
+fit = ARIMA(data, order=(1, 1, 1)).fit()
+forecast = fit.forecast(steps=12)
+\end{lstlisting}
+
+\begin{block}{Evaluation}
+Compare candidate models using residual diagnostics and rolling-origin forecast loss at the horizons that matter operationally.
+\end{block}
 \end{frame}
 
 % Knowledge Check Example
