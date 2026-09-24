@@ -430,79 +430,31 @@ DAGs make identification assumptions explicit. They do not validate those assump
 
 \section{Identification Strategies}
 
-\begin{frame}{Randomized Controlled Trials: The Gold Standard}
-\textbf{Why Randomization Works:} Breaks the link between treatment and confounders.
+\begin{frame}{Randomized Experiments: Identification by Assignment}
+Under random assignment, treatment is independent of potential outcomes by design:
+\[
+  T \perp \{Y(1),Y(0)\}.
+\]
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Randomization Ensures:}
-\begin{align}
-Y_i(1), Y_i(0) \indep T_i
-\end{align}
-
-This means:
-\begin{align}
-\E[Y(1)|T=1] &= \E[Y(1)]\\
-\E[Y(0)|T=0] &= \E[Y(0)]
-\end{align}
-
-Therefore:
-\begin{align}
-\text{ATE} &= \E[Y|T=1] - \E[Y|T=0]
-\end{align}
-
-\textbf{No confounding bias!}
-
-\vspace{0.3cm}
-\textbf{RCT Advantages:}
 \begin{itemize}
-\item Unbiased estimates
-\item Simple analysis
-\item High internal validity
-\item Clear causal interpretation
+  \item This identifies the intention-to-treat effect of assignment when outcomes are observed according to the randomized design.
+  \item Covariate balance holds in expectation; realized samples can still be imbalanced by chance.
+  \item Analysis should respect the randomization unit, clustering, blocking, and any pre-specified design features.
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.8]
-% Before randomization
-\node at (0,3) {\textbf{Before Randomization}};
-\node[draw, circle, fill=crimson!20] (T1) at (0,2) {T};
-\node[draw, circle, fill=forest!20] (Y1) at (2,2) {Y};
-\node[draw, circle, fill=gold!20] (U1) at (1,0.5) {U};
+\end{frame}
 
-\draw[->, thick] (U1) -- (T1);
-\draw[->, thick] (U1) -- (Y1);
-\draw[->, thick] (T1) -- (Y1);
-
-% After randomization
-\node at (0,0) {\textbf{After Randomization}};
-\node[draw, circle, fill=crimson!20] (T2) at (0,-1) {T};
-\node[draw, circle, fill=forest!20] (Y2) at (2,-1) {Y};
-\node[draw, circle, fill=gold!20] (U2) at (1,-2.5) {U};
-
-\draw[->, thick, dashed] (U2) -- (T2);
-\draw[->, thick] (U2) -- (Y2);
-\draw[->, thick] (T2) -- (Y2);
-
-\node[left] at (-0.5,-1.8) {\color{crimson}\small Broken link};
-\end{tikzpicture}
-\end{figure}
-
-\textbf{When RCTs Are Limited:}
+\begin{frame}{Randomized Experiments: Practical Limits}
 \begin{itemize}
-\item \textcolor{crimson}{Ethical constraints}: Harmful treatments
-\item \textcolor{crimson}{Practical constraints}: Cost, time, feasibility
-\item \textcolor{crimson}{External validity}: Lab vs real world
-\item \textcolor{crimson}{Compliance issues}: Not everyone follows assignment
+  \item \textbf{Non-compliance}: assignment and received treatment may differ; ITT and treatment-on-the-treated estimands are different.
+  \item \textbf{Attrition}: missing outcomes can break the simple randomized comparison if loss to follow-up is informative.
+  \item \textbf{Interference}: one unit's treatment can affect another unit's outcome.
+  \item \textbf{External validity}: an internally valid experiment need not generalize to other populations, settings, or implementations.
+  \item \textbf{Ethics/feasibility}: some interventions cannot be randomized.
 \end{itemize}
 
-\begin{alertblock}{The Gap}
-Most business/policy questions can't be answered with RCTs. We need methods for observational data.
+\begin{alertblock}{What randomization buys}
+Randomization addresses confounding in treatment assignment for the randomized estimand. It does not automatically solve non-compliance, missing data, interference, measurement error, or generalizability.
 \end{alertblock}
-\end{column}
-\end{columns}
 \end{frame}
 
 \begin{frame}{Instrumental Variables: Identification}
