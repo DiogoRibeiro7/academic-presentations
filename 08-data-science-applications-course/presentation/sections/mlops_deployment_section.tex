@@ -442,7 +442,7 @@ RUN pip install poetry && \
 
 COPY src/ ./src/
 
-CMD ["python", "-m", "src.app"]
+CMD python -m src.app
 \end{lstlisting}
 
 \begin{block}{Build discipline}
