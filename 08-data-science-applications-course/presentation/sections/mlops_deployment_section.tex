@@ -517,111 +517,45 @@ Always containerize ML models for consistent deployment across environments!
 % PART 4: MONITORING
 % ================================================================
 
-\begin{frame}[fragile,allowframebreaks]{Model Monitoring in Production}
-\textbf{What to monitor and why}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Why Monitor?}
-
-\textcolor{crimson}{\textbf{Models degrade over time!}}
-
+\begin{frame}{Production Monitoring: Model and Data Signals}
 \begin{itemize}
-\item Data distribution shifts
-\item Concept drift (relationships change)
-\item Bugs in production pipeline
-\item Adversarial attacks
+  \item \textbf{Data quality}: schema, missingness, ranges, categorical levels, freshness.
+  \item \textbf{Input distribution}: compare production data with relevant reference windows.
+  \item \textbf{Prediction distribution}: watch for changes in score/rate distributions.
+  \item \textbf{Observed performance}: evaluate loss, calibration, discrimination, or task-specific metrics once labels arrive.
 \end{itemize}
 
-\vspace{0.3cm}
+\begin{alertblock}{Drift is evidence, not diagnosis}
+A distribution shift can be harmless, and performance can fail without large marginal feature drift. Monitoring should connect signals to downstream model and business outcomes.
+\end{alertblock}
+\end{frame}
 
-\textbf{What to Monitor:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Data Quality}}
-   \begin{itemize}
-   \item Missing values
-   \item Out-of-range values
-   \item Schema changes
-   \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Data Drift}}
-   \begin{itemize}
-   \item Input distribution changed?
-   \item Compare to training data
-   \item KL divergence, KS test
-   \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Prediction Drift}}
-   \begin{itemize}
-   \item Output distribution changed?
-   \item More "positive" predictions lately?
-   \end{itemize}
-
-\item \textcolor{purple}{\textbf{Model Performance}}
-   \begin{itemize}
-   \item Accuracy declining?
-   \item Need ground truth labels
-   \item Monitor with delay
-   \end{itemize}
-\end{enumerate}
+\begin{frame}{Production Monitoring: System and Decision Signals}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\textbf{System health}
+\begin{itemize}
+  \item latency percentiles;
+  \item throughput;
+  \item error/timeout rates;
+  \item resource saturation.
+\end{itemize}
 \end{column}
 
-\begin{column}{0.5\textwidth}
-\begin{enumerate}
-\setcounter{enumi}{4}
-\item \textcolor{gold}{\textbf{System Metrics}}
-   \begin{itemize}
-   \item Latency (p50, p95, p99)
-   \item Throughput (requests/sec)
-   \item Error rate
-   \item Resource usage (CPU, memory)
-   \end{itemize}
-\end{enumerate}
-
-\vspace{0.2cm}
-
-\textbf{Example: Data Drift Detection}
-
-\begin{verbatim}
-from evidently.dashboard import Dashboard
-from evidently.tabs import DataDriftTab
-
-dashboard = Dashboard(
-    tabs=[DataDriftTab()]
-)
-
-dashboard.calculate(
-    reference_data=train_data,
-    current_data=production_data
-)
-
-dashboard.save("data_drift_report.html")
-\end{verbatim}
-
-\vspace{0.2cm}
-
-\textbf{Alerting Thresholds:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|l|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Metric} & \textbf{Alert if} \\
-\hline
-Data drift & KL div $> 0.1$ \\
-\hline
-Accuracy & Drop $> 5\%$ \\
-\hline
-Latency (p95) & $> 500$ms \\
-\hline
-Error rate & $> 1\%$ \\
-\hline
-\end{tabular}
-\end{table}
+\begin{column}{0.48\textwidth}
+\textbf{Decision/business health}
+\begin{itemize}
+  \item intervention or approval rates;
+  \item downstream outcomes;
+  \item subgroup behavior;
+  \item operational costs and incidents.
+\end{itemize}
 \end{column}
 \end{columns}
+
+\begin{block}{Alert thresholds}
+Thresholds should be calibrated to service objectives, historical variability, traffic volume, label delay, and consequence severity. There is no universal KL, accuracy-drop, latency, or error-rate cutoff.
+\end{block}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{CI/CD for Machine Learning}
@@ -762,105 +696,27 @@ jobs:
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Summary \& Best Practices}
-\textbf{Building production ML systems}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The MLOps Checklist:}
-
-\begin{enumerate}
-\item \textbf{Version everything}
-   \begin{itemize}
-   \item Code (Git)
-   \item Data (DVC)
-   \item Models (MLflow)
-   \item Environment (Docker)
-   \end{itemize}
-
-\item \textbf{Automate pipelines}
-   \begin{itemize}
-   \item Data preprocessing
-   \item Model training
-   \item Evaluation
-   \item Deployment
-   \end{itemize}
-
-\item \textbf{Test rigorously}
-   \begin{itemize}
-   \item Unit tests
-   \item Integration tests
-   \item Data validation
-   \item Model performance
-   \end{itemize}
-
-\item \textbf{Monitor continuously}
-   \begin{itemize}
-   \item Data drift
-   \item Model performance
-   \item System health
-   \item Business metrics
-   \end{itemize}
-
-\item \textbf{Enable rollback}
-   \begin{itemize}
-   \item Keep previous versions
-   \item Can revert quickly
-   \item A/B test new models
-   \end{itemize}
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Common Pitfalls:}
-
+\begin{frame}{MLOps Operating Checklist}
 \begin{itemize}
-\item[$\times$] Not monitoring after deployment
-\item[$\times$] No rollback plan
-\item[$\times$] Training-serving skew
-\item[$\times$] No data validation
-\item[$\times$] Ignoring latency requirements
-\item[$\times$] Not documenting decisions
+  \item version code, data identifiers, model artifacts, configuration, and environment;
+  \item automate reproducible training/evaluation/deployment pipelines;
+  \item test data contracts, code, integrations, and model release criteria;
+  \item monitor system, data, model, and business signals;
+  \item maintain rollback, recovery, and incident-response procedures;
+  \item document ownership, approvals, and model lifecycle decisions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLOps: Tools Are Replaceable}
+\begin{itemize}
+  \item Experiment tracking, orchestration, serving, monitoring, and feature management each have many viable implementations.
+  \item Architecture should depend on scale, latency, team structure, regulatory constraints, cloud/platform choices, and maintenance burden.
+  \item Avoid building a large platform before the use case needs it; operational complexity is itself a cost and failure mode.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{Tools Ecosystem:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|l|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Category} & \textbf{Tools} \\
-\hline
-Experiment Tracking & MLflow, W\&B \\
-\hline
-Versioning & DVC, Git LFS \\
-\hline
-Model Serving & TensorFlow Serving, TorchServe \\
-\hline
-Containerization & Docker, Kubernetes \\
-\hline
-Orchestration & Airflow, Kubeflow, Prefect \\
-\hline
-Monitoring & Prometheus, Grafana, Evidently \\
-\hline
-Feature Stores & Feast, Tecton \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.2cm}
-
-\textbf{Learn More:}
-\begin{itemize}
-\item "Machine Learning Engineering" (Burkov)
-\item "Designing ML Systems" (Huyen)
-\item Google's "Rules of ML"
-\end{itemize}
-\end{column}
-\end{columns}
+\begin{alertblock}{The durable principle}
+Choose tools to support reproducibility, observability, safe release, and recovery. The product names can change without changing the engineering contract.
+\end{alertblock}
 \end{frame}
 
 % ================================================================

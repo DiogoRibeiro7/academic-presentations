@@ -187,99 +187,40 @@ A model that is transparent at five rules may be difficult to interpret at hundr
 % PART 3: SHAP (SHapley Additive exPlanations)
 % ================================================================
 
-\begin{frame}[fragile,allowframebreaks]{SHAP: Unified Framework for Interpretability}
-\textbf{Game theory meets machine learning}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The Core Idea:}
-
-How much does each feature contribute to prediction?
-
-\textbf{Based on Shapley Values from Game Theory:}
-
-Consider prediction as "coalition game":
-\begin{itemize}
-\item Players = features
-\item Payoff = prediction
-\item Fair distribution of credit
-\end{itemize}
-
-\vspace{0.2cm}
-
-\textbf{SHAP Value for Feature $i$:}
+\begin{frame}{SHAP: Shapley-Value Attribution}
+SHAP methods define feature attributions using Shapley values from cooperative game theory.
 
 \[
-\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(|N|-|S|-1)!}{|N|!} [f(S \cup \{i\}) - f(S)]
+\phi_i = \sum_{S\subseteq N\setminus\{i\}}
+\frac{|S|!(|N|-|S|-1)!}{|N|!}
+\left[v(S\cup\{i\})-v(S)\right].
 \]
 
-\textbf{Intuition:}
 \begin{itemize}
-\item Average marginal contribution
-\item Across all possible feature subsets
-\item Accounts for feature interactions
+  \item the value function $v(S)$ specifies what it means for a subset of features to be present;
+  \item attributions depend on the chosen background/reference distribution;
+  \item local additivity holds relative to the SHAP formulation and baseline.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{SHAP in Practice and Caveats}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+explainer = shap.TreeExplainer(model)
+values = explainer(X_test)
+
+shap.plots.waterfall(values[0])
+shap.plots.beeswarm(values)
+\end{lstlisting}
+
+\begin{itemize}
+  \item local plots decompose one prediction relative to a baseline;
+  \item aggregated SHAP summaries describe the fitted model, not the data-generating mechanism;
+  \item correlated features can make attribution depend strongly on the conditional/interventional semantics used by the explainer;
+  \item SHAP values are not causal effects.
 \end{itemize}
 
-\vspace{0.2cm}
-
-\textbf{Properties:}
-\begin{enumerate}
-\item \textbf{Local accuracy:} Sum equals prediction
-\item \textbf{Consistency:} More contribution $\to$ higher value
-\item \textbf{Missingness:} Missing features have zero impact
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{SHAP in Practice:}
-
-\begin{verbatim}
-import shap
-
-# Train model
-model = XGBClassifier()
-model.fit(X_train, y_train)
-
-# Create explainer
-explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X_test)
-
-# Visualize
-shap.summary_plot(shap_values, X_test)
-shap.force_plot(explainer.expected_value,
-                shap_values[0], X_test.iloc[0])
-\end{verbatim}
-
-\vspace{0.2cm}
-
-\textbf{SHAP Visualizations:}
-
-\begin{enumerate}
-\item \textbf{Force plot:} Individual prediction
-  \begin{itemize}
-  \item Base value + feature contributions
-  \end{itemize}
-
-\item \textbf{Summary plot:} Global feature importance
-  \begin{itemize}
-  \item Feature impact across all instances
-  \end{itemize}
-
-\item \textbf{Dependence plot:} Feature effects
-  \begin{itemize}
-  \item How feature value affects prediction
-  \item Shows interactions
-  \end{itemize}
-
-\item \textbf{Waterfall plot:} Step-by-step explanation
-\end{enumerate}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Key Advantage}
-SHAP provides theoretically sound, consistent explanations for ANY model!
+\begin{alertblock}{Interpretation}
+The axioms characterize an attribution scheme once the value function is defined. They do not guarantee that the explanation is stable, causal, or appropriate for every audience.
 \end{alertblock}
 \end{frame}
 
@@ -372,96 +313,31 @@ Images/Text & Both support well \\
 
 % Due to length, including key additional topics in summary form
 
-\begin{frame}[fragile,allowframebreaks]{Feature Importance Methods}
-\textbf{Understanding what the model learned globally}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{1. Permutation Importance:}
-
-Shuffle feature $j$, measure performance drop:
-
-\begin{verbatim}
-from sklearn.inspection import
-    permutation_importance
-
-result = permutation_importance(
-    model, X_test, y_test,
-    n_repeats=10
-)
-\end{verbatim}
-
-\textbf{Advantages:}
+\begin{frame}{Global Importance: Permutation and Drop-Column}
+\textbf{Permutation importance}
 \begin{itemize}
-\item Model-agnostic
-\item Reliable
-\item Accounts for interactions
+  \item permute one feature and measure the change in a chosen validation metric;
+  \item model-agnostic, but sensitive to feature dependence and the evaluation distribution;
+  \item can underestimate importance when correlated predictors substitute for one another.
 \end{itemize}
 
-\vspace{0.2cm}
-
-\textbf{2. Drop-Column Importance:}
-
-Retrain without feature, measure drop:
+\textbf{Drop-column importance}
 \begin{itemize}
-\item More accurate but expensive
-\item Shows feature necessity
+  \item refit the model without a feature and compare validation performance;
+  \item measures the value of including that feature under the full retraining procedure;
+  \item more computationally expensive and still model/procedure dependent.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Feature Effects: PDP, ICE, and Tree Importance}
+\begin{itemize}
+  \item \textbf{PDP}: averages predictions over the empirical distribution of other features.
+  \item \textbf{ICE}: retains one curve per observation to expose heterogeneous fitted responses.
+  \item \textbf{Tree impurity importance}: fast and model-specific, but can be biased toward variables with many possible split points.
 \end{itemize}
 
-\vspace{0.2cm}
-
-\textbf{3. Tree-Based Importance:}
-
-For random forests, XGBoost:
-\begin{itemize}
-\item Gini importance
-\item Split counts
-\item Fast but can be biased
-\end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{4. Partial Dependence Plots (PDP):}
-
-Show marginal effect of feature:
-
-\[
-\hat{f}_S(x_S) = \E_{x_C}[\hat{f}(x_S, x_C)]
-\]
-
-\begin{verbatim}
-from sklearn.inspection import
-    PartialDependenceDisplay
-
-PartialDependenceDisplay.from_estimator(
-    model, X, features=[0, 1, (0,1)]
-)
-\end{verbatim}
-
-\textbf{Shows:}
-\begin{itemize}
-\item Feature effect on average
-\item Non-linear relationships
-\item 2D: Feature interactions
-\end{itemize}
-
-\vspace{0.2cm}
-
-\textbf{5. Individual Conditional Expectation (ICE):}
-
-PDP for each instance:
-\begin{itemize}
-\item Shows heterogeneity
-\item Reveals subgroups
-\item More detailed than PDP
-\end{itemize}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Best Practice}
-Use multiple methods! Permutation + SHAP + PDP gives complete picture.
+\begin{alertblock}{Use methods by question}
+Importance, marginal effect plots, and local attributions answer different questions. Combining several methods can be useful, but it does not create a single complete or causal explanation.
 \end{alertblock}
 \end{frame}
 

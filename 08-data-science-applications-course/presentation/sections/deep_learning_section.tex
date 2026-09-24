@@ -254,100 +254,60 @@ Modern frameworks record the computational graph and evaluate the required deriv
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Optimization Algorithms}
-\textbf{Beyond vanilla gradient descent}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Stochastic Gradient Descent (SGD):}
-
-\textbf{Vanilla GD:} Use all data
-\[
-W \leftarrow W - \eta \nabla_W \mathcal{L}
-\]
-
-\textbf{SGD:} Use mini-batches
-\[
-W \leftarrow W - \eta \nabla_W \mathcal{L}_{\text{batch}}
-\]
-
-Faster, more memory efficient, adds noise (helps escape local minima)
-
-\vspace{0.3cm}
-
-\textbf{Modern Optimizers:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{SGD with Momentum:}}
-   \[
-   v_t = \gamma v_{t-1} + \eta \nabla_W \mathcal{L}
-   \]
-   \[
-   W \leftarrow W - v_t
-   \]
-   Dampens oscillations, accelerates convergence
-
-\item \textcolor{navyblue}{\textbf{Adam (Adaptive Moment):}}
-   \begin{itemize}
-   \item Adapts learning rate per parameter
-   \item Combines momentum + RMSProp
-   \item Most popular optimizer today
-   \end{itemize}
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Optimizer Comparison:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|p{4cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Optimizer} & \textbf{Characteristics} \\
-\hline
-\textbf{SGD} & Simple, requires good LR tuning \\
-\hline
-\textbf{SGD+Momentum} & Faster than SGD, less oscillation \\
-\hline
-\textbf{RMSProp} & Adaptive LR, good for RNNs \\
-\hline
-\textbf{Adam} & Adaptive LR, fast convergence, most popular \\
-\hline
-\textbf{AdamW} & Adam + weight decay (better regularization) \\
-\hline
-\textbf{RAdam} & Rectified Adam (warm-up built-in) \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Learning Rate Schedules:}
-
+\begin{frame}{Optimization: SGD and Momentum}
 \begin{itemize}
-\item \textbf{Step decay:} Reduce LR every N epochs
-\item \textbf{Exponential decay:} $\eta_t = \eta_0 e^{-kt}$
-\item \textbf{Cosine annealing:} Smooth reduction
-\item \textbf{1cycle:} Increase then decrease (fast.ai)
+  \item Full-batch gradient descent uses the complete training set per update; minibatch SGD uses a stochastic gradient estimate.
+  \item Minibatches reduce memory cost and increase update frequency, but introduce gradient noise whose effect depends on batch size, learning rate, and objective geometry.
 \end{itemize}
 
-\vspace{0.2cm}
+\textbf{Momentum:}
+\[
+  v_t=\gamma v_{t-1}+\eta g_t,
+  \qquad W_t=W_{t-1}-v_t.
+\]
 
-\textbf{PyTorch Example:}
-\begin{lstlisting}[language=python,caption={PyTorch optimizer + scheduler}]
-optimizer = torch.optim.Adam(
+\begin{block}{Why momentum helps}
+Momentum can smooth oscillatory directions and accelerate progress along persistent gradient directions. It does not guarantee escape from poor local geometry.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Adaptive Optimizers and Learning-Rate Schedules}
+\begin{columns}
+\begin{column}{0.47\textwidth}
+\textbf{Common choices}
+\begin{itemize}
+  \item Adam: adaptive per-parameter scaling plus momentum-like moments;
+  \item AdamW: decouples weight decay from the adaptive update;
+  \item SGD + momentum: often competitive with a tuned schedule.
+\end{itemize}
+
+\textbf{Schedules}
+\begin{itemize}
+  \item step or exponential decay;
+  \item cosine schedules;
+  \item warm-up or one-cycle policies where justified.
+\end{itemize}
+\end{column}
+
+\begin{column}{0.49\textwidth}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+optimizer = torch.optim.AdamW(
     model.parameters(),
-    lr=0.001
+    lr=3e-4,
+    weight_decay=1e-2,
 )
 
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-    optimizer,
-    T_max=100,
-)
+scheduler = torch.optim.lr_scheduler.
+    CosineAnnealingLR(
+        optimizer, T_max=100
+    )
 \end{lstlisting}
 \end{column}
 \end{columns}
+
+\begin{alertblock}{No universal default}
+Optimizer, learning rate, schedule, batch size, and regularization interact. Compare plausible configurations under matched training budgets.
+\end{alertblock}
 \end{frame}
 
 % ================================================================
@@ -606,99 +566,48 @@ Simpler than LSTM, fewer parameters, often works as well.
 \end{columns}
 \end{frame}
 
-\begin{frame}{Transformers: Attention is All You Need}
-\textbf{The architecture that revolutionized NLP and beyond}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Limitations of RNNs/LSTMs:}
-
-\begin{itemize}
-\item Sequential processing (slow)
-\item Still struggle with very long sequences
-\item Hard to parallelize
-\end{itemize}
-
-\vspace{0.3cm}
-
-\textbf{Transformer Innovation:}
-
-Replace recurrence with \textcolor{crimson}{\textbf{self-attention}}:
+\begin{frame}{Transformers: Self-Attention}
+Transformers replace recurrent state updates with attention over a set or sequence of representations.
 
 \[
-\text{Attention}(Q, K, V) = \softmax\left(\frac{QK^T}{\sqrt{d_k}}\right) V
+  \operatorname{Attention}(Q,K,V)
+  = \operatorname{softmax}\!\left(
+      \frac{QK^\top}{\sqrt{d_k}}
+    \right)V.
 \]
 
-where:
 \begin{itemize}
-\item $Q$: Query (what I'm looking for)
-\item $K$: Key (what I have)
-\item $V$: Value (actual content)
+  \item queries specify what information is requested;
+  \item keys determine compatibility with each query;
+  \item values supply the information being aggregated;
+  \item positional information is required when order matters.
 \end{itemize}
 
-\vspace{0.2cm}
+\begin{block}{Trade-off}
+Self-attention supports parallel sequence processing, but standard dense attention has quadratic memory/compute cost in sequence length.
+\end{block}
+\end{frame}
 
-\textbf{Key Ideas:}
-\begin{enumerate}
-\item \textbf{Self-attention:} Every position attends to every other
-\item \textbf{Parallel:} No sequential dependency
-\item \textbf{Positional encoding:} Add position info
-\item \textbf{Multi-head:} Multiple attention mechanisms
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Transformer Architecture:}
-
-\begin{itemize}
-\item \textbf{Encoder:} Process input sequence
-\item \textbf{Decoder:} Generate output sequence
-\item \textbf{Stack:} 6-12 layers typical
-\end{itemize}
-
-\vspace{0.3cm}
-
-\textbf{Famous Transformers:}
-
+\begin{frame}{Transformer Families and Use Cases}
 \begin{table}
-\tiny
-\begin{tabular}{|l|l|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Model} & \textbf{Task} \\
-\hline
-\textbf{BERT} & Encoder-only, understanding \\
-\hline
-\textbf{GPT} & Decoder-only, generation \\
-\hline
-\textbf{T5} & Encoder-decoder, seq2seq \\
-\hline
-\textbf{Vision Transformer (ViT)} & Images as patches \\
-\hline
-\textbf{CLIP} & Vision-language alignment \\
-\hline
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Architecture} & \textbf{Typical use} \\
+\midrule
+Encoder-only & Representation learning / classification \\
+Decoder-only & Autoregressive generation \\
+Encoder-decoder & Conditional sequence generation \\
+Vision transformers & Patch/token-based vision models \\
+Multimodal transformers & Joint text/image/audio representations \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-\vspace{0.3cm}
-
-\textbf{Why Transformers Won:}
-
 \begin{itemize}
-\item[$\checkmark$] Parallelizable (train faster)
-\item[$\checkmark$] Long-range dependencies
-\item[$\checkmark$] Transfer learning (pre-training)
-\item[$\checkmark$] Scale to billions of parameters
-\item[$\checkmark$] Work beyond NLP (vision, audio, protein)
+  \item Pretraining and transfer learning are central to many modern Transformer applications.
+  \item Long-context performance, latency, memory, data requirements, and task structure should determine whether a Transformer is preferable to simpler alternatives.
 \end{itemize}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Current State}
-Transformers dominate NLP, increasingly used for vision (ViT), and even protein folding (AlphaFold)!
-\end{alertblock}
 \end{frame}
 
 % ================================================================
