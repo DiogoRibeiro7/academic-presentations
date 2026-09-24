@@ -248,7 +248,7 @@ The explanation depends on the perturbation distribution, proximity kernel, inte
 explainer = LimeTabularExplainer(
     X_train,
     feature_names=feature_names,
-    mode="classification",
+    mode='classification',
 )
 
 explanation = explainer.explain_instance(
