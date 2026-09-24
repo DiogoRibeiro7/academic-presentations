@@ -93,99 +93,46 @@ Deep learning composes multiple representation-learning layers; depth is not the
 \end{block}
 \end{frame}
 
-\begin{frame}{Activation Functions}
-\textbf{Non-linearities that make deep learning work}
+\begin{frame}{Activation Functions: Saturating Nonlinearities}
+Without a non-linearity, stacked affine layers collapse to one affine transformation.
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Why Activations Matter:}
-
-Without non-linearity, stacking layers is pointless:
+\textbf{Sigmoid}
 \[
-f(W_2(W_1 x)) = (W_2 W_1) x = W x
+  \sigma(z)=\frac{1}{1+e^{-z}}
 \]
-Still just linear!
-
-\vspace{0.3cm}
-
-\textbf{Common Activations:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Sigmoid:}}
-   \[
-   \sigma(z) = \frac{1}{1 + e^{-z}}
-   \]
-   Range: $(0, 1)$ \\
-   Use: Output layer (binary classification)
-
-\item \textcolor{navyblue}{\textbf{Tanh:}}
-   \[
-   \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
-   \]
-   Range: $(-1, 1)$ \\
-   Better than sigmoid (zero-centered)
-
-\item \textcolor{crimson}{\textbf{ReLU (Rectified Linear Unit):}}
-   \[
-   \text{ReLU}(z) = \max(0, z)
-   \]
-   Most popular! Fast, helps with vanishing gradients
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Activation Function Comparison:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|l|l|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Function} & \textbf{Pros} & \textbf{Cons} \\
-\hline
-\textbf{Sigmoid} & Smooth, interpretable & Vanishing gradient, not zero-centered \\
-\hline
-\textbf{Tanh} & Zero-centered & Vanishing gradient \\
-\hline
-\textbf{ReLU} & Fast, no vanishing gradient & Dead neurons (always 0) \\
-\hline
-\textbf{Leaky ReLU} & Fixes dead ReLU & Needs tuning \\
-\hline
-\textbf{ELU} & Smooth, negative values & Slower than ReLU \\
-\hline
-\textbf{Swish} & Smooth, self-gated & More computation \\
-\hline
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-
-\textbf{Modern Variants:}
-
 \begin{itemize}
-\item \textbf{Leaky ReLU:}
-  \[
-  f(z) = \begin{cases} z & z > 0 \\ 0.01z & z \leq 0 \end{cases}
-  \]
-
-\item \textbf{GELU} (Gaussian Error Linear Unit):
-  Used in Transformers (BERT, GPT)
-
-\item \textbf{Swish:} $f(z) = z \cdot \sigma(z)$
-  Self-gated, smooth
+  \item useful for Bernoulli output probabilities;
+  \item saturates for large $|z|$, producing small derivatives.
 \end{itemize}
 
-\vspace{0.2cm}
-
-\textbf{Rule of Thumb:}
+\textbf{Tanh}
 \begin{itemize}
-\item Hidden layers: \textcolor{forest}{\textbf{ReLU}}
-\item Output (regression): \textcolor{navyblue}{\textbf{Linear}}
-\item Output (binary): \textcolor{crimson}{\textbf{Sigmoid}}
-\item Output (multi-class): \textcolor{purple}{\textbf{Softmax}}
+  \item output in $(-1,1)$ and centered around zero;
+  \item also saturates for large $|z|$.
 \end{itemize}
-\end{column}
-\end{columns}
+\end{frame}
+
+\begin{frame}{Activation Functions: ReLU Family}
+\textbf{ReLU}
+\[
+  \operatorname{ReLU}(z)=\max(0,z).
+\]
+\begin{itemize}
+  \item simple and non-saturating for positive inputs;
+  \item has zero gradient for negative inputs and can create inactive units;
+  \item does not eliminate vanishing-gradient problems across an entire network.
+\end{itemize}
+
+\textbf{Variants}
+\begin{itemize}
+  \item Leaky ReLU and ELU modify the negative branch;
+  \item GELU is common in Transformer architectures;
+  \item SiLU/Swish uses $z\sigma(z)$.
+\end{itemize}
+
+\begin{alertblock}{Choice}
+Activation choice interacts with architecture, initialization, normalization, and optimization. There is no universal default for every network.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{Backpropagation: The Optimization Problem}
