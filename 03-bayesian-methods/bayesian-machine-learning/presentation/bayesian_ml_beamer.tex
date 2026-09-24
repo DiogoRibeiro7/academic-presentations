@@ -516,62 +516,30 @@ Fully Independent Training Conditional:
 \end{columns}
 \end{frame}
 
-\begin{frame}{GP Applications and Case Studies}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{1. Bayesian Optimization}
+\begin{frame}{Gaussian Processes: Common Application Patterns}
 \begin{itemize}
-\item Expensive function optimization
-\item Acquisition functions (EI, UCB, PI)
-\item Hyperparameter tuning
-\item Experimental design
+  \item \textbf{Bayesian optimization}: surrogate modeling for expensive objectives with acquisition-driven sampling.
+  \item \textbf{Time series}: temporal kernels and structured covariance for interpolation/forecasting.
+  \item \textbf{Spatial statistics}: kriging and uncertainty-aware interpolation over space.
+  \item \textbf{Experimental design}: choose new observations where posterior uncertainty or expected utility justifies measurement.
 \end{itemize}
 
-\textbf{2. Time Series Forecasting}
+\begin{alertblock}{Kernel choice matters}
+The GP prior expresses assumptions about smoothness, periodicity, scale, and similarity. Predictive uncertainty is only as meaningful as those modeling assumptions and the observation model.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Gaussian Processes: Practical Limits}
 \begin{itemize}
-\item Temporal kernels
-\item Uncertainty in predictions
-\item Missing data handling
-\item Irregular time series
+  \item exact GP regression scales cubically in the number of observations for dense covariance matrices;
+  \item sparse/inducing-point and structured-kernel methods trade approximation error against computational cost;
+  \item extrapolation behavior is determined strongly by the kernel/prior mean;
+  \item high-dimensional raw feature spaces often require careful representation design rather than a generic kernel.
 \end{itemize}
 
-\textbf{3. Spatial Statistics}
-\begin{itemize}
-\item Geostatistics and kriging
-\item Environmental monitoring
-\item Sensor network optimization
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{block}{Case Study: Drug Discovery}
-\textbf{Problem:} Optimize molecular properties
-
-\textbf{Setup:}
-\begin{itemize}
-\item 10,000 molecules tested
-\item Each test costs \$1000
-\item Goal: Find top 1\% molecules
-\end{itemize}
-
-\textbf{GP-based Optimization:}
-\begin{itemize}
-\item Molecular fingerprints as features
-\item Tanimoto kernel for similarity
-\item Expected improvement acquisition
-\end{itemize}
-
-\textbf{Results:}
-\begin{itemize}
-\item 95\% reduction in tests needed
-\item Found optimal molecules in 500 tests
-\item Saved \$9.5M in experimental costs
-\end{itemize}
+\begin{block}{Use case selection}
+GPs are especially attractive when uncertainty over functions matters and the dataset/model structure keeps inference computationally manageable.
 \end{block}
-\end{column}
-\end{columns}
-
-\vspace{0.3cm}
-\textbf{Other Applications:} Robotics, Computer Vision, Natural Language Processing, Finance
 \end{frame}
 
 \section{Advanced Topics and Modern Developments}
