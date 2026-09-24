@@ -224,91 +224,46 @@ The axioms characterize an attribution scheme once the value function is defined
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{LIME: Local Interpretable Model-Agnostic Explanations}
-\textbf{Explain any model locally with simple approximations}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{The LIME Approach:}
-
-\textbf{Key Idea:} Approximate complex model locally with interpretable model
-
-\vspace{0.2cm}
-
-\textbf{Algorithm:}
-\begin{enumerate}
-\item Select instance to explain
-\item Generate perturbed samples nearby
-\item Get predictions from black box
-\item Train simple model (linear/tree) on perturbed data
-\item Use simple model to explain
-\end{enumerate}
-
-\vspace{0.3cm}
-
-\textbf{Mathematical Formulation:}
-
+\begin{frame}{LIME: Local Surrogate Explanations}
+LIME approximates a black-box predictor near one observation with a simpler surrogate model:
 \[
-\xi(x) = \argmin_{g \in \mathcal{G}} \mathcal{L}(f, g, \pi_x) + \Omega(g)
+  \xi(x)=\arg\min_{g\in\mathcal G}
+  \mathcal L(f,g,\pi_x)+\Omega(g).
 \]
 
-where:
-\begin{itemize}
-\item $f$: Black box model
-\item $g$: Simple interpretable model
-\item $\pi_x$: Proximity measure
-\item $\Omega(g)$: Complexity penalty
-\end{itemize}
-\end{column}
+\begin{enumerate}
+  \item perturb the instance according to a chosen sampling scheme;
+  \item query the black-box model;
+  \item weight samples by proximity to the target instance;
+  \item fit a sparse/interpretable local surrogate.
+\end{enumerate}
 
-\begin{column}{0.5\textwidth}
-\textbf{LIME Implementation:}
+\begin{alertblock}{Local means method-defined}
+The explanation depends on the perturbation distribution, proximity kernel, interpretable representation, and surrogate class.
+\end{alertblock}
+\end{frame}
 
-\begin{verbatim}
-from lime import lime_tabular
+\begin{frame}[fragile]{LIME in Practice and Limitations}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+explainer = LimeTabularExplainer(
+    X_train,
+    feature_names=feature_names,
+    mode='classification',
+)
 
-# Create explainer
-explainer = lime_tabular.
-    LimeTabularExplainer(
-        X_train,
-        feature_names=feature_names,
-        class_names=['No', 'Yes'],
-        mode='classification'
-    )
-
-# Explain instance
 explanation = explainer.explain_instance(
     X_test[0],
     model.predict_proba,
-    num_features=10
+    num_features=8,
 )
+\end{lstlisting}
 
-explanation.show_in_notebook()
-\end{verbatim}
-
-\vspace{0.2cm}
-
-\textbf{LIME vs. SHAP:}
-
-\begin{table}
-\tiny
-\begin{tabular}{|l|p{4cm}|}
-\hline
-\rowcolor{navyblue!20}
-\textbf{Aspect} & \textbf{Comparison} \\
-\hline
-Theory & SHAP: game theory, LIME: local approx \\
-\hline
-Consistency & SHAP: guaranteed, LIME: not always \\
-\hline
-Speed & LIME: faster, SHAP: can be slow \\
-\hline
-Images/Text & Both support well \\
-\hline
-\end{tabular}
-\end{table}
-\end{column}
-\end{columns}
+\begin{itemize}
+  \item repeated runs can change when perturbation/sampling is unstable;
+  \item unrealistic perturbations can make the local surrogate misleading;
+  \item coefficients describe the surrogate, not causal effects of features;
+  \item SHAP and LIME answer related but not identical attribution questions; neither is universally superior.
+\end{itemize}
 \end{frame}
 
 % Due to length, including key additional topics in summary form
