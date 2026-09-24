@@ -495,102 +495,48 @@ Thresholds should be calibrated to service objectives, historical variability, t
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{CI/CD for Machine Learning}
-\textbf{Continuous Integration and Deployment}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Traditional CI/CD:}
-
-\begin{enumerate}
-\item Code commit $\to$ Git
-\item Run tests
-\item Build artifact
-\item Deploy to production
-\end{enumerate}
-
-\vspace{0.2cm}
-
-\textbf{ML CI/CD Additions:}
+\begin{frame}{ML CI/CD: What Changes}
+Traditional CI/CD validates and deploys software artifacts. ML systems add data and model concerns:
 
 \begin{itemize}
-\item \textbf{CT:} Continuous Training
-\item \textbf{CD:} Continuous Deployment
-\item \textbf{CM:} Continuous Monitoring
+  \item data/schema validation;
+  \item reproducible training and evaluation;
+  \item model-quality release criteria;
+  \item training-serving compatibility;
+  \item staged deployment and rollback;
+  \item post-release monitoring.
 \end{itemize}
 
-\vspace{0.3cm}
+\begin{alertblock}{Continuous training is optional}
+Retraining should be triggered by evidence and policy, not merely because new data exist. Automatic retraining without validation can propagate data-quality or labeling failures.
+\end{alertblock}
+\end{frame}
 
-\textbf{GitHub Actions Example:}
-
-\begin{verbatim}
-# .github/workflows/ml-pipeline.yml
-name: ML Pipeline
-
-on: [push]
-
+\begin{frame}[fragile]{ML CI/CD: Example Release Gate}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  validate:
     steps:
-      - uses: actions/checkout@v2
-      - name: Run tests
-        run: pytest tests/
+      - run: pytest
+      - run: python validate_data.py
 
-  train:
-    needs: test
-    runs-on: ubuntu-latest
+  evaluate:
+    needs: validate
     steps:
-      - name: Train model
-        run: python train.py
+      - run: python train.py
+      - run: python evaluate.py
+      - run: python check_release_gate.py
 
-      - name: Evaluate
-        run: python evaluate.py
-
-      - name: Check metrics
-        run: python check_metrics.py
-\end{verbatim}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\begin{verbatim}
-  deploy:
-    needs: train
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+  deploy_staging:
+    needs: evaluate
     steps:
-      - name: Build Docker image
-        run: docker build -t model:${{
-           github.sha }} .
+      - run: ./deploy_staging.sh
+      - run: pytest tests/integration
+\end{lstlisting}
 
-      - name: Push to registry
-        run: docker push model:${{
-           github.sha }}
-
-      - name: Deploy to staging
-        run: kubectl apply -f k8s/staging/
-
-      - name: Run integration tests
-        run: pytest tests/integration/
-
-      - name: Deploy to production
-        if: success()
-        run: kubectl apply -f k8s/prod/
-\end{verbatim}
-
-\vspace{0.2cm}
-
-\textbf{Key Tests for ML:}
-
-\begin{itemize}
-\item \textbf{Data validation:} Schema, ranges
-\item \textbf{Model tests:} Accuracy threshold
-\item \textbf{Integration tests:} API endpoints
-\item \textbf{Performance tests:} Latency SLAs
-\item \textbf{Bias tests:} Fairness metrics
-\end{itemize}
-\end{column}
-\end{columns}
+\begin{block}{Promotion}
+Production promotion should depend on explicit release criteria and the deployment risk. High-impact systems may require manual approval, canary/shadow evidence, or additional governance checks.
+\end{block}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{Knowledge Check: MLOps}
