@@ -941,67 +941,30 @@ Why do overparameterized models generalize well? How should we modify classical 
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Emerging Frontiers in Learning Theory}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Causal Learning:}
+\begin{frame}{Emerging Frontiers: Distribution and Adaptation}
 \begin{itemize}
-\item Beyond correlation to causation
-\item Structural causal models
-\item Invariant risk minimization
-\item Domain adaptation and robustness
+  \item \textbf{Distribution shift}: theory for prediction when training and deployment distributions differ.
+  \item \textbf{Domain adaptation / generalization}: transfer information across related environments under structural assumptions.
+  \item \textbf{Continual learning}: update models over time without catastrophic loss of previously useful information.
+  \item \textbf{Robust learning}: characterize performance under contamination, perturbation, or worst-case distributional neighborhoods.
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Meta-Learning:}
+\begin{alertblock}{Unifying issue}
+Generalization guarantees are always relative to assumptions about how future data relate to the data used for training and selection.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Emerging Frontiers: Structure, Privacy, and Tasks}
 \begin{itemize}
-\item Learning to learn across tasks
-\item Few-shot learning
-\item Model-agnostic meta-learning (MAML)
-\item Bayesian optimization for hyperparameters
+  \item \textbf{Causal learning}: combine predictive flexibility with invariance or identification assumptions about interventions.
+  \item \textbf{Meta-learning}: exploit related tasks to accelerate adaptation, while controlling transfer and selection bias.
+  \item \textbf{Federated learning}: optimize across distributed data holders under communication, heterogeneity, and privacy constraints.
+  \item \textbf{Differential privacy}: quantify privacy loss through a formal randomized mechanism, usually at a cost in statistical efficiency.
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Continual Learning:}
-\begin{itemize}
-\item Learning without forgetting
-\item Catastrophic forgetting problem
-\item Elastic weight consolidation
-\item Progressive networks
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Federated Learning:}
-\begin{itemize}
-\item Distributed learning with privacy
-\item Communication constraints
-\item Non-IID data distributions
-\item Differential privacy guarantees
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Robust Learning:}
-\begin{itemize}
-\item Adversarial examples
-\item Distribution shift
-\item Worst-case guarantees
-\item Certified defenses
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{Practical Implications}
-Modern ML applications require:
-\begin{itemize}
-\item Robustness to distribution shift
-\item Privacy-preserving algorithms
-\item Continual adaptation
-\item Causal understanding
-\end{itemize}
+\begin{block}{Theory evolves with the data-generating process}
+Modern learning problems add adaptive collection, non-IID data, privacy mechanisms, and deployment feedback. Classical learning theory remains useful, but its assumptions must be updated rather than silently reused.
 \end{block}
-\end{column}
-\end{columns}
-
-\textbf{The Future:} Integration of classical statistical learning with modern ML challenges.
 \end{frame}
 
 \section{Summary and Conclusions}
