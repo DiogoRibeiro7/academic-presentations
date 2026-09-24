@@ -638,67 +638,37 @@ Larger hypothesis classes (higher VC dimension) have:
 \textbf{Cross-validation:} a family of resampling procedures for estimating model-selection or predictive performance under a sampling scheme that should reflect the intended deployment population.
 \end{frame}
 
-\begin{frame}[fragile]{Cross-Validation: Theory and Practice}
-\begin{columns}
-\begin{column}[t]{0.55\textwidth}
-\textbf{k-Fold Cross-Validation Algorithm:}
+\begin{frame}{Cross-Validation: Estimation Procedure}
+\begin{enumerate}
+  \item partition observations into $k$ folds;
+  \item fit the complete modeling procedure on $k-1$ folds;
+  \item evaluate the held-out fold using the target loss;
+  \item repeat over folds and aggregate held-out losses.
+\end{enumerate}
 
-\begin{algorithm}[H]
-\caption{k-Fold Cross-Validation}
-\begin{algorithmic}[1]
-\STATE Split data into $k$ roughly equal folds
-\FOR{$i = 1$ to $k$}
-\STATE Use fold $i$ as validation set
-\STATE Use remaining $k-1$ folds as training set
-\STATE Train model and compute validation error $e_i$
-\ENDFOR
-\STATE Return $\text{CV}_k = \frac{1}{k}\sum_{i=1}^k e_i$
-\end{algorithmic}
-\end{algorithm}
+\begin{block}{What must stay inside each training fold}
+Preprocessing, feature selection, hyperparameter tuning steps, and any data-dependent transformations whose fitted state uses the training sample.
+\end{block}
+\end{frame}
 
-\textbf{Common choices:}
-\begin{itemize}
-\item $k = 5$ or $k = 10$ (good bias-variance tradeoff)
-\item $k = n$ (Leave-One-Out CV, LOOCV)
-\end{itemize}
-\end{column}
-\begin{column}[t]{0.45\textwidth}
-\begin{lstlisting}[basicstyle=\ttfamily\tiny]
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import Ridge
-import numpy as np
-
-from sklearn.datasets import make_regression
-X, y = make_regression(n_samples=100,
-                       n_features=20,
-                       noise=0.1,
-                       random_state=42)
+\begin{frame}[fragile]{Cross-Validation for Hyperparameter Selection}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+from sklearn.linear_model import RidgeCV
 
 alphas = np.logspace(-4, 2, 20)
-cv_scores = []
+model = RidgeCV(
+    alphas=alphas,
+    cv=5,
+    scoring="neg_mean_squared_error",
+)
+model.fit(X_train, y_train)
 
-for alpha in alphas:
-    model = Ridge(alpha=alpha)
-    scores = cross_val_score(
-        model, X, y,
-        cv=5,
-        scoring='neg_mean_squared_error'
-    )
-    cv_scores.append(-scores.mean())
-
-best_alpha = alphas[np.argmin(cv_scores)]
-print(f"Best alpha: {best_alpha:.4f}")
+best_alpha = model.alpha_
 \end{lstlisting}
-\end{column}
-\end{columns}
 
-\begin{block}{Statistical Properties of CV}
-\begin{itemize}
-\item \textbf{Bias}: $\text{Bias}[\text{CV}_k] \approx \frac{1}{k-1} \times \text{training set size effect}$
-\item \textbf{Variance}: Decreases with $k$, but computational cost increases
-\item \textbf{LOOCV}: Nearly unbiased but high variance, expensive for large $n$
-\end{itemize}
-\end{block}
+\begin{alertblock}{Uncertainty}
+There is no universal statement that CV variance simply decreases as $k$ increases, nor is LOOCV always nearly unbiased with high variance. Bias and variance depend on the estimator, loss, dependence structure, and data-generating process.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{Advanced Cross-Validation Techniques}
