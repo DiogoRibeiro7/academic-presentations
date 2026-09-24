@@ -1009,129 +1009,41 @@ Feature selection changes the hypothesis space, regularization path, and data-de
 \textbf{Three Main Approaches:} Filter, Wrapper, and Embedded methods.
 \end{frame}
 
-\begin{frame}[fragile]{Filter Methods: Statistical Feature Selection}
-\textbf{Idea:} Rank features by statistical measures, independent of the learning algorithm.
+\begin{frame}{Filter Methods: What They Measure}
+\begin{itemize}
+  \item \textbf{Variance threshold}: unsupervised removal of constant or near-constant predictors.
+  \item \textbf{Univariate tests}: rank each predictor using a specified marginal relationship with the target.
+  \item \textbf{Mutual information}: captures broader statistical dependence, subject to estimation error.
+  \item \textbf{Correlation screening}: measures linear or monotone association depending on the coefficient.
+\end{itemize}
 
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{lstlisting}
-import numpy as np
-import pandas as pd
-from sklearn.datasets import make_classification
-from sklearn.feature_selection import (
-    SelectKBest, f_classif, chi2, 
-    mutual_info_classif,
-    VarianceThreshold,
-    SelectPercentile
+\begin{alertblock}{Limitation}
+Filter methods evaluate variables one at a time. They can miss interactions, redundancy, and model-specific usefulness.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Filter Selection Inside Cross-Validation}
+Supervised filters belong inside the training fold:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score
+
+pipe = Pipeline([
+    ("select", SelectKBest(f_classif, k=10)),
+    ("model", LogisticRegression(max_iter=1000)),
+])
+
+scores = cross_val_score(
+    pipe, X, y, cv=5, scoring="roc_auc"
 )
-from sklearn.preprocessing import StandardScaler
-from scipy.stats import pearsonr
-
-# Generate sample data with irrelevant features
-X, y = make_classification(
-    n_samples=1000, n_features=20, 
-    n_informative=5, n_redundant=3,
-    n_clusters_per_class=1, random_state=42
-)
-
-feature_names = [f'feature_{i}' for i in range(X.shape[1])]
-df = pd.DataFrame(X, columns=feature_names)
-df['target'] = y
-
-print(f"Original features: {X.shape[1]}")
-
-# 1. Variance Threshold (remove low-variance features)
-variance_selector = VarianceThreshold(threshold=0.1)
-X_variance = variance_selector.fit_transform(X)
-print(f"After variance threshold: {X_variance.shape[1]}")
-
-# 2. Univariate statistical tests
-# For classification: f_classif, chi2, mutual_info_classif
-k_best_f = SelectKBest(score_func=f_classif, k=10)
-# Fit this selector inside each training fold, not once before CV
-X_f_test = k_best_f.fit_transform(X, y)
-f_scores = k_best_f.scores_
-f_pvalues = k_best_f.pvalues_
-
-print(f"After F-test (k=10): {X_f_test.shape[1]}")
-print(f"F-test scores range: [{f_scores.min():.2f}, {f_scores.max():.2f}]")
-
-# 3. Mutual Information
-mi_selector = SelectKBest(score_func=mutual_info_classif, k=10)
-# Same rule: supervised selection belongs inside the resampling pipeline
-X_mi = mi_selector.fit_transform(X, y)
-mi_scores = mi_selector.scores_
-
-print(f"MI scores range: [{mi_scores.min():.3f}, {mi_scores.max():.3f}]")
-
-# 4. Correlation-based selection
-def correlation_selector(X, y, threshold=0.1):
-    """Select features with high correlation to target"""
-    correlations = []
-    for i in range(X.shape[1]):
-        corr, _ = pearsonr(X[:, i], y)
-        correlations.append(abs(corr))
-    selected_idx = [i for i, corr in enumerate(correlations) if corr > threshold]
-    return X[:, selected_idx], selected_idx
-
-X_corr, corr_idx = correlation_selector(X, y, threshold=0.2)
-print(f"After correlation selection: {X_corr.shape[1]}")
-
-# Feature ranking comparison
-feature_rankings = pd.DataFrame({
-    'feature': feature_names,
-    'f_score': f_scores,
-    'mi_score': mi_scores,
-    'f_rank': (-f_scores).argsort().argsort() + 1,
-    'mi_rank': (-mi_scores).argsort().argsort() + 1
-})
-
-print("\nTop 5 features by F-test:")
-print(feature_rankings.nsmallest(5, 'f_rank')[['feature', 'f_score', 'f_rank']])
 \end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{Filter Method Types:}
 
-\begin{itemize}
-\item \textbf{Variance Threshold}:
-  \begin{itemize}
-  \item Remove constant/quasi-constant features
-  \item Fast, unsupervised
-  \end{itemize}
-
-\item \textbf{Statistical Tests}:
-  \begin{itemize}
-  \item F-test: Linear relationships
-  \item Chi-square: Categorical features
-  \item Mutual Information: Non-linear relationships
-  \end{itemize}
-
-\item \textbf{Correlation Methods}:
-  \begin{itemize}
-  \item Pearson: Linear correlation
-  \item Spearman: Monotonic relationships
-  \item Distance correlation: General dependence
-  \end{itemize}
-\end{itemize}
-
-\begin{block}{Pros and Cons}
-\textbf{Pros:}
-\begin{itemize}
-\item Fast and scalable
-\item Model-agnostic
-\item Good for initial screening
-\end{itemize}
-
-\textbf{Cons:}
-\begin{itemize}
-\item Ignores feature interactions
-\item May miss non-linear relationships
-\item No consideration of target model
-\end{itemize}
+\begin{block}{Why}
+Selecting features once on the full dataset before cross-validation leaks target information into the validation folds and produces optimistic performance estimates.
 \end{block}
-\end{column}
-\end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{Wrapper Methods: Model-Based Selection}
