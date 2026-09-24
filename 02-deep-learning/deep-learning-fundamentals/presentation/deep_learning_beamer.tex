@@ -165,53 +165,49 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Activation Functions}
-  \textbf{Non-linearity is crucial! Without it, network is just linear regression.}
+\begin{frame}{Activation Functions: Saturating Nonlinearities}
+\textbf{Sigmoid}
+\[
+  \sigma(z)=\frac{1}{1+e^{-z}}.
+\]
+\begin{itemize}
+  \item bounded output in $(0,1)$;
+  \item useful for Bernoulli probabilities at an output layer;
+  \item gradients become small for large $|z|$.
+\end{itemize}
 
-  \vspace{0.5em}
+\textbf{Tanh}
+\[
+  \tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}.
+\]
+\begin{itemize}
+  \item bounded output in $(-1,1)$;
+  \item zero-centered, but still saturates for large $|z|$.
+\end{itemize}
+\end{frame}
 
-  \begin{columns}
-    \column{0.5\textwidth}
-    \textbf{1. Sigmoid:}
-    \begin{equation}
-      \sigma(z) = \frac{1}{1 + e^{-z}}
-    \end{equation}
-    \begin{itemize}
-      \item Output: $(0, 1)$
-      \item Smooth gradient
-      \item Problem: Vanishing gradients
-    \end{itemize}
+\begin{frame}{Activation Functions: ReLU Family and GELU}
+\textbf{ReLU}
+\[
+  \operatorname{ReLU}(z)=\max(0,z).
+\]
+\begin{itemize}
+  \item inexpensive and non-saturating on the positive side;
+  \item gradient is zero for negative inputs, so units can become inactive;
+  \item it does not eliminate vanishing-gradient problems through an entire deep network.
+\end{itemize}
 
-    \textbf{2. Tanh:}
-    \begin{equation}
-      \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}
-    \end{equation}
-    \begin{itemize}
-      \item Output: $(-1, 1)$
-      \item Zero-centered
-      \item Still vanishing gradients
-    \end{itemize}
+\textbf{Common variants}
+\begin{itemize}
+  \item Leaky ReLU: non-zero negative slope;
+  \item ELU: smooth negative branch;
+  \item GELU: smooth gating used in many Transformer architectures;
+  \item SiLU/Swish: $z\,\sigma(z)$.
+\end{itemize}
 
-    \column{0.5\textwidth}
-    \textbf{3. ReLU:}
-    \begin{equation}
-      \text{ReLU}(z) = \max(0, z)
-    \end{equation}
-    \begin{itemize}
-      \item Most popular!
-      \item No vanishing gradients
-      \item Fast computation
-      \item Problem: "Dead neurons"
-    \end{itemize}
-
-    \textbf{4. Variants:}
-    \begin{itemize}
-      \item \textbf{Leaky ReLU:} $\max(0.01z, z)$
-      \item \textbf{ELU:} Smooth for $z < 0$
-      \item \textbf{Swish:} $z \cdot \sigma(z)$
-      \item \textbf{GELU:} Used in Transformers
-    \end{itemize}
-  \end{columns}
+\begin{alertblock}{Selection}
+Activation choice interacts with initialization, normalization, architecture, and optimization. There is no universally best activation.
+\end{alertblock}
 \end{frame}
 
 % ================================================================
