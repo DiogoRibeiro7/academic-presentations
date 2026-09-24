@@ -739,64 +739,44 @@ PyMC & User-friendly Bayesian & Educational, prototyping & Python \\
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Implementation Example: Simple BNN in PyTorch}
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{block}{Bayesian Linear Layer}
-\begin{verbatim}
+\begin{frame}{Variational Bayesian Neural Networks}
+A common BNN approximation places a tractable variational distribution over weights:
+\[
+  q_\phi(w) \approx p(w\mid\mathcal D).
+\]
+
+\begin{itemize}
+  \item location parameters $\mu$ represent posterior means in the approximation;
+  \item scale parameters are constrained positive, often through a softplus transform;
+  \item the reparameterization trick writes $w=\mu+\sigma\epsilon$ with $\epsilon\sim\mathcal N(0,1)$ so gradients can propagate through sampling.
+\end{itemize}
+
+\begin{alertblock}{Approximation}
+Sampling weights from a variational layer is only one component. Training must optimize an ELBO or another justified objective that includes both data fit and divergence to the prior.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Bayesian Linear Layer: Core Mechanics}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
 class BayesianLinear(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
-        # Weight parameters
         self.weight_mu = nn.Parameter(
-            torch.zeros(out_features, in_features))
+            torch.zeros(out_features, in_features)
+        )
         self.weight_rho = nn.Parameter(
-            torch.ones(out_features, in_features) * -3)
-        
-        # Bias parameters  
-        self.bias_mu = nn.Parameter(
-            torch.zeros(out_features))
-        self.bias_rho = nn.Parameter(
-            torch.ones(out_features) * -3)
-    
-    def forward(self, x):
-        # Sample weights and biases
-        weight_sigma = torch.log1p(torch.exp(self.weight_rho))
-        weight = self.weight_mu + weight_sigma * torch.randn_like(weight_sigma)
-        
-        bias_sigma = torch.log1p(torch.exp(self.bias_rho))
-        bias = self.bias_mu + bias_sigma * torch.randn_like(bias_sigma)
-        
-        return F.linear(x, weight, bias)
-\end{verbatim}
+            torch.full((out_features, in_features), -3.0)
+        )
+
+    def sample_weight(self):
+        sigma = F.softplus(self.weight_rho)
+        eps = torch.randn_like(sigma)
+        return self.weight_mu + sigma * eps
+\end{lstlisting}
+
+\begin{block}{Prediction}
+Posterior-predictive summaries use multiple weight samples or another approximation to integrate over uncertainty in $q_\phi(w)$.
 \end{block}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{Key Components:}
-\begin{itemize}
-\item \textcolor{forest}{Variational parameters:} $\mu$, $\rho$
-\item \textcolor{forest}{Reparameterization:} $w = \mu + \sigma \epsilon$
-\item \textcolor{forest}{Softplus:} $\sigma = \log(1 + \exp(\rho))$
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Training Loop:}
-\begin{itemize}
-\item Sample weights each forward pass
-\item Compute ELBO loss
-\item Backprop through sampling
-\item Update variational parameters
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{Prediction:}
-\begin{itemize}
-\item Multiple forward passes
-\item Monte Carlo averaging
-\item Uncertainty estimation
-\end{itemize}
-\end{column}
-\end{columns}
 \end{frame}
 
 \begin{frame}{Best Practices and Common Pitfalls}
