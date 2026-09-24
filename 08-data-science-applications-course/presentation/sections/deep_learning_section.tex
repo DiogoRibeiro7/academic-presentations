@@ -261,99 +261,42 @@ Optimizer, learning rate, schedule, batch size, and regularization interact. Com
 % PART 2: CNNs
 % ================================================================
 
-\begin{frame}{Convolutional Neural Networks (CNNs)}
-\textbf{Designed for spatial data (images, video)}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Why CNNs for Images?}
+\begin{frame}{CNNs: Local Connectivity and Parameter Sharing}
+Convolutional layers exploit spatial locality by applying the same learned kernel across positions.
 
 \begin{itemize}
-\item \textbf{Fully connected:}
-  \begin{itemize}
-  \item 100×100 RGB image = 30K inputs
-  \item 1st hidden layer (1000 neurons) = 30M parameters!
-  \end{itemize}
-
-\item \textbf{Problems:}
-  \begin{itemize}
-  \item Too many parameters
-  \item Ignores spatial structure
-  \item Not translation invariant
-  \end{itemize}
+  \item local receptive fields reduce the number of free parameters relative to dense connections;
+  \item weight sharing makes convolution translation-equivariant: shifting the input shifts the feature map;
+  \item learned filters can detect increasingly complex spatial patterns across depth.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{CNN Solutions:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Local connectivity:}}
-  \begin{itemize}
-  \item Each neuron sees small region (receptive field)
-  \end{itemize}
-
-\item \textcolor{navyblue}{\textbf{Parameter sharing:}}
-  \begin{itemize}
-  \item Same filter across image
-  \item Learns features (edges, textures)
-  \end{itemize}
-
-\item \textcolor{crimson}{\textbf{Pooling:}}
-  \begin{itemize}
-  \item Downsampling for translation invariance
-  \end{itemize}
-\end{enumerate}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Convolution Operation:}
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.5]
-% Input
-\draw[fill=navyblue!20] (0,0) rectangle (4,4);
-\node at (2,4.5) {\tiny Input};
-
-% Filter/Kernel
-\draw[fill=forest!40, thick] (1,1) rectangle (2.5,2.5);
-\node at (1.75,0.5) {\tiny Filter 3×3};
-
-% Output
-\draw[fill=crimson!20] (6,1) rectangle (8,3);
-\node at (7,3.5) {\tiny Output};
-
-% Arrow
-\draw[->, very thick] (4.5,2) -- (5.5,2);
-\end{tikzpicture}
-\end{figure}
-
-\textbf{Filter slides across image:}
 \[
-(\text{img} * \text{filter})_{ij} = \sum_m \sum_n \text{img}_{i+m,j+n} \cdot \text{filter}_{mn}
+  (X*K)_{ij}=\sum_m\sum_n X_{i+m,j+n}K_{mn}.
 \]
 
-\vspace{0.3cm}
+\begin{alertblock}{Invariance}
+Convolution itself is equivariant, not invariant. Pooling, striding, augmentation, and architecture choices can create approximate invariance to selected transformations.
+\end{alertblock}
+\end{frame}
 
-\textbf{Learned Filters Detect Features:}
-
+\begin{frame}{CNNs: From Feature Maps to Prediction}
 \begin{itemize}
-\item Early layers: edges, corners
-\item Middle layers: textures, patterns
-\item Deep layers: object parts, faces
+  \item convolution produces feature maps;
+  \item nonlinearities transform those maps;
+  \item pooling or strided convolutions reduce spatial resolution;
+  \item deeper layers increase the effective receptive field;
+  \item a prediction head maps the learned representation to the task output.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{CNN Architecture:}
 \[
-\text{Input} \to [\text{Conv} \to \text{ReLU} \to \text{Pool}]^* \to \text{FC} \to \text{Output}
+  \text{Input}\rightarrow
+  [\text{Conv}\rightarrow\text{Activation}]^L
+  \rightarrow\text{Head}\rightarrow\text{Output}.
 \]
 
-Common pattern: Stack Conv+ReLU+Pool blocks, then fully connected layers
-\end{column}
-\end{columns}
+\begin{block}{Modern practice}
+Many current CNNs use residual connections, normalization, global pooling, and task-specific heads rather than a fixed Conv--ReLU--Pool recipe.
+\end{block}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{Modern CNN Architectures}
