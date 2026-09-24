@@ -331,89 +331,33 @@ Compare against simple baselines under the same forecast origins, horizons, and 
 % - Case studies and applications
 % - More knowledge checks
 
-\begin{frame}{Summary \& Best Practices}
-\textbf{Key takeaways for time series analysis}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Core Principles:}
-
+\begin{frame}{Time Series: Core Workflow}
 \begin{enumerate}
-\item \textbf{Temporal ordering matters}
-   \begin{itemize}
-   \item Preserve the information set that would be available at each forecast origin
-   \item Use time-based train/test splits
-   \end{itemize}
-
-\item \textbf{Check stationarity}
-   \begin{itemize}
-   \item Diagnose trend, seasonality, breaks, and stochastic persistence
-   \item Use unit-root/stationarity tests as evidence within a broader specification analysis
-   \end{itemize}
-
-\item \textbf{Understand your data}
-   \begin{itemize}
-   \item Decompose into components
-   \item Identify seasonality, trend
-   \item Check for outliers, missing values
-   \end{itemize}
-
-\item \textbf{Start simple, add complexity}
-   \begin{itemize}
-   \item Baseline: naive, moving average
-   \item Then statistical or structured regression/state-space models
-   \item Add ML/DL only when covariates, data volume, nonlinear structure, or cross-series learning justify the complexity
-   \end{itemize}
-
-\item \textbf{Validate properly}
-   \begin{itemize}
-   \item Walk-forward validation
-   \item Multiple forecast horizons
-   \item Business-relevant metrics
-   \end{itemize}
+  \item define the forecast origin, horizon, target, and available information set;
+  \item inspect trend, seasonality, breaks, missingness, and dependence;
+  \item establish simple baselines before adding model complexity;
+  \item validate with rolling or expanding forecast origins;
+  \item evaluate the loss and uncertainty measures that match the decision problem.
 \end{enumerate}
-\end{column}
 
-\begin{column}{0.5\textwidth}
-\textbf{Common Pitfalls:}
+\begin{alertblock}{No automatic recipe}
+Stationarity tests, differencing, decomposition, and model selection are tools within a specification process; none should be applied mechanically.
+\end{alertblock}
+\end{frame}
 
+\begin{frame}{Time Series: Common Failure Modes}
 \begin{itemize}
-\item[$\times$] Using random train/test split
-\item[$\times$] Ignoring non-stationarity
-\item[$\times$] Data leakage from future
-\item[$\times$] Over-differencing
-\item[$\times$] Ignoring domain knowledge
-\item[$\times$] Not handling seasonality
-\item[$\times$] Using only RMSE (check MAE, MAPE too)
+  \item leakage from future features or preprocessing;
+  \item random validation splits that do not match deployment;
+  \item overdifferencing or unnecessary transformation;
+  \item ignoring changing regimes or structural breaks;
+  \item choosing models only by in-sample fit;
+  \item reporting a single error metric without considering horizon, scale, or business loss.
 \end{itemize}
 
-\vspace{0.3cm}
-
-\textbf{Resources:}
-
-\begin{itemize}
-\item \textbf{Books:}
-  \begin{itemize}
-  \item "Forecasting: Principles and Practice" (Hyndman \& Athanasopoulos)
-  \item "Time Series Analysis" (Hamilton)
-  \end{itemize}
-
-\item \textbf{Python Libraries:}
-  \begin{itemize}
-  \item \texttt{statsmodels}: ARIMA, SARIMAX
-  \item \texttt{prophet}: Facebook Prophet
-  \item \texttt{sktime}: Scikit-learn for time series
-  \item \texttt{darts}: Modern time series
-  \end{itemize}
-
-\item \textbf{Competitions:}
-  \begin{itemize}
-  \item M5 Forecasting (Kaggle)
-  \item Time Series Forecasting (various)
-  \end{itemize}
-\end{itemize}
-\end{column}
-\end{columns}
+\begin{block}{Useful references}
+Hyndman and Athanasopoulos for forecasting practice, Hamilton for time-series theory, and domain-specific benchmarks for realistic baselines.
+\end{block}
 \end{frame}
 
 % ================================================================
