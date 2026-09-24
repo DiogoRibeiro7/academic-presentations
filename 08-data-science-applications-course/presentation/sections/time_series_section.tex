@@ -125,84 +125,32 @@ The remainder depends on the decomposition method and tuning choices; it should 
 % Continue with key content slides...
 % For brevity, I'll include representative sections
 
-\begin{frame}{Stationarity: The Foundation}
-\textbf{Why stationarity matters for time series modeling}
+\begin{frame}{Stationarity: Definitions}
+\textbf{Strict stationarity} requires invariance of all finite-dimensional distributions under time shifts.
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\textbf{Definition:}
-
-A time series is \textbf{strictly stationary} if:
-\[
-P(y_{t_1}, \ldots, y_{t_k}) = P(y_{t_1+h}, \ldots, y_{t_k+h})
-\]
-for all $t_1, \ldots, t_k$ and $h$.
-
-\vspace{0.2cm}
-
-\textbf{Weak (Covariance) Stationarity:}
+\textbf{Weak stationarity} requires:
 \begin{enumerate}
-\item $\E[y_t] = \mu$ (constant mean)
-\item $\Var[y_t] = \sigma^2$ (constant variance)
-\item $\Cov[y_t, y_{t-k}] = \gamma_k$ (depends only on lag $k$)
+  \item constant mean;
+  \item finite, time-invariant variance;
+  \item autocovariance depending only on lag.
 \end{enumerate}
 
-\vspace{0.3cm}
-
-\textbf{Why It Matters:}
-\begin{itemize}
-\item Most models assume stationarity
-\item Enables statistical inference
-\item Allows generalization to future
-\item Non-stationary $\to$ spurious results
-\end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\textbf{Testing for Stationarity:}
-
-\begin{block}{Augmented Dickey-Fuller (ADF) Test}
-Tests null hypothesis of unit root:
-\[
-H_0: \text{Non-stationary (unit root)}
-\]
-\[
-H_1: \text{Stationary}
-\]
-
-Reject $H_0$ if p-value $< 0.05$
+\begin{block}{Why it matters}
+Some time-series estimators and asymptotic arguments require stationarity or stability assumptions, but many useful models explicitly allow trends, seasonality, changing variance, or time-varying latent states.
 \end{block}
+\end{frame}
 
-\vspace{0.2cm}
+\begin{frame}{Diagnosing and Modeling Nonstationarity}
+\begin{itemize}
+  \item Unit-root tests such as ADF test a specific null model and depend on deterministic terms, lag choice, sample size, and breaks.
+  \item Differencing is appropriate for some stochastic trends, but overdifferencing can add noise and moving-average structure.
+  \item Log/Box--Cox transforms can stabilize scale-dependent variance but change the interpretation of errors.
+  \item Seasonal differencing, deterministic seasonality, and state-space seasonal components solve different problems.
+  \item Structural breaks should be modeled or acknowledged rather than hidden by generic preprocessing.
+\end{itemize}
 
-\textbf{Making Series Stationary:}
-
-\begin{enumerate}
-\item \textcolor{forest}{\textbf{Differencing:}}
-   \[
-   \Delta y_t = y_t - y_{t-1}
-   \]
-   Removes trend
-
-\item \textcolor{navyblue}{\textbf{Log transform:}}
-   \[
-   \tilde{y}_t = \log(y_t)
-   \]
-   Stabilizes variance
-
-\item \textcolor{crimson}{\textbf{Seasonal differencing:}}
-   \[
-   \Delta_s y_t = y_t - y_{t-s}
-   \]
-   Removes seasonality (period $s$)
-\end{enumerate}
-\end{column}
-\end{columns}
-
-\vspace{0.2cm}
-
-\begin{alertblock}{Key Insight}
-Always check stationarity before modeling. Transform if necessary!
+\begin{alertblock}{No universal pre-test rule}
+Do not reduce model specification to ``ADF p-value below 0.05'' or ``always difference until stationary.'' Use tests as evidence within a broader modeling analysis.
 \end{alertblock}
 \end{frame}
 
