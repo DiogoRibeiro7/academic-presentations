@@ -1259,135 +1259,71 @@ Wrapper methods are expensive: $O(2^p)$ for exhaustive search, $O(p^2)$ for gree
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Embedded Methods: Built-in Feature Selection}
-\textbf{Idea:} Feature selection is integrated into the model training process.
+\begin{frame}{Embedded Feature Selection}
+Feature selection can be induced by the fitted model rather than performed as a separate filter step.
 
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{lstlisting}
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_regression
-from sklearn.linear_model import Lasso, Ridge, ElasticNet
+\begin{itemize}
+  \item \textbf{Lasso}: an $L_1$ penalty can shrink some coefficients exactly to zero.
+  \item \textbf{Elastic Net}: combines $L_1$ and $L_2$ penalties and can be more stable when predictors are correlated.
+  \item \textbf{Tree-based models}: split criteria induce model-specific importance measures that can be used for selection.
+\end{itemize}
+
+\begin{alertblock}{Validation rule}
+Hyperparameter tuning and feature selection are part of model fitting. If predictive performance is being estimated, the entire selection procedure must run inside each training fold.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Sparse Linear Selection}
+Use cross-validation to tune the penalty, then inspect the fitted sparse model:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+from sklearn.linear_model import LassoCV
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+model = make_pipeline(
+    StandardScaler(),
+    LassoCV(cv=5, random_state=42),
+)
+model.fit(X, y)
+
+lasso = model.named_steps["lassocv"]
+selected = np.flatnonzero(lasso.coef_ != 0)
+\end{lstlisting}
+
+\begin{block}{Interpretation}
+A zero coefficient means the fitted penalized model excluded that predictor at the selected penalty. It does not prove that the variable is scientifically irrelevant or has no conditional association in another specification.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tree-Based Embedded Selection}
+Keep selection inside the resampling pipeline:
+
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import Ridge
+from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score
 
-# Generate regression data with some irrelevant features
-X, y = make_regression(
-    n_samples=200, n_features=20, 
-    n_informative=5, noise=10,
-    random_state=42
+selector = SelectFromModel(
+    RandomForestRegressor(
+        n_estimators=200, random_state=42
+    ),
+    threshold="median",
 )
 
-print(f"Original features: {X.shape[1]}")
+pipe = Pipeline([
+    ("select", selector),
+    ("model", Ridge()),
+])
 
-# 1. L1 Regularization (Lasso) - automatic feature selection
-alphas = np.logspace(-4, 1, 50)
-lasso_scores = []
-n_features_selected = []
-
-for alpha in alphas:
-    lasso = Lasso(alpha=alpha, max_iter=2000)
-    score = cross_val_score(lasso, X, y, cv=5).mean()
-    lasso_scores.append(score)
-    lasso.fit(X, y)
-    n_selected = np.sum(lasso.coef_ != 0)
-    n_features_selected.append(n_selected)
-
-# Find best alpha
-best_idx = np.argmax(lasso_scores)
-best_alpha = alphas[best_idx]
-print(f"Best Lasso alpha: {best_alpha:.4f}")
-print(f"Features selected: {n_features_selected[best_idx]}")
-
-# 2. Tree-based feature importance
-rf = RandomForestRegressor(n_estimators=100, random_state=42)
-rf.fit(X, y)
-importances = rf.feature_importances_
-
-# Select features using importance threshold
-selector = SelectFromModel(rf, threshold='mean')
-X_rf_selected = selector.fit_transform(X, y)
-print(f"RF selected features: {X_rf_selected.shape[1]}")
-
-# 3. ElasticNet (combines L1 and L2)
-elastic = ElasticNet(alpha=0.1, l1_ratio=0.7, random_state=42)
-elastic.fit(X, y)
-elastic_selected = np.sum(elastic.coef_ != 0)
-print(f"ElasticNet selected features: {elastic_selected}")
-
-# Visualization (no explicit colors to keep style neutral)
-fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-
-# Lasso path
-axes[0].semilogx(alphas, lasso_scores, label='CV Score')
-axes[0].axvline(best_alpha, linestyle='--', label='Best alpha')
-axes[0].set_xlabel('Alpha')
-axes[0].set_ylabel('CV Score')
-axes[0].set_title('Lasso Regularization Path')
-axes[0].legend()
-
-# Feature selection vs alpha
-axes[1].semilogx(alphas, n_features_selected)
-axes[1].axvline(best_alpha, linestyle='--')
-axes[1].set_xlabel('Alpha')
-axes[1].set_ylabel('Features Selected')
-axes[1].set_title('Features vs Regularization')
-
-# Feature importance
-feature_idx = np.arange(X.shape[1])
-axes[2].bar(feature_idx, importances)
-axes[2].axhline(importances.mean(), linestyle='--', label='Mean')
-axes[2].set_xlabel('Feature Index')
-axes[2].set_ylabel('Importance')
-axes[2].set_title('Random Forest Feature Importance')
-axes[2].legend()
-
-plt.tight_layout()
+scores = cross_val_score(pipe, X, y, cv=5)
 \end{lstlisting}
-\end{column}
-\begin{column}{0.45\textwidth}
-\textbf{Embedded Method Types:}
 
-\begin{itemize}
-\item \textbf{L1 Regularization (Lasso)}:
-  \begin{itemize}
-  \item Penalty: $\lambda \sum_j |\beta_j|$
-  \item Sets coefficients exactly to zero
-  \item Automatic feature selection
-  \end{itemize}
-
-\item \textbf{Tree-based Importance}:
-  \begin{itemize}
-  \item Random Forest, Gradient Boosting
-  \item Based on split improvement
-  \item Handles interactions naturally
-  \end{itemize}
-
-\item \textbf{ElasticNet}:
-  \begin{itemize}
-  \item Combines L1 and L2 penalties
-  \item Groups correlated features
-  \item More stable than pure Lasso
-  \end{itemize}
-\end{itemize}
-
-\vspace{0.3cm}
-\begin{block}{Advantages}
-\begin{itemize}
-\item Efficient (single training run)
-\item Model-specific feature importance
-\item Handles feature interactions
-\item Less prone to overfitting
-\end{itemize}
-\end{block}
-
-\begin{alertblock}{Model-Specific Results}
-Feature importance depends on the model used. Always validate on your target algorithm.
+\begin{alertblock}{Importance is model-dependent}
+Impurity-based tree importance can favor variables with many potential split points and can distribute importance unpredictably across correlated predictors. Treat the selected set as part of the fitted pipeline, not as a universal ranking of scientific relevance.
 \end{alertblock}
-\end{column}
-\end{columns}
 \end{frame}
 
 \section{Practical Considerations and Best Practices}
