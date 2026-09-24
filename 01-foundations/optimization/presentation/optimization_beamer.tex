@@ -1008,53 +1008,48 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Example: Training a Model with PyTorch}
-  \begin{lstlisting}[language=Python, basicstyle=\tiny]
-import torch
-import torch.nn as nn
-import torch.optim as optim
+\begin{frame}[fragile]{Training Loop: Optimization Step}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+model.train()
 
-# Define model, loss, optimizer
-model = MyNeuralNetwork()
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
+for data, target in train_loader:
+    optimizer.zero_grad()
 
-# Training loop
-for epoch in range(num_epochs):
-    model.train()
-    total_loss = 0
+    output = model(data)
+    loss = criterion(output, target)
 
-    for batch_idx, (data, target) in enumerate(train_loader):
-        # Forward pass
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(
+        model.parameters(), max_norm=1.0
+    )
+    optimizer.step()
+\end{lstlisting}
+
+\begin{block}{Optimization state}
+Gradient clipping, optimizer state, batch size, and learning rate all change the update dynamics. Treat them as part of the training algorithm.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Training Loop: Validation and Scheduling}
+\begin{lstlisting}[style=code,basicstyle=\ttfamily\small]
+scheduler.step()
+
+model.eval()
+val_loss = 0.0
+
+with torch.no_grad():
+    for data, target in val_loader:
         output = model(data)
-        loss = criterion(output, target)
+        val_loss += criterion(
+            output, target
+        ).item()
 
-        # Backward pass and optimization
-        optimizer.zero_grad()  # Clear gradients
-        loss.backward()        # Compute gradients
+mean_val_loss = val_loss / len(val_loader)
+\end{lstlisting}
 
-        # Gradient clipping (optional, prevents exploding gradients)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-
-        optimizer.step()       # Update parameters
-        total_loss += loss.item()
-
-    # Learning rate scheduling
-    scheduler.step()
-
-    # Validation
-    model.eval()
-    val_loss = 0
-    with torch.no_grad():
-        for data, target in val_loader:
-            output = model(data)
-            val_loss += criterion(output, target).item()
-
-    # Logging
-    print(f'Epoch {epoch}: Train Loss: {total_loss/len(train_loader):.4f}, '
-          f'Val Loss: {val_loss/len(val_loader):.4f}, LR: {scheduler.get_last_lr()[0]:.6f}')
-  \end{lstlisting}
+\begin{alertblock}{Evaluation separation}
+Validation guides model/optimizer selection. Final generalization performance should be estimated on data not reused for tuning, early stopping, or scheduler decisions.
+\end{alertblock}
 \end{frame}
 
 % ================================================================
