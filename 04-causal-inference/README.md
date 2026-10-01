@@ -10,6 +10,7 @@ Methods for estimating treatment effects and designing experiments.
 - `causal-econometrics/`
 - `panel-data-econometrics/`
 - `difference-in-differences/`
+- `instrumental-variables/`
 - `ab-testing/`
 
 ## Structure

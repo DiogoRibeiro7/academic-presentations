@@ -1,0 +1,437 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title[Instrumental Variables]{Instrumental Variables, Endogeneity, and 2SLS}
+\subtitle{Identification from Exogenous Treatment Shifts}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Var}{\mathrm{Var}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item explain why endogeneity invalidates the usual OLS causal interpretation;
+\item state the relevance, independence, and exclusion conditions for an instrument;
+\item derive the Wald estimand and connect it to two-stage least squares;
+\item distinguish ATE-style interpretations from Local Average Treatment Effects;
+\item diagnose weak instruments and understand their inferential consequences;
+\item reason critically about overidentification tests, exclusion restrictions, and invalid instruments.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Instrumental Variables?}
+
+\begin{frame}{The Endogeneity Problem}
+Suppose the structural equation is
+\[
+Y_i=\beta D_i+X_i'\gamma+u_i.
+\]
+
+For OLS to identify \(\beta\), we need
+\[
+\E[u_i\mid D_i,X_i]=0.
+\]
+
+Endogeneity means instead
+\[
+\Cov(D_i,u_i)\neq 0.
+\]
+
+\begin{alertblock}{Consequence}
+Variation in treatment is partly driven by factors that also affect the outcome, so the regression coefficient mixes causal effect and selection.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Common Sources of Endogeneity}
+\begin{itemize}
+\item \textbf{Omitted variables}: ability affects education and earnings.
+\item \textbf{Simultaneity}: price and quantity are jointly determined.
+\item \textbf{Measurement error}: treatment is observed with noise.
+\item \textbf{Selection}: people choose treatment based on expected outcomes.
+\item \textbf{Policy targeting}: intervention is directed toward units already changing.
+\end{itemize}
+
+\begin{block}{IV strategy}
+Find a source of treatment variation that is plausibly unrelated to the outcome disturbance except through treatment.
+\end{block}
+\end{frame}
+
+\section{What Makes an Instrument Valid?}
+
+\begin{frame}{Instrument Relevance}
+An instrument \(Z\) must shift treatment:
+\[
+\Cov(Z,D)\neq 0.
+\]
+
+In a first-stage model,
+\[
+D_i=\pi_0+\pi_1Z_i+X_i'\pi_2+v_i,
+\]
+we require \(\pi_1\neq 0\).
+
+\begin{alertblock}{Testable, but not sufficient}
+A strong first stage only establishes that the instrument predicts treatment. It says nothing by itself about causal validity.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Instrument Independence}
+The instrument should be as-good-as-random with respect to the unobserved determinants of the outcome:
+\[
+Z_i\perp u_i
+\]
+conditionally on the maintained covariates and design.
+
+\begin{block}{Interpretation}
+The assignment mechanism that changes \(Z\) should not select units according to latent outcome determinants.
+\end{block}
+
+This is primarily a design and institutional-knowledge claim.
+\end{frame}
+
+\begin{frame}{Exclusion Restriction}
+The instrument should affect the outcome only through the treatment channel relevant to the estimand.
+
+In structural terms, there should be no direct path
+\[
+Z\rightarrow Y
+\]
+after accounting for treatment.
+
+\begin{alertblock}{Usually untestable}
+Exclusion is often the most controversial IV assumption and must be defended substantively.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Three Conditions, Three Different Questions}
+\begin{tabular}{p{3.1cm}p{4.2cm}p{5cm}}
+\toprule
+\textbf{Condition} & \textbf{Question} & \textbf{Evidence} \\
+\midrule
+Relevance & Does \(Z\) move \(D\)? & First-stage data \\
+Independence & Is \(Z\) unrelated to latent outcome causes? & Design / institutional knowledge \\
+Exclusion & Does \(Z\) affect \(Y\) only through \(D\)? & Scientific argument, falsification \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\section{The Wald Estimator}
+
+\begin{frame}{Binary Instrument, Binary Treatment}
+For binary \(Z\), a simple IV estimand is
+\[
+\widehat{\beta}_{Wald}
+=
+\frac{
+\E[Y\mid Z=1]-\E[Y\mid Z=0]
+}{
+\E[D\mid Z=1]-\E[D\mid Z=0]
+}.
+\]
+
+The numerator is the reduced-form effect of \(Z\) on \(Y\).
+
+The denominator is the first-stage effect of \(Z\) on \(D\).
+\end{frame}
+
+\begin{frame}{Reduced Form and First Stage}
+First stage:
+\[
+D_i=\pi_0+\pi_1Z_i+v_i.
+\]
+
+Reduced form:
+\[
+Y_i=\rho_0+\rho_1Z_i+e_i.
+\]
+
+With one instrument and one endogenous treatment,
+\[
+\widehat{\beta}_{IV}
+=
+\frac{\widehat{\rho}_1}{\widehat{\pi}_1}.
+\]
+
+\begin{block}{Interpretation}
+The causal effect is the outcome change induced by the instrument divided by the treatment change induced by the instrument.
+\end{block}
+\end{frame}
+
+\section{Two-Stage Least Squares}
+
+\begin{frame}{First Stage}
+Estimate
+\[
+D_i=\pi_0+Z_i'\pi_1+X_i'\pi_2+v_i.
+\]
+
+This produces predicted treatment
+\[
+\widehat D_i.
+\]
+
+Only the component of treatment variation explained by instruments and included exogenous covariates is retained.
+\end{frame}
+
+\begin{frame}{Second Stage}
+Estimate
+\[
+Y_i=\beta_0+\beta_1\widehat D_i+X_i'\beta_2+\varepsilon_i.
+\]
+
+\begin{alertblock}{Important implementation point}
+Do not literally run two unrelated OLS regressions and use ordinary second-stage standard errors. Proper 2SLS software accounts for first-stage estimation in the variance calculation.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Projection Interpretation}
+Let \(P_Z\) denote projection onto the instrument space.
+
+Then
+\[
+\widehat D=P_ZD.
+\]
+
+2SLS estimates the relationship between \(Y\) and the part of \(D\) that lies in the span of exogenous instruments.
+
+\begin{block}{Core idea}
+The estimator discards endogenous treatment variation not explained by the instrument.
+\end{block}
+\end{frame}
+
+\section{Local Average Treatment Effects}
+
+\begin{frame}{Treatment-Response Types}
+With binary instrument and treatment, units may be:
+\begin{itemize}
+\item \textbf{compliers}: take treatment when encouraged by \(Z\);
+\item \textbf{always-takers}: treated regardless of \(Z\);
+\item \textbf{never-takers}: untreated regardless of \(Z\);
+\item \textbf{defiers}: move opposite to the instrument.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Monotonicity}
+A common assumption rules out defiers:
+\[
+D_i(1)\geq D_i(0)
+\]
+for all units.
+
+Under standard IV assumptions and monotonicity, the Wald estimand identifies
+\[
+LATE
+=
+\E[Y_i(1)-Y_i(0)\mid \text{compliers}].
+\]
+
+\begin{alertblock}{Not necessarily the ATE}
+The effect applies to units whose treatment status is changed by the instrument.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Why the LATE Population Matters}
+Different instruments may affect different margins of treatment.
+
+Therefore two valid instruments can estimate different causal effects if treatment effects are heterogeneous.
+
+\begin{block}{Example}
+Distance to college may affect marginal students differently from tuition subsidies. Both can shift education, but for different groups.
+\end{block}
+\end{frame}
+
+\section{Weak Instruments}
+
+\begin{frame}{What Is a Weak Instrument?}
+A weak instrument has only limited explanatory power for the endogenous treatment.
+
+If the first stage is weak:
+\begin{itemize}
+\item 2SLS can be severely biased in finite samples;
+\item estimates become unstable;
+\item conventional normal approximations can be poor;
+\item confidence intervals can be misleading.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{First-Stage Diagnostics}
+Common diagnostics include:
+\begin{itemize}
+\item first-stage coefficient estimates;
+\item partial \(R^2\);
+\item F-type statistics for excluded instruments;
+\item weak-identification robust tests and confidence sets.
+\end{itemize}
+
+\begin{alertblock}{Avoid rigid folklore}
+Rules such as “F greater than 10” are rough heuristics, not universal guarantees of reliable inference.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Why Weak Instruments Are Dangerous}
+With weak relevance,
+\[
+\widehat{\beta}_{IV}
+=
+\frac{\widehat{\rho}_1}{\widehat{\pi}_1}
+\]
+has a noisy denominator.
+
+Small changes in the first stage can then generate very large changes in the IV estimate.
+
+\begin{block}{Practical implication}
+Report weak-instrument diagnostics alongside the causal estimate, not as an afterthought.
+\end{block}
+\end{frame}
+
+\section{Multiple Instruments}
+
+\begin{frame}{Overidentified Models}
+If there are more instruments than endogenous regressors, the model is overidentified.
+
+This can improve precision, but every instrument must satisfy the required assumptions.
+
+\begin{alertblock}{More instruments are not automatically better}
+Many weak or dubious instruments can worsen finite-sample behavior and complicate interpretation.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Overidentification Tests}
+Sargan/Hansen-style tests examine whether different instrument-implied moment conditions are mutually compatible.
+
+A rejection may signal invalid instruments or model misspecification.
+
+A non-rejection does not prove validity.
+
+\begin{block}{Reason}
+If multiple instruments violate exclusion in similar ways, they may still appear mutually consistent.
+\end{block}
+\end{frame}
+
+\section{Instrument Validity in Practice}
+
+\begin{frame}{Threats to the Exclusion Restriction}
+Suppose \(Z\) changes treatment \(D\), but also:
+\begin{itemize}
+\item changes another behavior that affects \(Y\);
+\item shifts resources directly;
+\item changes expectations;
+\item alters peer or spillover environments.
+\end{itemize}
+
+Then \(Z\) may have a direct or indirect path to \(Y\) outside the treatment channel.
+\end{frame}
+
+\begin{frame}{Falsification Strategies}
+Useful checks can include:
+\begin{itemize}
+\item balance of pre-treatment covariates across instrument values;
+\item effects of \(Z\) on outcomes that should not respond;
+\item reduced-form timing checks;
+\item alternative samples where the treatment channel should be absent;
+\item sensitivity analysis to plausible exclusion violations.
+\end{itemize}
+
+\begin{alertblock}{Scope}
+Falsification can expose some invalid instruments; it cannot certify exclusion.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Price Endogeneity}
+Suppose we want demand elasticity:
+\[
+Q_i=\beta P_i+u_i.
+\]
+
+Price \(P_i\) is endogenous because firms set prices partly in response to demand shocks contained in \(u_i\).
+
+A potential instrument is a cost shifter \(Z_i\) that affects price but is plausibly unrelated to demand except through price.
+
+\begin{block}{Question}
+Does the cost shifter also affect availability, quality, or consumer expectations? If yes, exclusion may fail.
+\end{block}
+\end{frame}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose a policy changes prices in some regions because of an administrative rule.
+
+A plausible IV workflow is:
+\begin{enumerate}
+\item explain the rule generating exogenous variation;
+\item quantify the first-stage effect on actual prices;
+\item inspect whether the rule changes other regional conditions;
+\item estimate the reduced form;
+\item estimate 2SLS with appropriate uncertainty;
+\item state the LATE population affected by the rule.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{A Credible IV Workflow}
+\begin{enumerate}
+\item State the endogenous treatment and the target estimand.
+\item Explain precisely why OLS is biased.
+\item Describe the instrument assignment mechanism.
+\item Defend relevance, independence, and exclusion separately.
+\item Report the first stage and reduced form.
+\item Use proper 2SLS inference.
+\item Diagnose weak identification.
+\item Define the complier population when using LATE logic.
+\item Run falsification and sensitivity analyses.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item treating a strong correlation with treatment as proof of validity;
+\item ignoring direct instrument effects on the outcome;
+\item calling a LATE estimate an ATE;
+\item using conventional inference with weak instruments;
+\item adding many weak instruments for apparent precision;
+\item interpreting overidentification non-rejection as validation;
+\item failing to explain the substantive assignment mechanism.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: What Makes IV Credible?}
+\begin{itemize}
+\item IV replaces endogenous treatment variation with instrument-induced variation.
+\item Relevance is necessary but not enough.
+\item Independence and exclusion come from design and scientific reasoning.
+\item 2SLS is the estimator; the instrument assignment mechanism is the identification strategy.
+\item With heterogeneous effects, the estimand may be a LATE for compliers.
+\item Weak instruments create bias and unreliable conventional inference.
+\item Strong IV analyses make first stage, reduced form, target population, and failure modes explicit.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Angrist, J. D., Imbens, G. W., and Rubin, D. B. (1996). Identification of Causal Effects Using Instrumental Variables. \textit{Journal of the American Statistical Association}, 91(434), 444--455.
+\item Angrist, J. D., and Pischke, J.-S. (2009). \textit{Mostly Harmless Econometrics}. Princeton University Press.
+\item Imbens, G. W., and Angrist, J. D. (1994). Identification and Estimation of Local Average Treatment Effects. \textit{Econometrica}, 62(2), 467--475.
+\item Staiger, D., and Stock, J. H. (1997). Instrumental Variables Regression with Weak Instruments. \textit{Econometrica}, 65(3), 557--586.
+\item Stock, J. H., Wright, J. H., and Yogo, M. (2002). A Survey of Weak Instruments and Weak Identification in Generalized Method of Moments. \textit{Journal of Business and Economic Statistics}, 20(4), 518--529.
+\item Wooldridge, J. M. (2010). \textit{Econometric Analysis of Cross Section and Panel Data}, 2nd ed. MIT Press.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
