@@ -1,0 +1,445 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Counterfactual Time Series]{Counterfactual Time-Series Methods}
+\subtitle{Interrupted Time Series and Synthetic Control}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish descriptive structural breaks from causal intervention effects;
+\item formulate interrupted time-series models with level and slope changes;
+\item account for seasonality, serial correlation, and concurrent shocks;
+\item construct synthetic controls from donor units and assess pre-treatment fit;
+\item use placebo units and placebo intervention dates as falsification devices;
+\item compare when interrupted time series, controlled ITS, and synthetic control are credible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Counterfactual Time Series}
+
+\begin{frame}{The Core Causal Question}
+Suppose an intervention occurs at time \(T_0\).
+
+For \(t>T_0\), we observe
+\[
+Y_t(1),
+\]
+but we need the missing untreated trajectory
+\[
+Y_t(0).
+\]
+
+The causal effect at time \(t\) is
+\[
+\tau_t=Y_t(1)-Y_t(0).
+\]
+
+\begin{alertblock}{The challenge}
+Time itself does not provide the counterfactual. We must model or construct what would have happened without intervention.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Before--After Is Usually Not Enough}
+A simple comparison
+\[
+\bar Y_{post}-\bar Y_{pre}
+\]
+attributes every temporal change to treatment.
+
+That can confound treatment with:
+\begin{itemize}
+\item secular trends;
+\item seasonality;
+\item macroeconomic shocks;
+\item measurement changes;
+\item unrelated structural breaks.
+\end{itemize}
+\end{frame}
+
+\section{Interrupted Time Series}
+
+\begin{frame}{Segmented Regression}
+A basic interrupted time-series model is
+\[
+Y_t
+=
+\beta_0
++
+\beta_1 Time_t
++
+\beta_2 Intervention_t
++
+\beta_3 PostTime_t
++
+\varepsilon_t.
+\]
+
+Where:
+\begin{itemize}
+\item \(\beta_1\): pre-intervention slope;
+\item \(\beta_2\): immediate level change;
+\item \(\beta_3\): slope change after intervention.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Level Change vs Slope Change}
+An intervention may cause:
+\begin{itemize}
+\item an immediate jump with no trend change;
+\item no immediate jump but a gradual trend change;
+\item both;
+\item a transient effect followed by reversion.
+\end{itemize}
+
+\begin{block}{Interpretation}
+The post-treatment counterfactual is an extrapolation of the untreated data-generating process, not simply the pre-period mean.
+\end{block}
+\end{frame}
+
+\begin{frame}{Key ITS Identification Assumption}
+The pre-intervention process must provide a credible basis for the untreated post-intervention trajectory.
+
+This requires ruling out alternative explanations for the break:
+\begin{itemize}
+\item no concurrent policy shock;
+\item no abrupt measurement change;
+\item no composition change;
+\item no anticipatory response contaminating the pre-period.
+\end{itemize}
+\end{frame}
+
+\section{Time-Series Dependence}
+
+\begin{frame}{Autocorrelation Matters}
+Residuals often satisfy
+\[
+\Cov(\varepsilon_t,\varepsilon_{t-k})\neq 0.
+\]
+
+Ignoring serial correlation can understate uncertainty around the intervention effect.
+
+Possible responses include:
+\begin{itemize}
+\item explicit AR error structures;
+\item HAC-style standard errors;
+\item state-space formulations;
+\item block bootstrap methods.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Seasonality}
+Suppose outcomes vary systematically by month or quarter.
+
+A segmented regression may include seasonal terms:
+\[
+Y_t
+=
+\beta_0+\beta_1 Time_t+\beta_2 D_t+\beta_3 PostTime_t
++
+\sum_{m=2}^{12}\delta_m Month_{mt}
++
+\varepsilon_t.
+\]
+
+\begin{alertblock}{Threat}
+If intervention timing coincides with seasonal peaks or troughs, naive before--after comparisons can be badly misleading.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Structural Breaks vs Treatment Effects}
+A detected break at \(T_0\) shows that the data-generating process changed.
+
+It does not, by itself, show that treatment caused the break.
+
+\begin{block}{Causal requirement}
+The intervention must be the most credible explanation for the deviation from the untreated counterfactual.
+\end{block}
+\end{frame}
+
+\section{Controlled Interrupted Time Series}
+
+\begin{frame}{Adding a Comparison Series}
+Suppose a comparable untreated series \(C_t\) is available.
+
+A controlled ITS uses that series to absorb common shocks:
+\[
+Y_t
+=
+\alpha
++
+\beta_1 Time_t
++
+\beta_2 TreatSeries
++
+\beta_3 Post_t
++
+\beta_4(TreatSeries\times Post_t)
++
+\cdots
+\]
+
+This creates a time-series analogue of comparative counterfactual reasoning.
+\end{frame}
+
+\begin{frame}{When a Control Series Helps}
+A control series can improve credibility when it:
+\begin{itemize}
+\item shares common shocks with the treated series;
+\item is not itself affected by treatment;
+\item has similar measurement quality;
+\item follows a stable relationship with the treated series pre-treatment.
+\end{itemize}
+
+\begin{alertblock}{Spillovers}
+If treatment affects the control series, the counterfactual is contaminated.
+\end{alertblock}
+\end{frame}
+
+\section{Synthetic Control}
+
+\begin{frame}{Why Synthetic Control?}
+Sometimes there is one treated unit and many potential comparison units.
+
+No single donor may be sufficiently similar.
+
+Synthetic control constructs
+\[
+\widehat Y_{1t}(0)
+=
+\sum_{j=2}^{J+1}w_jY_{jt}
+\]
+with
+\[
+w_j\geq 0,
+\qquad
+\sum_jw_j=1.
+\]
+
+The weights are chosen to reproduce pre-treatment characteristics and outcomes.
+\end{frame}
+
+\begin{frame}{The Donor Pool}
+The donor pool should contain units that:
+\begin{itemize}
+\item were not treated during the relevant period;
+\item were not substantially affected by spillovers;
+\item share plausible structural relationships with the treated unit;
+\item have reliable pre-treatment data.
+\end{itemize}
+
+\begin{alertblock}{Design decision}
+Donor selection is part of identification. A large donor pool is not automatically a good donor pool.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pre-Treatment Fit}
+Synthetic control credibility depends heavily on how well the weighted donors reproduce the treated unit before intervention.
+
+A common diagnostic is pre-treatment RMSPE:
+\[
+RMSPE_{pre}
+=
+\sqrt{
+\frac{1}{T_0}
+\sum_{t<T_0}
+(Y_{1t}-\widehat Y_{1t}(0))^2
+}.
+\]
+
+Poor pre-fit weakens the post-treatment counterfactual.
+\end{frame}
+
+\begin{frame}{Post-Treatment Effect Path}
+After treatment,
+\[
+\widehat\tau_t
+=
+Y_{1t}
+-
+\widehat Y_{1t}(0).
+\]
+
+Inspect:
+\begin{itemize}
+\item onset timing;
+\item persistence;
+\item cumulative effect;
+\item whether the gap is large relative to pre-treatment mismatch.
+\end{itemize}
+\end{frame}
+
+\section{Placebo Inference}
+
+\begin{frame}{Placebo Units}
+Pretend each donor unit was treated at the same date and construct a synthetic control for it.
+
+Then compare the treated unit's post-treatment gap with placebo gaps.
+
+\begin{block}{Purpose}
+This asks whether an effect of the observed magnitude is unusual relative to units that were not treated.
+\end{block}
+\end{frame}
+
+\begin{frame}{Placebo Intervention Dates}
+Move the treatment date into the pre-treatment period.
+
+A large apparent effect before actual intervention can indicate:
+\begin{itemize}
+\item unstable pre-treatment relationships;
+\item overfitting;
+\item structural breaks unrelated to treatment;
+\item model misspecification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Post/Pre Fit Ratios}
+One descriptive diagnostic compares post-treatment and pre-treatment fit:
+\[
+\frac{RMSPE_{post}}{RMSPE_{pre}}.
+\]
+
+A treated unit with a much larger ratio than placebo units can be suggestive.
+
+\begin{alertblock}{Caution}
+These placebo distributions are design-based diagnostics, not automatic classical p-values.
+\end{alertblock}
+\end{frame}
+
+\section{Failure Modes}
+
+\begin{frame}{Concurrent Shocks}
+Suppose treatment begins during:
+\begin{itemize}
+\item a recession;
+\item a supply-chain disruption;
+\item another policy change;
+\item a measurement-system migration.
+\end{itemize}
+
+If these shocks affect the treated unit differently, the estimated intervention effect may absorb them.
+\end{frame}
+
+\begin{frame}{Donor Contamination}
+A donor unit is problematic if it:
+\begin{itemize}
+\item later adopts the treatment;
+\item receives spillovers;
+\item experiences a unique structural break;
+\item changes measurement definitions.
+\end{itemize}
+
+\begin{block}{Practical rule}
+Audit donor histories, not just statistical fit.
+\end{block}
+\end{frame}
+
+\begin{frame}{Overfitting the Pre-Period}
+A synthetic control can match pre-treatment data extremely closely yet extrapolate poorly after intervention.
+
+Possible reasons:
+\begin{itemize}
+\item too many predictors relative to pre-period length;
+\item unstable donor relationships;
+\item accidental fit to noise;
+\item structural change unrelated to treatment.
+\end{itemize}
+\end{frame}
+
+\section{Choosing Between Designs}
+
+\begin{frame}{ITS vs Synthetic Control}
+\begin{tabular}{p{3.3cm}p{4.4cm}p{4.4cm}}
+\toprule
+& \textbf{Interrupted time series} & \textbf{Synthetic control} \\
+\midrule
+Counterfactual source & Extrapolated own history & Weighted donor units \\
+Main strength & Rich temporal structure & External comparison trajectory \\
+Main risk & Concurrent structural break & Poor donor support \\
+Best setting & Long stable pre-period & One/few treated units, good donors \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{When to Prefer Controlled ITS}
+Controlled ITS is attractive when:
+\begin{itemize}
+\item a natural comparison series exists;
+\item common shocks are important;
+\item treatment affects only one series;
+\item both series have long pre- and post-periods.
+\end{itemize}
+
+It can be simpler and more interpretable than a synthetic donor construction when a credible control is obvious.
+\end{frame}
+
+\section{Applied Workflow}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose one region changes pricing policy in January 2026.
+
+Questions:
+\begin{itemize}
+\item Was there already a demand trend before January?
+\item Is January seasonally unusual?
+\item Did competitors change pricing simultaneously?
+\item Are neighboring regions unaffected and suitable donors?
+\item Does the synthetic trajectory fit well before treatment?
+\item Are post-treatment gaps larger than placebo gaps?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible Counterfactual Time-Series Workflow}
+\begin{enumerate}
+\item Define intervention date and estimand.
+\item Plot raw series and inspect seasonality.
+\item Specify the untreated time-series process.
+\item Audit concurrent shocks and anticipation.
+\item Add control series or donor units where possible.
+\item Diagnose pre-treatment fit.
+\item Model serial correlation.
+\item Run placebo units and placebo dates.
+\item Report effect paths and sensitivity to donor/model choices.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Synthesis: Building a Missing Trajectory}
+\begin{itemize}
+\item Causal time-series analysis is fundamentally a counterfactual forecasting problem.
+\item Interrupted time series extrapolates the treated unit's own untreated process.
+\item Controlled ITS strengthens the design with a comparison series.
+\item Synthetic control constructs the untreated trajectory from weighted donors.
+\item Pre-treatment fit is necessary but not sufficient for credibility.
+\item Serial correlation, seasonality, spillovers, and concurrent shocks must be addressed explicitly.
+\item Placebo units and placebo dates are central falsification tools.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Bernal, J. L., Cummins, S., and Gasparrini, A. (2017). Interrupted Time Series Regression for the Evaluation of Public Health Interventions. \textit{International Journal of Epidemiology}, 46(1), 348--355.
+\item Abadie, A., Diamond, A., and Hainmueller, J. (2010). Synthetic Control Methods for Comparative Case Studies. \textit{Journal of the American Statistical Association}, 105(490), 493--505.
+\item Abadie, A., Diamond, A., and Hainmueller, J. (2015). Comparative Politics and the Synthetic Control Method. \textit{American Journal of Political Science}, 59(2), 495--510.
+\item Abadie, A. (2021). Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects. \textit{Journal of Economic Literature}, 59(2), 391--425.
+\item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., and Ljung, G. M. (2015). \textit{Time Series Analysis: Forecasting and Control}, 5th ed. Wiley.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}

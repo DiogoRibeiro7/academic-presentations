@@ -11,6 +11,7 @@ Methods for estimating treatment effects and designing experiments.
 - `panel-data-econometrics/`
 - `difference-in-differences/`
 - `instrumental-variables/`
+- `counterfactual-time-series/`
 - `ab-testing/`
 
 ## Structure
