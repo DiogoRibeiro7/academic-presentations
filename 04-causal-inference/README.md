@@ -8,6 +8,7 @@ Methods for estimating treatment effects and designing experiments.
 
 - `causal-inference-fundamentals/`
 - `causal-econometrics/`
+- `panel-data-econometrics/`
 - `ab-testing/`
 
 ## Structure
