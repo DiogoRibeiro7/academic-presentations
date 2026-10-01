@@ -20,6 +20,7 @@ PRIMARY_ENTRY_POINTS: Final[tuple[Path, ...]] = (
     Path("03-bayesian-methods/mcmc/presentation/main.tex"),
     Path("04-causal-inference/ab-testing/presentation/main.tex"),
     Path("04-causal-inference/causal-inference-fundamentals/presentation/main.tex"),
+    Path("04-causal-inference/causal-econometrics/presentation/main.tex"),
     Path("05-time-series/time-series-forecasting/presentation/main.tex"),
     Path("06-advanced-topics/ai-agents/presentation/main.tex"),
     Path("06-advanced-topics/computer-science/presentation/main.tex"),
