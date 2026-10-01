@@ -1,0 +1,466 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title[Difference-in-Differences]{Difference-in-Differences and Event Studies}
+\subtitle{Identification from Differential Trends}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item derive the canonical 2x2 Difference-in-Differences estimand;
+\item state parallel trends using potential outcomes;
+\item connect the design-based estimand to two-way fixed-effects regression;
+\item interpret event-study coefficients before and after treatment;
+\item recognize anticipation, staggered adoption, and heterogeneous treatment-effect problems;
+\item use clustering, placebo tests, and pre-treatment diagnostics without overclaiming what they prove.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{The Basic Design}
+
+\begin{frame}{The 2x2 Difference-in-Differences Setup}
+There are two groups and two periods:
+\begin{itemize}
+\item treated group \(G=1\);
+\item comparison group \(G=0\);
+\item pre-treatment period \(t=0\);
+\item post-treatment period \(t=1\).
+\end{itemize}
+
+The canonical estimator is
+\[
+\widehat{\tau}_{DID}
+=
+(\bar Y_{1,1}-\bar Y_{1,0})
+-
+(\bar Y_{0,1}-\bar Y_{0,0}).
+\]
+
+\begin{block}{Interpretation}
+Subtract the change in the untreated comparison group from the change in the treated group.
+\end{block}
+\end{frame}
+
+\begin{frame}{Why the Difference of Differences?}
+A before--after comparison in the treated group,
+\[
+\bar Y_{1,1}-\bar Y_{1,0},
+\]
+mixes treatment with all other time changes.
+
+A treated--control comparison after treatment,
+\[
+\bar Y_{1,1}-\bar Y_{0,1},
+\]
+mixes treatment with persistent group differences.
+
+\begin{alertblock}{DiD logic}
+Use the comparison group's change to estimate the treated group's counterfactual change in the absence of treatment.
+\end{alertblock}
+\end{frame}
+
+\section{Potential Outcomes and Identification}
+
+\begin{frame}{Potential Outcomes with Groups and Time}
+Let \(Y_{it}(1)\) denote the outcome under treatment and \(Y_{it}(0)\) the untreated potential outcome.
+
+For treated units after intervention,
+\[
+Y_{i1}=Y_{i1}(1).
+\]
+
+The missing counterfactual is
+\[
+Y_{i1}(0).
+\]
+
+Difference-in-Differences identifies this missing counterfactual through assumptions about untreated trends.
+\end{frame}
+
+\begin{frame}{Parallel Trends}
+A canonical parallel-trends condition is
+\[
+\E[Y_1(0)-Y_0(0)\mid G=1]
+=
+\E[Y_1(0)-Y_0(0)\mid G=0].
+\]
+
+\begin{block}{Meaning}
+Without treatment, the average outcome change would have been the same in treated and comparison groups.
+\end{block}
+
+\begin{alertblock}{What is not required}
+The groups do not need equal outcome levels before treatment.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{What Parallel Trends Does Not Say}
+Parallel trends does not require:
+\begin{itemize}
+\item identical levels;
+\item identical covariate distributions;
+\item identical shocks after treatment;
+\item constant treatment effects;
+\item linear outcome paths.
+\end{itemize}
+
+It does require the comparison group's untreated evolution to be informative about the treated group's untreated evolution over the relevant horizon.
+\end{frame}
+
+\begin{frame}{Conditional Parallel Trends}
+Sometimes parallel trends is more credible after conditioning on covariates \(X\):
+\[
+\E[Y_1(0)-Y_0(0)\mid G=1,X]
+=
+\E[Y_1(0)-Y_0(0)\mid G=0,X].
+\]
+
+\begin{itemize}
+\item covariates should be pre-treatment or otherwise justified;
+\item overlap between treated and comparison units remains important;
+\item conditioning cannot fix an omitted time-varying confounder absent supporting assumptions.
+\end{itemize}
+\end{frame}
+
+\section{Regression Formulation}
+
+\begin{frame}{The Canonical Regression}
+For the 2x2 design:
+\[
+Y_{it}
+=
+\alpha
++
+\gamma G_i
++
+\lambda Post_t
++
+\beta(G_i\times Post_t)
++
+u_{it}.
+\]
+
+The interaction coefficient \(\beta\) equals the sample DiD contrast.
+
+\begin{alertblock}{Important}
+The regression representation does not eliminate the need for parallel trends.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Two-Way Fixed Effects}
+With many units and periods:
+\[
+Y_{it}
+=
+\alpha_i
++
+\lambda_t
++
+\beta D_{it}
++
+u_{it}.
+\]
+
+Unit fixed effects absorb stable unit differences. Time fixed effects absorb shocks common to all units.
+
+\begin{block}{Identification}
+The coefficient is learned from treatment-status changes after removing unit and time averages.
+\end{block}
+\end{frame}
+
+\section{Event Studies}
+
+\begin{frame}{Relative Event Time}
+Let \(T_i\) be the first treatment period and define event time
+\[
+k=t-T_i.
+\]
+
+An event-study specification is
+\[
+Y_{it}
+=
+\alpha_i+\lambda_t
++
+\sum_{k\neq -1}
+\beta_k
+\mathbb{1}\{t-T_i=k\}
++
+u_{it}.
+\]
+
+Usually one pre-treatment period, often \(k=-1\), is omitted as the reference.
+\end{frame}
+
+\begin{frame}{How to Read Event-Study Coefficients}
+\begin{itemize}
+\item \(\beta_{-3},\beta_{-2}\): pre-treatment relative differences;
+\item \(\beta_0\): effect around treatment onset;
+\item \(\beta_1,\beta_2,\ldots\): dynamic post-treatment effects;
+\item all coefficients are relative to the omitted event-time period.
+\end{itemize}
+
+\begin{alertblock}{Pre-treatment coefficients}
+They can reveal obvious violations of parallel trends, but insignificant coefficients do not prove parallel trends.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Why Pre-Trend Tests Have Limited Power}
+Suppose the untreated trends differ modestly but the pre-period is short or noisy.
+
+Then:
+\begin{itemize}
+\item pre-treatment estimates can be imprecise;
+\item a joint test may fail to reject;
+\item the post-treatment bias may still be meaningful.
+\end{itemize}
+
+\begin{block}{Good practice}
+Inspect magnitudes and patterns, not only p-values.
+\end{block}
+\end{frame}
+
+\section{Anticipation and Dynamics}
+
+\begin{frame}{Anticipation Violates the Simple Timing Story}
+If units change behavior before formal treatment starts,
+\[
+Y_{it}(1)\neq Y_{it}(0)
+\]
+for nominally pre-treatment periods near adoption.
+
+Examples:
+\begin{itemize}
+\item firms invest before a regulation takes effect;
+\item customers stockpile before a price increase;
+\item workers change behavior after a policy announcement.
+\end{itemize}
+
+\begin{alertblock}{Consequence}
+The assumed untreated pre-period may already be contaminated by treatment.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Dynamic Treatment Effects}
+Treatment effects may evolve:
+\[
+\tau_k
+=
+\E[Y_{i,T_i+k}(1)-Y_{i,T_i+k}(0)\mid G_i=1].
+\]
+
+Possible patterns include:
+\begin{itemize}
+\item immediate jump;
+\item delayed onset;
+\item cumulative growth;
+\item temporary effect;
+\item fade-out.
+\end{itemize}
+
+Event studies are useful precisely because a single static post-treatment coefficient can hide this structure.
+\end{frame}
+
+\section{Staggered Adoption}
+
+\begin{frame}{Treatment at Different Times}
+In staggered designs, groups adopt treatment in different periods:
+\[
+T_i\in\{2,3,4,\ldots\}.
+\]
+
+At a given time, already-treated units can inadvertently serve as controls for newly treated units in a standard TWFE regression.
+
+\begin{alertblock}{Why this matters}
+With heterogeneous treatment effects, those comparisons can receive unintuitive or even negative weights.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Treatment-Effect Heterogeneity}
+Suppose cohort \(g\) has an effect
+\[
+ATT(g,t)
+=
+\E[Y_t(1)-Y_t(0)\mid T_i=g].
+\]
+
+If effects differ across cohorts or event time, a single TWFE coefficient need not equal a simple average of economically meaningful treatment effects.
+
+\begin{block}{Modern strategy}
+Estimate cohort- and time-specific effects using appropriate comparison groups, then aggregate transparently.
+\end{block}
+\end{frame}
+
+\begin{frame}{Who Should Be the Comparison Group?}
+Candidate comparisons include:
+\begin{itemize}
+\item never-treated units;
+\item not-yet-treated units;
+\item a carefully selected subset with credible untreated trends.
+\end{itemize}
+
+The comparison group should approximate the treated cohort's untreated counterfactual at that time.
+
+\begin{alertblock}{Design principle}
+Comparison-group choice is an identification decision, not a default regression setting.
+\end{alertblock}
+\end{frame}
+
+\section{Inference}
+
+\begin{frame}{Serial Correlation and Standard Errors}
+DiD residuals are often correlated within treatment units over time:
+\[
+\Cov(u_{it},u_{is})\neq 0.
+\]
+
+Ignoring this dependence can severely understate uncertainty.
+
+\begin{block}{Typical practice}
+Cluster at the treatment-assignment level when there are sufficiently many independent clusters.
+\end{block}
+\end{frame}
+
+\begin{frame}{Few Clusters}
+When the number of clusters is small:
+\begin{itemize}
+\item conventional cluster-robust asymptotics may be poor;
+\item degrees-of-freedom corrections matter;
+\item randomization inference or wild-cluster bootstrap methods may be useful;
+\item uncertainty should be reported conservatively.
+\end{itemize}
+
+\begin{alertblock}{Reminder}
+More observations within a handful of treated clusters do not create many independent treatment assignments.
+\end{alertblock}
+\end{frame}
+
+\section{Diagnostics and Falsification}
+
+\begin{frame}{Placebo Treatment Dates}
+Assign a false intervention date in the pre-treatment period and re-estimate the design.
+
+A large placebo effect may indicate:
+\begin{itemize}
+\item differential pre-trends;
+\item anticipation;
+\item model misspecification;
+\item seasonal or structural breaks.
+\end{itemize}
+
+\begin{block}{Interpretation}
+A null placebo is reassuring only for the specific failure modes the placebo could expose.
+\end{block}
+\end{frame}
+
+\begin{frame}{Placebo Outcomes}
+Estimate the design on outcomes that should not respond to treatment.
+
+A detected effect can signal:
+\begin{itemize}
+\item omitted concurrent shocks;
+\item broad changes unrelated to treatment;
+\item comparison-group failure.
+\end{itemize}
+
+Negative-control outcomes are especially useful when they share confounding pathways but not the treatment mechanism.
+\end{frame}
+
+\begin{frame}{Covariate and Composition Diagnostics}
+Check whether treatment coincides with changes in:
+\begin{itemize}
+\item sample composition;
+\item measurement procedures;
+\item migration across groups;
+\item attrition;
+\item pre-treatment covariates that should be stable.
+\end{itemize}
+
+\begin{alertblock}{Threat}
+A changing population can make apparent outcome trends differ even when individual-level potential outcomes do not.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose some regions introduce a pricing policy in 2026 while others do not.
+
+A DiD analysis asks:
+\begin{itemize}
+\item Were treated regions already on different demand trends?
+\item Did policy adoption respond to anticipated demand?
+\item Were there region-specific economic shocks?
+\item Did neighboring untreated regions experience spillovers?
+\item Did effects appear immediately or with delay?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible DiD Workflow}
+\begin{enumerate}
+\item Define treated cohorts, comparison units, and treatment timing.
+\item State the causal estimand.
+\item Plot raw outcome paths before modeling.
+\item Defend parallel trends substantively.
+\item Estimate event-time effects.
+\item Inspect pre-treatment magnitudes and uncertainty.
+\item Cluster uncertainty at the assignment level.
+\item Run placebo dates and negative-control outcomes.
+\item Address staggered adoption and heterogeneous effects explicitly.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item treating parallel trends as automatically true because pre-trend p-values are large;
+\item using already-treated units as controls without considering heterogeneity;
+\item ignoring anticipation;
+\item clustering at the observation level instead of assignment level;
+\item overlooking sample-composition changes;
+\item interpreting a single TWFE coefficient as the universal treatment effect;
+\item hiding dynamic effects inside one post-treatment dummy.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: What Makes DiD Credible?}
+\begin{itemize}
+\item DiD is a counterfactual design based on comparative trends.
+\item Parallel trends concerns untreated potential outcomes, not merely observed pre-period similarity.
+\item Event studies reveal dynamics and can expose some design failures.
+\item Pre-trend tests are diagnostics, not proofs.
+\item Staggered adoption and heterogeneous effects require estimators that respect cohort timing.
+\item Inference should reflect treatment-assignment dependence.
+\item Placebos and negative controls strengthen credibility when they target plausible failure modes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Angrist, J. D., and Pischke, J.-S. (2009). \textit{Mostly Harmless Econometrics}. Princeton University Press.
+\item Cunningham, S. (2021). \textit{Causal Inference: The Mixtape}. Yale University Press.
+\item Callaway, B., and Sant'Anna, P. H. C. (2021). Difference-in-Differences with Multiple Time Periods. \textit{Journal of Econometrics}, 225(2), 200--230.
+\item Sun, L., and Abraham, S. (2021). Estimating Dynamic Treatment Effects in Event Studies with Heterogeneous Treatment Effects. \textit{Journal of Econometrics}, 225(2), 175--199.
+\item Goodman-Bacon, A. (2021). Difference-in-Differences with Variation in Treatment Timing. \textit{Journal of Econometrics}, 225(2), 254--277.
+\item Roth, J. (2022). Pretest with Caution: Event-Study Estimates after Testing for Parallel Trends. \textit{American Economic Review: Insights}, 4(3), 305--322.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
