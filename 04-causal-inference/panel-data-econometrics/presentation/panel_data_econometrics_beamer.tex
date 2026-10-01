@@ -1,0 +1,487 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title[Panel Data Econometrics]{Panel Data, Fixed Effects, and Unobserved Heterogeneity}
+\subtitle{Identification from Repeated Observations}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\plim}{\operatorname{plim}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item explain what panel data add beyond repeated cross-sections;
+\item derive the within transformation and interpret fixed-effects estimators;
+\item distinguish pooled OLS, fixed effects, random effects, and two-way fixed effects;
+\item state the exogeneity assumptions required for causal interpretation;
+\item choose uncertainty estimates that respect panel dependence;
+\item recognize time-varying confounding, dynamic feedback, and other failures that fixed effects do not solve.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Panel Data?}
+
+\begin{frame}{The Panel Data Structure}
+A balanced panel observes units \(i=1,\ldots,N\) over periods \(t=1,\ldots,T\):
+\[
+\{Y_{it},D_{it},X_{it}\}.
+\]
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Cross-sectional variation}
+Why do units differ from one another?
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Within-unit variation}
+How does the same unit change over time?
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{0.4cm}
+Panel methods often identify coefficients primarily from within-unit changes after removing persistent heterogeneity.
+\end{frame}
+
+\begin{frame}{A Canonical Panel Model}
+Consider
+\[
+Y_{it}=\beta D_{it}+X_{it}'\gamma+\alpha_i+u_{it},
+\]
+where:
+\begin{itemize}
+\item \(\alpha_i\) is time-invariant unit heterogeneity;
+\item \(u_{it}\) is the remaining time-varying disturbance;
+\item \(D_{it}\) is the treatment or exposure of interest.
+\end{itemize}
+
+\begin{alertblock}{Central identification issue}
+If \(\alpha_i\) is correlated with \(D_{it}\), pooled OLS generally mixes treatment variation with persistent unit differences.
+\end{alertblock}
+\end{frame}
+
+\section{Pooled OLS and Fixed Effects}
+
+\begin{frame}{Why Pooled OLS Can Fail}
+Pooled OLS ignores unit structure:
+\[
+Y_{it}=\beta D_{it}+X_{it}'\gamma+\varepsilon_{it},
+\qquad
+\varepsilon_{it}=\alpha_i+u_{it}.
+\]
+
+If
+\[
+\Cov(D_{it},\alpha_i)\neq 0,
+\]
+then
+\[
+\Cov(D_{it},\varepsilon_{it})\neq 0
+\]
+even when the idiosyncratic disturbance is otherwise well behaved.
+
+\begin{block}{Example}
+More productive firms may adopt a technology earlier. A cross-sectional regression then confounds technology adoption with persistent productivity differences.
+\end{block}
+\end{frame}
+
+\begin{frame}{The Within Transformation}
+Start from
+\[
+Y_{it}=\beta D_{it}+X_{it}'\gamma+\alpha_i+u_{it}.
+\]
+
+Take the unit-specific time mean:
+\[
+\bar Y_i=\beta \bar D_i+\bar X_i'\gamma+\alpha_i+\bar u_i.
+\]
+
+Subtract:
+\[
+Y_{it}-\bar Y_i
+=
+\beta(D_{it}-\bar D_i)
++
+(X_{it}-\bar X_i)'\gamma
++
+(u_{it}-\bar u_i).
+\]
+
+\begin{alertblock}{Result}
+The time-invariant \(\alpha_i\) disappears exactly.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{What Variation Identifies the Fixed-Effects Coefficient?}
+The FE estimator uses deviations from each unit's own mean:
+\[
+\widetilde D_{it}=D_{it}-\bar D_i.
+\]
+
+Thus \(\beta\) is learned from units whose treatment changes over time.
+
+\begin{itemize}
+\item units with no within-unit treatment variation contribute no identifying variation for \(\beta\);
+\item time-invariant regressors are absorbed by unit fixed effects;
+\item interpretation is fundamentally within-unit, not cross-sectional.
+\end{itemize}
+
+\begin{block}{Practical question}
+Is the within-unit variation in treatment substantively meaningful, or mostly noise and measurement error?
+\end{block}
+\end{frame}
+
+\section{Exogeneity Assumptions}
+
+\begin{frame}{Strict Exogeneity}
+A standard FE condition is
+\[
+\E[u_{it}\mid D_{i1},\ldots,D_{iT},X_{i1},\ldots,X_{iT},\alpha_i]=0
+\]
+for every \(t\).
+
+This rules out correlation between today's disturbance and treatment in any period.
+
+\begin{alertblock}{Implication}
+Future treatment cannot respond to today's unexpected outcome shock under strict exogeneity.
+\end{alertblock}
+
+That can be implausible when treatment is adjusted dynamically in response to past outcomes.
+\end{frame}
+
+\begin{frame}{Contemporaneous Exogeneity Is Weaker}
+A weaker condition is
+\[
+\E[u_{it}\mid D_{it},X_{it},\alpha_i]=0.
+\]
+
+This permits some temporal feedback but is generally insufficient for the standard static FE estimator when treatment decisions respond to lagged shocks.
+
+\begin{block}{Example}
+A hospital increases staffing next month because this month's unobserved demand shock was unusually large.
+\end{block}
+
+The panel structure does not eliminate this feedback mechanism.
+\end{frame}
+
+\section{Two-Way Fixed Effects}
+
+\begin{frame}{Adding Time Fixed Effects}
+A two-way fixed-effects model is
+\[
+Y_{it}=\beta D_{it}+X_{it}'\gamma+\alpha_i+\lambda_t+u_{it}.
+\]
+
+Here:
+\begin{itemize}
+\item \(\alpha_i\) absorbs stable unit-specific factors;
+\item \(\lambda_t\) absorbs common shocks at time \(t\).
+\end{itemize}
+
+\begin{block}{Examples of common time shocks}
+Inflation, national policy changes, seasonality, macroeconomic cycles, or platform-wide product changes.
+\end{block}
+\end{frame}
+
+\begin{frame}{What Two-Way Fixed Effects Still Do Not Remove}
+TWFE does not automatically remove:
+\begin{itemize}
+\item unit-specific time-varying confounders;
+\item heterogeneous trends across units;
+\item anticipation before treatment;
+\item spillovers across units;
+\item endogenous treatment timing;
+\item dynamic feedback from outcomes to future treatment.
+\end{itemize}
+
+\begin{alertblock}{Core lesson}
+More fixed effects mean more conditioning, not automatic identification.
+\end{alertblock}
+\end{frame}
+
+\section{Random Effects}
+
+\begin{frame}{Random Effects Model}
+Random effects also starts from
+\[
+Y_{it}=\beta D_{it}+X_{it}'\gamma+\alpha_i+u_{it},
+\]
+but assumes
+\[
+\Cov(\alpha_i,D_{it})=0
+\]
+and analogous orthogonality with regressors.
+
+Under the model, GLS can exploit both within- and between-unit variation.
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Potential advantage}
+Greater efficiency when the assumptions are credible.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{Potential failure}
+Bias when persistent unit heterogeneity correlates with treatment.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Fixed Effects vs Random Effects}
+The difference is not merely computational.
+
+\begin{tabular}{p{3.2cm}p{4.3cm}p{4.3cm}}
+\toprule
+& \textbf{Fixed effects} & \textbf{Random effects} \\
+\midrule
+\(\alpha_i\) correlation with regressors & Allowed & Ruled out by model \\
+Variation used & Within-unit & Within + between \\
+Time-invariant regressors & Not separately estimated & Can be estimated \\
+Main risk & Low within variation & Invalid orthogonality \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4cm}
+Substantive knowledge about treatment assignment should drive the choice before any specification test.
+\end{frame}
+
+\begin{frame}{Hausman Comparison Logic}
+A classical Hausman-style comparison uses the idea that:
+\begin{itemize}
+\item FE remains consistent under correlation between \(\alpha_i\) and regressors, under its own assumptions;
+\item RE is inconsistent when that correlation is present;
+\item a systematic FE--RE coefficient difference may therefore signal RE misspecification.
+\end{itemize}
+
+\begin{alertblock}{Do not turn this into a mechanical rule}
+Specification tests do not replace a causal argument about the treatment-assignment mechanism.
+\end{alertblock}
+\end{frame}
+
+\section{Uncertainty in Panel Models}
+
+\begin{frame}{Why IID Standard Errors Are Often Wrong}
+Within a unit, disturbances may be serially correlated:
+\[
+\Cov(u_{it},u_{is})\neq 0
+\qquad (t\neq s).
+\]
+
+There may also be heteroskedasticity:
+\[
+\Var(u_{it}\mid X,D)\neq \sigma^2.
+\]
+
+Naive IID standard errors can then be too small.
+
+\begin{block}{Common response}
+Cluster standard errors at the level where treatment assignment and residual dependence plausibly occur.
+\end{block}
+\end{frame}
+
+\begin{frame}{Clustered Standard Errors}
+For unit-level clustering, arbitrary covariance is allowed within a unit while units are treated as approximately independent across clusters.
+
+\begin{itemize}
+\item cluster at the treatment-assignment or dependence level when possible;
+\item few clusters require special caution;
+\item two-way clustering can be appropriate when dependence runs across units and time;
+\item standard-error choice should follow the design, not convention.
+\end{itemize}
+
+\begin{alertblock}{Important}
+Clustering repairs an uncertainty calculation under dependence. It does not repair endogeneity.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Cross-Sectional Dependence}
+Units can share shocks not fully absorbed by time fixed effects:
+\[
+\Cov(u_{it},u_{jt})\neq 0.
+\]
+
+Possible sources include:
+\begin{itemize}
+\item geographic spillovers;
+\item common supply chains;
+\item network effects;
+\item sector-level shocks;
+\item policy coordination.
+\end{itemize}
+
+This can affect both standard errors and the validity of the identifying comparison.
+\end{frame}
+
+\section{Time-Varying Confounding}
+
+\begin{frame}{Fixed Effects Remove Only Time-Invariant Confounding}
+Suppose
+\[
+Y_{it}=\beta D_{it}+\delta Z_{it}+\alpha_i+u_{it},
+\]
+and \(Z_{it}\) varies over time.
+
+If \(Z_{it}\) affects both treatment and outcome, unit FE does not remove it.
+
+\[
+\Cov(D_{it},Z_{it})\neq 0
+\]
+can still induce omitted-variable bias.
+
+\begin{alertblock}{Diagnostic question}
+Which confounders are stable enough to be absorbed by FE, and which evolve with the treatment process?
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Unit-Specific Trends}
+Sometimes units would have evolved differently even without treatment.
+
+A richer model may include
+\[
+Y_{it}=\beta D_{it}+\alpha_i+\lambda_t+\theta_i t+u_{it}.
+\]
+
+But unit-specific trends:
+\begin{itemize}
+\item can absorb meaningful treatment variation;
+\item impose a particular functional form;
+\item may increase variance substantially;
+\item can obscure rather than solve misspecification.
+\end{itemize}
+
+\begin{block}{Principle}
+Trend controls need substantive justification, not automatic inclusion.
+\end{block}
+\end{frame}
+
+\section{Dynamic Panels}
+
+\begin{frame}{Lagged Outcomes Change the Problem}
+A dynamic panel may contain
+\[
+Y_{it}=\rho Y_{i,t-1}+\beta D_{it}+\alpha_i+u_{it}.
+\]
+
+After the within transformation,
+\[
+Y_{i,t-1}-\bar Y_{i,-1}
+\]
+is mechanically correlated with
+\[
+u_{it}-\bar u_i.
+\]
+
+This creates finite-\(T\) bias in the FE estimator, commonly called Nickell bias.
+\end{frame}
+
+\begin{frame}{Dynamic Treatment Effects}
+Treatment may affect outcomes over several periods:
+\[
+Y_{it}
+=
+\alpha_i+\lambda_t+
+\sum_{k=0}^{K}\beta_kD_{i,t-k}
++
+u_{it}.
+\]
+
+Relevant estimands can include:
+\begin{itemize}
+\item immediate effect \(\beta_0\);
+\item delayed effects \(\beta_k\);
+\item cumulative effect \(\sum_{k=0}^{K}\beta_k\).
+\end{itemize}
+
+A static treatment coefficient can be misleading when effects persist or accumulate.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose regions are observed monthly and some change pricing policy.
+
+A baseline panel model is
+\[
+Y_{it}=\beta D_{it}+\alpha_i+\lambda_t+u_{it}.
+\]
+
+Before interpreting \(\widehat\beta\) causally, ask:
+\begin{itemize}
+\item Did policy change because demand was already shifting?
+\item Are there region-specific macro shocks?
+\item Is treatment measured without substantial error?
+\item Does policy spill into neighboring regions?
+\item Are effects immediate or lagged?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Panel-Econometrics Workflow}
+\begin{enumerate}
+\item Describe the panel structure and treatment timing.
+\item Plot within-unit and between-unit variation.
+\item State which unobserved factors FE is intended to absorb.
+\item State the required exogeneity condition.
+\item Choose one-way or two-way FE based on the shock structure.
+\item Choose clustering based on assignment and dependence.
+\item Probe time-varying confounding and trends.
+\item Check dynamic feedback and lagged effects.
+\item Report the population and variation that identify the coefficient.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item interpreting FE as a universal cure for omitted variables;
+\item estimating effects from almost no within-unit treatment variation;
+\item adding fixed effects without understanding what variation remains;
+\item using IID standard errors in strongly dependent panels;
+\item selecting RE because it is more efficient despite implausible orthogonality;
+\item ignoring dynamic treatment assignment;
+\item confusing statistical precision with causal identification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: What Fixed Effects Actually Buy}
+\begin{itemize}
+\item Panel data let us compare units with themselves over time.
+\item Unit FE exactly remove time-invariant additive heterogeneity.
+\item Two-way FE additionally remove shocks common to all units at each time.
+\item Causal interpretation still requires exogeneity of the remaining within-unit treatment variation.
+\item Time-varying confounding, anticipation, spillovers, and feedback remain substantive threats.
+\item Panel dependence must be reflected in uncertainty estimates.
+\item Dynamic panels require methods beyond static FE when lagged outcomes are endogenous after transformation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Wooldridge, J. M. (2010). \textit{Econometric Analysis of Cross Section and Panel Data}, 2nd ed. MIT Press.
+\item Baltagi, B. H. (2021). \textit{Econometric Analysis of Panel Data}, 6th ed. Springer.
+\item Arellano, M. (2003). \textit{Panel Data Econometrics}. Oxford University Press.
+\item Angrist, J. D., and Pischke, J.-S. (2009). \textit{Mostly Harmless Econometrics}. Princeton University Press.
+\item Nickell, S. (1981). Biases in Dynamic Models with Fixed Effects. \textit{Econometrica}, 49(6), 1417--1426.
+\item Cameron, A. C., and Miller, D. L. (2015). A Practitioner's Guide to Cluster-Robust Inference. \textit{Journal of Human Resources}, 50(2), 317--372.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
