@@ -12,6 +12,7 @@ Methods for estimating treatment effects and designing experiments.
 - `difference-in-differences/`
 - `instrumental-variables/`
 - `counterfactual-time-series/`
+- `selection-on-observables/`
 - `ab-testing/`
 
 ## Structure
