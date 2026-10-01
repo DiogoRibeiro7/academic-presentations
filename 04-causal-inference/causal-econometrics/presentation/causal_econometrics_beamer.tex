@@ -1,0 +1,489 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title[Causal Econometrics]{Causal Econometrics}
+\subtitle{From Prediction to Identification}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\ATE}{\mathrm{ATE}}
+\newcommand{\ATT}{\mathrm{ATT}}
+\newcommand{\plim}{\operatorname{plim}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish prediction, association, and causal identification;
+\item define causal estimands before selecting an estimator;
+\item explain how selection, confounding, simultaneity, and omitted variables create endogeneity;
+\item connect panel data, Difference-in-Differences, instrumental variables, and counterfactual methods to their identifying assumptions;
+\item evaluate diagnostics, uncertainty, falsification tests, and limits of causal claims.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Prediction, Association, and Causality}
+
+\begin{frame}{Three Different Questions}
+\begin{columns}[T]
+\begin{column}{0.32\textwidth}
+\begin{block}{Prediction}
+What value of \(Y\) should we expect for a new observation with features \(X\)?
+\[
+\widehat{Y}=f(X)
+\]
+Accuracy is judged out of sample.
+\end{block}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{block}{Association}
+How does the conditional distribution of \(Y\) vary with \(X\)?
+\[
+\E[Y\mid X=x]
+\]
+The relation may reflect many mechanisms.
+\end{block}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{alertblock}{Causality}
+How would \(Y\) change if treatment \(D\) were set differently?
+\[
+\E[Y(1)-Y(0)]
+\]
+This requires a counterfactual argument.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Econometrics Starts with the Data-Generating Process}
+Consider
+\[
+Y_i=\beta D_i+\gamma X_i+u_i.
+\]
+If
+\[
+\E[u_i\mid D_i,X_i]=0,
+\]
+the coefficient on \(D_i\) can have a causal interpretation under the stated structural assumptions.
+
+If instead
+\[
+\Cov(D_i,u_i)\neq 0,
+\]
+ordinary least squares mixes the effect of \(D_i\) with mechanisms contained in \(u_i\).
+
+\begin{alertblock}{Identification question}
+What variation in \(D\) is sufficiently exogenous to reveal the causal effect we want?
+\end{alertblock}
+\end{frame}
+
+\section{Estimands and Counterfactuals}
+
+\begin{frame}{Define the Estimand First}
+For unit \(i\), let \(Y_i(1)\) and \(Y_i(0)\) denote potential outcomes:
+\[
+\tau_i=Y_i(1)-Y_i(0).
+\]
+Two common population estimands are
+\[
+\ATE=\E[Y(1)-Y(0)]
+\]
+and
+\[
+\ATT=\E[Y(1)-Y(0)\mid D=1].
+\]
+
+\begin{block}{Practical consequence}
+ATE and ATT answer different questions. A method that identifies one does not automatically identify the other.
+\end{block}
+\end{frame}
+
+\begin{frame}{The Fundamental Missing-Data Problem}
+The observed outcome is
+\[
+Y_i=D_iY_i(1)+(1-D_i)Y_i(0).
+\]
+For each unit, one potential outcome is observed and the other is missing.
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{block}{Observed}
+Treated units reveal \(Y(1)\).\\
+Untreated units reveal \(Y(0)\).
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{Unobserved}
+Treated units hide \(Y(0)\).\\
+Untreated units hide \(Y(1)\).
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{0.3cm}
+Causal inference is a disciplined strategy for constructing credible counterfactual comparisons.
+\end{frame}
+
+\section{Endogeneity and Bias}
+
+\begin{frame}{Where Endogeneity Comes From}
+\begin{itemize}
+\item \textbf{Omitted variables}: an unobserved factor affects treatment and outcome.
+\item \textbf{Simultaneity}: treatment and outcome are jointly determined.
+\item \textbf{Measurement error}: the regressor is observed with error.
+\item \textbf{Selection}: treatment is chosen partly because of expected outcomes.
+\item \textbf{Dynamic feedback}: past outcomes influence later treatment.
+\end{itemize}
+
+\begin{alertblock}{Econometric symptom}
+The problematic component of treatment is correlated with the regression disturbance.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Omitted-Variable Bias}
+Suppose the true model is
+\[
+Y=\beta D+\gamma Z+u,
+\]
+but \(Z\) is omitted. The simple-regression coefficient converges to
+\[
+\plim\widehat{\beta}
+=
+\beta+\gamma\frac{\Cov(D,Z)}{\Var(D)}.
+\]
+
+Bias therefore requires both:
+\begin{enumerate}
+\item \(Z\) affects the outcome;
+\item \(Z\) is associated with treatment.
+\end{enumerate}
+
+\begin{block}{Important}
+Adding controls is useful only when the controls correspond to a defensible causal adjustment strategy.
+\end{block}
+\end{frame}
+
+\section{Identification Strategies}
+
+\begin{frame}{A Map of Identification Strategies}
+\small
+\begin{tabular}{p{2.9cm}p{4.1cm}p{5.2cm}}
+\toprule
+\textbf{Design} & \textbf{Identifying variation} & \textbf{Core assumption} \\
+\midrule
+Randomized experiment & Random assignment & Randomization and design conditions \\
+Selection on observables & Covariate-adjusted comparison & Exchangeability + overlap \\
+Panel fixed effects & Within-unit change & Time-invariant heterogeneity removable \\
+Difference-in-Differences & Differential post-treatment change & Parallel untreated trends \\
+Instrumental variables & Exogenous treatment shift & Relevance + exclusion + independence \\
+Regression discontinuity & Assignment threshold & Continuity near cutoff \\
+Synthetic control & Weighted donor trajectory & Credible pre-treatment fit \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Panel Data and Fixed Effects}
+A canonical model is
+\[
+Y_{it}=\beta D_{it}+\alpha_i+\lambda_t+u_{it},
+\]
+where \(\alpha_i\) captures time-invariant unit heterogeneity and \(\lambda_t\) common time shocks.
+
+The within transformation removes \(\alpha_i\):
+\[
+Y_{it}-\bar{Y}_i
+=
+\beta(D_{it}-\bar{D}_i)
++
+(u_{it}-\bar{u}_i).
+\]
+
+\begin{alertblock}{What fixed effects do not solve}
+Time-varying confounders, reverse causality, anticipation, and endogenous treatment timing remain possible.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Difference-in-Differences}
+For treated group \(T\) and control group \(C\),
+\[
+\widehat{\tau}_{DID}
+=
+(\bar{Y}_{T,post}-\bar{Y}_{T,pre})
+-
+(\bar{Y}_{C,post}-\bar{Y}_{C,pre}).
+\]
+
+\begin{block}{Counterfactual logic}
+The control group's change estimates how the treated group would have evolved without treatment.
+\end{block}
+
+\begin{alertblock}{Central assumption}
+Without treatment, treated and control groups would have followed parallel trends over the relevant horizon.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Event Studies}
+A common specification is
+\[
+Y_{it}
+=
+\alpha_i+\lambda_t+
+\sum_{k\neq -1}\beta_k\mathbb{1}\{t-T_i=k\}+u_{it}.
+\]
+
+\begin{itemize}
+\item pre-treatment coefficients help reveal whether groups were already diverging;
+\item post-treatment coefficients describe dynamic effects relative to the reference period;
+\item heterogeneous effects and staggered adoption require care with two-way fixed-effects estimators.
+\end{itemize}
+
+\begin{block}{Do not over-interpret pre-trend tests}
+Failure to reject pre-trends is not proof of parallel trends; power may be weak.
+\end{block}
+\end{frame}
+
+\begin{frame}{Instrumental Variables and 2SLS}
+Suppose \(D\) is endogenous and \(Z\) is a candidate instrument.
+
+First stage:
+\[
+D_i=\pi_0+\pi_1Z_i+\pi_2X_i+v_i.
+\]
+
+Second stage:
+\[
+Y_i=\beta_0+\beta_1\widehat{D}_i+\beta_2X_i+\varepsilon_i.
+\]
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{block}{Relevance}
+\(Z\) must move treatment.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{Exclusion}
+\(Z\) must affect \(Y\) only through the relevant treatment channel.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{What Does IV Identify?}
+With heterogeneous treatment effects and standard IV assumptions, the estimand may be
+\[
+LATE=\E[Y(1)-Y(0)\mid\text{compliers}].
+\]
+
+\begin{itemize}
+\item the effect can be local to units whose treatment changes because of the instrument;
+\item weak instruments produce unstable estimates;
+\item a strong first stage does not validate the exclusion restriction.
+\end{itemize}
+
+\begin{alertblock}{Interpretation matters}
+IV is not a generic repair for endogeneity. The scientific meaning of the instrument determines the meaning of the estimate.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Synthetic Control}
+For one treated unit and donor units \(j=1,\ldots,J\),
+\[
+\widehat{Y}_{1t}(0)=\sum_{j=1}^{J}w_jY_{jt},
+\qquad
+w_j\geq 0,\quad \sum_jw_j=1.
+\]
+The post-treatment effect is
+\[
+\widehat{\tau}_t=Y_{1t}-\widehat{Y}_{1t}(0).
+\]
+
+\begin{itemize}
+\item pre-treatment fit is central;
+\item donor support determines credibility;
+\item placebo units and placebo dates contextualize the observed gap.
+\end{itemize}
+\end{frame}
+
+\section{Observed Confounding and Robust Estimation}
+
+\begin{frame}{Selection on Observables}
+Let
+\[
+e(X)=P(D=1\mid X)
+\]
+be the propensity score.
+
+Under
+\[
+(Y(1),Y(0))\perp D\mid X,
+\]
+plus positivity and consistency, treatment effects can be identified by appropriate adjustment.
+
+\begin{alertblock}{Key limitation}
+Propensity-score machinery cannot adjust for an important unmeasured confounder without additional identifying structure.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Weighting and Overlap}
+For the ATE, inverse-probability weights use
+\[
+w_i=\frac{D_i}{e(X_i)}+\frac{1-D_i}{1-e(X_i)}.
+\]
+
+When \(e(X)\) approaches 0 or 1, weights become extreme.
+
+\begin{itemize}
+\item inspect propensity-score distributions;
+\item inspect effective sample size and weight concentration;
+\item define trimming or truncation transparently;
+\item report when the effective target population changes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Doubly Robust Logic}
+Augmented weighting combines outcome regressions
+\[
+\widehat{\mu}_1(X),\qquad \widehat{\mu}_0(X)
+\]
+with a propensity model \(\widehat e(X)\).
+
+\begin{block}{Double robustness}
+Under standard conditions, consistency can survive misspecification of one nuisance model, not failure of the causal identification assumptions.
+\end{block}
+
+The phrase \emph{doubly robust} concerns estimator nuisance models; it does not make an observational design assumption-free.
+\end{frame}
+
+\section{Diagnostics and Uncertainty}
+
+\begin{frame}{Diagnostics Depend on the Design}
+\begin{itemize}
+\item \textbf{Panel models}: residual dependence, clustering level, within-unit variation.
+\item \textbf{DiD}: pre-treatment dynamics, placebo dates, comparison-group composition.
+\item \textbf{IV}: first-stage strength, reduced form, instrument interpretation.
+\item \textbf{Synthetic control}: pre-treatment fit, donor weights, placebo gaps.
+\item \textbf{Weighting/matching}: overlap, balance, weight concentration.
+\end{itemize}
+
+\begin{alertblock}{General principle}
+Diagnostics can falsify some designs. They rarely prove that an untestable identifying assumption is true.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Sampling Uncertainty Is Not Identification Uncertainty}
+A narrow confidence interval is conditional on the maintained design and model assumptions.
+
+It does not quantify uncertainty about:
+\begin{itemize}
+\item an invalid exclusion restriction;
+\item an unmeasured confounder;
+\item anticipation before treatment;
+\item interference between units;
+\item a structurally poor donor pool.
+\end{itemize}
+
+\begin{block}{Reporting standard}
+Separate sampling uncertainty from sensitivity to assumptions and model specification.
+\end{block}
+\end{frame}
+
+\begin{frame}{Placebos and Negative Controls}
+Useful falsification strategies include:
+\begin{itemize}
+\item placebo treatment dates before the real intervention;
+\item outcomes that should not respond to treatment;
+\item exposures that should not causally affect the target outcome;
+\item re-estimation on untreated comparison units;
+\item sensitivity across defensible specifications.
+\end{itemize}
+
+\begin{alertblock}{Interpretation}
+Passing a placebo check increases credibility only relative to the failure modes that check can detect.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Workflow}
+
+\begin{frame}{A Reproducible Causal Econometrics Workflow}
+\begin{enumerate}
+\item Define treatment, outcome, population, timing, and estimand.
+\item Write the causal and data-generating story before fitting a model.
+\item State identification assumptions explicitly.
+\item Choose an estimator implied by the design.
+\item Run design-specific diagnostics.
+\item Quantify statistical uncertainty.
+\item Run falsification and sensitivity analyses.
+\item Interpret magnitude, heterogeneity, and external validity.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Example: Regional Pricing Policy}
+\textbf{Question:} What is the incremental effect of a regional pricing policy on customer demand?
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Potential threats}
+\begin{itemize}
+\item regions selected because demand was already changing;
+\item regional macroeconomic shocks;
+\item lagged effects;
+\item cross-region spillovers;
+\item prices respond to expected demand.
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Candidate designs}
+\begin{itemize}
+\item fixed effects with rich time controls;
+\item DiD and event studies;
+\item synthetic control for few treated regions;
+\item IV with a defensible exogenous price shifter.
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Synthesis: Identification Before Estimation}
+\begin{itemize}
+\item Prediction asks what will happen; causal econometrics asks what would change under intervention.
+\item Fix the estimand before the estimator.
+\item Endogeneity is a failure of exogeneity, not merely a modeling inconvenience.
+\item Panel FE, DiD, IV, weighting, and synthetic control exploit different identifying variation.
+\item Every method inherits assumptions that need substantive defense and diagnostics.
+\item Confidence intervals do not protect against identification failure.
+\item Strong causal work makes assumptions, failure modes, and sensitivity visible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Angrist, J. D., and Pischke, J.-S. (2009). \textit{Mostly Harmless Econometrics}. Princeton University Press.
+\item Cunningham, S. (2021). \textit{Causal Inference: The Mixtape}. Yale University Press.
+\item Hernan, M. A., and Robins, J. M. (2020). \textit{Causal Inference: What If}. Chapman \& Hall/CRC.
+\item Imbens, G. W., and Rubin, D. B. (2015). \textit{Causal Inference for Statistics, Social, and Biomedical Sciences}. Cambridge University Press.
+\item Wooldridge, J. M. (2010). \textit{Econometric Analysis of Cross Section and Panel Data}, 2nd ed. MIT Press.
+\item Abadie, A. (2021). Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects. \textit{Journal of Economic Literature}, 59(2), 391--425.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
