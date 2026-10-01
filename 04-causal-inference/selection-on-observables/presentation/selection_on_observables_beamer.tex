@@ -1,0 +1,464 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Selection on Observables]{Selection on Observables}
+\subtitle{Matching, Weighting, and Doubly Robust Estimation}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item state the assumptions required to identify treatment effects from observed covariates;
+\item explain the role of the propensity score;
+\item compare matching, inverse-probability weighting, and outcome regression;
+\item diagnose lack of overlap and covariate imbalance;
+\item derive the logic of augmented inverse-probability weighting;
+\item distinguish double robustness from robustness to unmeasured confounding.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Identification from Observed Covariates}
+
+\begin{frame}{Conditional Exchangeability}
+Let \(D\in\{0,1\}\) be treatment and \(X\) observed pre-treatment covariates.
+
+A standard identification assumption is
+\[
+(Y(1),Y(0)) \perp D \mid X.
+\]
+
+\begin{block}{Meaning}
+After conditioning on \(X\), treatment assignment is independent of the potential outcomes.
+\end{block}
+
+\begin{alertblock}{What this requires}
+All important common causes of treatment and outcome must be adequately captured by \(X\).
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Positivity}
+We also need
+\[
+0<P(D=1\mid X=x)<1
+\]
+for covariate values relevant to the target population.
+
+If some types of units are always treated or never treated, their counterfactual treatment state is unsupported by the data.
+
+\begin{alertblock}{No overlap, no nonparametric identification}
+Model extrapolation cannot create empirical support where none exists.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Consistency}
+If unit \(i\) receives treatment \(D_i=d\), the observed outcome must correspond to the potential outcome under that treatment:
+\[
+Y_i=Y_i(d).
+\]
+
+This assumes the treatment is well defined.
+
+\begin{block}{Threat}
+If “treatment” bundles heterogeneous versions with different causal effects, the estimand may be ill posed.
+\end{block}
+\end{frame}
+
+\section{The Propensity Score}
+
+\begin{frame}{Definition}
+The propensity score is
+\[
+e(X)=P(D=1\mid X).
+\]
+
+Rosenbaum and Rubin showed that under conditional exchangeability,
+\[
+(Y(1),Y(0))\perp D\mid e(X).
+\]
+
+\begin{block}{Role}
+The propensity score compresses a potentially high-dimensional adjustment problem into a scalar balancing score.
+\end{block}
+\end{frame}
+
+\begin{frame}{What the Propensity Score Is Not}
+The propensity score is not:
+\begin{itemize}
+\item a prediction target whose AUC should be maximized at all costs;
+\item evidence that unmeasured confounding is absent;
+\item a causal effect estimator by itself;
+\item useful if treatment probabilities are near zero or one for large parts of the sample.
+\end{itemize}
+
+\begin{alertblock}{Priority}
+Estimate treatment assignment well enough to achieve balance and overlap for the target estimand.
+\end{alertblock}
+\end{frame}
+
+\section{Matching}
+
+\begin{frame}{Nearest-Neighbor Matching}
+For a treated unit \(i\), find an untreated unit \(j\) with similar covariates or propensity score.
+
+A simple ATT estimator is
+\[
+\widehat{ATT}
+=
+\frac{1}{N_1}
+\sum_{i:D_i=1}
+\left(
+Y_i-Y_{m(i)}
+\right).
+\]
+
+Here \(m(i)\) denotes the matched control.
+\end{frame}
+
+\begin{frame}{Calipers and Common Support}
+A caliper prevents poor matches:
+\[
+|\widehat e(X_i)-\widehat e(X_j)|<c.
+\]
+
+\begin{itemize}
+\item narrow calipers improve similarity but may discard many units;
+\item wide calipers retain more units but accept worse matches;
+\item discarded units change the population to which the result applies.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Matching Diagnostics}
+After matching, inspect:
+\begin{itemize}
+\item standardized mean differences;
+\item variance ratios;
+\item propensity-score overlap;
+\item distributional balance, not just means;
+\item number and characteristics of discarded units.
+\end{itemize}
+
+\begin{alertblock}{Balance first}
+Do not judge matching quality by whether the treatment-effect estimate “looks reasonable.”
+\end{alertblock}
+\end{frame}
+
+\section{Inverse-Probability Weighting}
+
+\begin{frame}{ATE Weights}
+For the ATE:
+\[
+w_i=
+\frac{D_i}{e(X_i)}
++
+\frac{1-D_i}{1-e(X_i)}.
+\]
+
+Weighted treated and untreated groups target the same covariate distribution.
+
+\begin{block}{Pseudo-population}
+IPW reweights the observed sample to mimic a population in which treatment is independent of measured covariates.
+\end{block}
+\end{frame}
+
+\begin{frame}{ATT Weights}
+For the ATT, one common weighting scheme is:
+\[
+w_i=
+\begin{cases}
+1, & D_i=1, \\\
+\dfrac{e(X_i)}{1-e(X_i)}, & D_i=0.
+\end{cases}
+\]
+
+The control group is reweighted to resemble the treated group.
+
+\begin{alertblock}{Estimand matters}
+ATE and ATT weights are different because they target different populations.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Extreme Weights}
+If \(e(X_i)\approx 0\) for a treated unit,
+\[
+\frac{1}{e(X_i)}
+\]
+becomes huge.
+
+Similarly, controls with \(e(X_i)\approx 1\) receive huge weights.
+
+Consequences:
+\begin{itemize}
+\item high variance;
+\item effective sample size collapse;
+\item sensitivity to a few observations;
+\item unstable estimates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Stabilized Weights}
+Stabilized weights can reduce variance:
+\[
+SW_i=
+\frac{P(D=D_i)}
+{P(D=D_i\mid X_i)}.
+\]
+
+They preserve the basic weighting logic while moderating scale.
+
+\begin{block}{Still required}
+Overlap diagnostics and inspection of the full weight distribution remain necessary.
+\end{block}
+\end{frame}
+
+\section{Balance and Effective Sample Size}
+
+\begin{frame}{Standardized Mean Differences}
+For covariate \(X_k\), a standardized mean difference is roughly
+\[
+SMD_k
+=
+\frac{\bar X_{k,1}-\bar X_{k,0}}
+{S_{pooled}}.
+\]
+
+After weighting or matching, good adjustment should substantially reduce imbalance across important covariates.
+
+\begin{alertblock}{No universal magic threshold}
+Rules such as 0.1 are useful conventions, not proofs of causal adequacy.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Effective Sample Size}
+For weights \(w_i\), a common effective sample-size diagnostic is
+\[
+ESS=
+\frac{(\sum_i w_i)^2}{\sum_i w_i^2}.
+\]
+
+When a few units dominate the weighted sample, ESS can be far smaller than the nominal sample size.
+\end{frame}
+
+\section{Outcome Regression}
+
+\begin{frame}{Regression Adjustment}
+Estimate outcome models
+\[
+\mu_d(X)=\E[Y\mid D=d,X]
+\]
+for \(d\in\{0,1\}\).
+
+Then estimate the ATE by
+\[
+\widehat{ATE}
+=
+\frac{1}{n}
+\sum_i
+\left[
+\widehat\mu_1(X_i)
+-
+\widehat\mu_0(X_i)
+\right].
+\]
+
+\begin{block}{Strength}
+Outcome modeling can be efficient when the conditional expectation is modeled well.
+\end{block}
+\end{frame}
+
+\begin{frame}{Outcome-Model Failure}
+A misspecified outcome regression can produce bias even if treatment assignment is fully captured by observed covariates.
+
+Common threats:
+\begin{itemize}
+\item omitted nonlinearities;
+\item missing interactions;
+\item extrapolation outside overlap;
+\item poor regularization choices.
+\end{itemize}
+\end{frame}
+
+\section{Doubly Robust Estimation}
+
+\begin{frame}{Augmented IPW}
+A common AIPW estimator for the ATE is
+\[
+\widehat\tau
+=
+\frac{1}{n}
+\sum_i
+\Bigg[
+\widehat\mu_1(X_i)
+-
+\widehat\mu_0(X_i)
++
+\frac{D_i(Y_i-\widehat\mu_1(X_i))}{\widehat e(X_i)}
+-
+\frac{(1-D_i)(Y_i-\widehat\mu_0(X_i))}{1-\widehat e(X_i)}
+\Bigg].
+\]
+\end{frame}
+
+\begin{frame}{Why “Doubly Robust”?}
+Under standard conditions, the estimator is consistent if either:
+\begin{itemize}
+\item the propensity model is correctly specified, or
+\item the outcome model is correctly specified.
+\end{itemize}
+
+\begin{alertblock}{Crucial qualification}
+This robustness concerns nuisance-model misspecification. It does not protect against unmeasured confounding, positivity failure, or ill-defined treatment.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Orthogonalization Intuition}
+AIPW combines:
+\begin{itemize}
+\item a model-based prediction of each unit's two potential outcomes;
+\item a residual correction weighted by treatment-assignment probabilities.
+\end{itemize}
+
+The correction reduces first-order sensitivity to nuisance-estimation errors when regularity conditions hold.
+\end{frame}
+
+\section{Trimming and Target Populations}
+
+\begin{frame}{Trimming for Poor Overlap}
+One may restrict analysis to
+\[
+\epsilon
+<
+\widehat e(X_i)
+<
+1-\epsilon.
+\]
+
+This reduces extreme weights and extrapolation.
+
+\begin{alertblock}{But the estimand changes}
+The result now applies to an overlap population, not necessarily the original ATE population.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Overlap Weights}
+Overlap weighting emphasizes units with treatment probabilities near 0.5.
+
+This can:
+\begin{itemize}
+\item improve precision;
+\item reduce dominance by extreme observations;
+\item target the population with strongest empirical equipoise.
+\end{itemize}
+
+Again, the target estimand must be stated explicitly.
+\end{frame}
+
+\section{Unmeasured Confounding}
+
+\begin{frame}{The Fundamental Limitation}
+All observed-covariate methods rest on the assumption that relevant confounding is measured.
+
+If an unobserved variable \(U\) affects both treatment and outcome,
+\[
+U\rightarrow D,
+\qquad
+U\rightarrow Y,
+\]
+then matching, weighting, and regression on \(X\) need not identify the causal effect.
+\end{frame}
+
+\begin{frame}{Sensitivity Analysis}
+Sensitivity analysis asks:
+\begin{itemize}
+\item how strong would an unmeasured confounder need to be to change the conclusion?
+\item how much imbalance in an omitted factor would overturn the estimate?
+\item how sensitive are results to plausible hidden-bias parameters?
+\end{itemize}
+
+\begin{block}{Purpose}
+Sensitivity analysis quantifies fragility; it does not remove hidden bias.
+\end{block}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Targeted Marketing Campaign}
+Suppose engaged customers are more likely to receive a campaign.
+
+Potential confounders include:
+\begin{itemize}
+\item prior purchases;
+\item site engagement;
+\item tenure;
+\item demographic characteristics;
+\item previous campaign exposure.
+\end{itemize}
+
+The causal question is whether campaign exposure changes purchasing, not whether exposed customers purchase more.
+\end{frame}
+
+\begin{frame}{A Credible Observational Workflow}
+\begin{enumerate}
+\item Define treatment, outcome, population, and estimand.
+\item Identify pre-treatment confounders from domain knowledge.
+\item Estimate the propensity score.
+\item Inspect overlap before estimating effects.
+\item Match or weight according to the target estimand.
+\item Diagnose post-adjustment covariate balance.
+\item Inspect weights and effective sample size.
+\item Estimate treatment effects with appropriate uncertainty.
+\item Compare with outcome regression or AIPW.
+\item Run sensitivity analysis for unmeasured confounding.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item maximizing propensity-score predictive accuracy instead of covariate balance;
+\item matching on post-treatment variables;
+\item ignoring lack of overlap;
+\item hiding extreme weights;
+\item assuming balance proves no hidden confounding;
+\item reporting trimmed estimates as if they targeted the original ATE;
+\item treating double robustness as immunity to design failure.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: What Adjustment Can and Cannot Do}
+\begin{itemize}
+\item Selection-on-observables designs require conditional exchangeability, positivity, and consistency.
+\item The propensity score is a balancing device, not a causal effect.
+\item Matching and weighting construct more comparable treated and untreated groups.
+\item Balance diagnostics evaluate observed covariates after adjustment.
+\item Outcome regression models the counterfactual outcome surface directly.
+\item AIPW combines weighting and outcome regression with double robustness to nuisance-model misspecification.
+\item None of these methods solves important unmeasured confounding without additional structure.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Rosenbaum, P. R., and Rubin, D. B. (1983). The Central Role of the Propensity Score in Observational Studies for Causal Effects. \textit{Biometrika}, 70(1), 41--55.
+\item Hernan, M. A., and Robins, J. M. (2020). \textit{Causal Inference: What If}. Chapman \& Hall/CRC.
+\item Imbens, G. W., and Rubin, D. B. (2015). \textit{Causal Inference for Statistics, Social, and Biomedical Sciences}. Cambridge University Press.
+\item Austin, P. C. (2011). An Introduction to Propensity Score Methods for Reducing the Effects of Confounding in Observational Studies. \textit{Multivariate Behavioral Research}, 46(3), 399--424.
+\item Robins, J. M., Rotnitzky, A., and Zhao, L. P. (1994). Estimation of Regression Coefficients When Some Regressors Are Not Always Observed. \textit{Journal of the American Statistical Association}, 89(427), 846--866.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
