@@ -1,0 +1,421 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Dynamic Treatment Effects]{Dynamic Treatment Effects}
+\subtitle{Panel and Time-Series Causal Responses}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish immediate, delayed, cumulative, and long-run treatment effects;
+\item formulate distributed-lag and event-time causal estimands;
+\item explain anticipation, carry-over, and persistence;
+\item recognize dynamic confounding and treatment feedback;
+\item understand when lagged outcomes create additional identification problems;
+\item summarize treatment-response paths without collapsing them into misleading static coefficients.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Effects Are Dynamic}
+
+\begin{frame}{A Static Effect Can Hide the Mechanism}
+A static model writes
+\[
+Y_{it}=\alpha_i+\lambda_t+\beta D_{it}+u_{it}.
+\]
+
+But treatment may act through several future periods.
+
+A richer representation is
+\[
+Y_{it}
+=
+\alpha_i+\lambda_t
++
+\sum_{k=0}^{K}\beta_kD_{i,t-k}
++
+u_{it}.
+\]
+
+\begin{alertblock}{Key question}
+Which horizon is scientifically meaningful: now, next period, or the cumulative effect over several periods?
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Types of Dynamic Responses}
+Treatment effects may show:
+\begin{itemize}
+\item immediate impact;
+\item delayed onset;
+\item gradual accumulation;
+\item temporary spike;
+\item fade-out;
+\item persistent long-run shift.
+\end{itemize}
+
+Different mechanisms imply different estimands and different modeling choices.
+\end{frame}
+
+\section{Distributed Lags}
+
+\begin{frame}{Distributed-Lag Model}
+Consider
+\[
+Y_t
+=
+\alpha
++
+\sum_{k=0}^{K}\beta_k D_{t-k}
++
+u_t.
+\]
+
+Each \(\beta_k\) captures the marginal effect associated with treatment \(k\) periods earlier, conditional on the specification.
+
+\begin{block}{Immediate effect}
+\[
+\beta_0.
+\]
+\end{block}
+\end{frame}
+
+\begin{frame}{Cumulative Effects}
+The cumulative effect through horizon \(h\) is
+\[
+\Theta_h
+=
+\sum_{k=0}^{h}\beta_k.
+\]
+
+The long-run finite-horizon effect is
+\[
+\Theta_K
+=
+\sum_{k=0}^{K}\beta_k.
+\]
+
+\begin{alertblock}{Interpretation}
+A small immediate coefficient can coexist with a large cumulative effect.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Choosing the Lag Length}
+Too few lags:
+\begin{itemize}
+\item omit delayed effects;
+\item bias cumulative responses;
+\item force persistence into the disturbance.
+\end{itemize}
+
+Too many lags:
+\begin{itemize}
+\item inflate variance;
+\item create multicollinearity;
+\item make individual coefficients unstable.
+\end{itemize}
+\end{frame}
+
+\section{Event-Time Effects}
+
+\begin{frame}{Dynamic Event-Time Estimands}
+For treatment cohort \(g\), define
+\[
+ATT(g,t)
+=
+\E[Y_t(1)-Y_t(0)\mid T_i=g].
+\]
+
+Relative event time is
+\[
+k=t-g.
+\]
+
+Then dynamic effects can be summarized as functions of \(k\), rather than calendar time alone.
+\end{frame}
+
+\begin{frame}{Why Event Time Helps}
+Event-time effects answer questions such as:
+\begin{itemize}
+\item Does the effect begin immediately?
+\item How quickly does it grow?
+\item Does it persist?
+\item When does it plateau?
+\item Does it reverse?
+\end{itemize}
+
+This is often more useful for policy or operational decisions than a single post-treatment average.
+\end{frame}
+
+\section{Anticipation}
+
+\begin{frame}{Treatment Can Start Before the Official Date}
+Suppose treatment is announced at \(T_a\) and implemented at \(T_0>T_a\).
+
+If units react after announcement,
+\[
+Y_t(1)\neq Y_t(0)
+\]
+for some \(t<T_0\).
+
+\begin{alertblock}{Consequence}
+Nominal pre-treatment observations may already contain causal effects.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Anticipation Examples}
+\begin{itemize}
+\item customers buy early before a tax increase;
+\item firms hire before a subsidy begins;
+\item investors reprice assets after an announcement;
+\item hospitals change scheduling before a new rule is enforced.
+\end{itemize}
+
+The relevant treatment timing is behavioral, not merely administrative.
+\end{frame}
+
+\section{Carry-Over and Persistence}
+
+\begin{frame}{Treatment Can Persist After Exposure Ends}
+If treatment ends at \(T_1\), the effect may continue:
+\[
+Y_t(1)\neq Y_t(0)
+\qquad
+t>T_1.
+\]
+
+This can occur through:
+\begin{itemize}
+\item habit formation;
+\item capital accumulation;
+\item learning;
+\item biological persistence;
+\item institutional inertia.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Washout Periods}
+When carry-over is plausible, one may need:
+\begin{itemize}
+\item explicit lagged treatment terms;
+\item post-treatment washout windows;
+\item separate estimands for exposure and persistence;
+\item sensitivity to assumed decay patterns.
+\end{itemize}
+\end{frame}
+
+\section{Dynamic Confounding}
+
+\begin{frame}{Past Outcomes Can Affect Future Treatment}
+Suppose
+\[
+D_{it}
+=
+f(Y_{i,t-1},X_{it},\eta_{it}).
+\]
+
+Then past outcomes affect treatment assignment.
+
+If past outcomes are themselves affected by earlier treatment, standard regression adjustment can become problematic.
+
+\begin{alertblock}{Feedback}
+Treatment changes outcomes, outcomes influence later treatment, and treatment history becomes endogenous.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Time-Varying Confounders Affected by Prior Treatment}
+Let \(L_t\) be a time-varying covariate such that
+\[
+D_{t-1}\rightarrow L_t,
+\qquad
+L_t\rightarrow D_t,
+\qquad
+L_t\rightarrow Y.
+\]
+
+Adjusting for \(L_t\) can block part of the treatment effect while failing to adjust correctly for dynamic confounding.
+
+This motivates longitudinal methods such as marginal structural models in appropriate settings.
+\end{frame}
+
+\section{Lagged Outcomes}
+
+\begin{frame}{Dynamic Panel Model}
+Consider
+\[
+Y_{it}
+=
+\rho Y_{i,t-1}
++
+\beta D_{it}
++
+\alpha_i
++
+u_{it}.
+\]
+
+Lagged outcomes can absorb persistence, but the within transformation creates correlation between transformed lagged outcomes and transformed errors.
+\end{frame}
+
+\begin{frame}{Nickell Bias}
+In short panels, fixed-effects estimation of
+\[
+Y_{it}=\rho Y_{i,t-1}+\alpha_i+u_{it}
+\]
+is biased because
+\[
+Y_{i,t-1}-\bar Y_i
+\]
+correlates with
+\[
+u_{it}-\bar u_i.
+\]
+
+The bias decreases as \(T\) grows, but can be substantial for small \(T\).
+\end{frame}
+
+\section{Impulse-Response Style Thinking}
+
+\begin{frame}{Treatment-Response Path}
+A dynamic causal response can be summarized as
+\[
+\{\tau_0,\tau_1,\tau_2,\ldots,\tau_H\}.
+\]
+
+This resembles an impulse response:
+\begin{itemize}
+\item \(\tau_0\): immediate effect;
+\item \(\tau_h\): effect \(h\) periods later;
+\item cumulative response: \(\sum_{j=0}^{h}\tau_j\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Do Not Confuse Forecasting IRFs with Causal IRFs}
+A dynamic response is causal only if the shock or treatment variation is identified causally.
+
+A predictive time-series model can describe temporal propagation without establishing exogenous intervention effects.
+
+\begin{alertblock}{Identification first}
+Dynamic machinery does not substitute for a causal design.
+\end{alertblock}
+\end{frame}
+
+\section{Heterogeneous Dynamics}
+
+\begin{frame}{Different Units May Respond Differently}
+Let
+\[
+\tau_{i,h}
+=
+Y_{i,t+h}(1)-Y_{i,t+h}(0).
+\]
+
+Heterogeneity may occur across:
+\begin{itemize}
+\item regions;
+\item firms;
+\item age groups;
+\item treatment intensity;
+\item baseline risk;
+\item adoption cohorts.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Average Dynamic Effects}
+An average event-time effect is
+\[
+\tau_h
+=
+\E[\tau_{i,h}].
+\]
+
+But the composition of units contributing to \(\tau_h\) can change with horizon.
+
+\begin{alertblock}{Comparability issue}
+At long horizons, only early-treated cohorts may remain observable.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose a regional pricing intervention starts in January.
+
+Possible effect path:
+\begin{itemize}
+\item month 0: little response;
+\item months 1--2: customers begin adapting;
+\item months 3--6: demand stabilizes at a new level;
+\item later months: competitor responses partially offset the effect.
+\end{itemize}
+
+A single post-treatment coefficient would compress all of this into one number.
+\end{frame}
+
+\begin{frame}{A Credible Dynamic-Effects Workflow}
+\begin{enumerate}
+\item Define the treatment start, announcement date, and exposure duration.
+\item Specify the horizons of scientific interest.
+\item State immediate and cumulative estimands.
+\item Plot event-time responses.
+\item Include lags consistent with the mechanism.
+\item Test sensitivity to lag length.
+\item Examine anticipation and carry-over.
+\item Address dynamic confounding and feedback.
+\item Report heterogeneity across cohorts or subgroups.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item forcing a static model onto a delayed-response process;
+\item choosing lag length only by significance;
+\item ignoring anticipation;
+\item treating persistent post-exposure effects as new treatments;
+\item controlling naively for time-varying mediators/confounders;
+\item interpreting lagged-outcome FE estimates without considering dynamic-panel bias;
+\item reporting only pointwise effects without cumulative interpretation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Time Is Part of the Estimand}
+\begin{itemize}
+\item Treatment effects can unfold over several periods.
+\item Distributed-lag models decompose immediate and delayed responses.
+\item Cumulative effects often matter more than a single-period coefficient.
+\item Event-time estimands reveal onset, persistence, and decay.
+\item Anticipation shifts the effective treatment date earlier.
+\item Carry-over extends effects beyond the exposure period.
+\item Dynamic confounding and lagged outcomes can invalidate naive static adjustment.
+\item Causal identification must remain valid at every horizon being interpreted.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Arellano, M. (2003). \textit{Panel Data Econometrics}. Oxford University Press.
+\item Nickell, S. (1981). Biases in Dynamic Models with Fixed Effects. \textit{Econometrica}, 49(6), 1417--1426.
+\item Robins, J. M., Hernan, M. A., and Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. \textit{Epidemiology}, 11(5), 550--560.
+\item Sun, L., and Abraham, S. (2021). Estimating Dynamic Treatment Effects in Event Studies with Heterogeneous Treatment Effects. \textit{Journal of Econometrics}, 225(2), 175--199.
+\item Callaway, B., and Sant'Anna, P. H. C. (2021). Difference-in-Differences with Multiple Time Periods. \textit{Journal of Econometrics}, 225(2), 200--230.
+\item Jordà, O. (2005). Estimation and Inference of Impulse Responses by Local Projections. \textit{American Economic Review}, 95(1), 161--182.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
