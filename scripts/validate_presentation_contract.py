@@ -29,6 +29,7 @@ PRIMARY_ENTRY_POINTS: Final[tuple[Path, ...]] = (
     Path("04-causal-inference/dynamic-treatment-effects/presentation/main.tex"),
     Path("04-causal-inference/robustness-sensitivity/presentation/main.tex"),
     Path("04-causal-inference/regression-discontinuity/presentation/main.tex"),
+    Path("04-causal-inference/heterogeneous-treatment-effects/presentation/main.tex"),
     Path("05-time-series/time-series-forecasting/presentation/main.tex"),
     Path("06-advanced-topics/ai-agents/presentation/main.tex"),
     Path("06-advanced-topics/computer-science/presentation/main.tex"),

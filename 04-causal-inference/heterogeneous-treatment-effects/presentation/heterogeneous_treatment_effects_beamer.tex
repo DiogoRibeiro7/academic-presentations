@@ -1,0 +1,316 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[HTE and Causal Forests]{Heterogeneous Treatment Effects and Causal Forests}
+\subtitle{From Average Effects to Conditional Effects}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish ATE, subgroup effects, and conditional average treatment effects;
+\item explain why predicting outcomes is different from predicting treatment effects;
+\item understand causal trees and causal forests;
+\item explain honesty, sample splitting, and orthogonalization;
+\item diagnose overlap and unstable subgroup discoveries;
+\item connect heterogeneity estimates to treatment targeting without overstating precision.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{From Average to Conditional Effects}
+
+\begin{frame}{Average Treatment Effect}
+The ATE is
+\[
+ATE=\E[Y(1)-Y(0)].
+\]
+
+It summarizes the population average, but it can hide important variation across units.
+\end{frame}
+
+\begin{frame}{Conditional Average Treatment Effect}
+For covariates \(X=x\),
+\[
+\tau(x)=\E[Y(1)-Y(0)\mid X=x].
+\]
+
+This is the conditional average treatment effect, or CATE.
+
+\begin{block}{Question}
+Which observed characteristics modify the causal response to treatment?
+\end{block}
+\end{frame}
+
+\begin{frame}{Effect Modification vs Prognosis}
+A variable can strongly predict outcomes without modifying treatment effects.
+
+For example, baseline risk may affect \(Y\) but not the difference
+\[
+Y(1)-Y(0).
+\]
+
+\begin{alertblock}{Key distinction}
+Prognostic importance is not causal-effect heterogeneity.
+\end{alertblock}
+\end{frame}
+
+\section{Why Heterogeneity Is Hard}
+
+\begin{frame}{The Individual Effect Is Never Observed}
+For each unit,
+\[
+\tau_i=Y_i(1)-Y_i(0),
+\]
+but only one potential outcome is observed.
+
+Therefore there is no direct supervised-learning target for individual treatment effects.
+\end{frame}
+
+\begin{frame}{Identification Still Comes First}
+Under conditional exchangeability,
+\[
+(Y(1),Y(0))\perp D\mid X,
+\]
+plus overlap and consistency, CATEs can be identified.
+
+Flexible ML does not repair unmeasured confounding or lack of support.
+\end{frame}
+
+\section{Causal Trees}
+
+\begin{frame}{Recursive Partitioning for Treatment Effects}
+A causal tree splits the covariate space to create groups with different estimated treatment effects.
+
+Unlike a prediction tree, the splitting criterion targets heterogeneity in causal effects rather than outcome fit.
+\end{frame}
+
+\begin{frame}{Honest Estimation}
+Honest trees separate:
+\begin{itemize}
+\item data used to choose splits;
+\item data used to estimate treatment effects within leaves.
+\end{itemize}
+
+\begin{block}{Purpose}
+Reduce adaptive bias caused by using the same noise both to discover and estimate subgroups.
+\end{block}
+\end{frame}
+
+\section{Causal Forests}
+
+\begin{frame}{From Trees to Forests}
+Causal forests average many causal trees.
+
+The goals are:
+\begin{itemize}
+\item flexible CATE estimation;
+\item reduced instability relative to a single tree;
+\item local weighting of observations with similar covariates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Local Weighting View}
+A forest estimate can be viewed schematically as
+\[
+\widehat\tau(x)
+=
+\sum_i \alpha_i(x)\widehat\psi_i,
+\]
+where the forest determines local weights \(\alpha_i(x)\) and \(\widehat\psi_i\) is an orthogonalized treatment-effect score.
+\end{frame}
+
+\section{Orthogonalization}
+
+\begin{frame}{Nuisance Functions}
+Define
+\[
+m(x)=\E[Y\mid X=x]
+\]
+and
+\[
+e(x)=P(D=1\mid X=x).
+\]
+
+Orthogonalization residualizes outcome and treatment using these nuisance models before estimating heterogeneity.
+\end{frame}
+
+\begin{frame}{Robinson-Style Residualization}
+A useful representation is
+\[
+Y-m(X)
+=
+\tau(X)(D-e(X))
++
+\varepsilon.
+\]
+
+This reduces sensitivity to errors in nuisance estimation under regularity conditions.
+\end{frame}
+
+\begin{frame}{Cross-Fitting}
+Estimate nuisance models on one fold and evaluate residualized scores on another.
+
+Cross-fitting helps avoid reusing the same observations for flexible nuisance fitting and effect estimation.
+\end{frame}
+
+\section{Overlap and Support}
+
+\begin{frame}{Heterogeneity Requires Local Overlap}
+For CATE estimation, overlap must hold within relevant covariate regions:
+\[
+0<e(x)<1.
+\]
+
+If a subgroup is almost always treated or untreated, its treatment effect is largely extrapolation.
+\end{frame}
+
+\begin{frame}{Extreme-CATE Warnings}
+Very large estimated CATEs can arise from:
+\begin{itemize}
+\item weak overlap;
+\item small effective samples;
+\item noisy leaves;
+\item adaptive subgroup discovery.
+\end{itemize}
+
+Always inspect support before interpreting extremes.
+\end{frame}
+
+\section{Validation}
+
+\begin{frame}{How Do We Validate Heterogeneity?}
+We cannot compare estimated individual effects to observed truth.
+
+Instead evaluate:
+\begin{itemize}
+\item calibration of predicted treatment effects;
+\item group-average effects across predicted-effect quantiles;
+\item out-of-sample policy value;
+\item stability across samples and specifications.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Sorted Group Effects}
+Rank units by predicted CATE and form groups.
+
+Estimate treatment effects within those groups using held-out or orthogonalized procedures.
+
+\begin{block}{Goal}
+Check whether units predicted to benefit more actually show larger group-average effects.
+\end{block}
+\end{frame}
+
+\begin{frame}{Subgroup Multiplicity}
+Searching many covariates creates opportunities for spurious subgroup findings.
+
+\begin{itemize}
+\item pre-specify important subgroups where possible;
+\item use honest estimation;
+\item validate on held-out data;
+\item avoid storytelling around one unstable split.
+\end{itemize}
+\end{frame}
+
+\section{Policy Targeting}
+
+\begin{frame}{From CATE to Treatment Rules}
+A simple treatment rule may be
+\[
+\pi(x)=\mathbb{1}\{\widehat\tau(x)>c\},
+\]
+where \(c\) reflects treatment cost or a decision threshold.
+\end{frame}
+
+\begin{frame}{Policy Value}
+The relevant target is often not CATE prediction error but expected outcome under the learned policy:
+\[
+V(\pi)=\E[Y(\pi(X))].
+\]
+
+\begin{alertblock}{Decision focus}
+A slightly imperfect CATE model can still yield a good policy, while a visually complex heterogeneity model may yield little decision value.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Intervention}
+Suppose the average pricing-policy effect is negative but heterogeneous.
+
+Potential modifiers:
+\begin{itemize}
+\item baseline demand;
+\item regional income;
+\item competitor intensity;
+\item customer tenure;
+\item seasonality exposure.
+\end{itemize}
+
+The question becomes which regions are most responsive, not just whether the average effect is nonzero.
+\end{frame}
+
+\begin{frame}{A Credible HTE Workflow}
+\begin{enumerate}
+\item Define the CATE or subgroup estimand.
+\item Establish causal identification first.
+\item Fit nuisance models with cross-fitting.
+\item Estimate heterogeneity honestly.
+\item Inspect overlap and effective sample sizes.
+\item Validate heterogeneity out of sample.
+\item Compare group-average effects across predicted CATE strata.
+\item Evaluate policy value if targeting is the goal.
+\item Report instability and uncertainty prominently.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item confusing outcome prediction with treatment-effect prediction;
+\item interpreting noisy individual CATEs as known personal effects;
+\item searching many subgroups without validation;
+\item ignoring weak overlap;
+\item using the same data for discovery and confirmation;
+\item treating variable importance as causal-effect importance;
+\item optimizing heterogeneity without checking policy value.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Heterogeneity Without Storytelling}
+\begin{itemize}
+\item CATEs describe how average causal effects vary with observed covariates.
+\item Individual causal effects remain fundamentally unobserved.
+\item Causal trees target treatment-effect differences rather than outcome prediction.
+\item Honest forests and cross-fitting reduce adaptive bias.
+\item Orthogonalization reduces first-order sensitivity to nuisance estimation.
+\item Local overlap is essential for credible subgroup effects.
+\item Heterogeneity should be validated out of sample and connected to explicit decisions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Athey, S., and Imbens, G. (2016). Recursive Partitioning for Heterogeneous Causal Effects. \textit{PNAS}, 113(27), 7353--7360.
+\item Wager, S., and Athey, S. (2018). Estimation and Inference of Heterogeneous Treatment Effects Using Random Forests. \textit{JASA}, 113(523), 1228--1242.
+\item Athey, S., Tibshirani, J., and Wager, S. (2019). Generalized Random Forests. \textit{Annals of Statistics}, 47(2), 1148--1178.
+\item Chernozhukov, V. et al. (2018). Double/Debiased Machine Learning for Treatment and Structural Parameters. \textit{The Econometrics Journal}, 21(1), C1--C68.
+\item Nie, X., and Wager, S. (2021). Quasi-Oracle Estimation of Heterogeneous Treatment Effects. \textit{Biometrika}, 108(2), 299--319.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
