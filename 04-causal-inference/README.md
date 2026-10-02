@@ -21,6 +21,7 @@ Methods for estimating treatment effects and designing experiments.
 - `policy-learning/`
 - `double-machine-learning/`
 - `causal-discovery/`
+- `interference-spillovers/`
 - `ab-testing/`
 
 ## Structure
