@@ -20,6 +20,7 @@ Methods for estimating treatment effects and designing experiments.
 - `causal-mediation/`
 - `policy-learning/`
 - `double-machine-learning/`
+- `causal-discovery/`
 - `ab-testing/`
 
 ## Structure

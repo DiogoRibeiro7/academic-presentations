@@ -1,0 +1,420 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\title[Causal Discovery]{Causal Discovery}
+\subtitle{Assumptions, Graphs, and Limits}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish causal discovery from causal effect estimation;
+\item explain DAGs, d-separation, and Markov equivalence;
+\item understand Markov and faithfulness assumptions;
+\item compare constraint-based and score-based discovery;
+\item explain how functional assumptions such as LiNGAM add orientation information;
+\item recognize the role of latent confounding, interventions, and domain knowledge.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{What Is Causal Discovery?}
+
+\begin{frame}{The Structure-Learning Problem}
+Suppose we observe variables
+\[
+X_1,\ldots,X_p.
+\]
+
+Causal discovery asks which directed structures are compatible with the observed statistical relationships and the maintained assumptions.
+
+\begin{alertblock}{Different task}
+Estimating a causal effect assumes a causal structure. Causal discovery tries to learn parts of that structure.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Graphs as Causal Models}
+A directed acyclic graph (DAG) contains:
+\begin{itemize}
+\item nodes for variables;
+\item directed edges for direct causal relations;
+\item no directed cycles.
+\end{itemize}
+
+A graph encodes qualitative assumptions about the data-generating process.
+\end{frame}
+
+\section{Markov and Faithfulness}
+
+\begin{frame}{Causal Markov Condition}
+A DAG implies conditional independences through its graph structure.
+
+Informally, each variable is independent of its non-descendants conditional on its parents.
+\end{frame}
+
+\begin{frame}{Factorization}
+If a distribution is Markov with respect to DAG \(G\),
+\[
+p(x_1,\ldots,x_p)
+=
+\prod_{j=1}^{p}
+p(x_j \mid \mathrm{pa}_G(x_j)).
+\]
+
+This links graph structure to statistical factorization.
+\end{frame}
+
+\begin{frame}{Faithfulness}
+Faithfulness assumes that observed conditional independences arise from the graph structure rather than exact cancellations of causal effects.
+
+\begin{alertblock}{Why it matters}
+Without faithfulness, conditional-independence tests may remove or orient edges incorrectly.
+\end{alertblock}
+\end{frame}
+
+\section{d-Separation}
+
+\begin{frame}{Chains, Forks, and Colliders}
+Three local patterns matter:
+
+\[
+X \rightarrow Z \rightarrow Y
+\]
+
+\[
+X \leftarrow Z \rightarrow Y
+\]
+
+\[
+X \rightarrow Z \leftarrow Y
+\]
+
+Chains and forks are blocked by conditioning on \(Z\).
+
+Colliders behave differently: conditioning on \(Z\) can create dependence.
+\end{frame}
+
+\begin{frame}{Collider Bias}
+For
+\[
+X \rightarrow Z \leftarrow Y,
+\]
+\(X\) and \(Y\) may be marginally independent.
+
+Conditioning on \(Z\) can induce association.
+
+\begin{block}{Connection}
+This is why causal graphs help distinguish confounders from colliders.
+\end{block}
+\end{frame}
+
+\section{Markov Equivalence}
+
+\begin{frame}{Observational Data May Not Identify Direction}
+Consider:
+\[
+X \rightarrow Y
+\qquad\text{and}\qquad
+X \leftarrow Y.
+\]
+
+With only two variables, purely observational data generally cannot distinguish these directions from conditional-independence structure alone.
+\end{frame}
+
+\begin{frame}{Equivalence Classes}
+Two DAGs are Markov equivalent when they imply the same conditional independences.
+
+They share:
+\begin{itemize}
+\item the same skeleton;
+\item the same unshielded colliders.
+\end{itemize}
+
+Discovery often returns a partially directed graph rather than one unique DAG.
+\end{frame}
+
+\section{Constraint-Based Discovery}
+
+\begin{frame}{PC Algorithm: Core Idea}
+The PC algorithm:
+\begin{enumerate}
+\item starts from a dense undirected graph;
+\item removes edges using conditional-independence tests;
+\item identifies collider structures;
+\item propagates edge orientations using logical rules.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Conditional-Independence Testing}
+For Gaussian data, one may test partial correlations.
+
+In other settings:
+\begin{itemize}
+\item kernel-based tests;
+\item mutual-information tests;
+\item nonparametric conditional-independence tests.
+\end{itemize}
+
+\begin{alertblock}{Finite-sample problem}
+Discovery quality depends strongly on test power and calibration.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{PC Assumptions}
+Typical assumptions include:
+\begin{itemize}
+\item acyclicity;
+\item causal Markov condition;
+\item faithfulness;
+\item no latent confounding in the basic version;
+\item reliable conditional-independence tests.
+\end{itemize}
+\end{frame}
+
+\section{Latent Confounding}
+
+\begin{frame}{Hidden Common Causes}
+Suppose an unobserved variable \(U\) causes both \(X\) and \(Y\):
+\[
+X \leftarrow U \rightarrow Y.
+\]
+
+A method that assumes causal sufficiency may infer a misleading direct edge between \(X\) and \(Y\).
+\end{frame}
+
+\begin{frame}{FCI-Type Methods}
+FCI-style methods extend constraint-based discovery to allow latent confounding.
+
+Outputs may contain:
+\begin{itemize}
+\item directed edges;
+\item bidirected possibilities;
+\item partially oriented endpoints.
+\end{itemize}
+
+The price is weaker orientation and more ambiguity.
+\end{frame}
+
+\section{Score-Based Discovery}
+
+\begin{frame}{Search Over Graphs}
+Score-based methods assign a score to candidate DAGs, such as:
+\[
+\mathrm{Score}(G)
+=
+\mathrm{fit}(G)
+-
+\mathrm{complexity\ penalty}(G).
+\]
+
+Then they search for a high-scoring graph.
+\end{frame}
+
+\begin{frame}{GES}
+Greedy Equivalence Search operates over Markov equivalence classes.
+
+It performs:
+\begin{itemize}
+\item a forward phase adding edges;
+\item a backward phase removing edges.
+\end{itemize}
+
+Under strong assumptions and suitable scores, it can be consistent.
+\end{frame}
+
+\section{Functional Causal Models}
+
+\begin{frame}{Beyond Conditional Independence}
+Sometimes direction can be identified by assumptions on functional form and noise.
+
+For example:
+\[
+Y=f(X)+\varepsilon,
+\qquad
+\varepsilon \perp X.
+\]
+
+The reverse model may not satisfy the same independence structure.
+\end{frame}
+
+\begin{frame}{LiNGAM}
+LiNGAM assumes:
+\begin{itemize}
+\item linear relations;
+\item acyclicity;
+\item non-Gaussian independent disturbances.
+\end{itemize}
+
+These non-Gaussianity assumptions can identify causal ordering beyond ordinary covariance structure.
+\end{frame}
+
+\begin{frame}{Additive Noise Models}
+In nonlinear settings, additive-noise asymmetry can sometimes distinguish
+\[
+X \rightarrow Y
+\]
+from
+\[
+X \leftarrow Y.
+\]
+
+Again, orientation comes from additional functional assumptions.
+\end{frame}
+
+\section{Interventions and Invariance}
+
+\begin{frame}{Interventions Add Information}
+Observational equivalence can be broken by interventions.
+
+If we manipulate \(X\) and \(Y\) changes, that provides directional evidence that passive observation alone may not contain.
+\end{frame}
+
+\begin{frame}{Invariant Prediction}
+Causal mechanisms are often assumed stable across environments.
+
+If a conditional relation remains invariant while distributions shift, that stability can help identify plausible causal parents.
+\end{frame}
+
+\section{Time and Causal Direction}
+
+\begin{frame}{Temporal Order Is Useful but Not Sufficient}
+If \(X_t\) occurs before \(Y_{t+1}\), then reverse instantaneous causation is less plausible.
+
+But time order alone does not remove:
+\begin{itemize}
+\item latent confounding;
+\item common trends;
+\item feedback through omitted variables;
+\item measurement timing errors.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Granger Causality Is Not Structural Causality}
+If past \(X\) improves prediction of future \(Y\), then \(X\) Granger-causes \(Y\).
+
+This is a predictive temporal concept, not automatically a structural causal claim.
+\end{frame}
+
+\section{Domain Knowledge}
+
+\begin{frame}{Background Knowledge Can Constrain Search}
+Useful constraints include:
+\begin{itemize}
+\item impossible directions;
+\item known temporal ordering;
+\item known exogenous variables;
+\item forbidden edges;
+\item required edges.
+\end{itemize}
+
+\begin{block}{Benefit}
+Domain knowledge can shrink the equivalence class and improve stability.
+\end{block}
+\end{frame}
+
+\section{Stability and Validation}
+
+\begin{frame}{Bootstrap Graph Stability}
+Repeat discovery across bootstrap samples.
+
+Inspect:
+\begin{itemize}
+\item edge-selection frequency;
+\item orientation frequency;
+\item structural variability.
+\end{itemize}
+
+Unstable edges should not be presented as settled causal facts.
+\end{frame}
+
+\begin{frame}{Sensitivity to Tuning}
+Discovery can change with:
+\begin{itemize}
+\item significance thresholds;
+\item score penalties;
+\item variable transformations;
+\item included variables;
+\item sample size.
+\end{itemize}
+
+Sensitivity is part of the result.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing System}
+Suppose we observe:
+\begin{itemize}
+\item regional price;
+\item demand;
+\item income;
+\item competitor activity;
+\item promotional intensity;
+\item inventory constraints.
+\end{itemize}
+
+A discovery algorithm may suggest candidate structures, but economic knowledge is needed to rule out implausible directions and hidden-common-cause explanations.
+\end{frame}
+
+\begin{frame}{A Credible Causal-Discovery Workflow}
+\begin{enumerate}
+\item Define measured variables and temporal meaning.
+\item State assumptions about latent confounding and cycles.
+\item Encode domain constraints.
+\item Choose a discovery family consistent with assumptions.
+\item Run stability analysis.
+\item Compare alternative algorithms.
+\item Inspect the equivalence class, not only one graph.
+\item Validate orientations using interventions or external evidence where possible.
+\item Treat discovered structure as a hypothesis set, not automatic truth.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item claiming one observational DAG is uniquely identified when it is not;
+\item ignoring latent confounding;
+\item treating conditional independence tests as infallible;
+\item using temporal prediction as proof of causality;
+\item hiding unstable orientations;
+\item forgetting that algorithm assumptions generate the conclusions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Discovery Is Assumption-Driven}
+\begin{itemize}
+\item DAGs encode qualitative causal structure.
+\item Conditional independences can identify skeletons and some orientations.
+\item Markov equivalence limits what passive observational data can reveal.
+\item Faithfulness and causal sufficiency are strong assumptions.
+\item Functional restrictions, non-Gaussianity, interventions, and invariance add identifying information.
+\item Latent confounding and finite-sample error can radically alter conclusions.
+\item Causal discovery should generate constrained hypotheses for further validation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Spirtes, P., Glymour, C., and Scheines, R. (2000). \textit{Causation, Prediction, and Search}, 2nd ed. MIT Press.
+\item Pearl, J. (2009). \textit{Causality}, 2nd ed. Cambridge University Press.
+\item Chickering, D. M. (2002). Optimal Structure Identification with Greedy Search. \textit{JMLR}, 3, 507--554.
+\item Shimizu, S. et al. (2006). A Linear Non-Gaussian Acyclic Model for Causal Discovery. \textit{JMLR}, 7, 2003--2030.
+\item Peters, J., Janzing, D., and Schölkopf, B. (2017). \textit{Elements of Causal Inference}. MIT Press.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
