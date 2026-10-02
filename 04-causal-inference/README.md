@@ -18,6 +18,7 @@ Methods for estimating treatment effects and designing experiments.
 - `regression-discontinuity/`
 - `heterogeneous-treatment-effects/`
 - `causal-mediation/`
+- `policy-learning/`
 - `ab-testing/`
 
 ## Structure
