@@ -1,0 +1,395 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Double Machine Learning]{Double Machine Learning and Orthogonal Scores}
+\subtitle{Flexible Nuisance Estimation with Valid Causal Inference}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item explain why naive plug-in machine learning can bias causal parameters;
+\item derive the partialling-out idea in partially linear models;
+\item explain Neyman orthogonality;
+\item understand cross-fitting and why it helps;
+\item distinguish nuisance estimation from target-parameter estimation;
+\item recognize the identification assumptions that DML does not solve.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Double Machine Learning?}
+
+\begin{frame}{Prediction Is Not the Target}
+Suppose we want a low-dimensional causal parameter \(\theta_0\), but must also estimate flexible nuisance functions.
+
+Examples:
+\begin{itemize}
+\item outcome regression;
+\item propensity score;
+\item conditional treatment model;
+\item high-dimensional controls.
+\end{itemize}
+
+\begin{alertblock}{Problem}
+Regularized ML can predict well while introducing bias into a plug-in causal estimator.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Partially Linear Model}
+Consider
+\[
+Y = \theta_0 D + g_0(X) + \varepsilon,
+\]
+with
+\[
+\E[\varepsilon\mid X,D]=0.
+\]
+
+Treatment follows
+\[
+D = m_0(X)+v,
+\]
+with
+\[
+\E[v\mid X]=0.
+\]
+\end{frame}
+
+\section{Partialling Out}
+
+\begin{frame}{Residualize the Outcome}
+Estimate
+\[
+g_0(X) \approx \widehat g(X),
+\]
+then form
+\[
+\widetilde Y = Y-\widehat g(X).
+\]
+\end{frame}
+
+\begin{frame}{Residualize the Treatment}
+Estimate
+\[
+m_0(X) \approx \widehat m(X),
+\]
+then form
+\[
+\widetilde D = D-\widehat m(X).
+\]
+
+Then estimate
+\[
+\widetilde Y = \theta_0 \widetilde D + \text{error}.
+\]
+\end{frame}
+
+\begin{frame}{Why Partialling Out Helps}
+The residualized treatment isolates variation in \(D\) that is not explained by \(X\).
+
+The target parameter is then estimated from residualized outcome and residualized treatment rather than directly from a high-dimensional joint model.
+\end{frame}
+
+\section{Orthogonal Scores}
+
+\begin{frame}{Moment Conditions}
+Let the score be
+\[
+\psi(W;\theta,\eta),
+\]
+where \(\theta\) is the target and \(\eta\) contains nuisance functions.
+
+The target solves
+\[
+\E[\psi(W;\theta_0,\eta_0)]=0.
+\]
+\end{frame}
+
+\begin{frame}{Neyman Orthogonality}
+An orthogonal score satisfies, informally,
+\[
+\left.
+\frac{\partial}{\partial r}
+\E[
+\psi(W;\theta_0,\eta_0+r h)
+]
+\right|_{r=0}
+=0.
+\]
+
+\begin{block}{Meaning}
+Small first-order errors in nuisance estimation have little first-order effect on the estimating equation for \(\theta_0\).
+\end{block}
+\end{frame}
+
+\begin{frame}{Orthogonality Is Not Magic}
+Orthogonality reduces sensitivity to nuisance error.
+
+It does not eliminate:
+\begin{itemize}
+\item unmeasured confounding;
+\item positivity violations;
+\item invalid instruments;
+\item bad target definitions;
+\item severe model misspecification outside the orthogonal structure.
+\end{itemize}
+\end{frame}
+
+\section{Cross-Fitting}
+
+\begin{frame}{Why Sample Splitting?}
+Using the same sample to:
+\begin{itemize}
+\item fit complex nuisance models;
+\item compute residuals;
+\item estimate the target parameter
+\end{itemize}
+can produce overfitting bias.
+\end{frame}
+
+\begin{frame}{Cross-Fitting Procedure}
+Split data into folds.
+
+For each fold:
+\begin{enumerate}
+\item fit nuisance models on the other folds;
+\item predict nuisance quantities on the held-out fold;
+\item compute orthogonal scores on held-out observations.
+\end{enumerate}
+
+Finally aggregate scores across folds.
+\end{frame}
+
+\begin{frame}{Why Cross-Fitting Helps}
+Cross-fitting weakens empirical-process restrictions and reduces dependence between nuisance fitting errors and score evaluation.
+
+This permits flexible learners while retaining asymptotic inference under suitable rate conditions.
+\end{frame}
+
+\section{Rate Conditions}
+
+\begin{frame}{Nuisance Models Need Not Be Parametric}
+DML does not require perfect nuisance models.
+
+A typical condition is that nuisance errors shrink sufficiently fast so their product is small enough, for example schematically:
+\[
+\|\widehat g-g_0\|
+\cdot
+\|\widehat m-m_0\|
+=
+o_p(n^{-1/2}).
+\]
+\end{frame}
+
+\begin{frame}{Product-Rate Intuition}
+One nuisance model can converge more slowly if the other is estimated very well.
+
+\begin{alertblock}{But not arbitrarily slowly}
+Orthogonality protects against first-order nuisance error, not against completely uninformative nuisance estimation.
+\end{alertblock}
+\end{frame}
+
+\section{ATE Scores}
+
+\begin{frame}{Propensity and Outcome Nuisance Functions}
+For binary treatment:
+\[
+e(X)=P(D=1\mid X),
+\]
+\[
+\mu_d(X)=\E[Y\mid D=d,X].
+\]
+\end{frame}
+
+\begin{frame}{Orthogonal ATE Score}
+An augmented score is
+\[
+\psi(W)
+=
+\mu_1(X)-\mu_0(X)
++
+\frac{D(Y-\mu_1(X))}{e(X)}
+-
+\frac{(1-D)(Y-\mu_0(X))}{1-e(X)}.
+\]
+
+Its expectation equals the ATE under identification assumptions.
+\end{frame}
+
+\begin{frame}{Connection to Double Robustness}
+This score combines:
+\begin{itemize}
+\item outcome regression;
+\item propensity weighting.
+\end{itemize}
+
+It is doubly robust in the usual sense and orthogonal to small nuisance perturbations under regularity conditions.
+\end{frame}
+
+\section{Regularization Bias}
+
+\begin{frame}{Why Lasso or Forest Plug-In Can Fail}
+If we estimate a causal coefficient directly after aggressive regularization, shrinkage and selection can bias the target.
+
+Prediction-optimal tuning is not necessarily inference-optimal.
+\end{frame}
+
+\begin{frame}{DML Strategy}
+Separate:
+\begin{itemize}
+\item nuisance prediction;
+\item orthogonal score construction;
+\item low-dimensional target estimation.
+\end{itemize}
+
+This isolates the causal target from much of the regularization bias in nuisance models.
+\end{frame}
+
+\section{Inference}
+
+\begin{frame}{Root-n Inference}
+Under identification, orthogonality, overlap, and suitable nuisance-rate conditions,
+\[
+\sqrt{n}(\widehat\theta-\theta_0)
+\]
+can have an asymptotically normal limit.
+
+This enables confidence intervals even with flexible nuisance learners.
+\end{frame}
+
+\begin{frame}{Clustered or Dependent Data}
+Cross-fitting alone does not solve dependence.
+
+Panel, grouped, or time-series data may require:
+\begin{itemize}
+\item clustered sample splitting;
+\item cluster-robust variance estimation;
+\item block-based cross-fitting.
+\end{itemize}
+\end{frame}
+
+\section{Learner Choice}
+
+\begin{frame}{What Can Estimate the Nuisance Functions?}
+Possible learners include:
+\begin{itemize}
+\item lasso / elastic net;
+\item random forests;
+\item boosted trees;
+\item neural networks;
+\item splines and GAMs;
+\item ensembles.
+\end{itemize}
+
+The causal target remains defined independently of the learner.
+\end{frame}
+
+\begin{frame}{Prediction Quality Still Matters}
+Orthogonality is not an excuse for weak nuisance models.
+
+Poor nuisance estimation can cause:
+\begin{itemize}
+\item unstable residualization;
+\item overlap problems;
+\item poor finite-sample performance;
+\item invalid asymptotic approximations.
+\end{itemize}
+\end{frame}
+
+\section{Diagnostics}
+
+\begin{frame}{Overlap Diagnostics}
+For treatment-effect DML, inspect the estimated propensity distribution.
+
+Extreme values near 0 or 1 produce unstable scores and large variance.
+\end{frame}
+
+\begin{frame}{Score Diagnostics}
+Useful checks include:
+\begin{itemize}
+\item fold-specific estimates;
+\item nuisance prediction errors;
+\item score outliers;
+\item sensitivity to learner choice;
+\item sensitivity to cross-fitting partitions.
+\end{itemize}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Marketing Treatment Effect}
+Suppose treatment assignment depends on hundreds of behavioral features.
+
+A DML workflow:
+\begin{itemize}
+\item fit flexible propensity and outcome models;
+\item cross-fit predictions;
+\item compute orthogonal ATE or ATT scores;
+\item estimate the low-dimensional treatment effect;
+\item report uncertainty and overlap diagnostics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible DML Workflow}
+\begin{enumerate}
+\item Define the causal estimand and identification assumptions.
+\item Choose an orthogonal score for the target.
+\item Specify nuisance functions.
+\item Fit nuisance learners using training folds only.
+\item Cross-fit predictions to held-out folds.
+\item Compute orthogonal scores.
+\item Estimate the target parameter and variance.
+\item Inspect overlap and score stability.
+\item Repeat across defensible nuisance learners.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item believing ML automatically removes confounding;
+\item using flexible models without cross-fitting;
+\item treating orthogonality as immunity to bad overlap;
+\item ignoring dependence structure;
+\item reporting only one nuisance learner;
+\item confusing predictive performance with causal identification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: ML for Nuisance, Causality for the Target}
+\begin{itemize}
+\item DML separates nuisance prediction from target estimation.
+\item Partialling out removes predictable components of treatment and outcome.
+\item Orthogonal scores reduce first-order sensitivity to nuisance errors.
+\item Cross-fitting prevents the same observations from driving nuisance fitting and score evaluation.
+\item Flexible ML can be used while retaining classical inference under suitable conditions.
+\item DML does not replace identification assumptions.
+\item Overlap, dependence, and target definition remain central.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Chernozhukov, V. et al. (2018). Double/Debiased Machine Learning for Treatment and Structural Parameters. \textit{The Econometrics Journal}, 21(1), C1--C68.
+\item Robinson, P. M. (1988). Root-N-Consistent Semiparametric Regression. \textit{Econometrica}, 56(4), 931--954.
+\item Belloni, A., Chernozhukov, V., and Hansen, C. (2014). Inference on Treatment Effects after Selection among High-Dimensional Controls. \textit{Review of Economic Studies}, 81(2), 608--650.
+\item Chernozhukov, V. et al. (2022). Locally Robust Semiparametric Estimation. \textit{Econometrica}, 90(4), 1501--1535.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
