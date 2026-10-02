@@ -13,6 +13,7 @@ Methods for estimating treatment effects and designing experiments.
 - `instrumental-variables/`
 - `counterfactual-time-series/`
 - `selection-on-observables/`
+- `dynamic-treatment-effects/`
 - `ab-testing/`
 
 ## Structure
