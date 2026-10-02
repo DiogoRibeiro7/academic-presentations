@@ -31,7 +31,7 @@ pytest-mock>=3.11.0
 pytest-timeout>=2.1.0
 pytest-benchmark>=4.0.0
 hypothesis>=6.82.0
-tox>=4.6.0  # Test across multiple Python versions
+tox>=4.64.2  # Test across multiple Python versions
 coverage[toml]>=7.3.0
 
 # ============================================================================
