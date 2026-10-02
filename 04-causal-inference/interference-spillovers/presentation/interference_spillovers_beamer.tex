@@ -1,0 +1,390 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Interference and Spillovers]{Interference, Spillovers, and Network Causal Inference}
+\subtitle{When One Unit's Treatment Affects Another Unit's Outcome}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item explain why SUTVA and no-interference assumptions matter;
+\item define causal effects when outcomes depend on treatment assignments of others;
+\item distinguish direct, spillover, total, and overall effects;
+\item understand exposure mappings and partial interference;
+\item connect cluster and two-stage randomization to interference;
+\item recognize design and estimation failures caused by contamination and network spillovers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Interference Matters}
+
+\begin{frame}{Classical Potential Outcomes}
+Without interference, unit \(i\) has potential outcomes
+\[
+Y_i(1),\qquad Y_i(0).
+\]
+
+The treatment of other units does not enter unit \(i\)'s outcome.
+\end{frame}
+
+\begin{frame}{Treatment Assignment Vectors}
+With interference,
+\[
+Y_i(\mathbf D)
+\]
+may depend on the entire treatment vector
+\[
+\mathbf D=(D_1,\ldots,D_n).
+\]
+
+\begin{alertblock}{Consequence}
+There are potentially many more than two potential outcomes per unit.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Examples of Interference}
+\begin{itemize}
+\item vaccination protects untreated contacts;
+\item pricing in one region shifts demand to neighboring regions;
+\item promotions create word-of-mouth effects;
+\item agricultural treatment affects nearby plots;
+\item information campaigns diffuse through social networks.
+\end{itemize}
+\end{frame}
+
+\section{SUTVA and No Interference}
+
+\begin{frame}{Stable Unit Treatment Value Assumption}
+SUTVA is often summarized as:
+\begin{itemize}
+\item no multiple versions of treatment;
+\item no interference between units.
+\end{itemize}
+
+Violations of either part complicate the mapping from treatment labels to potential outcomes.
+\end{frame}
+
+\begin{frame}{No-Interference Assumption}
+The classical condition is
+\[
+Y_i(\mathbf D)=Y_i(D_i).
+\]
+
+This says assignments received by other units do not matter for unit \(i\)'s outcome.
+\end{frame}
+
+\section{Exposure Mappings}
+
+\begin{frame}{Reducing the Assignment Space}
+Instead of indexing by the full vector \(\mathbf D\), define an exposure mapping
+\[
+E_i = h_i(\mathbf D, G),
+\]
+where \(G\) represents network or group structure.
+
+Then write
+\[
+Y_i(D_i,E_i).
+\]
+\end{frame}
+
+\begin{frame}{Examples of Exposure}
+Exposure might be:
+\begin{itemize}
+\item number of treated neighbors;
+\item fraction of treated peers;
+\item whether at least one neighbor is treated;
+\item weighted exposure by network distance;
+\item cluster-level treatment saturation.
+\end{itemize}
+\end{frame}
+
+\begin{alertblock}{Modeling choice}
+The exposure mapping is itself an assumption about how interference operates.
+\end{alertblock}
+
+\section{Direct and Spillover Effects}
+
+\begin{frame}{Direct Effect}
+For fixed peer exposure \(e\), define
+\[
+DE(e)
+=
+\mathbb E\left[
+Y_i(1,e)-Y_i(0,e)
+\right].
+\]
+
+This compares own treatment while holding exposure from others fixed.
+\end{frame}
+
+\begin{frame}{Spillover Effect}
+For an untreated unit,
+\[
+SE(e_1,e_0)
+=
+\mathbb E\left[
+Y_i(0,e_1)-Y_i(0,e_0)
+\right].
+\]
+
+This captures how others' treatment affects an untreated unit.
+\end{frame}
+
+\begin{frame}{Total and Overall Effects}
+A total effect can compare
+\[
+Y_i(1,e_1)-Y_i(0,e_0),
+\]
+changing both own treatment and exposure.
+
+An overall effect compares average outcomes under two treatment-allocation regimes.
+\end{frame}
+
+\section{Partial Interference}
+
+\begin{frame}{Interference Within Clusters}
+Under partial interference:
+\begin{itemize}
+\item units may affect others within the same cluster;
+\item there is no interference across clusters.
+\end{itemize}
+
+This makes cluster-level analysis possible while relaxing individual no-interference.
+\end{frame}
+
+\begin{frame}{Examples of Clusters}
+\begin{itemize}
+\item households;
+\item schools;
+\item villages;
+\item hospitals;
+\item geographic markets.
+\end{itemize}
+\end{frame}
+
+\section{Two-Stage Randomization}
+
+\begin{frame}{Randomize Saturation, Then Treatment}
+A two-stage design can:
+\begin{enumerate}
+\item randomize clusters to treatment saturation levels;
+\item randomize individuals within clusters to treatment.
+\end{enumerate}
+
+This creates variation in both own treatment and peer exposure.
+\end{frame}
+
+\begin{frame}{Why Two-Stage Designs Help}
+They can identify:
+\begin{itemize}
+\item direct effects at a given saturation;
+\item spillover effects among untreated units;
+\item total effects;
+\item overall effects of allocation regimes.
+\end{itemize}
+\end{frame}
+
+\section{Cluster Randomization}
+
+\begin{frame}{Why Cluster-Level Assignment?}
+Cluster randomization can reduce contamination when interference is expected within groups.
+
+But it changes:
+\begin{itemize}
+\item the unit of assignment;
+\item the effective sample size;
+\item the relevant variance estimator.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Effective Sample Size}
+With clustered assignment, the number of independent assignment units may be the number of clusters, not the number of individuals.
+
+Few clusters can therefore produce weak inference even with many observations.
+\end{frame}
+
+\section{Network Interference}
+
+\begin{frame}{Known Network Structure}
+Let \(G_{ij}=1\) indicate that units \(i\) and \(j\) are connected.
+
+Exposure can be defined as
+\[
+E_i
+=
+\sum_{j\neq i}G_{ij}D_j.
+\]
+
+Weighted or normalized alternatives are also possible.
+\end{frame}
+
+\begin{frame}{Distance-Based Interference}
+Spillovers may decay with network or geographic distance.
+
+A useful question is not simply whether interference exists, but how far it propagates.
+\end{frame}
+
+\begin{frame}{Network Position}
+Treatment effects may vary with:
+\begin{itemize}
+\item degree;
+\item centrality;
+\item community membership;
+\item local treatment density.
+\end{itemize}
+
+This mixes interference with heterogeneous treatment effects.
+\end{frame}
+
+\section{Contamination and Displacement}
+
+\begin{frame}{Contamination}
+Control units can indirectly receive treatment exposure.
+
+Examples:
+\begin{itemize}
+\item untreated users see treated users' messages;
+\item control stores face promotional spillovers;
+\item untreated communities interact with treated communities.
+\end{itemize}
+
+Naive treated-versus-control comparisons can then understate direct effects.
+\end{frame}
+
+\begin{frame}{Displacement}
+Treatment can improve outcomes in one unit by worsening outcomes elsewhere.
+
+Examples:
+\begin{itemize}
+\item crime displaced geographically;
+\item sales shifted across stores;
+\item patients shifted across hospitals.
+\end{itemize}
+
+A local positive effect may coexist with a zero or negative system-wide effect.
+\end{frame}
+
+\section{Identification}
+
+\begin{frame}{The Estimand Must Match the Exposure Model}
+Credible analysis requires:
+\begin{itemize}
+\item a treatment assignment mechanism;
+\item an interference structure;
+\item an exposure mapping;
+\item a clearly defined causal contrast.
+\end{itemize}
+
+Without these, “the treatment effect” is ambiguous.
+\end{frame}
+
+\begin{frame}{Positivity Under Interference}
+We need support for relevant combinations of own treatment and exposure.
+
+For example, if highly connected units are always heavily exposed, low-exposure counterfactuals for them may be unsupported.
+\end{frame}
+
+\section{Diagnostics}
+
+\begin{frame}{Check the Network / Cluster Assumptions}
+Useful diagnostics include:
+\begin{itemize}
+\item cross-cluster interaction rates;
+\item geographic spillover plots;
+\item exposure distributions;
+\item treatment saturation by cluster;
+\item sensitivity to alternative exposure mappings.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Alternative Exposure Mappings}
+Compare results under:
+\begin{itemize}
+\item treated-neighbor count;
+\item treated-neighbor share;
+\item binary any-exposure indicator;
+\item distance-weighted exposure.
+\end{itemize}
+
+Large changes imply strong dependence on the assumed interference model.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Intervention}
+Suppose treatment changes prices in selected regions.
+
+Possible spillovers:
+\begin{itemize}
+\item customers shop across borders;
+\item competitors respond in neighboring regions;
+\item promotions diffuse nationally;
+\item inventory reallocates across regions.
+\end{itemize}
+
+A standard regional DiD may then violate no-interference.
+\end{frame}
+
+\begin{frame}{A Credible Interference Workflow}
+\begin{enumerate}
+\item Define the unit and assignment mechanism.
+\item State whether no-interference is plausible.
+\item Map likely spillover channels.
+\item Define the exposure mapping.
+\item Choose direct, spillover, total, or regime-level estimands.
+\item Match inference to cluster/network dependence.
+\item test sensitivity to alternative exposure definitions.
+\item report system-wide as well as local effects when displacement is possible.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item assuming SUTVA without substantive justification;
+\item defining peer exposure after seeing outcomes;
+\item ignoring cross-cluster interaction;
+\item treating contaminated controls as unexposed;
+\item reporting only direct effects when spillovers are policy-relevant;
+\item using individual-level standard errors under cluster assignment.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Treatment Can Propagate}
+\begin{itemize}
+\item No-interference is an identifying assumption, not a default truth.
+\item With interference, potential outcomes depend on assignment vectors or exposure mappings.
+\item Direct, spillover, total, and overall effects answer different questions.
+\item Partial interference and cluster designs provide tractable structure.
+\item Network information can encode who is exposed to whom.
+\item Contamination and displacement can reverse policy interpretation.
+\item The estimand, exposure mapping, assignment mechanism, and dependence structure must be aligned.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Hudgens, M. G., and Halloran, M. E. (2008). Toward Causal Inference with Interference. \textit{JASA}, 103(482), 832--842.
+\item Aronow, P. M., and Samii, C. (2017). Estimating Average Causal Effects Under General Interference. \textit{Annals of Applied Statistics}, 11(4), 1912--1947.
+\item Tchetgen Tchetgen, E. J., and VanderWeele, T. J. (2012). On Causal Inference in the Presence of Interference. \textit{Statistical Methods in Medical Research}, 21(1), 55--75.
+\item Baird, S. et al. (2018). Optimal Design of Experiments in the Presence of Interference. \textit{Review of Economics and Statistics}, 100(5), 844--860.
+\item Athey, S., Eckles, D., and Imbens, G. W. (2018). Exact P-values for Network Interference. \textit{JASA}, 113(521), 230--240.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
