@@ -1,0 +1,312 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Robustness and Sensitivity]{Robustness, Placebos, Negative Controls, and Sensitivity Analysis}
+\subtitle{Testing the Credibility of Causal Claims}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish sampling uncertainty from identification uncertainty;
+\item design placebo tests tied to specific failure modes;
+\item use negative controls to detect residual confounding and invalid pathways;
+\item interpret specification stability across defensible models;
+\item evaluate sensitivity to unmeasured confounding;
+\item communicate when a causal conclusion is robust, fragile, or not identified.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Robustness and Identification}
+
+\begin{frame}{Robustness Is Design-Specific}
+A robustness check is useful when it probes a plausible violation of the identifying assumptions.
+
+\begin{itemize}
+\item DiD: parallel trends and anticipation;
+\item IV: exclusion and instrument independence;
+\item synthetic control: donor support and pre-treatment fit;
+\item observed-confounding adjustment: overlap and omitted confounding.
+\end{itemize}
+
+\begin{alertblock}{Principle}
+Passing many generic checks is less informative than passing the few checks that directly challenge the design.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Sampling vs Identification Uncertainty}
+Standard errors quantify sampling variability under maintained assumptions.
+
+They do not quantify uncertainty about:
+\begin{itemize}
+\item invalid exclusion restrictions;
+\item unmeasured confounding;
+\item spillovers;
+\item donor contamination;
+\item treatment misclassification;
+\item non-parallel untreated trends.
+\end{itemize}
+\end{frame}
+
+\section{Placebo Tests}
+
+\begin{frame}{Placebo Dates}
+Move treatment to a false pre-treatment date.
+
+A nonzero placebo effect may indicate:
+\begin{itemize}
+\item pre-existing trends;
+\item anticipation;
+\item seasonality;
+\item unrelated structural breaks;
+\item model misspecification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Placebo Units}
+Assign treatment to units known not to have been treated.
+
+Compare their estimated effects with the treated unit's effect.
+
+\begin{block}{Use}
+This is especially useful in synthetic-control and panel settings.
+\end{block}
+\end{frame}
+
+\begin{frame}{Placebo Outcomes}
+Estimate an effect on an outcome that treatment should not plausibly affect.
+
+A detected effect can reveal:
+\begin{itemize}
+\item residual confounding;
+\item concurrent shocks;
+\item measurement changes;
+\item design misspecification.
+\end{itemize}
+\end{frame}
+
+\section{Negative Controls}
+
+\begin{frame}{Negative-Control Outcomes}
+A negative-control outcome shares some confounding structure with the target outcome but should not respond to treatment.
+
+If it appears to respond, the causal design may contain residual bias.
+\end{frame}
+
+\begin{frame}{Negative-Control Exposures}
+A negative-control exposure resembles the treatment in confounding structure but should not affect the target outcome.
+
+An association can indicate:
+\begin{itemize}
+\item unmeasured confounding;
+\item selection bias;
+\item incorrect temporal ordering;
+\item data-linkage problems.
+\end{itemize}
+\end{frame}
+
+\section{Specification Stability}
+
+\begin{frame}{Specification Curves}
+A specification curve summarizes estimates across defensible analysis choices:
+\begin{itemize}
+\item covariate sets;
+\item lag lengths;
+\item functional forms;
+\item comparison groups;
+\item trimming thresholds;
+\item clustering choices.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What Stability Means}
+A stable result shows similar sign and magnitude across credible specifications.
+
+Instability can reveal:
+\begin{itemize}
+\item dependence on one modeling choice;
+\item weak support;
+\item researcher degrees of freedom;
+\item hidden extrapolation.
+\end{itemize}
+
+\begin{alertblock}{Caution}
+Only substantively defensible specifications belong in the comparison set.
+\end{alertblock}
+\end{frame}
+
+\section{Sensitivity to Unmeasured Confounding}
+
+\begin{frame}{How Much Confounding Would It Take?}
+Sensitivity analysis asks how strong an omitted common cause would need to be to:
+\begin{itemize}
+\item move the estimate to zero;
+\item reverse its sign;
+\item push it below a practical decision threshold.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Matched-Study Sensitivity}
+In matched designs, one can allow matched units to differ in treatment odds because of an unobserved factor.
+
+Inference is recomputed as the allowed difference increases.
+
+\begin{block}{Interpretation}
+The more unobserved selection required to overturn the conclusion, the less fragile the result appears under that sensitivity model.
+\end{block}
+\end{frame}
+
+\begin{frame}{Variance-Based Sensitivity}
+Another strategy parameterizes an omitted confounder by the residual variation it explains in:
+\begin{itemize}
+\item treatment;
+\item outcome.
+\end{itemize}
+
+Observed covariates can then serve as empirical benchmarks.
+\end{frame}
+
+\section{Overlap and Influence}
+
+\begin{frame}{Trimming Sensitivity}
+When propensity scores approach zero or one, estimates can depend heavily on a few observations.
+
+Vary trimming thresholds and inspect:
+\begin{itemize}
+\item effect stability;
+\item weight concentration;
+\item effective sample size;
+\item changes in the target population.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Leave-One-Cluster-Out}
+Re-estimate after removing one cluster at a time.
+
+This reveals:
+\begin{itemize}
+\item influential regions or firms;
+\item dependence on one treated cluster;
+\item leverage hidden by aggregate uncertainty.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Leave-One-Donor-Out}
+For synthetic control, omit each donor in turn.
+
+If the estimated effect disappears whenever one donor is removed, the result depends strongly on that donor.
+\end{frame}
+
+\section{Design-Specific Diagnostics}
+
+\begin{frame}{Difference-in-Differences}
+Useful diagnostics include:
+\begin{itemize}
+\item pre-treatment event-time coefficients;
+\item placebo treatment dates;
+\item alternative comparison groups;
+\item negative-control outcomes;
+\item sensitivity to anticipation windows.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Instrumental Variables}
+Useful diagnostics include:
+\begin{itemize}
+\item first-stage strength;
+\item balance across instrument values;
+\item outcomes that should not respond directly to the instrument;
+\item subsamples where the treatment channel should be absent;
+\item sensitivity to plausible exclusion violations.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthetic Control}
+Useful diagnostics include:
+\begin{itemize}
+\item pre-treatment fit;
+\item placebo treated units;
+\item placebo dates;
+\item donor-pool restrictions;
+\item leave-one-donor-out analysis.
+\end{itemize}
+\end{frame}
+
+\section{Applied Workflow}
+
+\begin{frame}{Example: Regional Pricing Policy}
+Suppose the estimated effect is a 5 percent reduction in demand.
+
+A useful robustness program asks:
+\begin{itemize}
+\item Is there an effect at false pre-treatment dates?
+\item Does an unrelated outcome move too?
+\item Does the effect survive alternative comparison regions?
+\item Does it depend on one region?
+\item Does trimming poor-overlap regions matter?
+\item How strong would omitted confounding need to be to remove the effect?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible Robustness Workflow}
+\begin{enumerate}
+\item List the identifying assumptions.
+\item Map each assumption to plausible failure modes.
+\item Choose targeted falsification tests.
+\item Re-estimate across defensible specifications.
+\item Quantify influence of key units, clusters, or donors.
+\item Run sensitivity analysis for unmeasured confounding.
+\item Separate estimator sensitivity from estimand changes.
+\item Report failed checks prominently.
+\item Revise the causal claim when diagnostics weaken identification.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item reporting only checks that pass;
+\item running irrelevant checks for appearance;
+\item treating a null placebo as proof of identification;
+\item hiding dependence on one specification;
+\item ignoring failed negative controls;
+\item calling different estimands “robustness checks” without noting the target changed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Robustness Is About Credibility}
+\begin{itemize}
+\item Robustness analysis should target plausible violations of identifying assumptions.
+\item Placebos ask whether effects appear where they should not.
+\item Negative controls probe residual confounding and invalid pathways.
+\item Specification curves reveal dependence on defensible modeling choices.
+\item Sensitivity analysis quantifies how strong omitted confounding must be to alter conclusions.
+\item Influence diagnostics expose dependence on individual units, clusters, or donors.
+\item Failed diagnostics should weaken the causal claim, not be buried.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Rosenbaum, P. R. (2002). \textit{Observational Studies}, 2nd ed. Springer.
+\item Cinelli, C., Ferwerda, J., and Hazlett, C. (2020). Sensitivity Analysis Tools for OLS. \textit{Journal of Statistical Software}, 96(1), 1--28.
+\item Simonsohn, U., Simmons, J. P., and Nelson, L. D. (2020). Specification Curve Analysis. \textit{Nature Human Behaviour}, 4, 1208--1214.
+\item Lipsitch, M., Tchetgen Tchetgen, E., and Cohen, T. (2010). Negative Controls: A Tool for Detecting Confounding and Bias in Observational Studies. \textit{Epidemiology}, 21(3), 383--388.
+\item Abadie, A. (2021). Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects. \textit{Journal of Economic Literature}, 59(2), 391--425.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}

@@ -14,6 +14,7 @@ Methods for estimating treatment effects and designing experiments.
 - `counterfactual-time-series/`
 - `selection-on-observables/`
 - `dynamic-treatment-effects/`
+- `robustness-sensitivity/`
 - `ab-testing/`
 
 ## Structure
