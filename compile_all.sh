@@ -30,6 +30,7 @@ presentations=(
   "04-causal-inference/heterogeneous-treatment-effects/presentation/main"
   "04-causal-inference/causal-mediation/presentation/main"
   "04-causal-inference/policy-learning/presentation/main"
+  "04-causal-inference/double-machine-learning/presentation/main"
   "05-time-series/time-series-forecasting/presentation/main"
   "06-advanced-topics/ai-agents/presentation/main"
   "06-advanced-topics/computer-science/presentation/main"
