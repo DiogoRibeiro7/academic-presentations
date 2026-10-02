@@ -1,0 +1,352 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Causal Mediation]{Causal Mediation Analysis}
+\subtitle{Direct Effects, Indirect Effects, and Mechanisms}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish total, direct, and indirect causal effects;
+\item define mediator potential outcomes and natural-effect estimands;
+\item explain sequential ignorability and mediator-outcome confounding;
+\item recognize post-treatment confounding as a major identification threat;
+\item distinguish natural effects from interventional effects;
+\item use sensitivity analysis when mediator assumptions are uncertain.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Mediation?}
+
+\begin{frame}{From “Does It Work?” to “How Does It Work?”}
+Let treatment \(D\) affect outcome \(Y\) partly through mediator \(M\):
+\[
+D \rightarrow M \rightarrow Y.
+\]
+
+There may also be a direct path:
+\[
+D \rightarrow Y.
+\]
+
+\begin{block}{Mechanism question}
+How much of the treatment effect operates through \(M\)?
+\end{block}
+\end{frame}
+
+\begin{frame}{Total Effect}
+The total effect is
+\[
+TE=\E[Y(1)-Y(0)].
+\]
+
+It combines all causal pathways from treatment to outcome.
+\end{frame}
+
+\section{Mediator Potential Outcomes}
+
+\begin{frame}{Potential Mediator}
+Let
+\[
+M(d)
+\]
+denote the mediator value that would occur under treatment \(d\).
+
+Let
+\[
+Y(d,m)
+\]
+denote the outcome if treatment were set to \(d\) and mediator to \(m\).
+\end{frame}
+
+\begin{frame}{Nested Counterfactuals}
+Natural effects use nested potential outcomes such as
+\[
+Y(1,M(0)).
+\]
+
+This asks what the outcome would be under treatment, while forcing the mediator to whatever value it would naturally have taken under control.
+\end{frame}
+
+\section{Natural Direct and Indirect Effects}
+
+\begin{frame}{Natural Direct Effect}
+One version of the natural direct effect is
+\[
+NDE
+=
+\E[
+Y(1,M(0))
+-
+Y(0,M(0))
+].
+\]
+
+The mediator is held at its natural control value while treatment changes.
+\end{frame}
+
+\begin{frame}{Natural Indirect Effect}
+A natural indirect effect can be written
+\[
+NIE
+=
+\E[
+Y(1,M(1))
+-
+Y(1,M(0))
+].
+\]
+
+Treatment is fixed while the mediator changes from its natural control value to its natural treated value.
+\end{frame}
+
+\begin{frame}{Decomposition}
+Under the chosen definitions,
+\[
+TE=NDE+NIE.
+\]
+
+\begin{alertblock}{Caution}
+This decomposition is causal only under assumptions strong enough to identify the nested counterfactuals.
+\end{alertblock}
+\end{frame}
+
+\section{Controlled Direct Effects}
+
+\begin{frame}{Controlled Direct Effect}
+For a fixed mediator level \(m\),
+\[
+CDE(m)
+=
+\E[Y(1,m)-Y(0,m)].
+\]
+
+This asks what treatment would do if the mediator could be externally fixed to \(m\).
+\end{frame}
+
+\begin{frame}{Why Controlled and Natural Effects Differ}
+Controlled effects intervene on a specific mediator value.
+
+Natural effects intervene on whichever mediator value a unit would naturally attain under another treatment condition.
+
+These are different scientific questions.
+\end{frame}
+
+\section{Identification Assumptions}
+
+\begin{frame}{Treatment-Outcome Exchangeability}
+A standard assumption is that, conditional on pre-treatment covariates \(X\),
+\[
+Y(d,m) \perp D \mid X.
+\]
+
+Randomized treatment can make this assumption plausible.
+\end{frame}
+
+\begin{frame}{Mediator-Outcome Exchangeability}
+We also need a condition such as
+\[
+Y(d,m) \perp M \mid D,X.
+\]
+
+This is much harder: the mediator is usually not randomized.
+\end{frame}
+
+\begin{frame}{Sequential Ignorability}
+A common identification framework combines:
+\begin{itemize}
+\item no unmeasured treatment-outcome confounding;
+\item no unmeasured treatment-mediator confounding;
+\item no unmeasured mediator-outcome confounding after conditioning on treatment and baseline covariates.
+\end{itemize}
+\end{frame}
+
+\section{Post-Treatment Confounding}
+
+\begin{frame}{A Serious Failure Mode}
+Suppose treatment changes a variable \(L\), and \(L\) affects both mediator and outcome:
+\[
+D \rightarrow L \rightarrow M,
+\]
+and
+\[
+L \rightarrow Y.
+\]
+
+Then \(L\) is a treatment-induced mediator-outcome confounder.
+\end{frame}
+
+\begin{frame}{Why Ordinary Adjustment Can Fail}
+Conditioning on \(L\) can block part of the treatment effect while leaving mediation estimands unidentified.
+
+\begin{alertblock}{Core lesson}
+Post-treatment covariates cannot be handled like ordinary baseline confounders.
+\end{alertblock}
+\end{frame}
+
+\section{Exposure-Mediator Interaction}
+
+\begin{frame}{Treatment Can Change the Mediator Effect}
+Suppose
+\[
+Y
+=
+\beta_0
++
+\beta_1 D
++
+\beta_2 M
++
+\beta_3 D M
++
+\varepsilon.
+\]
+
+If \(\beta_3\neq 0\), the mediator effect depends on treatment status.
+\end{frame}
+
+\begin{frame}{Implication}
+Simple “product of coefficients” mediation formulas generally fail when:
+\begin{itemize}
+\item treatment interacts with mediator;
+\item models are nonlinear;
+\item treatment or mediator is binary;
+\item confounding structure is complex.
+\end{itemize}
+\end{frame}
+
+\section{Interventional Effects}
+
+\begin{frame}{Why Interventional Effects?}
+Natural effects rely on nested counterfactuals that can be scientifically awkward.
+
+Interventional effects instead define stochastic interventions on the mediator distribution.
+\end{frame}
+
+\begin{frame}{Interventional Indirect Effect}
+Rather than forcing each unit to its own counterfactual mediator value, one can compare outcomes under mediator draws from treatment-specific mediator distributions.
+
+\begin{block}{Benefit}
+This can avoid some cross-world interpretations and may remain meaningful with treatment-induced mediator-outcome confounding under suitable formulations.
+\end{block}
+\end{frame}
+
+\section{Estimation}
+
+\begin{frame}{Regression-Based Mediation}
+A simple workflow models:
+\[
+M=f(D,X)+\eta
+\]
+and
+\[
+Y=g(D,M,X)+\varepsilon.
+\]
+
+Causal interpretation depends on identification assumptions, not on the fact that two regressions were fitted.
+\end{frame}
+
+\begin{frame}{Simulation / G-Computation}
+A more general approach:
+\begin{enumerate}
+\item model the mediator distribution;
+\item model the outcome conditional on treatment, mediator, and covariates;
+\item simulate mediator and outcome counterfactuals under the target intervention;
+\item average the resulting causal contrasts.
+\end{enumerate}
+\end{frame}
+
+\section{Sensitivity Analysis}
+
+\begin{frame}{Unmeasured Mediator-Outcome Confounding}
+Mediator-outcome confounding is often the most fragile assumption.
+
+Sensitivity analysis asks how strong an omitted common cause would need to be to materially change the indirect effect.
+\end{frame}
+
+\begin{frame}{Correlation-Sensitivity Intuition}
+In linear settings, one can parameterize correlation between mediator-model and outcome-model disturbances.
+
+As that residual correlation increases, recompute direct and indirect effects.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Marketing Intervention}
+Suppose an email campaign \(D\) changes site engagement \(M\), which then changes purchasing \(Y\).
+
+Potential issues:
+\begin{itemize}
+\item prior engagement confounds mediator and outcome;
+\item treatment changes another behavior that also affects purchasing;
+\item mediator measurement is noisy;
+\item treatment changes the effect of engagement on purchasing.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible Mediation Workflow}
+\begin{enumerate}
+\item Define the total, direct, and indirect estimands.
+\item Draw the causal graph including post-treatment variables.
+\item Separate baseline from treatment-induced confounders.
+\item State the mediation identification assumptions.
+\item Choose natural or interventional effects deliberately.
+\item Fit mediator and outcome models.
+\item allow treatment-mediator interactions where plausible.
+\item run sensitivity analysis for mediator-outcome confounding.
+\item avoid interpreting regression decomposition as mechanism proof.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item treating association between mediator and outcome as mediation;
+\item adjusting mechanically for the mediator and calling the remaining coefficient “direct”;
+\item ignoring treatment-induced confounding;
+\item using product-of-coefficients formulas outside their assumptions;
+\item interpreting natural effects without acknowledging cross-world assumptions;
+\item skipping sensitivity analysis for mediator-outcome confounding.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Mechanisms Need Stronger Assumptions}
+\begin{itemize}
+\item The total effect asks whether treatment changes the outcome.
+\item Mediation asks how the effect operates through intermediate variables.
+\item Natural direct and indirect effects use nested counterfactuals.
+\item Controlled direct effects answer a different intervention question.
+\item Mediator-outcome confounding is typically not removed by treatment randomization.
+\item Treatment-induced confounders complicate or invalidate standard mediation formulas.
+\item Interventional effects provide alternative mechanism estimands.
+\item Sensitivity analysis is essential when mediation assumptions are fragile.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Robins, J. M., and Greenland, S. (1992). Identifiability and Exchangeability for Direct and Indirect Effects. \textit{Epidemiology}, 3(2), 143--155.
+\item Pearl, J. (2001). Direct and Indirect Effects. \textit{Proceedings of UAI}.
+\item Imai, K., Keele, L., and Tingley, D. (2010). A General Approach to Causal Mediation Analysis. \textit{Psychological Methods}, 15(4), 309--334.
+\item VanderWeele, T. J. (2015). \textit{Explanation in Causal Inference}. Oxford University Press.
+\item Vansteelandt, S., and Daniel, R. M. (2017). Interventional Effects for Mediation Analysis with Multiple Mediators. \textit{Epidemiology}, 28(2), 258--265.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}

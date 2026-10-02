@@ -17,6 +17,7 @@ Methods for estimating treatment effects and designing experiments.
 - `robustness-sensitivity/`
 - `regression-discontinuity/`
 - `heterogeneous-treatment-effects/`
+- `causal-mediation/`
 - `ab-testing/`
 
 ## Structure
