@@ -15,6 +15,7 @@ Methods for estimating treatment effects and designing experiments.
 - `selection-on-observables/`
 - `dynamic-treatment-effects/`
 - `robustness-sensitivity/`
+- `regression-discontinuity/`
 - `ab-testing/`
 
 ## Structure

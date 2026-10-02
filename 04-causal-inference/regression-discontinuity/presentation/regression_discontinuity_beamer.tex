@@ -1,0 +1,344 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Regression Discontinuity]{Regression Discontinuity Designs}
+\subtitle{Local Causal Identification at a Threshold}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item explain why a treatment threshold can create quasi-experimental variation;
+\item distinguish sharp and fuzzy regression discontinuity designs;
+\item define the local causal estimand at the cutoff;
+\item understand bandwidth choice and local polynomial estimation;
+\item diagnose manipulation, sorting, and covariate discontinuities;
+\item interpret robust bias-corrected uncertainty and limits on external validity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{The Basic Design}
+
+\begin{frame}{Treatment Assignment at a Cutoff}
+Let \(X_i\) be a running variable and \(c\) a known cutoff.
+
+In a sharp RDD:
+\[
+D_i=\mathbb{1}\{X_i\ge c\}.
+\]
+
+Units just below and just above \(c\) are compared.
+
+\begin{alertblock}{Identification intuition}
+Near the threshold, units may be very similar except for the treatment status induced by the assignment rule.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{The Local Causal Estimand}
+The target is the treatment effect at the cutoff:
+\[
+\tau_{RD}
+=
+\E[Y_i(1)-Y_i(0)\mid X_i=c].
+\]
+
+This is a local estimand.
+
+\begin{block}{Implication}
+RDD does not automatically identify an average effect for the whole population.
+\end{block}
+\end{frame}
+
+\section{Continuity Assumptions}
+
+\begin{frame}{Continuity of Potential Outcomes}
+A core assumption is that
+\[
+\E[Y_i(0)\mid X_i=x]
+\]
+and
+\[
+\E[Y_i(1)\mid X_i=x]
+\]
+are continuous at \(x=c\).
+
+Then any jump in the observed conditional mean at the cutoff can be attributed to treatment.
+\end{frame}
+
+\begin{frame}{Why Continuity Can Be Plausible}
+Continuity is plausible when:
+\begin{itemize}
+\item the cutoff is administratively imposed;
+\item units cannot precisely manipulate the running variable;
+\item other determinants of the outcome evolve smoothly near the threshold.
+\end{itemize}
+\end{frame}
+
+\section{Sharp RDD}
+
+\begin{frame}{Sharp RDD Estimand}
+With deterministic assignment:
+\[
+\tau_{SRD}
+=
+\lim_{x\downarrow c}\E[Y\mid X=x]
+-
+\lim_{x\uparrow c}\E[Y\mid X=x].
+\]
+
+The discontinuity in outcomes identifies the local treatment effect.
+\end{frame}
+
+\begin{frame}{Local Linear Regression}
+Estimate separate local lines on each side:
+\[
+Y_i
+=
+\alpha
++
+\tau D_i
++
+\beta_1(X_i-c)
++
+\beta_2D_i(X_i-c)
++
+u_i.
+\]
+
+Only observations within a bandwidth around \(c\) are used.
+\end{frame}
+
+\section{Bandwidth Choice}
+
+\begin{frame}{Bias--Variance Tradeoff}
+A narrow bandwidth:
+\begin{itemize}
+\item improves local comparability;
+\item reduces functional-form dependence;
+\item increases variance.
+\end{itemize}
+
+A wide bandwidth:
+\begin{itemize}
+\item uses more observations;
+\item reduces variance;
+\item risks bias from misspecified trends away from the cutoff.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bandwidth Sensitivity}
+Report estimates across reasonable bandwidths.
+
+\begin{alertblock}{Caution}
+A result that appears only for one narrow bandwidth may be fragile.
+\end{alertblock}
+\end{frame}
+
+\section{Polynomial Pitfalls}
+
+\begin{frame}{Why High-Order Global Polynomials Are Risky}
+High-order polynomial fits can:
+\begin{itemize}
+\item behave erratically near boundaries;
+\item overfit distant observations;
+\item create artificial curvature;
+\item produce unstable extrapolation at the cutoff.
+\end{itemize}
+
+\begin{block}{Preferred approach}
+Local linear or low-order local polynomial estimation is usually more stable.
+\end{block}
+\end{frame}
+
+\section{Manipulation and Sorting}
+
+\begin{frame}{Precise Manipulation Breaks the Design}
+Suppose units can influence \(X_i\) to cross the threshold.
+
+Then units just above and below \(c\) may differ systematically.
+
+Examples:
+\begin{itemize}
+\item firms strategically reporting values;
+\item students gaming test-score thresholds;
+\item applicants manipulating eligibility metrics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Density Discontinuity}
+A visible jump in the density of \(X\) at \(c\) can suggest sorting or manipulation.
+
+\begin{alertblock}{Interpretation}
+A density discontinuity is evidence against smooth assignment near the threshold, though context matters.
+\end{alertblock}
+\end{frame}
+
+\section{Covariate Balance}
+
+\begin{frame}{Predetermined Covariates Should Be Smooth}
+Pre-treatment covariates should not jump at the cutoff.
+
+Examples:
+\begin{itemize}
+\item age;
+\item prior outcomes;
+\item baseline income;
+\item historical performance.
+\end{itemize}
+
+A discontinuity in predetermined covariates can signal invalid local comparability.
+\end{frame}
+
+\section{Placebo Cutoffs}
+
+\begin{frame}{False Thresholds}
+Estimate RDD effects at placebo cutoffs where treatment does not change.
+
+Large placebo discontinuities may reveal:
+\begin{itemize}
+\item functional-form misspecification;
+\item unrelated structural breaks;
+\item periodicity or heaping in the running variable.
+\end{itemize}
+\end{frame}
+
+\section{Fuzzy RDD}
+
+\begin{frame}{When Treatment Probability Jumps, Not Treatment Itself}
+In fuzzy RDD,
+\[
+\lim_{x\downarrow c}P(D=1\mid X=x)
+-
+\lim_{x\uparrow c}P(D=1\mid X=x)
+\neq 0,
+\]
+but the jump is less than one.
+
+The cutoff acts as an instrument for actual treatment.
+\end{frame}
+
+\begin{frame}{Fuzzy RDD as Local IV}
+The fuzzy RDD estimand is
+\[
+\tau_{FRD}
+=
+\frac{
+\lim_{x\downarrow c}\E[Y\mid X=x]
+-
+\lim_{x\uparrow c}\E[Y\mid X=x]
+}{
+\lim_{x\downarrow c}\E[D\mid X=x]
+-
+\lim_{x\uparrow c}\E[D\mid X=x]
+}.
+\]
+
+This is a local Wald ratio.
+\end{frame}
+
+\begin{frame}{Interpretation of Fuzzy RDD}
+Under monotonicity and standard assumptions, the fuzzy RDD identifies a local average treatment effect for units whose treatment status is changed by crossing the cutoff.
+\end{frame}
+
+\section{Inference}
+
+\begin{frame}{Bias-Corrected Inference}
+Local polynomial estimators have smoothing bias.
+
+Modern RDD inference often uses:
+\begin{itemize}
+\item bias correction;
+\item robust standard errors;
+\item bandwidth selection tailored to inference.
+\end{itemize}
+
+\begin{block}{Reason}
+Point-estimation bandwidths are not always optimal for confidence intervals.
+\end{block}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Eligibility Threshold}
+Suppose a subsidy is available only to firms with score
+\[
+X_i\ge 70.
+\]
+
+To estimate the local effect near 70:
+\begin{itemize}
+\item plot outcomes against the running variable;
+\item estimate local fits on each side;
+\item test for score manipulation;
+\item inspect baseline covariates;
+\item vary bandwidths;
+\item estimate placebo cutoffs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible RDD Workflow}
+\begin{enumerate}
+\item Define the running variable and cutoff.
+\item Explain the assignment rule.
+\item State the local estimand.
+\item Plot raw data near the cutoff.
+\item Choose a principled bandwidth.
+\item Estimate local linear models.
+\item Test density continuity and covariate balance.
+\item Run placebo cutoffs and bandwidth sensitivity.
+\item Report robust bias-corrected uncertainty.
+\item Limit interpretation to the population near the cutoff.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item fitting high-order global polynomials;
+\item using observations far from the cutoff;
+\item ignoring manipulation;
+\item skipping covariate-balance checks;
+\item treating a local effect as population-wide;
+\item interpreting a discontinuity in treatment probability as a sharp design;
+\item hiding bandwidth sensitivity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Identification at the Threshold}
+\begin{itemize}
+\item RDD exploits discontinuous treatment assignment at a known threshold.
+\item Identification is local to units near the cutoff.
+\item Continuity of untreated potential outcomes is the central design assumption.
+\item Precise manipulation threatens local comparability.
+\item Local linear estimation and principled bandwidth selection are preferred.
+\item Fuzzy RDD is a local instrumental-variable design.
+\item Density tests, covariate balance, placebo cutoffs, and bandwidth sensitivity are core diagnostics.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Hahn, J., Todd, P., and van der Klaauw, W. (2001). Identification and Estimation of Treatment Effects with a Regression-Discontinuity Design. \textit{Econometrica}, 69(1), 201--209.
+\item Imbens, G. W., and Lemieux, T. (2008). Regression Discontinuity Designs: A Guide to Practice. \textit{Journal of Econometrics}, 142(2), 615--635.
+\item Lee, D. S., and Lemieux, T. (2010). Regression Discontinuity Designs in Economics. \textit{Journal of Economic Literature}, 48(2), 281--355.
+\item Calonico, S., Cattaneo, M. D., and Titiunik, R. (2014). Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs. \textit{Econometrica}, 82(6), 2295--2326.
+\item Cattaneo, M. D., Idrobo, N., and Titiunik, R. (2020). \textit{A Practical Introduction to Regression Discontinuity Designs}. Cambridge University Press.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
