@@ -23,6 +23,7 @@ Methods for estimating treatment effects and designing experiments.
 - `causal-discovery/`
 - `interference-spillovers/`
 - `transportability-external-validity/`
+- `missing-data-selection-bias/`
 - `ab-testing/`
 
 ## Structure

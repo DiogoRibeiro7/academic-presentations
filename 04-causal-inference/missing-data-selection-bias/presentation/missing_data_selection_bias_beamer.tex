@@ -1,0 +1,338 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Missing Data and Selection Bias]{Missing Data, Attrition, and Selection Bias in Causal Inference}
+\subtitle{Identification When Outcomes or Units Disappear}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish MCAR, MAR, and MNAR mechanisms;
+\item explain how attrition can destroy randomized comparisons;
+\item recognize complete-case analysis as an identification choice;
+\item use inverse-probability-of-observation weighting and imputation appropriately;
+\item understand Lee bounds and partial-identification logic;
+\item design sensitivity analyses for missing-not-at-random outcomes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Why Missingness Is Causal}
+
+\begin{frame}{Observed Outcomes Are Selected Outcomes}
+Let
+\[
+R_i=
+\begin{cases}
+1,&Y_i\text{ observed},\\
+0,&Y_i\text{ missing}.
+\end{cases}
+\]
+
+We observe \(R_iY_i\), not always \(Y_i\).
+
+\begin{alertblock}{Key point}
+The mechanism determining \(R_i\) can induce selection bias even when treatment assignment itself was randomized.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Attrition Can Break Randomization}
+Suppose treatment is randomized, but
+\[
+P(R=1\mid D=1) \neq P(R=1\mid D=0).
+\]
+
+The observed treated and control samples may no longer be comparable if attrition depends on potential outcomes or post-treatment variables.
+\end{frame}
+
+\section{MCAR, MAR, and MNAR}
+
+\begin{frame}{Missing Completely at Random}
+MCAR means, informally,
+\[
+R \perp (Y,D,X).
+\]
+
+Missingness is unrelated to observed or unobserved variables relevant to the analysis.
+\end{frame}
+
+\begin{frame}{Missing at Random}
+MAR means
+\[
+R \perp Y_{mis} \mid Y_{obs},D,X.
+\]
+
+After conditioning on observed information, missingness does not depend on the missing values themselves.
+\end{frame}
+
+\begin{frame}{Missing Not at Random}
+MNAR means missingness still depends on the unobserved outcome after conditioning on observed information.
+
+Example: participants with especially poor outcomes are more likely to disappear from follow-up.
+\end{frame}
+
+\section{Complete-Case Analysis}
+
+\begin{frame}{What Complete-Case Analysis Assumes}
+Analyzing only \(R=1\) changes the target population.
+
+A complete-case contrast estimates
+\[
+\E[Y\mid D=1,R=1]-\E[Y\mid D=0,R=1].
+\]
+
+This equals the causal effect of interest only under strong selection assumptions.
+\end{frame}
+
+\begin{frame}{Selection as Conditioning on a Collider}
+If both treatment and outcome affect observation,
+\[
+D \rightarrow R \leftarrow Y,
+\]
+conditioning on \(R=1\) can induce association between treatment and outcome.
+
+\begin{alertblock}{Collider bias}
+Observed cases can become a selected subpopulation created by the analysis itself.
+\end{alertblock}
+\end{frame}
+
+\section{Inverse-Probability-of-Observation Weighting}
+
+\begin{frame}{Observation Probabilities}
+Estimate
+\[
+\pi(X,D)=P(R=1\mid X,D).
+\]
+
+Observed units receive weights
+\[
+w_i=\frac{1}{\widehat\pi(X_i,D_i)}.
+\]
+\end{frame}
+
+\begin{frame}{Weighted Estimation}
+Under MAR-type assumptions,
+\[
+\E\left[
+\frac{R_iY_i}{\pi(X_i,D_i)}
+\right]
+\]
+can recover population expectations.
+\end{frame}
+
+\begin{frame}{Weight Instability}
+If \(\pi(X,D)\) is near zero, weights explode.
+
+Consequences:
+\begin{itemize}
+\item high variance;
+\item sensitivity to model misspecification;
+\item effective sample-size collapse.
+\end{itemize}
+\end{frame}
+
+\section{Imputation}
+
+\begin{frame}{Outcome Imputation}
+Under MAR, estimate
+\[
+m_d(X)=\E[Y\mid D=d,X,R=1]
+\]
+and predict missing outcomes.
+
+Validity depends on the MAR assumption, outcome modeling, and overlap.
+\end{frame}
+
+\begin{frame}{Multiple Imputation}
+For causal work:
+\begin{itemize}
+\item include treatment;
+\item include strong outcome predictors;
+\item include variables predicting missingness;
+\item respect time ordering;
+\item avoid post-treatment variables that change the estimand.
+\end{itemize}
+\end{frame}
+
+\section{Doubly Robust Missingness Adjustment}
+
+\begin{frame}{Outcome Model Plus Observation Model}
+One can combine:
+\begin{itemize}
+\item a model for \(P(R=1\mid X,D)\);
+\item a model for \(\E[Y\mid X,D,R=1]\).
+\end{itemize}
+
+Augmented estimators can be consistent if one nuisance model is correctly specified under suitable identification assumptions.
+\end{frame}
+
+\section{Lee Bounds}
+
+\begin{frame}{Monotone Selection}
+In randomized experiments with differential attrition, Lee bounds use a monotonicity assumption such as treatment weakly increasing observation probability.
+
+The more-retained group is trimmed to match the retention rate of the other group.
+\end{frame}
+
+\begin{frame}{Bounding Instead of Point Identification}
+If
+\[
+P(R=1\mid D=1)>P(R=1\mid D=0),
+\]
+trim the treated outcome distribution by the excess retention fraction.
+
+This yields upper and lower bounds for the treatment effect among always-observed units.
+\end{frame}
+
+\begin{frame}{Why Bounds Matter}
+When point identification is not credible, informative bounds may be more honest than a precise-looking adjusted estimate.
+\end{frame}
+
+\section{Principal-Stratification Intuition}
+
+\begin{frame}{Potential Observation Status}
+Define
+\[
+R_i(1),\qquad R_i(0).
+\]
+
+Units can be always observed, observed only if treated, observed only if untreated, or never observed.
+\end{frame}
+
+\begin{frame}{Always-Observed Effect}
+One possible estimand is
+\[
+\E[Y(1)-Y(0)\mid R(1)=R(0)=1].
+\]
+
+Membership in the always-observed stratum is latent, so identification requires additional assumptions or bounds.
+\end{frame}
+
+\section{Selection Bias}
+
+\begin{frame}{Sample Selection Before Treatment}
+Sometimes units enter the analysis only if
+\[
+S=1.
+\]
+
+If selection depends jointly on treatment causes and outcome causes, conditioning on \(S=1\) can induce bias.
+\end{frame}
+
+\begin{frame}{Administrative Data Are Selected Data}
+Examples:
+\begin{itemize}
+\item only customers who remain active;
+\item only patients who return to clinic;
+\item only workers who stay employed;
+\item only firms that survive;
+\item only users with trackable devices.
+\end{itemize}
+\end{frame}
+
+\section{MNAR Sensitivity}
+
+\begin{frame}{Pattern-Mixture Sensitivity}
+A simple sensitivity model can posit
+\[
+\E[Y\mid R=0,D,X]
+=
+\E[Y\mid R=1,D,X]
++
+\delta.
+\]
+
+Vary \(\delta\) over plausible values and recompute treatment effects.
+\end{frame}
+
+\begin{frame}{Selection-Model Sensitivity}
+Alternatively model
+\[
+P(R=1\mid Y,D,X)
+\]
+directly, allowing missingness to depend on the unobserved outcome.
+\end{frame}
+
+\begin{frame}{Tipping-Point Analysis}
+Ask:
+\begin{itemize}
+\item How different would missing outcomes need to be?
+\item How differential would missingness need to be across treatment arms?
+\item At what assumption value does the substantive conclusion change?
+\end{itemize}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Treatment Follow-Up}
+Suppose a treatment reduces an outcome, but treated participants with poor outcomes are more likely to miss follow-up.
+
+Observed treated outcomes become selectively optimistic.
+
+A complete-case analysis can exaggerate treatment benefit.
+\end{frame}
+
+\begin{frame}{A Credible Missing-Data Workflow}
+\begin{enumerate}
+\item Define which variables are missing and when.
+\item Plot missingness by treatment and baseline covariates.
+\item State the target population and estimand.
+\item Draw the selection/missingness causal structure.
+\item Decide whether MCAR/MAR is defensible.
+\item Use weighting, imputation, or augmented methods under MAR.
+\item Consider bounds when point identification is weak.
+\item Run MNAR sensitivity analysis.
+\item Report attrition rates and effective sample sizes.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item dropping missing cases without discussion;
+\item interpreting randomized treatment as protection against attrition bias;
+\item conditioning on post-treatment causes of missingness;
+\item using unstable observation weights;
+\item imputing outcomes without treatment or missingness predictors;
+\item treating MAR as testable from observed data alone.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Missingness Changes the Design}
+\begin{itemize}
+\item Missingness is a selection mechanism, not merely a data-cleaning nuisance.
+\item Randomization does not protect against treatment-dependent attrition.
+\item Complete-case analysis can condition on a collider and alter the estimand.
+\item Weighting and imputation require assumptions about observation.
+\item Augmented estimators can combine observation and outcome models.
+\item Lee bounds offer partial identification under monotone selection.
+\item MNAR mechanisms require sensitivity analysis or stronger assumptions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Rubin, D. B. (1976). Inference and Missing Data. \textit{Biometrika}, 63(3), 581--592.
+\item Little, R. J. A., and Rubin, D. B. (2019). \textit{Statistical Analysis with Missing Data}, 3rd ed. Wiley.
+\item Robins, J. M., Rotnitzky, A., and Zhao, L. P. (1995). Analysis of Semiparametric Regression Models for Repeated Outcomes in the Presence of Missing Data. \textit{JASA}, 90(429), 106--121.
+\item Lee, D. S. (2009). Training, Wages, and Sample Selection: Estimating Sharp Bounds on Treatment Effects. \textit{Review of Economic Studies}, 76(3), 1071--1102.
+\item Molenberghs, G., and Kenward, M. G. (2007). \textit{Missing Data in Clinical Studies}. Wiley.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
