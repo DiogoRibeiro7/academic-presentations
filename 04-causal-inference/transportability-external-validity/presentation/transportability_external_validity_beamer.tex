@@ -1,0 +1,330 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Transportability]{Transportability and External Validity}
+\subtitle{Moving Causal Evidence Across Populations, Sites, and Time}
+\date{\today}
+
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish internal validity from external validity;
+\item define study populations, target populations, and target estimands;
+\item explain effect modification and why it drives transportability;
+\item use standardization and weighting to generalize effects;
+\item diagnose support failures and covariate shift;
+\item reason about site heterogeneity, temporal drift, and deployment differences.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Internal and External Validity}
+
+\begin{frame}{Internal Validity}
+Internal validity asks whether the effect is identified in the study population.
+
+A study can be internally valid when:
+\begin{itemize}
+\item treatment assignment is well understood;
+\item confounding is controlled or randomized;
+\item measurement is reliable;
+\item interference is handled or absent.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{External Validity}
+External validity asks whether the study effect informs another population, site, or time period.
+
+\begin{alertblock}{Key point}
+A precisely estimated internally valid effect can still be irrelevant for a new target population.
+\end{alertblock}
+\end{frame}
+
+\section{Populations and Estimands}
+
+\begin{frame}{Study and Target Populations}
+Let \(S=1\) indicate membership in the study population and \(S=0\) the target population.
+
+The study estimand might be
+\[
+\E[Y(1)-Y(0)\mid S=1].
+\]
+
+The target estimand is
+\[
+\E[Y(1)-Y(0)\mid S=0].
+\]
+\end{frame}
+
+\begin{frame}{The Estimand Must Be Named}
+Transportability depends on what we want to transport:
+\begin{itemize}
+\item ATE in a new population;
+\item ATT for a new treated group;
+\item policy value under a deployment rule;
+\item site-specific effect;
+\item effect at a future time.
+\end{itemize}
+\end{frame}
+
+\section{Effect Modification}
+
+\begin{frame}{Effect Modifiers}
+A covariate \(X\) is an effect modifier if
+\[
+\E[Y(1)-Y(0)\mid X=x]
+\]
+varies with \(x\).
+
+If the distribution of \(X\) differs between study and target populations, the average treatment effect may change.
+\end{frame}
+
+\begin{frame}{Transport Requires Measured Modifiers}
+If all relevant effect modifiers are measured, we can attempt to adjust for population differences.
+
+If important effect modifiers are unmeasured, transport rests on stronger, less testable assumptions.
+\end{frame}
+
+\section{Standardization and Weighting}
+
+\begin{frame}{Standardization}
+Estimate conditional effects in the study population:
+\[
+\tau(x)=\E[Y(1)-Y(0)\mid X=x,S=1].
+\]
+
+Average them over the target population:
+\[
+\E_{X\mid S=0}[\tau(X)].
+\]
+\end{frame}
+
+\begin{frame}{Transport Weights}
+A weighting approach reweights study units to resemble the target population:
+\[
+w(X)=\frac{P(S=0\mid X)}{P(S=1\mid X)}.
+\]
+
+Then study effects are averaged with target-like covariate weights.
+\end{frame}
+
+\begin{frame}{Support Condition}
+Transport requires that target covariate profiles have support in the study population.
+
+If
+\[
+P(S=1\mid X=x)=0
+\]
+for some target-relevant \(x\), the study contains no empirical basis for that subgroup.
+\end{frame}
+
+\section{Covariate Shift and Site Heterogeneity}
+
+\begin{frame}{Covariate Shift}
+Covariate shift means
+\[
+P(X\mid S=1) \neq P(X\mid S=0).
+\]
+
+This matters for transport when treatment effects vary with \(X\).
+\end{frame}
+
+\begin{frame}{Site Heterogeneity}
+Effects may differ across sites because of:
+\begin{itemize}
+\item population composition;
+\item treatment implementation;
+\item baseline risk;
+\item institutions;
+\item measurement systems;
+\item competing interventions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Composition vs Mechanism}
+A study and target may differ because:
+\begin{itemize}
+\item the mix of units differs;
+\item the causal mechanism itself differs.
+\end{itemize}
+
+Standardization handles composition differences better than mechanism changes.
+\end{frame}
+
+\section{Trial-to-Target Generalization}
+
+\begin{frame}{Trial Evidence for a Target Population}
+Randomized trials can identify effects internally, but trial participants may differ from the deployment population.
+
+Common differences:
+\begin{itemize}
+\item eligibility criteria;
+\item adherence;
+\item baseline risk;
+\item access to care;
+\item time period.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Generalizability vs Transportability}
+Generalizability often means the target population contains the study population.
+
+Transportability often means evidence must be moved to a related but distinct population.
+
+The mathematical issues are similar: measured effect modifiers and support dominate.
+\end{frame}
+
+\section{Temporal Transport}
+
+\begin{frame}{Effects Can Drift Over Time}
+A causal effect estimated in 2024 may not equal the effect in 2027.
+
+Reasons include:
+\begin{itemize}
+\item technology changes;
+\item competitor response;
+\item policy adaptation;
+\item population learning;
+\item saturation effects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Stable Mechanisms}
+Temporal transport is more plausible when the mechanism linking treatment to outcome remains stable.
+
+It is less plausible when context changes the treatment itself or the response to it.
+\end{frame}
+
+\section{Implementation and Versions of Treatment}
+
+\begin{frame}{Different Versions of Treatment}
+The same treatment label may hide different implementations.
+
+Examples:
+\begin{itemize}
+\item different marketing copy;
+\item different clinicians;
+\item different software interfaces;
+\item different compliance regimes;
+\item different pricing rules.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation Is Part of the Estimand}
+If the treatment version changes, the transported effect may refer to a different intervention.
+
+\begin{alertblock}{Practical warning}
+Do not transport an effect across settings where the treatment label stayed fixed but the treatment mechanism changed.
+\end{alertblock}
+\end{frame}
+
+\section{Sensitivity and Diagnostics}
+
+\begin{frame}{Transport Diagnostics}
+Useful checks include:
+\begin{itemize}
+\item compare study and target covariate distributions;
+\item inspect overlap and transport weights;
+\item identify target subgroups poorly represented in the study;
+\item estimate site-specific effects when possible;
+\item compare implementation conditions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Weight Instability}
+Large transport weights indicate that a small number of study units represent large parts of the target population.
+
+Consequences:
+\begin{itemize}
+\item high variance;
+\item fragile conclusions;
+\item extrapolation risk;
+\item sensitivity to model specification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Unmeasured Effect Modifiers}
+Sensitivity analysis can ask how strongly an unmeasured modifier would need to differ between study and target populations to change the transported conclusion.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing Experiment}
+Suppose a pricing experiment was run in urban regions.
+
+Can we transport it to rural regions?
+
+Ask:
+\begin{itemize}
+\item Are baseline demand and income different?
+\item Are competitors different?
+\item Is customer substitution different?
+\item Is the price implementation identical?
+\item Are rural profiles represented in the urban experiment?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible Transport Workflow}
+\begin{enumerate}
+\item Define the source population and target population.
+\item Define the target estimand.
+\item List plausible effect modifiers.
+\item Compare modifier distributions.
+\item Check support and transport weights.
+\item Standardize or weight the study effect to the target.
+\item Assess implementation differences.
+\item Run sensitivity analysis for unmeasured modifiers.
+\item Report where the evidence does not transport.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item assuming internal validity implies external validity;
+\item transporting an ATE without specifying the target population;
+\item ignoring effect modifiers;
+\item extrapolating into unsupported target regions;
+\item ignoring treatment-version differences;
+\item treating old estimates as stable despite temporal drift;
+\item hiding unstable transport weights.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Effects Travel by Assumption}
+\begin{itemize}
+\item Internal validity and external validity are different problems.
+\item Transport requires a named target estimand.
+\item Effect modification is the central reason average effects differ across settings.
+\item Standardization and weighting adjust for measured modifier distributions.
+\item Support failures create extrapolation, not evidence.
+\item Treatment implementation and time can change the causal mechanism.
+\item External validity should be argued, diagnosed, and bounded, not assumed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Pearl, J., and Bareinboim, E. (2011). Transportability of Causal and Statistical Relations. \textit{AAAI}.
+\item Bareinboim, E., and Pearl, J. (2016). Causal Inference and the Data-Fusion Problem. \textit{PNAS}, 113(27), 7345--7352.
+\item Stuart, E. A. et al. (2011). Use of Propensity Scores to Assess the Generalizability of Results from Randomized Trials. \textit{JRSS A}, 174(2), 369--386.
+\item Dahabreh, I. J. et al. (2020). Generalizing Causal Inferences from Individuals in Randomized Trials to All Trial-Eligible Individuals. \textit{Biometrics}, 76(2), 685--694.
+\item Tipton, E. (2013). Improving Generalizations from Experiments Using Propensity Score Subclassification. \textit{JRSS A}, 176(2), 495--519.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
