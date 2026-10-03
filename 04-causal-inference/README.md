@@ -24,6 +24,7 @@ Methods for estimating treatment effects and designing experiments.
 - `interference-spillovers/`
 - `transportability-external-validity/`
 - `missing-data-selection-bias/`
+- `measurement-error-misclassification/`
 - `ab-testing/`
 
 ## Structure
