@@ -25,6 +25,7 @@ Methods for estimating treatment effects and designing experiments.
 - `transportability-external-validity/`
 - `missing-data-selection-bias/`
 - `measurement-error-misclassification/`
+- `partial-identification-bounds/`
 - `ab-testing/`
 
 ## Structure
