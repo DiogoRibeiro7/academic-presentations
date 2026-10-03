@@ -1,159 +1,134 @@
 # Academic Presentations Roadmap
 
-This roadmap tracks the repository cleanup and standardization work from the current 2026 baseline. It is intentionally implementation-focused: completed work is recorded briefly, active work is explicit, and future work is ordered by repository risk rather than by cosmetic priority.
+This roadmap is the active planning document for the repository. It exists to keep development finite, ordered, and reviewable.
 
-## Current Objective
+The repository is source-first: LaTeX sources are canonical, PDFs are build artifacts, presentations share the FMAD - UTP Beamer system, and active decks must satisfy the presentation contract enforced in CI.
 
-Bring the repository to one coherent presentation system without rewriting teaching content.
+## Current Status
 
-The canonical Beamer model is:
+The repository-wide presentation infrastructure is mature:
 
-- Madrid theme;
-- default Beamer color theme;
-- red presentation palette;
-- canonical `code` listing style for Python;
-- current author identity and affiliation;
-- preservation of existing `\documentclass` options such as `aspectratio=169` and `11pt`;
-- topic-specific packages, mathematical notation, diagrams, and language-specific listing definitions retained where needed.
+- [x] shared canonical Beamer theme;
+- [x] canonical author metadata;
+- [x] `presentation/main.tex` entry points;
+- [x] CI compilation and presentation-contract validation;
+- [x] source-only policy for generated PDFs;
+- [x] current-facing documentation separated from historical migration material;
+- [x] causal-inference core and advanced specialist lecture series substantially expanded.
 
-The repository should favor direct source edits, ordinary compile CI, and small reviewable pull requests. It should not depend on source normalizers, generated preambles, or self-modifying workflows.
+The current priority is to **finish the causal-inference domain deliberately rather than continue adding decks indefinitely**.
 
-## Completed
+## Phase 1 — Presentation Infrastructure
 
-### Canonical author identity
+**Status: complete.**
 
-- [x] Add `shared/author.json` as the canonical author metadata record.
-- [x] Set the active affiliation to **FMAD - UTP**.
-- [x] Keep ORCID `0009-0001-2022-7072` and the active `dfr@esmad.ipp.pt` contact address.
-- [x] Remove MySense.ai as a current affiliation from the shared theme and public README identity.
-- [x] Add the canonical LinkedIn profile.
-- [x] Validate active author metadata in CI.
+- [x] Standardize the shared Beamer shell.
+- [x] Standardize active author identity and affiliation.
+- [x] Add canonical presentation entry points.
+- [x] Validate learning goals, synthesis, references, and contact slides.
+- [x] Compile active decks in GitHub Actions.
+- [x] Remove generated PDFs from source control.
+- [x] Keep historical planning documents for provenance while marking them as historical.
 
-### Bibliography integrity
+## Phase 2 — Causal Inference Closeout
 
-- [x] Repair invalid or mismatched DOI metadata identified during the repository audit.
-- [x] Keep bibliography validation and link checking in CI.
+**Status: active.**
 
-### Canonical Beamer model
+### Completed causal-inference expansion
 
-- [x] Convert the existing shared theme into a compatibility/helper layer around the Madrid/default red model.
-- [x] Remove the competing custom title-page and footline visual system from the shared theme.
-- [x] Standardize the canonical Python `code` listing style.
-- [x] Preserve compatibility helpers and mathematical commands used by existing decks.
-- [x] Update the public Beamer style guide to document the actual canonical model.
+- [x] Causal Econometrics
+- [x] Panel Data and Fixed Effects
+- [x] Difference-in-Differences and Event Studies
+- [x] Instrumental Variables and 2SLS
+- [x] Counterfactual Time-Series Methods
+- [x] Selection on Observables
+- [x] Dynamic Treatment Effects
+- [x] Robustness and Sensitivity Analysis
+- [x] Regression Discontinuity Designs
+- [x] Heterogeneous Treatment Effects and Causal Forests
+- [x] Causal Mediation Analysis
+- [x] Policy Learning and Treatment Targeting
+- [x] Double Machine Learning and Orthogonal Scores
+- [x] Causal Discovery
+- [x] Interference, Spillovers, and Network Causal Inference
+- [x] Transportability and External Validity
+- [x] Missing Data, Attrition, and Selection Bias
+- [x] Measurement Error and Misclassification
 
-### Standalone presentation migration
+### Remaining work
 
-The following standalone decks have been migrated with reviewable shell-level changes while preserving their teaching content:
+- [ ] **Partial Identification and Bounds** — current PR #125.
+- [ ] **Principal Stratification and Post-Treatment Variables**
+- [ ] **Time-Varying Treatments and Marginal Structural Models**
+- [ ] **Causal-inference consolidation**
+  - organize the domain into a coherent learning path;
+  - update the domain README and supporting documentation;
+  - review references and terminology across the causal decks;
+  - verify every causal deck is registered in validation and CI;
+  - remove duplicate or obsolete guidance;
+  - declare the causal-inference domain complete.
 
-- [x] Feature Engineering
-- [x] Principal Component Analysis
-- [x] Statistical Modeling
-- [x] Extended Statistical Modeling
-- [x] MCMC
-- [x] Bayesian Machine Learning
-- [x] ARMA Processes
-- [x] Stationarity and Ergodicity
-- [x] Object-Oriented Programming
-- [x] Streaming Pipeline Processing
+### Hard stop
 
-Existing decks that consume the shared theme now inherit the canonical visual model through that theme.
+After the consolidation step, **no new causal-inference lecture topics are added as part of this expansion**.
 
-### Canonical presentation entry points
+The domain then enters maintenance mode:
 
-- [x] Add `presentation/main.tex` as the primary entry point for every presentation topic.
-- [x] Keep named standalone entry points only for genuine additional presentation tracks.
-- [x] Make every standalone Beamer source inherit the shared canonical theme.
-- [x] Enforce the entry-point contract in CI.
-- [x] Remove the obsolete `develop` branch trigger from the LaTeX workflow.
+- corrections;
+- reference updates;
+- accessibility fixes;
+- teaching improvements;
+- CI/build fixes.
 
-### LaTeX regression coverage
+New causal-inference decks should require a new roadmap decision rather than being appended opportunistically.
 
-- [x] Compile presentation sources from their own source directories.
-- [x] Expand the static CI matrix from 13 to all **21 standalone Beamer entry points**.
-- [x] Compile both exercise sets alongside presentation sources.
-- [x] Trigger the LaTeX workflow when its own workflow file changes.
-- [x] Verify the complete 21-presentation matrix successfully on an exact pull-request head.
+## Phase 3 — Repository-Wide Quality Pass
 
-## Current State
+**Status: later.**
 
-The repository-wide presentation migration is complete:
+Once causal inference is closed:
 
-- [x] All 20 active compiled course decks expose the canonical presentation structure.
-- [x] All 4 genuine additional standalone tracks inherit the shared shell.
-- [x] The complete presentation matrix compiles on CI.
-- [x] Current affiliation is **FMAD - UTP** across active presentation sources.
-- [x] MySense.ai is absent from current presentation metadata.
-- [x] Every active compiled deck has learning goals/objectives, a synthesis, references, and the shared contact slide.
-- [x] Standalone acknowledgement and “Thank you” filler slides have been removed from active compiled decks.
-- [x] The academic content contract is enforced by `scripts/validate_presentation_contract.py`.
+- [ ] audit accessibility, contrast, font sizes, tables, and figure readability;
+- [ ] review bibliography coverage and citation consistency across active decks;
+- [ ] review dense decks that may need splitting for teaching duration;
+- [ ] improve learning-path documentation across domains;
+- [ ] review public slide previews and navigation;
+- [ ] consolidate genuinely duplicated helpers only where duplication creates maintenance cost.
 
-## Next
+## Phase 4 — Next Domain Expansion
 
-### 1. Repository structure and generated artifacts
+**Status: not started.**
 
-- [x] Preserve genuine alternate sources such as the PCA proof-oriented handout and the Data Science Applications composite Beamer source.
-- [x] Remove obsolete PDF-only `main_presentation.tex` aggregation wrappers that were unreferenced by CI/build workflows.
-- [x] Adopt a source-only Git policy for generated PDFs: `.tex` sources remain in Git, compiled PDFs live in CI/release artifacts.
-- [x] Remove historically tracked generated PDFs from presentation, exercise, and assessment directories.
-- [x] Ignore future generated PDFs with `*.pdf` in `.gitignore`.
+Before adding another large batch of lectures:
 
-### 2. Current documentation cleanup
+1. choose the target domain;
+2. create a finite issue/roadmap batch;
+3. define its stop condition;
+4. implement the batch in reviewable PRs;
+5. consolidate the domain before moving again.
 
-- [x] Correct current-facing README/build/assessment documentation that contradicted the source-only PDF and canonical-entry-point policies.
-- [x] Clearly label 2025 enhancement guides as historical planning documents rather than current repository instructions.
-- [x] Keep genuine migration/changelog history intact and separate from current-state documentation.
-- [x] Review remaining historical/generated summary documents; they are correctly isolated under `docs/history/` and labeled as provenance.
+The next domain should be chosen deliberately rather than by continuing whichever topic happens to be convenient.
 
-### 3. Public repository metadata
+## Working Rules
 
-- [x] Audit the GitHub repository description and topics against the current FMAD - UTP identity.
-- [x] Refresh the README landing section so it reflects the actual deck count, assessment state, and source-only PDF policy.
-- [x] Update the GitHub repository description to the current FMAD - UTP wording.
-- [x] Keep README, style guide, roadmap, template, and public repository metadata aligned.
-
-### 4. Accessibility and presentation ergonomics
-
-- [ ] Audit dense slides, minimum font sizes, contrast, table readability, and figure legibility.
-- [ ] Review alt-text or textual equivalents where figures carry essential information.
-- [ ] Identify decks that should be split for teaching duration rather than compressed further.
-
-### 5. Citation and source hygiene
-
-- [ ] Audit bibliography coverage and citation consistency across all active decks.
-- [ ] Prefer stable primary/academic references over tool documentation when a scientific claim is being supported.
-- [ ] Check that current software/version claims are either evergreen or maintained deliberately.
-
-## Later Improvements
-
-These are useful only after source identity, visual consistency, and compile coverage are stable.
-
-- [ ] Audit accessibility of figures, contrast, font sizes, and dense slides.
-- [ ] Add presentation-specific content quality checks where they can be objective and low-maintenance.
-- [ ] Review bibliography coverage and citation consistency across all decks.
-- [ ] Consolidate genuinely duplicated helpers only when duplication creates maintenance cost.
-- [ ] Consider automated discovery of presentation entry points only if the static 21-entry matrix becomes burdensome to maintain.
-
-## Explicit Non-Goals
-
-The cleanup should **not**:
-
-- rewrite lectures merely to make source files look alike;
-- remove `aspectratio`, font-size, or other valid `\documentclass` options;
-- force Python listing syntax onto R, SQL, or pseudocode examples;
-- replace the existing theme with another generated abstraction;
-- introduce a source normalizer or a workflow that rewrites repository files;
-- rewrite genuine historical affiliations in changelog/history material;
-- rename compatibility files or commands without a concrete maintenance benefit.
+- Use small, reviewable pull requests.
+- Do not merge automatically.
+- Keep `main` as the canonical integration branch.
+- Prefer mathematically grounded and transparent teaching material.
+- Do not add a method merely because it is fashionable.
+- Preserve source-first reproducibility and CI compilation.
+- Keep historical documents as history, not current instructions.
+- Avoid endless topic expansion without a defined completion criterion.
 
 ## Definition of Done
 
-The presentation-standardization phase is complete when:
+The current roadmap cycle is complete when:
 
-1. all supported standalone Beamer entry points compile in CI;
-2. every active presentation inherits the canonical Madrid/red shell;
-3. current author identity is consistent across active presentation sources;
-4. every active compiled deck satisfies the academic content contract;
-5. the shared template creates a compliant presentation by default.
+1. PR #125 is resolved;
+2. Principal Stratification is added;
+3. Time-Varying Treatments / Marginal Structural Models is added;
+4. the causal-inference domain is consolidated and documented;
+5. the causal-inference expansion is explicitly frozen;
+6. repository-wide accessibility and citation work is moved to the next roadmap cycle.
 
-The broader repository-cleanup phase remains open until generated-artifact policy, obsolete-source review, current documentation, public repository metadata, accessibility, and citation hygiene are also complete.
+At that point, the causal-inference domain is considered **complete for this expansion**.
