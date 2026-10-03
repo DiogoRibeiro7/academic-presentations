@@ -15,6 +15,7 @@ A source-first collection of academic presentations covering statistics, machine
 **[📊 Browse slide previews](https://diogoribeiro7.github.io/academic-presentations/)** ·
 [Course catalog](#-course-catalog) ·
 [Getting started](#-getting-started) ·
+[Roadmap](./ROADMAP.md) ·
 [Contributing](./CONTRIBUTING.md) ·
 [Changelog](./CHANGELOG.md)
 
