@@ -22,6 +22,7 @@ Methods for estimating treatment effects and designing experiments.
 - `double-machine-learning/`
 - `causal-discovery/`
 - `interference-spillovers/`
+- `transportability-external-validity/`
 - `ab-testing/`
 
 ## Structure
