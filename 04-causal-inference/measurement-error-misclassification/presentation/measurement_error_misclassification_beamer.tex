@@ -1,0 +1,380 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Measurement Error]{Measurement Error and Misclassification in Causal Inference}
+\subtitle{When Variables Are Observed Imperfectly}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish measurement error from missingness;
+\item explain regression dilution under classical covariate error;
+\item understand treatment and outcome misclassification;
+\item distinguish differential from nondifferential error;
+\item recognize residual confounding from noisy covariates;
+\item use validation data, calibration, SIMEX, and sensitivity analysis.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Measurement Error as a Causal Problem}
+
+\begin{frame}{True and Observed Variables}
+Suppose the true variable is \(X\), but we observe
+\[
+X^\ast = X + U.
+\]
+
+The analysis conditions on or regresses on \(X^\ast\), not \(X\).
+\end{frame}
+
+\begin{frame}{Measurement Error Is Not Missing Data}
+Missingness removes observations or values.
+
+Measurement error retains a value, but the recorded value differs from the latent target.
+
+\begin{alertblock}{Implication}
+Bias can remain invisible because the dataset looks complete.
+\end{alertblock}
+\end{frame}
+
+\section{Classical Measurement Error}
+
+\begin{frame}{Classical Error Model}
+A common model is
+\[
+X^\ast = X + U,
+\]
+with
+\[
+\E[U]=0,
+\qquad
+U \perp X.
+\]
+
+This is restrictive but useful for intuition.
+\end{frame}
+
+\begin{frame}{Regression Dilution}
+In simple linear regression, classical error in an exposure tends to attenuate the slope toward zero.
+
+If
+\[
+Y=\beta X+\varepsilon,
+\]
+but we regress on \(X^\ast\), then \(\widehat\beta\) is generally attenuated.
+\end{frame}
+
+\begin{frame}{Attenuation Is Not Universal}
+The “bias toward zero” rule can fail when:
+\begin{itemize}
+\item multiple covariates are mismeasured;
+\item the error is differential;
+\item the outcome model is nonlinear;
+\item the mismeasured variable is a confounder rather than the exposure.
+\end{itemize}
+\end{frame}
+
+\section{Noisy Confounders}
+
+\begin{frame}{Residual Confounding}
+Suppose \(X\) is a confounder:
+\[
+X \rightarrow D,
+\qquad
+X \rightarrow Y.
+\]
+
+If only \(X^\ast\) is observed, conditioning on \(X^\ast\) may not block the confounding path fully.
+\end{frame}
+
+\begin{frame}{Measurement Quality Matters for Adjustment}
+Even a correctly chosen adjustment set can fail if confounders are poorly measured.
+
+\begin{alertblock}{Key lesson}
+“Adjusted for age, income, severity...” is not enough; measurement reliability of those variables matters.
+\end{alertblock}
+\end{frame}
+
+\section{Treatment Misclassification}
+
+\begin{frame}{Observed vs True Treatment}
+Let
+\[
+D^\ast
+\]
+be the recorded treatment and
+\[
+D
+\]
+the true treatment.
+
+Misclassification occurs when
+\[
+P(D^\ast\neq D)>0.
+\]
+\end{frame}
+
+\begin{frame}{Sensitivity and Specificity}
+For binary treatment:
+\[
+Se=P(D^\ast=1\mid D=1),
+\]
+\[
+Sp=P(D^\ast=0\mid D=0).
+\]
+
+These quantities characterize treatment classification quality.
+\end{frame}
+
+\begin{frame}{Nondifferential Treatment Misclassification}
+If treatment misclassification is independent of outcome given true treatment and covariates, bias may often attenuate effects, but not always.
+
+The direction depends on prevalence, sensitivity, specificity, and the estimand.
+\end{frame}
+
+\begin{frame}{Differential Treatment Misclassification}
+If recording quality depends on outcome or outcome-related variables, bias can move in either direction.
+
+Example:
+\begin{itemize}
+\item treatment adherence is self-reported more accurately by participants with better outcomes.
+\end{itemize}
+\end{frame}
+
+\section{Outcome Misclassification}
+
+\begin{frame}{Binary Outcome Misclassification}
+Let \(Y^\ast\) be the measured outcome.
+
+Sensitivity:
+\[
+P(Y^\ast=1\mid Y=1).
+\]
+
+Specificity:
+\[
+P(Y^\ast=0\mid Y=0).
+\]
+\end{frame}
+
+\begin{frame}{Differential Outcome Measurement}
+Outcome measurement may depend on treatment status.
+
+Examples:
+\begin{itemize}
+\item treated patients receive more intensive monitoring;
+\item treated firms are audited more often;
+\item intervention participants report symptoms differently.
+\end{itemize}
+
+This can generate apparent treatment effects from detection alone.
+\end{frame}
+
+\section{Timing Error}
+
+\begin{frame}{Treatment Timing Misclassification}
+Suppose treatment actually begins at \(T_i\), but recorded time is
+\[
+T_i^\ast=T_i+\Delta_i.
+\]
+
+This can distort:
+\begin{itemize}
+\item event studies;
+\item dynamic treatment effects;
+\item interrupted time series;
+\item anticipation analyses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Event-Time Smearing}
+Timing error spreads a sharp causal response across adjacent event-time bins.
+
+Observed event-study coefficients may appear delayed, attenuated, or falsely anticipatory.
+\end{frame}
+
+\section{Validation Data}
+
+\begin{frame}{Validation Subsamples}
+A validation sample contains both:
+\begin{itemize}
+\item the noisy measure;
+\item a higher-quality reference measure.
+\end{itemize}
+
+It can estimate:
+\begin{itemize}
+\item reliability;
+\item sensitivity and specificity;
+\item measurement-error variance;
+\item calibration functions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{External vs Internal Validation}
+Internal validation:
+\begin{itemize}
+\item occurs within the study sample.
+\end{itemize}
+
+External validation:
+\begin{itemize}
+\item uses a separate sample.
+\end{itemize}
+
+Transporting error parameters between populations requires its own assumptions.
+\end{frame}
+
+\section{Regression Calibration}
+
+\begin{frame}{Regression Calibration}
+Replace a noisy covariate with
+\[
+\E[X\mid X^\ast,Z],
+\]
+estimated from validation data or a measurement model.
+
+This can reduce bias in some regression settings.
+\end{frame}
+
+\begin{frame}{Limits of Calibration}
+Regression calibration may be inadequate for:
+\begin{itemize}
+\item strongly nonlinear outcome models;
+\item binary misclassification;
+\item differential measurement error;
+\item complex causal structures.
+\end{itemize}
+\end{frame}
+
+\section{SIMEX}
+
+\begin{frame}{Simulation Extrapolation}
+SIMEX:
+\begin{enumerate}
+\item adds extra simulated measurement error;
+\item estimates the parameter at increasing error levels;
+\item models the bias trajectory;
+\item extrapolates back to the zero-error case.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{SIMEX Assumptions}
+SIMEX requires:
+\begin{itemize}
+\item a model for measurement-error variance;
+\item a stable extrapolation function;
+\item correct understanding of the error mechanism.
+\end{itemize}
+\end{frame}
+
+\section{Quantitative Bias Analysis}
+
+\begin{frame}{Bias Parameters}
+For binary misclassification, specify plausible ranges for:
+\begin{itemize}
+\item sensitivity;
+\item specificity;
+\item differential error by treatment or outcome;
+\item prevalence of the true exposure/outcome.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Corrected Estimates}
+Recompute the causal effect over plausible measurement-error scenarios.
+
+\begin{block}{Goal}
+Ask whether realistic error could explain, attenuate, or reverse the observed effect.
+\end{block}
+\end{frame}
+
+\section{Measurement Error in Instruments and Mediators}
+
+\begin{frame}{Instrument Measurement Error}
+Noisy instruments can weaken relevance and increase finite-sample instability.
+
+If measurement error changes the instrument-outcome relation directly, exclusion concerns may also arise.
+\end{frame}
+
+\begin{frame}{Mediator Measurement Error}
+Mismeasured mediators can bias direct and indirect effects.
+
+Because mediation is already assumption-heavy, poor mediator measurement compounds identification uncertainty.
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Regional Pricing}
+Suppose the treatment is a regional pricing intervention, but implementation dates are recorded with error.
+
+Possible consequences:
+\begin{itemize}
+\item event-study effects shift across time;
+\item pre-trend diagnostics become contaminated;
+\item treatment intensity is misclassified;
+\item spillovers may be mistaken for measurement error.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Credible Measurement-Error Workflow}
+\begin{enumerate}
+\item Identify which variables may be measured with error.
+\item Define the latent target and observed proxy.
+\item Determine whether error is classical, differential, or misclassification.
+\item Use validation data when available.
+\item Quantify reliability, sensitivity, and specificity.
+\item Apply calibration or measurement models where justified.
+\item Run quantitative bias or SIMEX-style sensitivity analyses.
+\item Report corrected and uncorrected estimates.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item assuming all measurement error attenuates toward zero;
+\item ignoring noisy confounders;
+\item treating self-reported treatment as exact;
+\item overlooking differential outcome detection;
+\item applying calibration without a valid measurement model;
+\item using validation parameters from a non-comparable population.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Measurement Is Part of Identification}
+\begin{itemize}
+\item Measurement error can affect treatment, outcomes, confounders, mediators, and timing.
+\item Classical attenuation is only one special case.
+\item Noisy confounders leave residual confounding.
+\item Differential misclassification can bias effects in either direction.
+\item Validation data can identify key error parameters.
+\item Calibration, SIMEX, and bias analysis require explicit error assumptions.
+\item Measurement quality belongs in the causal argument, not only the data-cleaning appendix.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Carroll, R. J. et al. (2006). \textit{Measurement Error in Nonlinear Models}, 2nd ed. Chapman \& Hall/CRC.
+\item Stefanski, L. A., and Cook, J. R. (1995). Simulation-Extrapolation: The Measurement Error Jackknife. \textit{JASA}, 90(432), 1247--1256.
+\item Gustafson, P. (2004). \textit{Measurement Error and Misclassification in Statistics and Epidemiology}. Chapman \& Hall/CRC.
+\item Greenland, S., and Lash, T. L. (2008). Bias Analysis. In \textit{Modern Epidemiology}, 3rd ed.
+\item Keogh, R. H., and White, I. R. (2014). A Toolkit for Measurement Error Correction. \textit{Stata Journal}, 14(2), 301--325.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
