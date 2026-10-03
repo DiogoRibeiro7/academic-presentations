@@ -36,6 +36,7 @@ presentations=(
   "04-causal-inference/transportability-external-validity/presentation/main"
   "04-causal-inference/missing-data-selection-bias/presentation/main"
   "04-causal-inference/measurement-error-misclassification/presentation/main"
+  "04-causal-inference/partial-identification-bounds/presentation/main"
   "05-time-series/time-series-forecasting/presentation/main"
   "06-advanced-topics/ai-agents/presentation/main"
   "06-advanced-topics/computer-science/presentation/main"
