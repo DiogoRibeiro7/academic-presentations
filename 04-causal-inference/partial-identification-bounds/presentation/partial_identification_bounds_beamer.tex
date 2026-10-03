@@ -1,0 +1,302 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{../../../shared/theme/esmad_beamer_theme}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\title[Partial Identification]{Partial Identification and Bounds}
+\subtitle{What Can Be Learned Without Point Identification?}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Learning Goals}
+\begin{itemize}
+\item distinguish point identification from partial identification;
+\item define identification regions and sharp bounds;
+\item derive simple worst-case bounds;
+\item understand how monotonicity and instruments can tighten bounds;
+\item connect attrition and missing-data problems to partial identification;
+\item communicate bounded causal conclusions without overstating precision.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Identification}
+
+\begin{frame}{Point Identification}
+A parameter \(\theta\) is point identified if the observed-data distribution and assumptions imply a unique value:
+\[
+\Theta_I(P)=\{\theta_0\}.
+\]
+\end{frame}
+
+\begin{frame}{Partial Identification}
+A parameter is partially identified when data and assumptions imply a set:
+\[
+\Theta_I(P)=[\underline{\theta},\overline{\theta}].
+\]
+
+\begin{alertblock}{Interpretation}
+Every value in the identification region is compatible with the observed data and maintained assumptions.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Why Bounds Matter}
+Point estimates often require strong assumptions.
+
+Bounds let us ask:
+\begin{itemize}
+\item what is learned from the data alone?
+\item which assumptions shrink the region?
+\item how much identifying power does each assumption contribute?
+\end{itemize}
+\end{frame}
+
+\section{Worst-Case Bounds}
+
+\begin{frame}{Binary Outcomes}
+Suppose \(Y\in[0,1]\) and some counterfactual outcomes are never observed.
+
+Without further assumptions, missing potential outcomes can be assigned their extreme feasible values.
+
+This yields worst-case bounds.
+\end{frame}
+
+\begin{frame}{Manski-Style Logic}
+For a bounded outcome \(Y\in[y_L,y_U]\), unobserved counterfactual means are constrained only by:
+\[
+y_L \leq \mathbb E[Y(d)\mid \text{unobserved}] \leq y_U.
+\]
+
+These constraints propagate into bounds for treatment effects.
+\end{frame}
+
+\begin{frame}{Data Plus Logical Restrictions}
+Even weak information can matter:
+\begin{itemize}
+\item outcome support;
+\item treatment prevalence;
+\item observed group means;
+\item monotone response restrictions.
+\end{itemize}
+
+Partial identification formalizes how these pieces combine.
+\end{frame}
+
+\section{Sharpness}
+
+\begin{frame}{Sharp Bounds}
+Bounds are sharp when every value inside the interval is attainable under some data-generating process satisfying the assumptions.
+
+\begin{block}{Meaning}
+The interval cannot be tightened without adding information or assumptions.
+\end{block}
+\end{frame}
+
+\begin{frame}{Non-Sharp Bounds}
+A valid but non-sharp interval may contain values that are not actually compatible with the full model.
+
+Sharpness matters because unnecessarily wide bounds can understate what the assumptions imply.
+\end{frame}
+
+\section{Monotonicity}
+
+\begin{frame}{Monotone Treatment Response}
+Suppose treatment cannot harm:
+\[
+Y_i(1)\geq Y_i(0)
+\]
+for every unit.
+
+This eliminates counterfactual configurations inconsistent with monotonicity and can tighten bounds.
+\end{frame}
+
+\begin{frame}{Monotone Treatment Selection}
+Suppose units selecting treatment have weakly higher untreated outcomes than untreated units.
+
+Such restrictions can tighten observational-study bounds, but they are substantive assumptions.
+\end{frame}
+
+\section{Instrumental Variables and Bounds}
+
+\begin{frame}{IV Without Full Point Identification}
+An instrument may satisfy:
+\begin{itemize}
+\item relevance;
+\item independence;
+\item exclusion;
+\end{itemize}
+yet fail to identify a single average treatment effect.
+
+The data can still imply informative bounds.
+\end{frame}
+
+\begin{frame}{Binary Instrument, Treatment, Outcome}
+With binary \(Z,D,Y\), observed response probabilities constrain the joint distribution of potential outcomes.
+
+Additional monotonicity assumptions can tighten the Balke--Pearl type bounds.
+\end{frame}
+
+\begin{frame}{Monotonicity in IV Designs}
+The no-defiers condition:
+\[
+D_i(1)\geq D_i(0)
+\]
+reduces the set of latent compliance types.
+
+This is one reason LATE can be point identified even when broader population effects are not.
+\end{frame}
+
+\section{Missing Data and Attrition}
+
+\begin{frame}{Bounds with Missing Outcomes}
+Suppose outcome \(Y\) is observed only when \(R=1\).
+
+If \(Y\in[y_L,y_U]\), then missing outcomes can initially be bounded by the support.
+
+Observed and missing fractions determine the overall mean bounds.
+\end{frame}
+
+\begin{frame}{Lee Bounds}
+Under monotone selection, if treatment weakly increases observation probability, trim the treatment arm with higher retention until rates match.
+
+This yields bounds for effects among always-observed units.
+\end{frame}
+
+\begin{frame}{Why Lee Bounds Are Useful}
+Lee bounds trade point identification for a more defensible monotonicity assumption.
+
+They are often preferable to assuming missing-at-random when that assumption is not credible.
+\end{frame}
+
+\section{Sensitivity as Partial Identification}
+
+\begin{frame}{Sensitivity Parameters Define Regions}
+Suppose an unmeasured-confounding parameter \(\Gamma\) is known only to lie in:
+\[
+1\leq \Gamma \leq \Gamma_{\max}.
+\]
+
+Each value implies a compatible causal effect.
+
+The union forms a sensitivity region.
+\end{frame}
+
+\begin{frame}{From One Estimate to an Identified Set}
+Instead of reporting:
+\[
+\widehat{\tau}=2.1,
+\]
+we may conclude:
+\[
+\tau\in[0.4,3.7]
+\]
+under a stated assumption class.
+\end{frame}
+
+\section{Set-Valued Inference}
+
+\begin{frame}{Sampling Uncertainty Around Bounds}
+Estimated bounds are themselves uncertain.
+
+We therefore need confidence regions that account for estimation error in:
+\[
+\underline{\theta}
+\quad\text{and}\quad
+\overline{\theta}.
+\]
+\end{frame}
+
+\begin{frame}{Do Not Confuse Two Kinds of Uncertainty}
+\begin{itemize}
+\item identification uncertainty: the true parameter lies in a set even with infinite data;
+\item sampling uncertainty: estimated bounds vary across samples.
+\end{itemize}
+
+\begin{alertblock}{Important}
+More data can reduce sampling uncertainty without eliminating partial identification.
+\end{alertblock}
+\end{frame}
+
+\section{Applied Reasoning}
+
+\begin{frame}{Example: Program Evaluation with Attrition}
+Suppose treatment increases survey response.
+
+A complete-case estimate may be biased.
+
+Possible approaches:
+\begin{itemize}
+\item MAR adjustment;
+\item MNAR sensitivity;
+\item Lee bounds under monotone selection.
+\end{itemize}
+
+The correct choice depends on which assumptions are defensible.
+\end{frame}
+
+\begin{frame}{Example: Imperfect Instrument}
+Suppose an encouragement instrument shifts treatment but does not justify homogeneous treatment effects.
+
+The instrument may identify a local effect or only bounds for broader effects.
+
+The estimand must follow the identifying assumptions.
+\end{frame}
+
+\begin{frame}{A Credible Partial-Identification Workflow}
+\begin{enumerate}
+\item Define the causal estimand.
+\item Identify why point identification fails.
+\item Derive bounds under minimal assumptions.
+\item Add one substantive assumption at a time.
+\item Quantify how each assumption tightens the region.
+\item Check whether bounds are sharp.
+\item Report sampling uncertainty around the bounds.
+\item Explain what decisions remain possible despite ambiguity.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Common Failure Modes}
+\begin{itemize}
+\item forcing a point estimate when assumptions only justify bounds;
+\item presenting non-sharp bounds as fundamental limits;
+\item hiding the assumptions that tighten the interval;
+\item interpreting a wide interval as “no information”;
+\item conflating sampling uncertainty with identification uncertainty;
+\item preferring precision over credibility.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Synthesis: Sometimes the Answer Is a Set}
+\begin{itemize}
+\item Point identification is stronger than many real problems justify.
+\item Partial identification reports all values compatible with data and assumptions.
+\item Worst-case bounds provide a defensible baseline.
+\item Monotonicity, instruments, and design restrictions can tighten regions.
+\item Missingness and attrition naturally lead to bounded conclusions.
+\item Sharp bounds reveal the true identifying content of assumptions.
+\item More data do not remove uncertainty created by weak identification.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Selected References}
+\small
+\begin{itemize}
+\item Manski, C. F. (1990). Nonparametric Bounds on Treatment Effects. \textit{American Economic Review}, 80(2), 319--323.
+\item Manski, C. F. (2003). \textit{Partial Identification of Probability Distributions}. Springer.
+\item Balke, A., and Pearl, J. (1997). Bounds on Treatment Effects from Studies with Imperfect Compliance. \textit{JASA}, 92(439), 1171--1176.
+\item Lee, D. S. (2009). Training, Wages, and Sample Selection: Estimating Sharp Bounds on Treatment Effects. \textit{Review of Economic Studies}, 76(3), 1071--1102.
+\item Imbens, G. W., and Manski, C. F. (2004). Confidence Intervals for Partially Identified Parameters. \textit{Econometrica}, 72(6), 1845--1857.
+\end{itemize}
+\end{frame}
+
+\contactslide
+
+\end{document}
